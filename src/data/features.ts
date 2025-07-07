@@ -25,28 +25,28 @@ export const featureModules: FeatureModule[] = [
     category: "Reference",
   },
   {
-    id: "report-writer",
-    title: "Report Writer",
+    id: "flowcharts",
+    title: "Interactive Flowcharts",
+    summary: "Visualize complex legal procedures and decision-making processes.",
+    icon: "GitFork",
+    targetPage: "/flowcharts",
+    category: "Tools",
+  },
+  {
+    id: "report-assistant",
+    title: "Report Assistant",
     summary: "", // AI will generate this
     icon: "FileText",
     targetPage: "/reports",
     category: "Productivity",
   },
   {
-    id: "hazmat-guide",
-    title: "Hazmat Guide",
-    summary: "A visual guide to DOT hazardous materials placards.",
-    icon: "Biohazard",
-    targetPage: "/", // Points to dashboard for now
-    category: "Tools",
-  },
-  {
-    id: "field-tools",
-    title: "Field Tools",
-    summary: "A collection of essential interactive field utilities.",
-    icon: "Wrench",
-    targetPage: "/", // Points to dashboard for now
-    category: "Tools",
+    id: "field-notes",
+    title: "Field Notes",
+    summary: "Your persistent digital notepad. All notes are saved automatically.",
+    icon: "Notebook",
+    targetPage: "/notes",
+    category: "Productivity",
   },
   {
     id: "officer-wellness",
