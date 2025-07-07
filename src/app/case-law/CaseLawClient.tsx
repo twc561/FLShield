@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Summarizer } from "@/components/Summarizer"
-import type { CaseLaw } from "@/data"
+import type { CaseLaw } from "@/data/case-law"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search } from "lucide-react"
 
@@ -25,7 +25,9 @@ export function CaseLawClient({ initialCases }: { initialCases: CaseLaw[] }) {
       (c) =>
         c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         c.citation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.summary.toLowerCase().includes(searchTerm.toLowerCase())
+        c.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.tags.some(tag => tag.includes(searchTerm.toLowerCase()))
     )
   }, [searchTerm, initialCases])
 
@@ -34,7 +36,7 @@ export function CaseLawClient({ initialCases }: { initialCases: CaseLaw[] }) {
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
-          placeholder="Search by title, citation, or content..."
+          placeholder="Search by title, citation, category, tag..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10"
@@ -53,18 +55,28 @@ export function CaseLawClient({ initialCases }: { initialCases: CaseLaw[] }) {
                   <div className="flex justify-between items-start gap-4">
                     <div className="flex-1">
                       <CardTitle>{c.title}</CardTitle>
-                      <CardDescription>{c.citation}</CardDescription>
+                      <CardDescription>{c.citation} &middot; {c.category}</CardDescription>
                     </div>
                     <Summarizer
-                      documentText={c.fullText}
+                      documentText={`${c.summary}\n\nWhat it Means for Officers:\n${c.meaning}`}
                       documentTitle={c.title}
                     />
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm font-medium text-foreground/90">
                     {c.summary}
                   </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    <span className="font-semibold text-foreground/80">What it Means for Officers:</span> {c.meaning}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {c.tags.map(tag => (
+                      <span key={tag} className="px-2 py-1 text-xs rounded-md bg-secondary text-secondary-foreground">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             ))
