@@ -58,10 +58,10 @@ export function StatuteClient({
     const handler = setTimeout(() => {
       if (
         filteredStatutes.length === 0 &&
-        !isAiSearching
+        !isAiSearching &&
+        !aiResult
       ) {
         setIsAiSearching(true)
-        setAiResult(null)
         findStatute({ query: searchTerm })
           .then((result) => {
             if (result && result.code) {
@@ -101,7 +101,7 @@ export function StatuteClient({
     return () => {
       clearTimeout(handler) 
     }
-  }, [searchTerm, filteredStatutes.length, isAiSearching])
+  }, [searchTerm, filteredStatutes.length, isAiSearching, aiResult])
 
   const showLocalResults = filteredStatutes.length > 0 && searchTerm !== ""
   const showAiResult = !showLocalResults && aiResult
