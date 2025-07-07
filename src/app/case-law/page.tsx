@@ -10,7 +10,7 @@ export default function CaseLawPage() {
     <div className="h-full flex flex-col">
       <PageHeader
         title="Case Law Vault"
-        description="Search and review relevant case laws. Use the AI Summarizer for quick insights."
+        description="Search and review relevant case laws by category. Use the AI Summarizer for quick insights."
       />
       <CaseLawClient initialCases={cases} />
     </div>
