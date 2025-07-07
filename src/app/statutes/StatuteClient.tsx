@@ -138,7 +138,7 @@ export function StatuteClient({
     return () => {
       clearTimeout(handler); // Cleanup on component unmount or search term change
     };
-  }, [searchTerm, filteredStatutes.length, isAiSearching]);
+  }, [searchTerm, filteredStatutes.length]);
 
 
   const showLocalResults = filteredStatutes.length > 0;
