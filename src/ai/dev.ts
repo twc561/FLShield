@@ -3,3 +3,4 @@ config();
 
 import '@/ai/flows/summarize-document.ts';
 import '@/ai/flows/generate-feature-summary.ts';
+import '@/ai/flows/generate-wellness-tip.ts';

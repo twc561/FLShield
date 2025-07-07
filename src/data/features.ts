@@ -53,7 +53,7 @@ export const featureModules: FeatureModule[] = [
     title: "Officer Wellness",
     summary: "", // AI will generate this
     icon: "HeartPulse",
-    targetPage: "/", // Points to dashboard for now
+    targetPage: "/wellness",
     category: "Support",
   },
 ]

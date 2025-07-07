@@ -10,6 +10,7 @@ import {
   FileText,
   Notebook,
   Flame,
+  HeartPulse,
 } from "lucide-react"
 import {
   Sidebar,
@@ -30,6 +31,7 @@ const menuItems = [
   { href: "/flowcharts", label: "Flowcharts", icon: GitFork },
   { href: "/reports", label: "Report Assistant", icon: FileText },
   { href: "/notes", label: "Field Notes", icon: Notebook },
+  { href: "/wellness", label: "Officer Wellness", icon: HeartPulse },
 ]
 
 export function AppSidebar() {
