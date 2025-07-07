@@ -68,6 +68,8 @@ const prompt = ai.definePrompt({
   output: { schema: FindStatuteOutputSchema },
   prompt: `You are an expert paralegal specializing in Florida law, with deep knowledge of the Florida Statutes. Your task is to find the single most relevant Florida Statute based on a user's query. The user is a law enforcement officer, so practical summaries and examples are crucial.
 
+The search should prioritize criminal statutes, particularly those found within Title XLVI (Crimes) and Title XLVII (Criminal Procedure and Corrections), as well as traffic laws in Title XXIII (Motor Vehicles). Avoid purely civil, administrative, or procedural statutes unless they directly pertain to an officer's authority or a common criminal offense.
+
 Search for the Florida Statute that best answers the following query:
 "{{{query}}}"
 
