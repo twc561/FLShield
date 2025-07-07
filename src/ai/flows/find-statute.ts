@@ -47,6 +47,12 @@ const FindStatuteOutputSchema = z.object({
     .describe(
       'A practical summary explaining what this statute means for a law enforcement officer. If not found, return null.'
     ),
+  elementsOfTheCrime: z
+    .string()
+    .nullable()
+    .describe(
+      'A concise, bulleted or numbered list of the essential elements of the crime that must be proven. If not a criminal statute, return null.'
+    ),
   example: z
     .string()
     .nullable()
@@ -73,7 +79,7 @@ The search should prioritize criminal statutes, particularly those found within 
 Search for the Florida Statute that best answers the following query:
 "{{{query}}}"
 
-IMPORTANT: Only return information for a single statute. Do not provide lists or multiple options. The response must be in the specified JSON format. If you cannot find a single, highly relevant statute, return null for all fields. Do not guess or invent statutes. The statute code must be in the format "F.S. § [number]".`,
+IMPORTANT: Only return information for a single statute. Do not provide lists or multiple options. The response must be in the specified JSON format. If the statute defines a crime, you must populate the 'elementsOfTheCrime' field with a clear, concise list of the elements that must be proven. If you cannot find a single, highly relevant statute, return null for all fields. Do not guess or invent statutes. The statute code must be in the format "F.S. § [number]".`,
 });
 
 const findStatuteFlow = ai.defineFlow(

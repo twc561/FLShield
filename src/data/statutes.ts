@@ -8,6 +8,7 @@ export type Statute = {
   practicalSummary: string;
   example: string;
   url: string;
+  elementsOfTheCrime?: string | null;
 };
 
 export const statutes: Statute[] = [
@@ -38,7 +39,7 @@ export const statutes: Statute[] = [
     code: 'F.S. § 782.04',
     title: 'Murder',
     description: 'Defines the unlawful killing of a human being, distinguishing between different degrees of murder.',
-    fullText: 'The unlawful killing of a human being: (1)(a) When perpetrated from a premeditated design to effect the death of the person killed or any human being; (b) When committed by a person engaged in the perpetration of, or in the attempt to perpetrate, any specified felony... constitutes murder in the first degree.',
+    fullText: 'The unlawful killing of a human being: (1)(a) When perpetrated from a premeditated design to effect the death of the person killed or any human being; (b) When committed by a person engaged in the perpetration of, or in the attempt to perpetrate, any specified felony... constitutes murder in the a.first degree.',
     degreeOfCharge: 'First-degree or Capital Felony',
     practicalSummary: "Defines the most serious homicide offense. For officers, the critical element to investigate and document for first-degree murder is 'premeditated design'—evidence of planning, motive, or deliberate intent to kill.",
     example: "A suspect waits for their estranged spouse to leave work, follows them home, and shoots them. The acts of waiting, following, and bringing a weapon are all evidence that can be used to establish the premeditation required for a first-degree murder charge.",

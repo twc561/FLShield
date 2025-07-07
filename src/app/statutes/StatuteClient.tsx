@@ -49,13 +49,16 @@ export function StatuteClient({
   }, [searchTerm, initialStatutes])
 
   useEffect(() => {
-    // A debounced effect to trigger AI search
+    if (searchTerm === "") {
+        setAiResult(null)
+        setIsAiSearching(false)
+        return
+    }
+
     const handler = setTimeout(() => {
       if (
-        searchTerm &&
         filteredStatutes.length === 0 &&
-        !isAiSearching &&
-        !aiResult
+        !isAiSearching
       ) {
         setIsAiSearching(true)
         setAiResult(null)
@@ -74,6 +77,7 @@ export function StatuteClient({
                 degreeOfCharge: result.degreeOfCharge || "N/A",
                 practicalSummary:
                   result.practicalSummary || "No summary provided by AI.",
+                elementsOfTheCrime: result.elementsOfTheCrime || null,
                 example: result.example || "No example provided by AI.",
                 url: `https://www.flsenate.gov/Laws/Statutes/search?search=${encodeURIComponent(
                   result.title || result.code
@@ -81,7 +85,7 @@ export function StatuteClient({
               }
               setAiResult(newStatute)
             } else {
-              setAiResult(null) // Explicitly nullify if AI finds nothing
+              setAiResult(null) 
             }
           })
           .catch((error) => {
@@ -92,18 +96,20 @@ export function StatuteClient({
             setIsAiSearching(false)
           })
       }
-    }, 800) // Debounce for 800ms
+    }, 800) 
 
     return () => {
-      clearTimeout(handler) // Cleanup on component unmount or search term change
+      clearTimeout(handler) 
     }
-  }, [searchTerm, filteredStatutes.length, isAiSearching, aiResult])
+  }, [searchTerm, filteredStatutes.length, isAiSearching])
 
-  const showLocalResults = filteredStatutes.length > 0
+  const showLocalResults = filteredStatutes.length > 0 && searchTerm !== ""
   const showAiResult = !showLocalResults && aiResult
   const showLoading = !showLocalResults && isAiSearching
   const showNotFound =
     !showLocalResults && !aiResult && !isAiSearching && searchTerm.length > 0
+    
+  const statutesToDisplay = searchTerm ? filteredStatutes : initialStatutes
 
   return (
     <div className="flex flex-col h-[calc(100vh-12rem)] animate-fade-in-up">
@@ -114,15 +120,18 @@ export function StatuteClient({
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value)
-            setAiResult(null) // Clear AI result on new search
+            setAiResult(null)
+            if (e.target.value !== "" && filteredStatutes.length > 0) {
+              setIsAiSearching(false)
+            }
           }}
           className="pl-10"
         />
       </div>
       <ScrollArea className="flex-1 pr-4 -mr-4">
         <Accordion type="single" collapsible className="w-full space-y-4">
-          {showLocalResults &&
-            filteredStatutes.map((statute, index) => (
+          {(showLocalResults || searchTerm === "") &&
+            statutesToDisplay.map((statute, index) => (
               <AccordionItem
                 value={statute.id}
                 key={statute.id}
@@ -188,7 +197,7 @@ export function StatuteClient({
               </AccordionItem>
             ))}
 
-          {showAiResult && (
+          {showAiResult && aiResult && (
             <AccordionItem value={aiResult.id} className="border-b-0">
               <Card className="animate-fade-in-up border-accent/50">
                 <AccordionTrigger className="p-6 text-left hover:no-underline">
@@ -221,6 +230,16 @@ export function StatuteClient({
                         {aiResult.practicalSummary}
                       </p>
                     </div>
+                     {aiResult.elementsOfTheCrime && (
+                        <div className="p-4 bg-muted/50 rounded-lg">
+                          <h4 className="font-semibold mb-2">
+                            Elements of the Crime
+                          </h4>
+                          <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                            {aiResult.elementsOfTheCrime}
+                          </p>
+                        </div>
+                      )}
                     <div className="p-4 bg-muted/50 rounded-lg">
                       <h4 className="font-semibold mb-2">
                         Real-World Example
