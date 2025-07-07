@@ -1,3 +1,4 @@
+
 export type CaseLaw = {
   id: string;
   title: string;
@@ -19,6 +20,16 @@ export const caseLaws: CaseLaw[] = [
     summary: 'Clarifies procedures for involuntary psychiatric examinations (Baker Act), emphasizing that criteria must be strictly met and documented.',
     meaning: 'When you initiate a Baker Act, you must have evidence that the person is mentally ill and poses a danger to themselves or others, or is self-neglectful. Your report must clearly document the specific behaviors and statements that justify the involuntary examination. Failure to meet the strict criteria can lead to liability.',
     tags: ['baker act', 'crisis intervention', 'involuntary commitment', 'mental health', 'florida'],
+    overturned: false,
+  },
+  {
+    id: 'city-and-county-of-san-francisco-v-sheehan',
+    title: 'City and County of San Francisco v. Sheehan',
+    citation: '575 U.S. 600 (2015)',
+    category: 'Crisis Intervention',
+    summary: 'While the Americans with Disabilities Act (ADA) may apply to police interactions with the mentally ill, officers who followed their training on handling armed and dangerous individuals are entitled to qualified immunity. The court did not definitively rule on how the ADA applies to arrests.',
+    meaning: 'When dealing with an armed and mentally ill individual who poses a threat, your primary duty is to ensure safety according to your training. While the ADA is a consideration, qualified immunity protects you if you adhere to established use-of-force policies, even if accommodations for the disability were not made during the direct confrontation.',
+    tags: ['crisis intervention', 'ada', 'mental health', 'qualified immunity', 'use of force'],
     overturned: false,
   },
 
@@ -101,6 +112,16 @@ export const caseLaws: CaseLaw[] = [
     summary: 'Established the "public safety" exception to Miranda. If a threat to public safety exists, officers may ask questions to neutralize the threat before providing Miranda warnings.',
     meaning: 'If a suspect is in custody and you have reason to believe there is an immediate threat (e.g., a hidden gun in a public place), you can ask questions to locate the weapon before reading Miranda. The questions must be about neutralizing the threat, not general questioning about the crime.',
     tags: ['miranda rights', 'public safety exception', 'exigent circumstances'],
+    overturned: false,
+  },
+  {
+    id: 'missouri-v-seibert',
+    title: 'Missouri v. Seibert',
+    citation: '542 U.S. 600 (2004)',
+    category: 'Custodial Interrogation',
+    summary: 'A post-Miranda confession is inadmissible if it was obtained after a deliberate "question-first, warn-later" interrogation strategy, as this tactic undermines the effectiveness of the Miranda warnings.',
+    meaning: 'You cannot intentionally get a confession from a suspect, then read them their Miranda rights, and have them repeat the confession. This two-step interrogation tactic is unconstitutional. Get a clear Miranda waiver *before* any custodial interrogation begins.',
+    tags: ['miranda rights', 'custodial interrogation', 'two-step interrogation', 'confession', 'waiver'],
     overturned: false,
   },
   {
@@ -339,6 +360,16 @@ export const caseLaws: CaseLaw[] = [
     tags: ['plain feel', 'terry frisk', 'contraband', 'search'],
     overturned: false,
   },
+    {
+    id: 'arizona-v-hicks',
+    title: 'Arizona v. Hicks',
+    citation: '480 U.S. 321 (1987)',
+    category: 'Search & Seizure',
+    summary: 'For an object to be seized under the "plain view" doctrine, its incriminating character must be "immediately apparent." Moving an object to expose a concealed serial number constitutes a search.',
+    meaning: 'If you are lawfully in a location and see contraband in plain view, you can seize it. However, you cannot move or manipulate items to get a better look or to find identifying marks. If you have to move it to know it\'s contraband, its incriminating nature wasn\'t "immediately apparent," and you\'ve just conducted a new search.',
+    tags: ['plain view', 'search', 'warrant exception', 'probable cause'],
+    overturned: false,
+  },
   {
     id: 'schneckloth-v-bustamonte',
     title: 'Schneckloth v. Bustamonte',
@@ -367,6 +398,16 @@ export const caseLaws: CaseLaw[] = [
     summary: 'If an objecting co-occupant is removed from the residence for a lawful reason (like arrest), police may then obtain consent to search from the remaining occupant.',
     meaning: 'This clarifies Georgia v. Randolph. If you lawfully arrest the person who was objecting to the search and remove them from the scene, you can then go back and ask the other resident for consent. The objection is only valid while the objector is present.',
     tags: ['consent search', 'co-occupant', 'randolph rule', 'arrest'],
+    overturned: false,
+  },
+  {
+    id: 'kentucky-v-king',
+    title: 'Kentucky v. King',
+    citation: '563 U.S. 452 (2011)',
+    category: 'Search & Seizure',
+    summary: 'The exigent circumstances rule applies even if police create the exigency, as long as they do not violate or threaten to violate the Fourth Amendment in doing so.',
+    meaning: 'If you are lawfully at a residence (e.g., knock and talk) and your presence causes suspects to start destroying evidence, you can enter without a warrant based on those exigent circumstances. The key is that your initial actions (like knocking) must be lawful.',
+    tags: ['exigent circumstances', 'warrant exception', 'home entry', 'police-created exigency'],
     overturned: false,
   },
   {
@@ -422,6 +463,16 @@ export const caseLaws: CaseLaw[] = [
     overturned: false,
   },
   {
+    id: 'arizona-v-johnson',
+    title: 'Arizona v. Johnson',
+    citation: '555 U.S. 323 (2009)',
+    category: 'Traffic & DUI',
+    summary: 'During a lawful traffic stop, an officer may conduct a pat-down search of a passenger if the officer has reasonable suspicion that the passenger is armed and dangerous.',
+    meaning: 'Just as you can frisk a driver under Terry v. Ohio, you can also frisk a passenger during a traffic stop, but you still need independent, articulable reasonable suspicion that the passenger specifically is armed and dangerous. The traffic stop itself does not automatically justify a frisk of a passenger.',
+    tags: ['traffic stop', 'passenger', 'terry frisk', 'stop and frisk', 'officer safety', 'reasonable suspicion'],
+    overturned: false,
+  },
+  {
     id: 'heien-v-north-carolina',
     title: 'Heien v. North Carolina',
     citation: '574 U.S. 54 (2014)',
@@ -439,6 +490,16 @@ export const caseLaws: CaseLaw[] = [
     summary: 'An anonymous 911 call reporting dangerous driving can be sufficient to establish reasonable suspicion for a traffic stop if it bears adequate "indicia of reliability."',
     meaning: 'An anonymous tip can be enough for a stop if it seems reliable. Factors that help are if the caller identifies the vehicle and location, reports specific dangerous driving (not just a "drunk driver"), and makes the call soon after seeing the incident. The more details, the better.',
     tags: ['reasonable suspicion', 'traffic stop', 'anonymous tip', '911 call', 'dui'],
+    overturned: false,
+  },
+  {
+    id: 'kansas-v-glover',
+    title: 'Kansas v. Glover',
+    citation: '140 S. Ct. 1183 (2020)',
+    category: 'Traffic & DUI',
+    summary: 'When an officer lacks information negating an inference that the owner is driving their own vehicle, an investigative traffic stop after running a vehicle\'s license plate and learning that the registered owner\'s driver\'s license has been revoked is reasonable.',
+    meaning: 'If you run a license plate and see the registered owner has a suspended or revoked license, you can reasonably assume the owner is driving and initiate a traffic stop, as long as you don\'t have information to the contrary (e.g., you can clearly see the driver is of a different age or gender). This is a common-sense inference that provides reasonable suspicion for the stop.',
+    tags: ['traffic stop', 'reasonable suspicion', 'license plate', 'revoked license', 'dmv records'],
     overturned: false,
   },
   {
@@ -491,6 +552,26 @@ export const caseLaws: CaseLaw[] = [
     summary: 'A police officer\'s attempt to terminate a dangerous high-speed car chase that threatens the lives of innocent bystanders does not violate the Fourth Amendment, even when it places the fleeing motorist at risk of serious injury or death.',
     meaning: 'When a suspect leads you on a high-speed chase that endangers the public, using force to stop the chase (like a PIT maneuver) can be considered reasonable, even if it carries a high risk for the suspect. You must balance the risk to the suspect against the risk to the public.',
     tags: ['use of force', 'vehicle pursuit', 'deadly force', 'objective reasonableness'],
+    overturned: false,
+  },
+  {
+    id: 'county-of-sacramento-v-lewis',
+    title: 'County of Sacramento v. Lewis',
+    citation: '523 U.S. 833 (1998)',
+    category: 'Use of Force & Arrest',
+    summary: 'In high-speed pursuits, for an officer\'s conduct to be considered a due process violation, it must "shock the conscience," which requires a purpose to cause harm unrelated to the legitimate object of arrest.',
+    meaning: 'When you are involved in a high-speed pursuit, your actions are judged by a very high standard. Liability is typically found only if your actions show an intent to harm the suspect for reasons other than stopping the chase. This provides significant protection against lawsuits arising from injuries to suspects during pursuits.',
+    tags: ['use of force', 'vehicle pursuit', 'shocks the conscience', 'due process', 'high-speed chase'],
+    overturned: false,
+  },
+  {
+    id: 'plumhoff-v-rickard',
+    title: 'Plumhoff v. Rickard',
+    citation: '572 U.S. 765 (2014)',
+    category: 'Use of Force & Arrest',
+    summary: 'Officers acted reasonably when they used deadly force (shooting) to terminate a dangerous high-speed chase after the suspect continued to flee and endanger officers and the public even after being cornered.',
+    meaning: 'This case reaffirms the principles of Scott v. Harris. If a fleeing driver continues to pose a deadly threat to the public or officers even after being stopped or cornered, using deadly force to end that threat can be reasonable. The threat posed by the flight is the key factor.',
+    tags: ['use of force', 'deadly force', 'vehicle pursuit', 'scott v harris', 'qualified immunity'],
     overturned: false,
   },
   {
