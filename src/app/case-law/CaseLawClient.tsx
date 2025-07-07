@@ -54,6 +54,7 @@ export function CaseLawClient({ initialCases }: { initialCases: CaseLaw[] }) {
         c.citation.toLowerCase().includes(searchTerm) ||
         c.summary.toLowerCase().includes(searchTerm) ||
         c.meaning.toLowerCase().includes(searchTerm) ||
+        c.example.toLowerCase().includes(searchTerm) ||
         c.tags.some(tag => tag.toLowerCase().includes(searchTerm))
     );
   };
@@ -100,7 +101,7 @@ export function CaseLawClient({ initialCases }: { initialCases: CaseLaw[] }) {
                                 <CardDescription>{c.citation}</CardDescription>
                                 </div>
                                 <Summarizer
-                                documentText={`${c.summary}\n\nWhat it Means for Officers:\n${c.meaning}`}
+                                documentText={`${c.summary}\n\nWhat it Means for Officers:\n${c.meaning}\n\nExample:\n${c.example}`}
                                 documentTitle={c.title}
                                 />
                             </div>
@@ -109,8 +110,11 @@ export function CaseLawClient({ initialCases }: { initialCases: CaseLaw[] }) {
                             <p className="text-sm font-medium text-foreground/90">
                                 {c.summary}
                             </p>
-                            <p className="text-sm text-muted-foreground mt-2">
+                            <p className="text-sm text-muted-foreground mt-4">
                                 <span className="font-semibold text-foreground/80">What it Means for Officers:</span> {c.meaning}
+                            </p>
+                             <p className="text-sm text-muted-foreground mt-3 border-l-2 border-accent pl-3 italic">
+                                <span className="font-semibold text-foreground/80 not-italic">Real-World Example:</span> {c.example}
                             </p>
                             <div className="flex flex-wrap gap-2 mt-4">
                                 {c.tags.map(tag => (
