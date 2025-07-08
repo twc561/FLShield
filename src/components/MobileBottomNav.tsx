@@ -43,8 +43,14 @@ const mainNavItems = [
 export function MobileBottomNav() {
   const pathname = usePathname()
   const [isSheetOpen, setIsSheetOpen] = React.useState(false)
+  const [isClient, setIsClient] = React.useState(false)
+
+  React.useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   const isActive = (href: string) => {
+    if (!isClient) return false;
     if (href === "/") return pathname === "/"
     return pathname.startsWith(href)
   }

@@ -32,12 +32,18 @@ import { menuItems } from "@/lib/menu-items"
 export function AppSidebar() {
   const pathname = usePathname()
   const [openStates, setOpenStates] = React.useState<Record<string, boolean>>({})
+  const [isClient, setIsClient] = React.useState(false)
+
+  React.useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   const isActive = (href: string) => {
     return pathname === href || (href !== "/" && pathname.startsWith(href))
   }
 
   React.useEffect(() => {
+    if (!isClient) return;
     const initialStates: Record<string, boolean> = {}
     menuItems.forEach((item) => {
       if (item.items) {
@@ -45,7 +51,7 @@ export function AppSidebar() {
       }
     })
     setOpenStates(initialStates)
-  }, [pathname])
+  }, [pathname, isClient])
 
   return (
     <Sidebar>
@@ -63,7 +69,7 @@ export function AppSidebar() {
             item.items ? (
               <Collapsible
                 key={item.label}
-                open={openStates[item.label] || false}
+                open={isClient ? (openStates[item.label] || false) : false}
                 onOpenChange={(isOpen) =>
                   setOpenStates((prev) => ({ ...prev, [item.label]: isOpen }))
                 }
@@ -73,7 +79,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       className="w-full justify-between"
                       variant="ghost"
-                      data-active={item.items.some(subItem => isActive(subItem.href))}
+                      data-active={isClient && item.items.some(subItem => isActive(subItem.href))}
                     >
                       <div className="flex items-center gap-2">
                         <item.icon className="size-5" />
@@ -93,7 +99,7 @@ export function AppSidebar() {
                           href={subItem.href}
                           className={cn(
                             "flex h-full w-full items-center gap-2 rounded-md px-2 text-sm text-sidebar-foreground/80 outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2",
-                            isActive(subItem.href) && "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                            isClient && isActive(subItem.href) && "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                           )}
                         >
                           <subItem.icon className="size-4 shrink-0" />
@@ -108,9 +114,9 @@ export function AppSidebar() {
               <SidebarMenuItem key={item.label}>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname === item.href}
+                  isActive={isClient && pathname === item.href}
                   tooltip={{ children: item.label, side: "right" }}
-                  className={cn(pathname === item.href && "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary")}
+                  className={cn(isClient && pathname === item.href && "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary")}
                 >
                   <Link href={item.href!}>
                     <item.icon className="size-5" />
