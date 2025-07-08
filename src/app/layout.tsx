@@ -2,6 +2,7 @@
 'use client'
 
 import { usePathname } from "next/navigation"
+import { useEffect } from "react"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 import { SidebarProvider } from "@/components/ui/sidebar"
@@ -19,11 +20,22 @@ export default function RootLayout({
   
   const isLandingPage = pathname === "/"
 
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/service-worker.js')
+        .then((registration) => console.log('Service Worker registered with scope:', registration.scope))
+        .catch((error) => console.error('Service Worker registration failed:', error));
+    }
+  }, []);
+
   return (
     <html lang="en" className="dark">
       <head>
         <title>Florida Shield</title>
         <meta name="description" content="A digital toolkit for law enforcement." />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#1F2937" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
