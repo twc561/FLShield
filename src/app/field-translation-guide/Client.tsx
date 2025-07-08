@@ -22,9 +22,8 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
   const [searchTerm, setSearchTerm] = React.useState("")
   const [activeAudioId, setActiveAudioId] = React.useState<string | null>(null);
   
-  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+  const audioRef = React.useRef<HTMLAudioElement>(null);
   const audioCache = React.useRef<Map<string, string>>(new Map());
-  
 
   const filteredPhrases = React.useMemo(() => {
     if (!searchTerm) {
@@ -60,50 +59,48 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
 
   const stopAudio = () => {
     if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.onended = null;
-        audioRef.current = null;
+      audioRef.current.pause();
+      audioRef.current.src = '';
     }
     setActiveAudioId(null);
   };
 
   const playAudio = async (text: string, language: 'es-US' | 'ht-HT', id: string) => {
-    if (activeAudioId === id) {
-        stopAudio();
-        return;
+    if (id === activeAudioId && audioRef.current && !audioRef.current.paused) {
+      stopAudio();
+      return;
     }
 
     stopAudio();
     setActiveAudioId(id);
 
     try {
-        let audioDataUri = audioCache.current.get(id);
-        
-        if (!audioDataUri) {
-            const response = await trilingualTextToSpeech({ text, language });
-            audioDataUri = response.media;
-            audioCache.current.set(id, audioDataUri);
-        }
-
+      let audioDataUri = audioCache.current.get(id);
+      
+      if (!audioDataUri) {
+        const response = await trilingualTextToSpeech({ text, language });
+        audioDataUri = response.media;
         if (audioDataUri) {
-            const audio = new Audio(audioDataUri);
-            audioRef.current = audio;
-            audio.play();
-            audio.onended = () => {
-                if (activeAudioId === id) {
-                    stopAudio();
-                }
-            };
+            audioCache.current.set(id, audioDataUri);
+        } else {
+            throw new Error("Received empty audio data from AI.");
         }
+      }
+
+      if (audioRef.current) {
+        audioRef.current.src = audioDataUri;
+        await audioRef.current.play();
+      }
     } catch (error) {
-        console.error("TTS or playback error:", error);
-        stopAudio();
+      console.error("TTS or playback error:", error);
+      stopAudio(); // Reset on error
     }
   };
 
 
   return (
     <div className="space-y-6">
+      <audio ref={audioRef} onEnded={stopAudio} />
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
