@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Florida Shield</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better dark theme experience */
+        .form-input {
+            @apply mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition;
+        }
+        .btn-primary {
+            @apply w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition;
+        }
+        .form-link {
+            @apply font-medium text-blue-400 hover:text-blue-300 cursor-pointer;
+        }
+    </style>
+</head>
+<body class="h-full">
+    <div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md space-y-8">
+            <div>
+                <svg class="mx-auto h-12 w-auto text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3A5.25 5.25 0 0012 1.5zm-3.75 5.25v3h7.5v-3a3.75 3.75 0 00-7.5 0z" clip-rule="evenodd" />
+                </svg>
+                <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-200">Florida Shield</h2>
+            </div>
+            
+            <!-- Notification Area -->
+            <div id="notification" class="hidden p-3 rounded-md text-sm"></div>
+
+            <!-- Login Form -->
+            <div id="login-view">
+                <form id="login-form" class="space-y-6">
+                    <div>
+                        <label for="login-email" class="block text-sm font-medium text-gray-400">Email address</label>
+                        <input id="login-email" name="email" type="email" autocomplete="email" required class="form-input">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <label for="login-password" class="block text-sm font-medium text-gray-400">Password</label>
+                            <div class="text-sm">
+                                <a id="forgot-password-link" class="form-link">Forgot your password?</a>
+                            </div>
+                        </div>
+                        <input id="login-password" name="password" type="password" autocomplete="current-password" required class="form-input">
+                    </div>
+                    <div>
+                        <button type="submit" id="login-button" class="btn-primary">
+                            <span class="btn-text">Sign In</span>
+                            <span class="btn-loader hidden">Signing in...</span>
+                        </button>
+                    </div>
+                </form>
+                <p class="mt-6 text-center text-sm text-gray-400">
+                    Not a member?
+                    <a id="show-signup-link" class="form-link">Start your 14-day free trial</a>
+                </p>
+            </div>
+
+            <!-- Sign Up Form -->
+            <div id="signup-view" class="hidden">
+                 <form id="signup-form" class="space-y-6">
+                    <div>
+                        <label for="signup-email" class="block text-sm font-medium text-gray-400">Email address</label>
+                        <input id="signup-email" name="email" type="email" autocomplete="email" required class="form-input">
+                    </div>
+                    <div>
+                        <label for="signup-password" class="block text-sm font-medium text-gray-400">Password</label>
+                        <input id="signup-password" name="password" type="password" autocomplete="new-password" required class="form-input">
+                    </div>
+                    <div>
+                        <button type="submit" id="signup-button" class="btn-primary">
+                            <span class="btn-text">Create Account</span>
+                            <span class="btn-loader hidden">Creating...</span>
+                        </button>
+                    </div>
+                </form>
+                <p class="mt-6 text-center text-sm text-gray-400">
+                    Already have an account?
+                    <a id="show-login-link-from-signup" class="form-link">Sign In</a>
+                </p>
+            </div>
+
+            <!-- Forgot Password Form -->
+            <div id="forgot-password-view" class="hidden">
+                <form id="forgot-password-form" class="space-y-6">
+                    <div>
+                        <label for="forgot-email" class="block text-sm font-medium text-gray-400">Enter your email</label>
+                        <input id="forgot-email" name="email" type="email" autocomplete="email" required class="form-input">
+                    </div>
+                    <div>
+                        <button type="submit" id="forgot-button" class="btn-primary">
+                            <span class="btn-text">Send Reset Email</span>
+                            <span class="btn-loader hidden">Sending...</span>
+                        </button>
+                    </div>
+                </form>
+                 <p class="mt-6 text-center text-sm text-gray-400">
+                    Remembered your password?
+                    <a id="show-login-link-from-forgot" class="form-link">Sign In</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKOZL2TdqleyUtbrbKHJfjObRqpBz2s28",
+            authDomain: "florida-shield.firebaseapp.com",
+            projectId: "florida-shield",
+            storageBucket: "florida-shield.appspot.com",
+            messagingSenderId: "320998993928",
+            appId: "1:320998993928:web:79043e80e835f9c3eee1bd"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // DOM Elements
+        const views = {
+            login: document.getElementById('login-view'),
+            signup: document.getElementById('signup-view'),
+            forgot: document.getElementById('forgot-password-view')
+        };
+        
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const forgotPasswordForm = document.getElementById('forgot-password-form');
+        
+        const notificationEl = document.getElementById('notification');
+
+        // View Switching Logic
+        const showView = (viewName) => {
+            Object.values(views).forEach(view => view.classList.add('hidden'));
+            views[viewName].classList.remove('hidden');
+        };
+
+        document.getElementById('forgot-password-link').addEventListener('click', () => showView('forgot'));
+        document.getElementById('show-signup-link').addEventListener('click', () => showView('signup'));
+        document.getElementById('show-login-link-from-signup').addEventListener('click', () => showView('login'));
+        document.getElementById('show-login-link-from-forgot').addEventListener('click', () => showView('login'));
+
+        // Notification Logic
+        const showNotification = (message, isError = false) => {
+            notificationEl.textContent = message;
+            notificationEl.className = `p-3 rounded-md text-sm ${isError ? 'bg-red-800/50 text-red-300' : 'bg-green-800/50 text-green-300'}`;
+            setTimeout(() => {
+                notificationEl.className = 'hidden';
+            }, 5000);
+        };
+
+        // Loading State Logic
+        const setLoadingState = (button, isLoading) => {
+            button.disabled = isLoading;
+            button.querySelector('.btn-text').classList.toggle('hidden', isLoading);
+            button.querySelector('.btn-loader').classList.toggle('hidden', !isLoading);
+        };
+
+        // Sign-In Logic
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = loginForm.email.value;
+            const password = loginForm.password.value;
+            const button = document.getElementById('login-button');
+            setLoadingState(button, true);
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // On success, Firebase's onAuthStateChanged will handle the redirect
+            } catch (error) {
+                showNotification(error.message, true);
+            } finally {
+                setLoadingState(button, false);
+            }
+        });
+
+        // Sign-Up Logic
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = signupForm.email.value;
+            const password = signupForm.password.value;
+            const button = document.getElementById('signup-button');
+            setLoadingState(button, true);
+
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                showNotification('Account created successfully! Please sign in.');
+                showView('login');
+            } catch (error) {
+                showNotification(error.message, true);
+            } finally {
+                 setLoadingState(button, false);
+            }
+        });
+
+        // Forgot Password Logic
+        forgotPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = forgotPasswordForm.email.value;
+            const button = document.getElementById('forgot-button');
+            setLoadingState(button, true);
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showNotification('Password reset email sent. Check your inbox.');
+                showView('login');
+            } catch (error) {
+                showNotification(error.message, true);
+            } finally {
+                setLoadingState(button, false);
+            }
+        });
+
+        // Auth State Observer
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, redirect to the dashboard.
+                // Use a short delay to ensure login state is fully propagated.
+                setTimeout(() => {
+                     window.location.pathname = '/dashboard';
+                }, 100);
+            } else {
+                // User is signed out. Stay on login page.
+            }
+        });
+    </script>
+</body>
+</html>
