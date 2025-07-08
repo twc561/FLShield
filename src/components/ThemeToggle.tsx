@@ -6,16 +6,13 @@ import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState("dark")
+  const [theme, setTheme] = useState<"light" | "dark" | null>(null)
 
   useEffect(() => {
-    // On mount, we check for a theme in localStorage or default to 'dark'.
-    // We only run this on the client.
-    const storedTheme = localStorage.getItem("theme")
+    const storedTheme = localStorage.getItem("theme") as "light" | "dark" | null
     if (storedTheme) {
       setTheme(storedTheme)
     } else {
-      // If no theme is stored, we respect the system preference but default to dark
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
       setTheme(prefersDark ? "dark" : "light")
     }
@@ -24,10 +21,11 @@ export function ThemeToggle() {
   useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark")
-    } else {
+      localStorage.setItem("theme", "dark")
+    } else if (theme === "light") {
       document.documentElement.classList.remove("dark")
+      localStorage.setItem("theme", "light")
     }
-    localStorage.setItem("theme", theme)
   }, [theme])
 
   const toggleTheme = () => {
@@ -36,7 +34,7 @@ export function ThemeToggle() {
 
   // We render null on the server and until hydration is complete on the client
   // to avoid a hydration mismatch.
-  if (!theme) return null
+  if (theme === null) return null
 
   return (
     <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
