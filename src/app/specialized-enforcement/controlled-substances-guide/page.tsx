@@ -1,17 +1,16 @@
+
 import { PageHeader } from "@/components/PageHeader"
-import { controlledSubstancesData } from "@/data"
+import { substancePlaceholders } from "@/data/specialized-enforcement/controlled-substances-index"
 import { ControlledSubstancesClient } from "./Client"
 
 export default function ControlledSubstancesGuidePage() {
-
   return (
-    <div className="animate-fade-in-up">
+    <div className="animate-fade-in-up h-full flex flex-col">
       <PageHeader
         title="Controlled Substances Field Guide"
-        description="A visual quick-reference for common narcotics, including street names, paraphernalia, and relevant Florida statutes."
+        description="A detailed reference for common narcotics. Select a substance for an AI-powered analysis of its appearance, paraphernalia, legal status, and officer safety considerations."
       />
-      
-      <ControlledSubstancesClient data={controlledSubstancesData} />
+      <ControlledSubstancesClient initialPlaceholders={substancePlaceholders} />
     </div>
   )
 }

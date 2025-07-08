@@ -23,7 +23,7 @@ export * from './traffic-enforcement/dui-investigation';
 export * from './traffic-enforcement/traffic-violations';
 export * from './traffic-enforcement/commercial-vehicle';
 export * from './emergency-response/crisis-intervention';
-export * from './specialized-enforcement/controlled-substances';
+export * from './specialized-enforcement/controlled-substances-index';
 export * from './specialized-enforcement/k9-guide';
 export * from './specialized-enforcement/fwc-regulations';
 export * from './specialized-enforcement/animal-cruelty';
