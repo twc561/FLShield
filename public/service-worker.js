@@ -1,59 +1,57 @@
-const CACHE_NAME = 'florida-shield-cache-v2';
-const OFFLINE_URL = 'offline.html';
+// A network-first, falling back to cache service worker
+// The version of the cache. Every time you change assets, you need to update this version.
+const CACHE_VERSION = 1;
+const CACHE_NAME = `florida-shield-cache-v${CACHE_VERSION}`;
+
+// A list of essential files to be pre-cached.
 const PRECACHE_ASSETS = [
-  OFFLINE_URL,
-  '/manifest.json',
-  'https://placehold.co/192x192.png',
-  'https://placehold.co/512x512.png'
+    '/offline.html',
+    '/manifest.json',
+    'https://placehold.co/192x192.png',
+    'https://placehold.co/512x512.png'
 ];
 
+// On install, pre-cache the essential assets.
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(PRECACHE_ASSETS))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    // Setting {cache: 'reload'} forces the browser to fetch a fresh copy of the assets from the network.
+    await cache.addAll(PRECACHE_ASSETS.map(url => new Request(url, { cache: 'reload' })));
+  })());
+  self.skipWaiting();
 });
 
+// On activate, clean up old caches.
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter(cacheName => cacheName !== CACHE_NAME)
-          .map(cacheName => caches.delete(cacheName))
-      );
-    }).then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    const names = await caches.keys();
+    await Promise.all(
+      names.map((name) => {
+        if (name !== CACHE_NAME) {
+          return caches.delete(name);
+        }
+      })
+    );
+    await clients.claim();
+  })());
 });
 
+// The core logic: Network falling back to cache.
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.open(CACHE_NAME).then(async (cache) => {
+  // We only want to handle navigation requests (i.e., for HTML pages).
+  if (event.request.mode === 'navigate') {
+    event.respondWith((async () => {
       try {
-        // 1. Try to fetch from the network
+        // First, try to fetch the request from the network.
         const networkResponse = await fetch(event.request);
-        // If successful, cache the new response for future use
-        if (event.request.method === 'GET') {
-          cache.put(event.request, networkResponse.clone());
-        }
         return networkResponse;
       } catch (error) {
-        // 2. Network failed, try to get it from the cache
-        const cachedResponse = await cache.match(event.request);
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-
-        // 3. If it's a navigation request and it's not in the cache, show the offline page
-        if (event.request.mode === 'navigate') {
-          const offlinePage = await cache.match(OFFLINE_URL);
-          return offlinePage;
-        }
-
-        // For other failed requests (e.g., images), just fail
-        return Response.error();
+        // If the network fetch fails (i.e., offline), open the cache.
+        const cache = await caches.open(CACHE_NAME);
+        // Respond with the pre-cached offline page.
+        const cachedResponse = await cache.match('/offline.html');
+        return cachedResponse;
       }
-    })
-  );
+    })());
+  }
 });

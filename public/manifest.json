@@ -1,13 +1,13 @@
 {
-  "name": "Shield FL",
-  "short_name": "ShieldFL",
-  "start_url": ".",
-  "scope": ".",
-  "id": "/",
-  "display": "standalone",
-  "background_color": "#111827",
-  "theme_color": "#1F2937",
+  "name": "Florida Shield: The Officer's Field Guide",
+  "short_name": "Florida Shield",
   "description": "The essential digital partner for the modern Florida officer.",
+  "start_url": "/",
+  "id": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1F2937",
+  "theme_color": "#3B82F6",
   "icons": [
     {
       "src": "https://placehold.co/192x192.png",

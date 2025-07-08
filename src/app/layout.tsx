@@ -21,11 +21,17 @@ export default function RootLayout({
   const isLandingPage = pathname === "/"
 
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/service-worker.js')
-        .then((registration) => console.log('Service Worker registered with scope:', registration.scope))
-        .catch((error) => console.error('Service Worker registration failed:', error));
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("/service-worker.js").then(
+          function (registration) {
+            console.log("Service Worker registration successful with scope: ", registration.scope);
+          },
+          function (err) {
+            console.log("Service Worker registration failed: ", err);
+          }
+        );
+      });
     }
   }, []);
 
@@ -33,7 +39,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <head>
         <title>Florida Shield</title>
-        <meta name="description" content="A digital toolkit for law enforcement." />
+        <meta name="description" content="The essential digital partner for the modern Florida officer." />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#1F2937" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
