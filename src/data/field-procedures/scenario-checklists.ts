@@ -14,6 +14,9 @@ export type WalkthroughStep = {
 export type Scenario = {
   id: string;
   name: string;
+  subtitle: string;
+  category: string;
+  icon: string;
   goal: string;
   keyStatutes: string[];
   walkthrough: Record<string, WalkthroughStep>;
@@ -29,6 +32,9 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
   'dui-investigation': {
     id: 'dui-investigation',
     name: 'DUI Investigation',
+    subtitle: 'F.S. §316.193, §316.1932',
+    category: 'Patrol Operations',
+    icon: 'Car',
     goal: 'To safely stop, investigate, and if probable cause exists, arrest an impaired driver. To thoroughly document evidence for successful prosecution.',
     keyStatutes: ['F.S. §316.193 (DUI)', 'F.S. §316.1932 (Implied Consent)'],
     initialStepId: 'start',
@@ -171,6 +177,9 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
   'traffic-stop-moving-violation': {
     id: 'traffic-stop-moving-violation',
     name: 'Traffic Stop (Moving Violation)',
+    subtitle: 'F.S. §316, §322',
+    category: 'Patrol Operations',
+    icon: 'TrafficCone',
     goal: 'To safely conduct a traffic stop for an observed moving violation, issue the appropriate enforcement action (citation/warning), and document the encounter thoroughly.',
     keyStatutes: ['F.S. §316 (State Uniform Traffic Control)', 'F.S. §322 (Driver Licenses)'],
     initialStepId: 'start',
@@ -298,6 +307,9 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
   'domestic-violence-investigation': {
     id: 'domestic-violence-investigation',
     name: 'Domestic Violence Investigation',
+    subtitle: 'F.S. §741.28, §784.03',
+    category: 'Crimes Against Persons',
+    icon: 'ShieldAlert',
     goal: 'To safely intervene, ensure victim safety, identify the primary aggressor, and gather sufficient evidence for an evidence-based prosecution.',
     keyStatutes: ['F.S. §741.28 (DV Definition)', 'F.S. §784.03 (Battery)', 'F.S. §741.31 (Injunction Violation)'],
     initialStepId: 'start',
@@ -415,6 +427,9 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
   'burglary-residential-in-progress': {
     id: 'burglary-residential-in-progress',
     name: 'Burglary (Residential) In Progress',
+    subtitle: 'F.S. §810.02',
+    category: 'Property Crimes',
+    icon: 'Home',
     goal: 'To safely clear a structure, apprehend suspects if present, and preserve the crime scene.',
     keyStatutes: ['F.S. §810.02 (Burglary)'],
     initialStepId: 'start',
@@ -525,6 +540,9 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
   'retail-theft': {
     id: 'retail-theft',
     name: 'Retail Theft (Shoplifting)',
+    subtitle: 'F.S. §812.014, §812.015',
+    category: 'Property Crimes',
+    icon: 'ShoppingCart',
     goal: 'To investigate a retail theft, identify the suspect, recover stolen merchandise, and take appropriate enforcement action based on the value of the goods.',
     keyStatutes: ['F.S. §812.014 (Theft)', 'F.S. §812.015 (Retail Theft)'],
     initialStepId: 'start',
@@ -635,6 +653,9 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
   'traffic-crash-investigation': {
     id: 'traffic-crash-investigation',
     name: 'Traffic Crash Investigation',
+    subtitle: 'F.S. §316.061, §316.066',
+    category: 'Patrol Operations',
+    icon: 'CarCrash',
     goal: 'To safely manage a traffic crash scene, render aid, conduct a thorough investigation, determine the at-fault party, and restore normal traffic flow.',
     keyStatutes: ['F.S. §316.061 (Crashes involving damage)', 'F.S. §316.066 (Written reports of crashes)'],
     initialStepId: 'start',
@@ -759,6 +780,9 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
   'missing-person-adult': {
     id: 'missing-person-adult',
     name: 'Missing Person (Adult)',
+    subtitle: 'F.S. §937.021',
+    category: 'General Investigations',
+    icon: 'UserSearch',
     goal: 'To conduct a thorough initial investigation for a missing adult, assess risk factors, and initiate appropriate alerts or resources.',
     keyStatutes: ['F.S. §937.021 (Missing Persons Investigations)', 'Silver/Purple Alert criteria'],
     initialStepId: 'start',
@@ -872,6 +896,9 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
    'stolen-vehicle-recovery': {
     id: 'stolen-vehicle-recovery',
     name: 'Stolen Vehicle Recovery',
+    subtitle: 'F.S. §812.014',
+    category: 'Patrol Operations',
+    icon: 'KeyRound',
     goal: 'To safely conduct a high-risk traffic stop on an occupied stolen vehicle, apprehend suspects, and recover the vehicle.',
     keyStatutes: ['F.S. §812.014 (Grand Theft of a Motor Vehicle)'],
     initialStepId: 'start',
@@ -976,6 +1003,9 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
   'unattended-death': {
     id: 'unattended-death',
     name: 'Unattended Death Investigation',
+    subtitle: 'F.S. §406',
+    category: 'Death Investigations',
+    icon: 'HeartPulse',
     goal: 'To professionally and respectfully manage an unattended death scene, determine if it is suspicious, and coordinate with the Medical Examiner\'s office.',
     keyStatutes: ['F.S. §406 (Medical Examiners)'],
     initialStepId: 'start',
@@ -1086,6 +1116,9 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
   'serving-arrest-warrant': {
     id: 'serving-arrest-warrant',
     name: 'Serving an Arrest Warrant',
+    subtitle: 'F.S. §901.02, §901.16',
+    category: 'Patrol Operations',
+    icon: 'FileBadge',
     goal: 'To safely and lawfully take a wanted person into custody at a known location based on a valid arrest warrant.',
     keyStatutes: ['F.S. §901.02 (Issuance of arrest warrants)', 'F.S. §901.16 (Method of arrest by officer with warrant)'],
     initialStepId: 'start',
@@ -1191,6 +1224,9 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
   'protest-crowd-management': {
     id: 'protest-crowd-management',
     name: 'Protest & Crowd Management',
+    subtitle: 'F.S. §870.01, §877.03',
+    category: 'Patrol Operations',
+    icon: 'Users',
     goal: 'To protect the First Amendment rights of protestors while maintaining public order, protecting property, and ensuring the safety of all parties.',
     keyStatutes: ['F.S. §870.01 (Affrays and riots)', 'F.S. §877.03 (Breach of the peace; disorderly conduct)'],
     initialStepId: 'start',
@@ -1305,6 +1341,9 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
    'active-assailant-response-initial': {
     id: 'active-assailant-response-initial',
     name: 'Active Assailant (Initial Response)',
+    subtitle: 'Tactical Emergency Response',
+    category: 'Emergency Response',
+    icon: 'Siren',
     goal: 'To immediately enter a hostile environment, locate, and neutralize an active threat to stop the killing of innocent persons.',
     keyStatutes: ['N/A (Focus is on immediate tactical action)'],
     initialStepId: 'start',

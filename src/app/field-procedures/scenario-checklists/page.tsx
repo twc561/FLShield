@@ -1,37 +1,40 @@
 import { PageHeader } from "@/components/PageHeader"
 import { scenarioChecklistsData } from "@/data"
 import { ScenarioChecklistsClient } from "./Client"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import type { Scenario } from "@/data"
 
 export default function ScenarioChecklistsPage() {
   const scenarios = Object.values(scenarioChecklistsData)
-  const defaultScenarioId = scenarios.length > 0 ? scenarios[0].id : ""
+
+  const groupedScenarios = scenarios.reduce((acc, scenario) => {
+    const { category } = scenario;
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(scenario);
+    return acc;
+  }, {} as Record<string, Scenario[]>);
+
+  const categoryOrder = [
+    'Patrol Operations',
+    'Crimes Against Persons',
+    'Property Crimes',
+    'General Investigations',
+    'Death Investigations',
+    'Emergency Response',
+  ];
 
   return (
     <div className="animate-fade-in-up">
       <PageHeader
-        title="Interactive Scenario Checklists"
-        description="Select a scenario below to begin a step-by-step interactive walkthrough or view a static checklist."
+        title="Scenario Checklists"
+        description="Search or browse our library of interactive guides and procedural checklists for common law enforcement scenarios."
       />
-
-      {scenarios.length > 0 ? (
-        <Tabs defaultValue={defaultScenarioId} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
-            {scenarios.map(scenario => (
-              <TabsTrigger key={scenario.id} value={scenario.id} className="flex-1">
-                {scenario.name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          {scenarios.map(scenario => (
-            <TabsContent key={scenario.id} value={scenario.id} className="mt-6">
-              <ScenarioChecklistsClient scenario={scenario} />
-            </TabsContent>
-          ))}
-        </Tabs>
-      ) : (
-        <p className="text-muted-foreground">No scenarios available.</p>
-      )}
+      <ScenarioChecklistsClient 
+        initialScenarios={scenarios}
+        groupedScenarios={groupedScenarios}
+        categoryOrder={categoryOrder}
+      />
     </div>
   )
 }
