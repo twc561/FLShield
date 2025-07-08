@@ -20,39 +20,14 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
   phrases: Phrase[]
 }) {
   const [searchTerm, setSearchTerm] = React.useState("")
-  // A single state to track the ID of the audio that is loading or playing
+  // This is the only state we need. It's either null, or the ID of the audio that is loading/playing.
   const [activeAudioId, setActiveAudioId] = React.useState<string | null>(null);
-  const [isLoadingAudio, setIsLoadingAudio] = React.useState(false);
   
-  // Ref to hold the single Audio instance
+  // This ref will hold the currently playing HTMLAudioElement instance so we can stop it.
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
-  // Cache for fetched audio data
+  // This ref caches the fetched audio data to prevent redundant API calls.
   const audioCache = React.useRef<Map<string, string>>(new Map());
   
-  // Effect to set up the audio element on the client
-  React.useEffect(() => {
-    audioRef.current = new Audio();
-    
-    const audio = audioRef.current;
-    
-    const handlePlaybackEnd = () => {
-      setActiveAudioId(null);
-      setIsLoadingAudio(false);
-    };
-
-    audio.addEventListener('ended', handlePlaybackEnd);
-    audio.addEventListener('error', handlePlaybackEnd);
-
-    // Cleanup on component unmount
-    return () => {
-      if (audio) {
-        audio.removeEventListener('ended', handlePlaybackEnd);
-        audio.removeEventListener('error', handlePlaybackEnd);
-        audio.pause();
-        audio.src = '';
-      }
-    }
-  }, []);
 
   const filteredPhrases = React.useMemo(() => {
     if (!searchTerm) {
@@ -87,21 +62,21 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
   ]
 
   const playAudio = async (text: string, language: 'es-US' | 'ht-HT', id: string) => {
-    // If this audio is already playing, do nothing.
-    if (activeAudioId === id && !isLoadingAudio && audioRef.current) {
-        audioRef.current.play().catch(e => console.error("Error re-playing audio:", e));
-        return;
-    }
-    
-    // Stop any currently playing audio
+    // Stop any currently playing audio.
     if (audioRef.current) {
         audioRef.current.pause();
-        audioRef.current.currentTime = 0;
     }
 
-    setActiveAudioId(id);
-    setIsLoadingAudio(true);
+    // If the user clicked the button that was already active, treat it as a 'stop' action.
+    if (activeAudioId === id) {
+        setActiveAudioId(null);
+        audioRef.current = null;
+        return;
+    }
 
+    // Set the loading state for the clicked button.
+    setActiveAudioId(id);
+    
     try {
       let audioDataUri = audioCache.current.get(id);
       
@@ -111,15 +86,27 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
         audioCache.current.set(id, audioDataUri);
       }
 
-      if (audioRef.current && audioDataUri) {
-        audioRef.current.src = audioDataUri;
-        await audioRef.current.play();
-        setIsLoadingAudio(false);
+      if (audioDataUri) {
+        const audio = new Audio(audioDataUri);
+        audioRef.current = audio; // Store the new audio instance.
+        
+        audio.play().catch(e => {
+            console.error("Audio playback failed:", e);
+            setActiveAudioId(null); // Reset UI on playback error
+        });
+        
+        // When this specific audio finishes playing, reset the state.
+        audio.onended = () => {
+            setActiveAudioId(null);
+            audioRef.current = null;
+        };
+      } else {
+        // If we failed to get audio data, reset the state.
+        setActiveAudioId(null);
       }
     } catch (error) {
       console.error("TTS or playback error:", error);
-      setActiveAudioId(null);
-      setIsLoadingAudio(false);
+      setActiveAudioId(null); // Reset UI on fetch error
     }
   };
 
@@ -152,9 +139,8 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
                   const spanishId = `${phrase.phraseID}-es`;
                   const haitianId = `${phrase.phraseID}-ht`;
                   
-                  const isSpanishLoading = isLoadingAudio && activeAudioId === spanishId;
-                  const isHaitianLoading = isLoadingAudio && activeAudioId === haitianId;
-
+                  const isSpanishActive = activeAudioId === spanishId;
+                  const isHaitianActive = activeAudioId === haitianId;
 
                   return (
                     <AccordionItem value={phrase.phraseID} key={phrase.phraseID} className="border rounded-md bg-card">
@@ -169,9 +155,10 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
                               variant="ghost" 
                               size="icon"
                               onClick={() => playAudio(phrase.spanishText, 'es-US', spanishId)}
-                              disabled={isSpanishLoading}
+                              // Disable other buttons while one is active.
+                              disabled={activeAudioId !== null && !isSpanishActive}
                             >
-                              {isSpanishLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
+                              {isSpanishActive ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
                             </Button>
                           </div>
                           <div className="flex items-center justify-between">
@@ -180,9 +167,10 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
                               variant="ghost" 
                               size="icon"
                               onClick={() => playAudio(phrase.haitianCreoleText, 'ht-HT', haitianId)}
-                              disabled={isHaitianLoading}
+                              // Disable other buttons while one is active.
+                              disabled={activeAudioId !== null && !isHaitianActive}
                             >
-                              {isHaitianLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
+                              {isHaitianActive ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
                             </Button>
                           </div>
                         </div>
