@@ -2,12 +2,15 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import * as React from "react"
 import {
   Flame,
   ChevronDown,
+  LogOut,
 } from "lucide-react"
+import { signOut } from "firebase/auth"
+import { auth } from "@/lib/firebase"
 
 import {
   Collapsible,
@@ -30,12 +33,22 @@ import { menuItems } from "@/lib/menu-items"
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [openStates, setOpenStates] = React.useState<Record<string, boolean>>({})
   const [isClient, setIsClient] = React.useState(false)
 
   React.useEffect(() => {
     setIsClient(true)
   }, [])
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth)
+      router.push('/login.html')
+    } catch (error) {
+      console.error("Error signing out: ", error)
+    }
+  }
 
   const isActive = (href: string) => {
     if (!isClient) return false;
@@ -132,6 +145,10 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter className="flex flex-col gap-2 p-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:items-center">
+        <SidebarMenuButton onClick={handleSignOut} className="w-full" tooltip={{ children: "Sign Out", side: "right" }}>
+          <LogOut className="size-5" />
+          <span className="group-data-[collapsible=icon]:hidden">Sign Out</span>
+        </SidebarMenuButton>
       </SidebarFooter>
     </Sidebar>
   )

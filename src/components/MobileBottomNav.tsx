@@ -2,7 +2,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import * as React from "react"
 import {
   LayoutGrid,
@@ -11,6 +11,7 @@ import {
   FileText,
   Menu,
   Flame,
+  LogOut,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
@@ -20,6 +21,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { menuItems } from "@/lib/menu-items"
+import { signOut } from "firebase/auth"
+import { auth } from "@/lib/firebase"
 
 const mainNavItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
@@ -34,12 +37,22 @@ const mainNavItems = [
 
 export function MobileBottomNav() {
   const pathname = usePathname()
+  const router = useRouter()
   const [isSheetOpen, setIsSheetOpen] = React.useState(false)
   const [isClient, setIsClient] = React.useState(false)
 
   React.useEffect(() => {
     setIsClient(true)
   }, [])
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth)
+      router.push('/login.html')
+    } catch (error) {
+      console.error("Error signing out: ", error)
+    }
+  }
 
   const isActive = (href: string) => {
     if (!isClient) return false
@@ -137,6 +150,15 @@ export function MobileBottomNav() {
                 </div>
               ))}
             </nav>
+          </div>
+          <div className="p-2 border-t">
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-3 p-3 rounded-md text-foreground hover:bg-muted w-full"
+            >
+              <LogOut className="h-5 w-5" />
+              <span>Sign Out</span>
+            </button>
           </div>
         </SheetContent>
       </Sheet>
