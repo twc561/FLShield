@@ -80,7 +80,8 @@ export function StatuteClient({
     const handler = setTimeout(() => {
       if (
         totalFilteredResults === 0 &&
-        !isAiSearching
+        !isAiSearching &&
+        !aiResult
       ) {
         setIsAiSearching(true)
         findStatute({ query: searchTerm })
@@ -93,11 +94,11 @@ export function StatuteClient({
                 description:
                   result.description || "No description provided by AI.",
                 fullText:
-                  result.practicalSummary ||
+                  result.description ||
                   "No full text available for AI-generated result.",
                 degreeOfCharge: result.degreeOfCharge || "N/A",
                 practicalSummary:
-                  result.practicalSummary || "No summary provided by AI.",
+                  result.description || "No summary provided by AI.",
                 elementsOfTheCrime: result.elementsOfTheCrime || null,
                 example: result.example || "No example provided by AI.",
                 url: `https://www.flsenate.gov/Laws/Statutes/search?search=${encodeURIComponent(
@@ -206,20 +207,10 @@ export function StatuteClient({
                         <AccordionItem value="description" className="border-b-0">
                             <Card className="bg-muted/50">
                                 <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-                                    AI-Generated Description
+                                    Practical Summary for Officers
                                 </AccordionTrigger>
                                 <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
                                     {aiResult.description}
-                                </AccordionContent>
-                            </Card>
-                        </AccordionItem>
-                        <AccordionItem value="summary" className="border-b-0">
-                            <Card className="bg-muted/50">
-                                <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-                                    What it Means for Officers
-                                </AccordionTrigger>
-                                <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
-                                    {aiResult.practicalSummary}
                                 </AccordionContent>
                             </Card>
                         </AccordionItem>

@@ -33,19 +33,13 @@ const FindStatuteOutputSchema = z.object({
     .string()
     .nullable()
     .describe(
-      'A brief, official description of what the statute covers. If not found, return null.'
+      'A practical summary for a law enforcement officer explaining what this statute means, what constitutes a violation, and key points to be aware of. If not found, return null.'
     ),
   degreeOfCharge: z
     .string()
     .nullable()
     .describe(
       'The typical degree of the charge (e.g., "Varies (by value)", "Misdemeanor", "Third-degree felony"). If not found, return null.'
-    ),
-  practicalSummary: z
-    .string()
-    .nullable()
-    .describe(
-      'A practical summary explaining what this statute means for a law enforcement officer. If not found, return null.'
     ),
   elementsOfTheCrime: z
     .string()
@@ -79,7 +73,10 @@ The search should prioritize criminal statutes, particularly those found within 
 Search for the Florida Statute that best answers the following query:
 "{{{query}}}"
 
-IMPORTANT: Only return information for a single statute. Do not provide lists or multiple options. The response must be in the specified JSON format. If the statute defines a crime, you must populate the 'elementsOfTheCrime' field with a clear, concise list of the elements that must be proven. If you cannot find a single, highly relevant statute, return null for all fields. Do not guess or invent statutes. The statute code must be in the format "F.S. § [number]".`,
+IMPORTANT: Only return information for a single statute. Do not provide lists or multiple options. The response must be in the specified JSON format.
+- The 'description' field MUST be a practical summary tailored for a law enforcement officer. It should explain what the statute means, what constitutes a violation, and key points for an officer to know. DO NOT provide a dry, official summary here.
+- If the statute defines a crime, you must populate the 'elementsOfTheCrime' field with a clear, concise list of the elements that must be proven.
+- If you cannot find a single, highly relevant statute, return null for all fields. Do not guess or invent statutes. The statute code must be in the format "F.S. § [number]".`,
 });
 
 const findStatuteFlow = ai.defineFlow(
