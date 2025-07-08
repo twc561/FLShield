@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -18,31 +19,11 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { generateWellnessTip, type GenerateWellnessTipOutput } from "@/ai/flows/generate-wellness-tip"
-import { LifeBuoy, Zap, Shield, PiggyBank, Users, Loader2 } from "lucide-react"
-import { DebriefClient } from "./DebriefClient"
+import { decompressionSessions } from "@/data/officer-wellness-rights/decompression-sessions"
+import { wellnessResources } from "@/data/officer-wellness-rights/wellness-resources"
+import Link from "next/link"
 
-const wellnessTopics = [
-  {
-    title: "Mental Resilience",
-    icon: Shield,
-    content: "Develop coping strategies for trauma and stress. Practices like mindfulness, controlled breathing, and seeking professional counseling are signs of strength. Resources are available to help you process the difficult aspects of the job.",
-  },
-  {
-    title: "Physical Fitness",
-    icon: Zap,
-    content: "Maintain a consistent fitness routine to handle the physical demands of the job. Focus on functional strength, cardiovascular health, and flexibility. Proper nutrition and hydration are critical, especially in the Florida heat.",
-  },
-  {
-    title: "Peer Support",
-    icon: Users,
-    content: "You are not alone. Building strong connections with trusted peers provides a vital support system. Your colleagues understand the unique pressures of the job. Formal peer support programs and informal check-ins are crucial.",
-  },
-  {
-    title: "Financial Wellness",
-    icon: PiggyBank,
-    content: "Financial stress can impact all areas of your life. Take advantage of financial planning resources offered by your agency or union. Budgeting, saving for retirement, and managing debt are key to long-term security.",
-  },
-]
+import { LifeBuoy, Zap, Shield, PiggyBank, Users, Loader2, MessageSquare, Headphones, Building } from "lucide-react"
 
 export default function OfficerWellnessPage() {
   const [dailyTip, setDailyTip] = useState<GenerateWellnessTipOutput | null>(null)
@@ -67,70 +48,106 @@ export default function OfficerWellnessPage() {
 
   return (
     <div className="animate-fade-in-up">
-      <div className="flex justify-between items-start mb-4">
         <PageHeader
           title="Officer Wellness Hub"
-          description="Resources and tools to support your mental and physical well-being."
+          description="Tools and resources to support your mental and physical well-being."
         />
-        <div className="pt-2">
-            <DebriefClient />
-        </div>
-      </div>
-      <Card className="mb-8 bg-primary/5 border-primary/20">
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle className="text-primary">AI-Powered Daily Wellness Tip</CardTitle>
-              <CardDescription>A new tip generated just for you. Contextual to the challenges of Florida policing.</CardDescription>
-            </div>
-             <Button variant="ghost" size="icon" onClick={fetchTip} disabled={isLoading}>
-              {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <LifeBuoy className="h-5 w-5" />}
-              <span className="sr-only">Get New Tip</span>
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-1/4" />
-              <Skeleton className="h-4 w-full" />
-            </div>
-          ) : dailyTip ? (
-             <div>
-                <p className="text-sm font-semibold text-primary mb-1">{dailyTip.topic}</p>
-                <p className="text-foreground/90">{dailyTip.tip}</p>
-             </div>
-          ) : null}
-        </CardContent>
-      </Card>
       
-      <h2 className="text-2xl font-bold tracking-tight mb-4">Wellness Resources</h2>
-      <Accordion type="single" collapsible className="w-full">
-        {wellnessTopics.map((topic, index) => (
-          <AccordionItem
-            key={topic.title}
-            value={`item-${index}`}
-            className="animate-fade-in-up"
-            style={{ animationDelay: `${index * 100}ms` }}
-          >
-            <AccordionTrigger className="text-lg">
-              <div className="flex items-center gap-3">
-                <topic.icon className="h-5 w-5 text-accent" />
-                {topic.title}
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="text-base text-muted-foreground px-2">
-              {topic.content}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        {/* Active Listener */}
+        <Card className="flex flex-col">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+                <MessageSquare className="w-6 h-6 text-primary"/>
+                <CardTitle>Active Listener Chatbot</CardTitle>
+            </div>
+            <CardDescription>A confidential, non-judgmental space to talk through anything on your mind. Conversations are not saved or monitored.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex-grow flex items-end">
+            <Button asChild>
+                <Link href="/wellness/active-listener">Start Conversation</Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* AI Daily Tip */}
+         <Card className="flex flex-col">
+            <CardHeader>
+                 <div className="flex items-center gap-3">
+                    <LifeBuoy className="w-6 h-6 text-primary"/>
+                    <CardTitle>AI Daily Wellness Tip</CardTitle>
+                </div>
+                <CardDescription>A contextual tip generated just for you.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex-grow">
+            {isLoading ? (
+                <div className="space-y-2">
+                <Skeleton className="h-4 w-1/4" />
+                <Skeleton className="h-4 w-full" />
+                </div>
+            ) : dailyTip ? (
+                <div>
+                    <p className="text-sm font-semibold text-primary mb-1">{dailyTip.topic}</p>
+                    <p className="text-foreground/90">{dailyTip.tip}</p>
+                </div>
+            ) : null}
+            </CardContent>
+            <CardContent>
+                 <Button variant="ghost" size="sm" onClick={fetchTip} disabled={isLoading}>
+                    {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                    <span className="ml-2">Get New Tip</span>
+                </Button>
+            </CardContent>
+        </Card>
+
+         {/* Guided Decompression */}
+        <Card>
+            <CardHeader>
+                 <div className="flex items-center gap-3">
+                    <Headphones className="w-6 h-6 text-primary"/>
+                    <CardTitle>Guided Decompression</CardTitle>
+                </div>
+                <CardDescription>Short, guided audio scripts for stress management.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                 <Accordion type="single" collapsible className="w-full">
+                    {decompressionSessions.map((session) => (
+                    <AccordionItem key={session.id} value={session.id} className="border-b-0">
+                        <AccordionTrigger>{session.title}</AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground whitespace-pre-wrap">
+                            {session.script}
+                        </AccordionContent>
+                    </AccordionItem>
+                    ))}
+                </Accordion>
+            </CardContent>
+        </Card>
+
+        {/* Local Resources */}
+         <Card className="lg:col-span-3">
+            <CardHeader>
+                <div className="flex items-center gap-3">
+                    <Building className="w-6 h-6 text-primary"/>
+                    <CardTitle>Local Wellness Resources (St. Lucie County Area)</CardTitle>
+                </div>
+                <CardDescription>Verified local and agency-specific support contacts.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+               {wellnessResources.map((resource) => (
+                   <div key={resource.contactName} className="p-4 border rounded-lg bg-muted/50">
+                       <h4 className="font-semibold">{resource.resourceType}</h4>
+                       <p className="text-sm font-medium">{resource.contactName}</p>
+                       <p className="text-sm text-muted-foreground">{resource.description}</p>
+                       <Button variant="link" asChild className="p-0 h-auto text-sm mt-1">
+                           <Link href={`tel:${resource.phoneNumber}`}>{resource.phoneNumber}</Link>
+                       </Button>
+                   </div>
+               ))}
+            </CardContent>
+        </Card>
+
+      </div>
     </div>
   )
-}
-
-declare module "react" {
-    interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-      style?: React.CSSProperties & { [key: string]: string | number };
-    }
 }

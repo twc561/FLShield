@@ -80,31 +80,23 @@ export const menuItems: MenuItem[] = [
       ],
   },
   {
-      label: "Reporting & Development",
+      label: "Reporting Tools",
       icon: Briefcase,
       items: [
           { href: "/reporting-development/ai-charge-assistant", label: "AI Charge Assistant", icon: Gavel },
           { href: "/reporting-development/use-of-force-wizard", label: "Use of Force Wizard", icon: ShieldQuestion },
           { href: "/reporting-development/ai-report-writer", label: "AI Report Writer", icon: ClipboardEdit },
-          { href: "/reporting-development/knowledge-check", label: "Knowledge Check", icon: GraduationCap },
       ],
   },
   {
-    label: "Training & Development",
+    label: "Training & Wellness",
     icon: GraduationCap,
     items: [
         { href: "/training-development/role-play-simulator", label: "AI Role-Play Simulator", icon: MessageSquare },
         { href: "/training-development/report-proofreader", label: "Report Proofreader", icon: FileCheck },
+        { href: "/reporting-development/knowledge-check", label: "Knowledge Check", icon: GraduationCap },
+        { href: "/wellness", label: "Wellness Hub", icon: ShieldQuestion },
     ],
   },
-  {
-      label: "Officer Wellness & Rights",
-      icon: ShieldQuestion,
-      items: [
-          { href: "/officer-wellness-rights/police-officers-bill-of-rights", label: "Police Officer's Bill of...", icon: ShieldCheck },
-          { href: "/officer-wellness-rights/court-testimony-guide", label: "Court Testimony Guide", icon: Landmark },
-      ],
-  },
   { href: "/notes", label: "Field Notes", icon: FileText },
-  { href: "/wellness", label: "Wellness Hub", icon: ShieldQuestion },
 ]
