@@ -17,3 +17,4 @@ import '@/ai/flows/text-to-speech.ts';
 import '@/ai/flows/active-listener.ts';
 import '@/ai/flows/trilingual-tts.ts';
 import '@/ai/flows/analyze-ordinance.ts';
+import '@/ai/flows/analyze-constitution.ts';
