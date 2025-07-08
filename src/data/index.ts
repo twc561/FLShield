@@ -18,6 +18,7 @@ export * from './legal-reference/florida-administrative-code';
 export * from './legal-reference/statutory-case-law-updates';
 export * from './legal-reference/local-ordinances';
 export * from './legal-reference/rights-reference';
+export * from './legal-reference/miranda-warning-guide';
 export * from './traffic-enforcement/dui-investigation';
 export * from './traffic-enforcement/traffic-violations';
 export * from './traffic-enforcement/commercial-vehicle';

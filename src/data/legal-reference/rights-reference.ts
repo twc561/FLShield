@@ -10,14 +10,6 @@ export type RightsInfo = {
 
 export const rightsReferenceData: RightsInfo[] = [
   {
-    id: 'rights1',
-    title: 'Miranda Rights (For Suspects)',
-    icon: 'MicOff',
-    whenToUse: 'Before any CUSTODIAL INTERROGATION. The suspect must be in custody (not free to leave) AND you must be about to ask them incriminating questions about a crime.',
-    script: '"You have the right to remain silent. Anything you say can and will be used against you in a court of law. You have the right to an attorney. If you cannot afford an attorney, one will be provided for you. Do you understand the rights I have just read to you? With these rights in mind, do you wish to speak to me?"',
-    officerTakeaway: 'Read this verbatim from your agency-issued card. The key is "Custody + Interrogation = Miranda." A routine traffic stop or a consensual encounter is not custody. However, once you make an arrest, or restrain a person to the degree associated with a formal arrest, Miranda applies before questioning.',
-  },
-  {
     id: 'rights2',
     title: 'Garrity Rights (For Officers)',
     icon: 'ShieldCheck',

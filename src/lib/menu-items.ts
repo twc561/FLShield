@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import {
-  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, ShieldAlert as MessageSquareWarning, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, Flame, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon,
+  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, ShieldAlert as MessageSquareWarning, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, Flame, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, MicOff,
 } from "lucide-react"
 
 type SubMenuItem = {
@@ -28,6 +28,7 @@ export const menuItems: MenuItem[] = [
     items: [
       { href: "/legal-reference/statutes", label: "Statute Navigator", icon: Scale },
       { href: "/legal-reference/case-law", label: "Case Law Vault", icon: Gavel },
+      { href: "/legal-reference/miranda-warning-guide", label: "Miranda Warning Guide", icon: MicOff },
       { href: "/legal-reference/local-ordinances-guide", label: "Local Ordinances", icon: Home },
       { href: "/legal-reference/constitutional-law-guide", label: "Constitutional Law Guide", icon: Landmark },
       { href: "/legal-reference/rules-of-criminal-procedure", label: "Rules of Criminal Pro...", icon: FileText },
