@@ -52,4 +52,63 @@ export const fwcData: FwcTopic[] = [
       "FWC officers have the authority to stop a vessel for safety checks or if they observe reckless operation, which can lead to a BUI investigation.",
     ],
   },
+  {
+    id: "manatee-zones",
+    title: "Vessel Speed & Manatee Zones",
+    icon: "AlertTriangle",
+    description: "Rules for operating vessels in designated manatee protection zones.",
+    points: [
+      "Manatee zones are legally enforceable speed zones, marked by waterway signs.",
+      "'Slow Speed / Minimum Wake' means the vessel is fully settled in the water and creating the smallest wake possible.",
+      "'Idle Speed / No Wake' means the minimum speed needed to maintain steerage.",
+      "Violations are a noncriminal infraction, but can become a misdemeanor if the operator has prior convictions.",
+      "These zones are critical for protecting Florida's manatee population from boat strikes."
+    ],
+    note: "Zone boundaries can change seasonally. Always refer to the posted signs on the water and official FWC maps for current regulations."
+  },
+  {
+    id: "diver-down",
+    title: "Diver-Down Flag Rules",
+    icon: "Flag",
+    description: "Requirements for displaying and operating around diver-down flags to protect snorkelers and scuba divers.",
+    points: [
+      "Two types of flags are recognized: the traditional red flag with a white diagonal stripe, and the blue and white 'Alpha' flag.",
+      "On a vessel, the flag must be at least 20x24 inches and displayed at the highest point for 360-degree visibility.",
+      "On a float/buoy, the flag must be at least 12x12 inches.",
+      "Vessel operators must make a reasonable effort to stay at least 300 feet away from a diver-down flag in open water.",
+      "In rivers, inlets, and navigation channels, boaters must stay at least 100 feet away.",
+      "Boaters must operate at idle speed if they must come within these distances."
+    ],
+    note: "This is a critical safety rule. Violations can lead to serious accidents and carry significant penalties. The responsibility is on both the diver to display the flag properly and the boater to respect it."
+  },
+  {
+    id: "pwc-rules",
+    title: "Personal Watercraft (PWC) Regulations",
+    icon: "Waves",
+    description: "Specific rules governing the operation of personal watercraft like Jet Skis, Sea-Doos, etc.",
+    points: [
+        "A person must be at least 14 years of age to operate a PWC in Florida.",
+        "Anyone born on or after January 1, 1988, must have successfully completed a boating safety course and possess a Boating Safety Education ID Card.",
+        "The operator must wear an approved, non-inflatable PFD.",
+        "A safety lanyard must be attached from the start/stop switch to the operator's person or PFD.",
+        "PWCs cannot be operated from 1/2 hour after sunset to 1/2 hour before sunrise.",
+        "Reckless operation includes weaving through congested traffic, jumping the wake of another vessel unreasonably close, or swerving at the last minute to avoid a collision."
+    ],
+    note: "PWC operators are often tourists or new boaters. Education is a key component of enforcement for minor infractions. Reckless operation, however, poses a serious danger and should be addressed accordingly."
+  },
+  {
+    id: "hunting-regs",
+    title: "Hunting License & Regulations Overview",
+    icon: "Crosshair",
+    description: "Basic overview of hunting license requirements and key regulations.",
+    points: [
+        "A hunting license is required to attempt to take game.",
+        "Specific permits are required for certain species, like deer, turkey, and waterfowl.",
+        "It is illegal to hunt on or from any state or county road right-of-way.",
+        "It is prohibited to take wildlife on another person's property without landowner permission.",
+        "It is illegal to discharge a firearm over or across any public road.",
+        "Taking or attempting to take game at night with a light is generally illegal and known as 'night hunting'."
+    ],
+    note: "FWC has primary jurisdiction, but local LEOs may encounter violations like illegal night hunting, trespassing, or unsafe shooting. Always verify season dates and specific Wildlife Management Area (WMA) rules if applicable."
+  }
 ];
