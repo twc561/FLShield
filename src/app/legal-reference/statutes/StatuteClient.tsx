@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useMemo, useEffect, memo } from "react"
@@ -256,7 +257,7 @@ export const StatuteClient = memo(function StatuteClient({
                           documentTitle={aiResult.title}
                         />
                         <Button asChild variant="secondary">
-                          <Link href={aiResult.url} target="_blank">
+                          <Link href={aiResult.url} target="_blank" rel="noopener noreferrer">
                             <ExternalLink className="mr-2 h-4 w-4" />
                             View Full Statute
                           </Link>
@@ -388,7 +389,7 @@ export const StatuteClient = memo(function StatuteClient({
                                             documentTitle={statute.title}
                                             />
                                             <Button asChild variant="secondary">
-                                            <Link href={statute.url} target="_blank">
+                                            <Link href={statute.url} target="_blank" rel="noopener noreferrer">
                                                 <ExternalLink className="mr-2 h-4 w-4" />
                                                 View Full Statute
                                             </Link>
