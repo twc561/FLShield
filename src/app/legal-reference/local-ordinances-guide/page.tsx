@@ -4,10 +4,10 @@ import { LocalOrdinancesClient } from "./Client";
 
 export default function LocalOrdinancesGuidePage() {
   return (
-    <div className="animate-fade-in-up">
+    <div className="animate-fade-in-up h-full flex flex-col">
       <PageHeader
         title="Local Ordinances Guide"
-        description="A searchable guide to the most common local ordinances for the City of Fort Pierce and St. Lucie County. Ordinances not found locally can be fetched on-demand with AI."
+        description="Use the AI Analyst to instantly look up and parse any municipal or county ordinance from across Florida. You can also browse a pre-loaded list of common ordinances for the St. Lucie County area."
       />
       <LocalOrdinancesClient
         initialIndex={ordinanceIndex}

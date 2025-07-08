@@ -25,12 +25,15 @@ import {
   Search,
   Loader2,
   Sparkles,
+  AlertTriangle,
 } from "lucide-react";
 import { analyzeOrdinance } from "@/ai/flows/analyze-ordinance";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const categoryIcons: { [key: string]: React.ElementType } = {
   "Alcohol & Public Behavior": Beer,
@@ -62,7 +65,7 @@ const OrdinanceDetailView = React.memo(function OrdinanceDetailView({
           <h4 className="font-semibold text-foreground/90 mb-1">Penalty</h4>
           <Badge variant="secondary">{detail.penalty}</Badge>
         </div>
-        {detail.relatedStateStatute && (
+        {detail.relatedStateStatute && detail.relatedStateStatute !== "N/A" && (
           <div>
             <h4 className="font-semibold text-foreground/90 mb-1">
               Related State Statute
@@ -101,6 +104,14 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
     string | null
   >(null);
   const [error, setError] = React.useState<string | null>(null);
+
+  // State for on-demand AI search
+  const [customJurisdiction, setCustomJurisdiction] = React.useState("");
+  const [customOrdinanceNumber, setCustomOrdinanceNumber] = React.useState("");
+  const [isCustomSearching, setIsCustomSearching] = React.useState(false);
+  const [customSearchResult, setCustomSearchResult] = React.useState<OrdinanceDetail | null>(null);
+  const [customSearchError, setCustomSearchError] = React.useState<string | null>(null);
+
 
   const filteredIndex = React.useMemo(() => {
     if (!searchTerm) {
@@ -155,6 +166,29 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
     }
   };
 
+  const handleCustomSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customJurisdiction || !customOrdinanceNumber) {
+        setCustomSearchError("Please enter both a jurisdiction and an ordinance number.");
+        return;
+    }
+    setIsCustomSearching(true);
+    setCustomSearchResult(null);
+    setCustomSearchError(null);
+    try {
+      const result = await analyzeOrdinance({
+        jurisdiction: customJurisdiction,
+        ordinance_number: customOrdinanceNumber,
+      });
+      setCustomSearchResult(result);
+    } catch (err) {
+      console.error("AI ordinance search failed:", err);
+      setCustomSearchError("The AI model failed to retrieve this ordinance. Please check the jurisdiction spelling or try again later.");
+    } finally {
+      setIsCustomSearching(false);
+    }
+  };
+
   const categoryOrder = [
     "Alcohol & Public Behavior",
     "Traffic & Parking",
@@ -165,14 +199,73 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-        <Input
-          placeholder="Search by ordinance # or keyword (e.g., noise, parking)..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10"
-        />
+      <Card className="mb-6 animate-fade-in-up">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Sparkles className="h-5 w-5 text-accent" /> AI Ordinance Analyst</CardTitle>
+          <CardDescription>Look up any ordinance from any city or county in Florida.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleCustomSearch} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input 
+                placeholder="Jurisdiction (e.g., City of Miami)" 
+                value={customJurisdiction}
+                onChange={(e) => setCustomJurisdiction(e.target.value)}
+              />
+              <Input 
+                placeholder="Ordinance # (e.g., Sec. 37-28)" 
+                value={customOrdinanceNumber}
+                onChange={(e) => setCustomOrdinanceNumber(e.target.value)}
+              />
+            </div>
+            <Button type="submit" disabled={isCustomSearching || !customJurisdiction || !customOrdinanceNumber}>
+              {isCustomSearching ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
+              {isCustomSearching ? 'Analyzing...' : 'Analyze Ordinance'}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      {isCustomSearching && (
+        <div className="flex items-center justify-center space-x-2 text-muted-foreground my-4">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span>AI is analyzing ordinance... This may take a moment.</span>
+        </div>
+      )}
+
+      {customSearchError && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Analysis Error</AlertTitle>
+          <AlertDescription>{customSearchError}</AlertDescription>
+        </Alert>
+      )}
+
+      {customSearchResult && (
+        <Card className="mb-6 animate-fade-in-up">
+          <CardHeader>
+            <CardTitle>{customSearchResult.ordinanceTitle}</CardTitle>
+            <CardDescription>{customSearchResult.ordinanceNumber} ({customSearchResult.jurisdiction})</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <OrdinanceDetailView detail={customSearchResult} />
+          </CardContent>
+        </Card>
+      )}
+
+      <Separator className="my-6" />
+      
+      <div className="space-y-2 mb-4">
+          <h3 className="text-xl font-bold tracking-tight">Common St. Lucie County Area Ordinances</h3>
+          <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                placeholder="Search common ordinances by # or keyword..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+          </div>
       </div>
 
       <ScrollArea className="flex-1 -mr-4 pr-4">
@@ -200,7 +293,7 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
                   {ordinancesInCategory.map((ord) => (
                     <AccordionItem
                       value={ord.ordinanceNumber}
-                      key={ord.ordinanceNumber}
+                      key={`${ord.jurisdiction}-${ord.ordinanceNumber}`}
                       className="border rounded-md bg-card"
                     >
                       <AccordionTrigger className="p-4 hover:no-underline font-semibold text-base text-card-foreground">
@@ -241,7 +334,7 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
               </div>
             );
           })}
-           {filteredIndex.length === 0 && (
+           {filteredIndex.length === 0 && searchTerm && (
             <div className="text-center py-16">
               <Search className="mx-auto h-12 w-12 text-muted-foreground" />
               <h3 className="mt-4 text-lg font-medium">No Ordinances Found</h3>

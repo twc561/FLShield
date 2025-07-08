@@ -3,7 +3,7 @@
 export type OrdinancePlaceholder = {
   ordinanceNumber: string;
   ordinanceTitle: string;
-  jurisdiction: "City of Fort Pierce" | "St. Lucie County";
+  jurisdiction: string;
   category:
     | "Alcohol & Public Behavior"
     | "Traffic & Parking"
@@ -15,7 +15,7 @@ export type OrdinancePlaceholder = {
 export type OrdinanceDetail = {
   ordinanceNumber: string;
   ordinanceTitle: string;
-  jurisdiction: "City of Fort Pierce" | "St. Lucie County";
+  jurisdiction: string;
   fullOrdinanceText: string;
   summary: string;
   enforcementNotes: string;

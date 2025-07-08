@@ -10,8 +10,8 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 const AnalyzeOrdinanceInputSchema = z.object({
-  jurisdiction: z.string().describe('The jurisdiction of the ordinance, e.g., "City of Fort Pierce" or "St. Lucie County".'),
-  ordinance_number: z.string().describe('The specific ordinance number, e.g., "Sec. 42-61".'),
+  jurisdiction: z.string().describe('The jurisdiction of the ordinance, e.g., "City of Miami" or "Orange County".'),
+  ordinance_number: z.string().describe('The specific ordinance number, e.g., "Sec. 37-28".'),
 });
 export type AnalyzeOrdinanceInput = z.infer<typeof AnalyzeOrdinanceInputSchema>;
 
@@ -36,7 +36,7 @@ const prompt = ai.definePrompt({
   name: 'analyzeOrdinancePrompt',
   input: { schema: AnalyzeOrdinanceInputSchema },
   output: { schema: AnalyzeOrdinanceOutputSchema },
-  prompt: `You are a local government legal analyst AI for Florida. Your task is to provide a detailed, structured analysis of a specific local ordinance for a law enforcement officer. For the given ordinance number and jurisdiction, retrieve the most current and complete text of the law. Then, parse this information and return it ONLY as a single, well-formed JSON object adhering strictly to the following schema.
+  prompt: `You are an expert local government legal analyst AI specializing in Florida municipal and county codes. Your task is to provide a detailed, structured analysis of a specific local ordinance from any city or county in Florida for a law enforcement officer. For the given ordinance number and jurisdiction, retrieve the most current and complete text of the law. Then, parse this information and return it ONLY as a single, well-formed JSON object adhering strictly to the following schema.
 
 Jurisdiction: {{{jurisdiction}}}
 Ordinance Number: {{{ordinance_number}}}`,
