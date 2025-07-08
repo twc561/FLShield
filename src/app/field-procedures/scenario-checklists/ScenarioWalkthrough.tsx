@@ -92,20 +92,28 @@ export const ScenarioWalkthrough = React.memo(function ScenarioWalkthrough({
 
         </CardContent>
         <CardFooter className="flex flex-col items-start gap-4">
-          <div className="flex flex-wrap gap-2">
-            {currentStep.choices?.map((choice, index) => (
-              <Button
-                key={index}
-                onClick={() => handleChoice(choice.nextStepId)}
-              >
-                {choice.text}
-              </Button>
-            ))}
-          </div>
-          {(currentStep.isEnd || !currentStep.choices) && (
-              <Button onClick={handleRestart} variant="outline">
-                <Repeat className="mr-2 h-4 w-4" />
-                Start Over
+          {currentStep.choices && currentStep.choices.length > 0 && (
+            <div className="w-full">
+              <h4 className="text-sm font-semibold text-muted-foreground mb-2">
+                Select your next action:
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {currentStep.choices.map((choice, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => handleChoice(choice.nextStepId)}
+                  >
+                    {choice.text}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {(currentStep.isEnd || !currentStep.choices || currentStep.choices.length === 0) && (
+            <Button onClick={handleRestart} variant="outline">
+              <Repeat className="mr-2 h-4 w-4" />
+              Start Over
             </Button>
           )}
         </CardFooter>
