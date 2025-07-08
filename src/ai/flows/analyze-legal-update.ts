@@ -25,7 +25,7 @@ const AnalyzeLegalUpdateOutputSchema = z.object({
     }),
     plainLanguageSummary: z.string().describe("A clear summary of the case's holding or the nature of the statutory change."),
     tacticalImpactForOfficers: z.object({
-        title: z.literal("What This Changes For You in the Field").describe("A static title for this section."),
+        title: z.string().describe("A static title for this section, e.g., 'What This Changes For You in the Field'"),
         points: z.array(z.string()).describe("An array of 2-4 bullet points explaining the practical impact on police procedure."),
     }),
     keyQuoteOrText: z.string().describe("A powerful, impactful quote from the court's opinion or the specific changed text of the statute."),
