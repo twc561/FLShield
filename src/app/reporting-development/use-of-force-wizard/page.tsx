@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { useForm, zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"

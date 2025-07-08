@@ -1,18 +1,17 @@
-import { caseLaws } from "@/data"
+import { caseLawIndex, caseLawsFullData } from "@/data"
 import { PageHeader } from "@/components/PageHeader"
-import { CaseLawClient } from "./CaseLawClient"
+import { CaseLawClient } from "../legal-reference/case-law/CaseLawClient"
 
 export default function CaseLawPage() {
-  // In a real app, this data would be fetched from a database.
-  const cases = caseLaws
-
+  // This page now uses the more performant client from the legal-reference section,
+  // which uses a placeholder index and lazy-loads full case details.
   return (
     <div className="h-full flex flex-col">
       <PageHeader
         title="Case Law Vault"
         description="Search and review relevant case laws by category. Use the AI Summarizer for quick insights."
       />
-      <CaseLawClient initialCases={cases} />
+      <CaseLawClient initialCaseIndex={caseLawIndex} caseLawsFullData={caseLawsFullData} />
     </div>
   )
 }
