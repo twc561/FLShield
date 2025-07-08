@@ -1,19 +1,19 @@
+
 "use client"
 
 import { useState, useMemo, memo } from "react"
+import * as LucideIcons from "lucide-react"
 import { Input } from "@/components/ui/input"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { Summarizer } from "@/components/Summarizer"
 import type { CaseLaw } from "@/data/case-law"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search, Loader2 } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Search, Gavel } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 
 type CaseLawIndexItem = {
@@ -21,6 +21,7 @@ type CaseLawIndexItem = {
   title: string;
   citation: string;
   category: string;
+  icon: string;
 }
 
 export const CaseLawClient = memo(function CaseLawClient({ 
@@ -35,9 +36,8 @@ export const CaseLawClient = memo(function CaseLawClient({
   const [cachedData, setCachedData] = useState<Record<string, CaseLaw>>({});
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
-
-  const categories = useMemo(() => {
-    const categoryOrder = [
+  const categoryOrder = useMemo(() => {
+    const order = [
       'Use of Force & Arrest',
       'Search & Seizure',
       'Custodial Interrogation',
@@ -48,30 +48,25 @@ export const CaseLawClient = memo(function CaseLawClient({
     ];
     const uniqueCategories = [...new Set(initialCaseIndex.map((c) => c.category))];
     return uniqueCategories.sort((a, b) => {
-        const indexA = categoryOrder.indexOf(a);
-        const indexB = categoryOrder.indexOf(b);
+        const indexA = order.indexOf(a);
+        const indexB = order.indexOf(b);
         if (indexA === -1) return 1;
         if (indexB === -1) return -1;
         return indexA - indexB;
     });
   }, [initialCaseIndex]);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value.toLowerCase());
-  }
-
-  const getFilteredCasesForCategory = (category: string) => {
-    const filtered = initialCaseIndex.filter((c) => c.category === category);
+  const filteredCaseIndex = useMemo(() => {
     if (!searchTerm) {
-      return filtered;
+      return initialCaseIndex;
     }
-    return filtered.filter(
-      (c) =>
-        c.title.toLowerCase().includes(searchTerm) ||
-        c.citation.toLowerCase().includes(searchTerm)
+    const lowercasedTerm = searchTerm.toLowerCase();
+    return initialCaseIndex.filter(c => 
+      c.title.toLowerCase().includes(lowercasedTerm) ||
+      c.citation.toLowerCase().includes(lowercasedTerm)
     );
-  };
-  
+  }, [searchTerm, initialCaseIndex]);
+
   const handleAccordionChange = async (value: string | undefined) => {
     setActiveAccordionItem(value);
     if (!value) return; 
@@ -87,97 +82,96 @@ export const CaseLawClient = memo(function CaseLawClient({
     setLoadingId(null);
   }
 
-  const FullCaseLawContent = ({ caseData }: { caseData: CaseLaw }) => (
-    <>
-      <p className="text-sm font-medium text-foreground/90">
-          {caseData.summary}
-      </p>
-      <p className="text-sm text-muted-foreground mt-4">
-          <span className="font-semibold text-foreground/80">What it Means for Officers:</span> {caseData.meaning}
-      </p>
-        <p className="text-sm text-muted-foreground mt-3 border-l-2 border-accent pl-3 italic">
-          <span className="font-semibold text-foreground/80 not-italic">Real-World Example:</span> {caseData.example}
-      </p>
-      <div className="flex flex-wrap gap-2 mt-4">
-          {caseData.tags.map(tag => (
-          <span key={tag} className="px-2 py-1 text-xs rounded-md bg-secondary text-secondary-foreground">
-              {tag}
-          </span>
-          ))}
-      </div>
-    </>
-  );
-
   return (
     <div className="flex flex-col h-full animate-fade-in-up">
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-        <Input
-          placeholder="Search cases by title or citation..."
-          onChange={handleSearchChange}
-          className="pl-10"
-        />
-      </div>
-
-      <Tabs defaultValue={categories[0]} className="flex flex-col flex-1 -mr-4">
-        <div className="overflow-x-auto pb-2 -mb-2 pr-4">
-            <TabsList className="inline-flex h-auto">
-                {categories.map((category) => (
-                <TabsTrigger key={category} value={category} className="px-4 py-2 text-sm">
-                    {category}
-                </TabsTrigger>
-                ))}
-            </TabsList>
+        <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input
+              placeholder="Search cases by title or citation..."
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
         </div>
-        
-        {categories.map((category) => {
-          const filteredCases = getFilteredCasesForCategory(category);
-          return (
-            <TabsContent key={category} value={category} className="flex-1 mt-4 overflow-hidden">
-                <ScrollArea className="h-full pr-4">
-                    <div className="space-y-4">
-                    {filteredCases.length > 0 ? (
-                        filteredCases.map((c, index) => (
-                        <Card
-                            key={c.id}
-                            className="animate-fade-in-up"
-                            style={{ animationDelay: `${index * 50}ms` }}
-                        >
-                            <CardHeader>
-                            <div className="flex justify-between items-start gap-4">
-                                <div className="flex-1">
-                                <CardTitle>{c.title}</CardTitle>
-                                <CardDescription>{c.citation}</CardDescription>
+
+        <ScrollArea className="flex-1 -mr-4 pr-4">
+          <div className="space-y-6">
+            {categoryOrder
+              .filter(category => filteredCaseIndex.some(c => c.category === category))
+              .map(category => (
+                <div key={category}>
+                  <h2 className="text-lg font-bold tracking-tight my-4 px-1">{category}</h2>
+                  <Accordion type="single" collapsible className="w-full space-y-2" value={activeAccordionItem} onValueChange={handleAccordionChange}>
+                    {filteredCaseIndex
+                      .filter(c => c.category === category)
+                      .map(c => {
+                        const Icon = (LucideIcons as any)[c.icon] || Gavel;
+                        return (
+                          <AccordionItem value={c.id} key={c.id} className="border rounded-md bg-card">
+                            <AccordionTrigger className="p-4 hover:no-underline">
+                              <div className="flex items-center gap-4 flex-1">
+                                <div className="p-2 bg-primary/10 rounded-lg">
+                                  <Icon className="w-6 h-6 text-primary" />
                                 </div>
-                                <Summarizer
-                                  documentText={cachedData[c.id] ? `${cachedData[c.id].summary}\n\nWhat it Means for Officers:\n${cachedData[c.id].meaning}\n\nExample:\n${cachedData[c.id].example}` : "Loading..."}
-                                  documentTitle={c.title}
-                                />
-                            </div>
-                            </CardHeader>
-                             <CardContent>
-                                {loadingId === c.id && (
-                                  <div className="space-y-3">
-                                    <Skeleton className="h-4 w-full" />
-                                    <Skeleton className="h-4 w-5/6" />
-                                    <Skeleton className="h-4 w-full" />
-                                  </div>
-                                )}
-                                {cachedData[c.id] && <FullCaseLawContent caseData={cachedData[c.id]} />}
-                             </CardContent>
-                        </Card>
-                        ))
-                    ) : (
-                        <div className="text-center py-16">
-                        <p className="text-muted-foreground">No cases found matching your search.</p>
-                        </div>
-                    )}
-                    </div>
-                </ScrollArea>
-            </TabsContent>
-          );
-        })}
-      </Tabs>
+                                <div className="flex-1 text-left">
+                                  <p className="font-semibold text-base text-card-foreground">{c.title}</p>
+                                  <p className="text-xs text-muted-foreground">{c.citation}</p>
+                                </div>
+                              </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="p-4 pt-0">
+                                <div className="border-t pt-4 space-y-4">
+                                  {loadingId === c.id && (
+                                    <div className="space-y-3">
+                                        <Skeleton className="h-4 w-full" />
+                                        <Skeleton className="h-4 w-5/6" />
+                                        <Skeleton className="h-4 w-full" />
+                                    </div>
+                                  )}
+                                  {cachedData[c.id] && (
+                                    <>
+                                      <p className="text-sm font-medium text-foreground/90">
+                                          {cachedData[c.id].summary}
+                                      </p>
+                                      <p className="text-sm text-muted-foreground mt-4">
+                                          <span className="font-semibold text-foreground/80">What it Means for Officers:</span> {cachedData[c.id].meaning}
+                                      </p>
+                                        <p className="text-sm text-muted-foreground mt-3 border-l-2 border-accent pl-3 italic">
+                                          <span className="font-semibold text-foreground/80 not-italic">Real-World Example:</span> {cachedData[c.id].example}
+                                      </p>
+                                      <div className="flex flex-wrap gap-2 mt-4">
+                                          {cachedData[c.id].tags.map(tag => (
+                                          <span key={tag} className="px-2 py-1 text-xs rounded-md bg-secondary text-secondary-foreground">
+                                              {tag}
+                                          </span>
+                                          ))}
+                                      </div>
+                                      <div className="mt-4">
+                                        <Summarizer
+                                          documentText={`${cachedData[c.id].summary}\n\nWhat it Means for Officers:\n${cachedData[c.id].meaning}\n\nExample:\n${cachedData[c.id].example}`}
+                                          documentTitle={c.title}
+                                        />
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        )
+                      })
+                    }
+                  </Accordion>
+                </div>
+              ))
+            }
+            {filteredCaseIndex.length === 0 && searchTerm && (
+                <div className="text-center py-16">
+                  <Gavel className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <h3 className="mt-4 text-lg font-medium">No Cases Found</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">Your search did not match any cases.</p>
+                </div>
+              )}
+          </div>
+        </ScrollArea>
     </div>
   );
 })
