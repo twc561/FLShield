@@ -1,4 +1,6 @@
 
+'use client'
+
 import {
   BookOpen,
   History,
@@ -7,45 +9,17 @@ import {
   Search,
 } from "lucide-react"
 import Link from "next/link"
+import React, { useState, useEffect } from "react"
 
 import { dashboardFeatureGroups, dailyBriefingData } from "@/data"
-import type { FeatureModule } from "@/types"
-import { generateFeatureSummary } from "@/ai/flows/generate-feature-summary"
 import { FeatureCard } from "@/components/FeatureCard"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
-// Helper function to generate summaries for all features
-async function generateAllSummaries(groups: typeof dashboardFeatureGroups) {
-  const allFeatures = groups.flatMap((group) => group.features)
-  const summaryPromises = allFeatures.map((feature) =>
-    generateFeatureSummary({ title: feature.title }).catch((e) => {
-      console.error(`Failed to generate summary for ${feature.title}:`, e)
-      return { summary: feature.summary } // Fallback to default summary
-    })
-  )
 
-  const summaries = await Promise.all(summaryPromises)
-
-  const featuresWithSummaries = allFeatures.map((feature, index) => ({
-    ...feature,
-    summary: summaries[index].summary,
-  }))
-
-  const featuresById = featuresWithSummaries.reduce((acc, feature) => {
-    acc[feature.id] = feature
-    return acc
-  }, {} as Record<string, FeatureModule>)
-
-  return groups.map((group) => ({
-    ...group,
-    features: group.features.map((feature) => featuresById[feature.id]),
-  }))
-}
-
-
-export default async function DashboardPage() {
+export default function DashboardPage() {
+  const [greeting, setGreeting] = useState("")
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -53,20 +27,20 @@ export default async function DashboardPage() {
     day: "numeric",
   })
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) {
-      return "Good morning";
-    } else if (hour < 18) {
-      return "Good afternoon";
-    } else {
-      return "Good evening";
-    }
-  };
+  useEffect(() => {
+    const getGreeting = () => {
+      const hour = new Date().getHours();
+      if (hour < 12) {
+        return "Good morning";
+      } else if (hour < 18) {
+        return "Good afternoon";
+      } else {
+        return "Good evening";
+      }
+    };
+    setGreeting(`${getGreeting()}, Officer.`);
+  }, [])
 
-  const greeting = `${getGreeting()}, Officer.`;
-  
-  const featureGroupsWithSummaries = await generateAllSummaries(dashboardFeatureGroups);
 
   return (
     <div className="animate-fade-in-up space-y-8">
@@ -136,7 +110,7 @@ export default async function DashboardPage() {
       
       {/* Main Navigator */}
       <div className="space-y-6">
-        {featureGroupsWithSummaries.map((group) => ( // Using the new variable here
+        {dashboardFeatureGroups.map((group) => (
           <div key={group.category}>
             <h2 className="text-lg font-bold tracking-tight my-4 px-1 flex items-center gap-3">
               <group.icon className="h-5 w-5 text-primary" />
@@ -146,7 +120,7 @@ export default async function DashboardPage() {
               {group.features.map((feature, index) => (
                 <FeatureCard
                   key={feature.id}
-                  module={feature} // The module now includes the generated summary
+                  module={feature}
                   style={{ animationDelay: `${index * 50}ms` }}
                   className="animate-fade-in-up"
                 />
