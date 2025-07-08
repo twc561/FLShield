@@ -34,15 +34,15 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
                 </div>
             </CardHeader>
             <CardContent>
-              <Accordion type="single" collapsible className="w-full space-y-2">
-                <AccordionItem value="fort-pierce" className="border rounded-md">
+              <Accordion type="single" collapsible className="w-full space-y-2" defaultValue="item-fort-pierce">
+                <AccordionItem value="item-fort-pierce" className="border rounded-md">
                   <AccordionTrigger className="px-4 hover:no-underline">City of Fort Pierce</AccordionTrigger>
                   <AccordionContent className="p-4 pt-0 text-muted-foreground whitespace-pre-wrap border-t mt-2">
                     {item.fortPierceDetails}
                   </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="port-st-lucie" className="border rounded-md">
-                  <AccordionTrigger className="px-4 hover:no-underline">City of Port St. Lucie</AccordionTrigger>
+                <AccordionItem value="item-port-st-lucie" className="border rounded-md">
+                  <AccordionTrigger className="px-4 hover:no-underline">City of Port St. Lucie / St. Lucie County</AccordionTrigger>
                   <AccordionContent className="p-4 pt-0 text-muted-foreground whitespace-pre-wrap border-t mt-2">
                     {item.portStLucieDetails}
                   </AccordionContent>
