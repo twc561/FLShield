@@ -69,17 +69,18 @@ export function StatuteClient({
   }, [searchTerm, initialStatutes]);
 
   useEffect(() => {
-    if (searchTerm === "") {
-        setAiResult(null)
-        setIsAiSearching(false)
+    if (searchTerm === "" || aiResult) {
+        if (searchTerm === "") {
+            setAiResult(null)
+            setIsAiSearching(false)
+        }
         return
     }
 
     const handler = setTimeout(() => {
       if (
         totalFilteredResults === 0 &&
-        !isAiSearching &&
-        !aiResult
+        !isAiSearching
       ) {
         setIsAiSearching(true)
         findStatute({ query: searchTerm })
