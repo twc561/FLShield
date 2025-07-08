@@ -39,7 +39,7 @@ export const animalCrueltyData: AnimalCrueltyTopic[] = [
   {
     id: "topic3",
     title: "Evidence of Intentional/Aggravated Cruelty (Felony)",
-    icon: "Angry",
+    icon: "Bone",
     description: "Identifying acts that are intentional, cruel, or result in excessive pain or suffering (F.S. § 828.12).",
     checklist: [
       "Witness Statements: Are there witnesses to the suspect striking, kicking, or torturing the animal?",

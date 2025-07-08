@@ -5,7 +5,7 @@ import { LocalOrdinancesClient } from "./Client"
 
 export default function LocalOrdinancesGuidePage() {
   const pageContent = localOrdinancesData.map(item => 
-    `${item.title}: ${item.description}. Officer Takeaway: ${item.officerTakeaway}`
+    `${item.topic}: ${item.summary}\nFort Pierce: ${item.fortPierceDetails}\nPort St. Lucie: ${item.portStLucieDetails}`
   ).join('\n\n');
 
   return (
