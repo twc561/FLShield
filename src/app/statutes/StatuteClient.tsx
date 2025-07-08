@@ -120,11 +120,8 @@ export function StatuteClient({
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value)
-            if (!aiResult) {
+            if (e.target.value === '' || filteredStatutes.length > 0) {
               setAiResult(null)
-            }
-            if (e.target.value !== "" && filteredStatutes.length > 0) {
-              setIsAiSearching(false)
             }
           }}
           className="pl-10"
@@ -151,42 +148,55 @@ export function StatuteClient({
                       </CardDescription>
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent className="px-6 pb-6">
-                    <p className="text-sm text-muted-foreground pb-4 border-t pt-4">
-                      {statute.description}
-                    </p>
-                    <div className="space-y-4 text-sm">
-                      <div className="p-4 bg-muted/50 rounded-lg">
-                        <h4 className="font-semibold mb-2">
-                          What it Means for Officers
-                        </h4>
-                        <p className="text-muted-foreground leading-relaxed">
-                          {statute.practicalSummary}
-                        </p>
+                  <AccordionContent className="px-6 pb-6 pt-0">
+                    <div className="border-t pt-4">
+                      <Accordion type="multiple" collapsible className="w-full space-y-2" defaultValue={['description']}>
+                        <AccordionItem value="description" className="border-b-0">
+                          <Card className="bg-muted/50">
+                              <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                                  Official Description
+                              </AccordionTrigger>
+                              <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                                  {statute.description}
+                              </AccordionContent>
+                          </Card>
+                        </AccordionItem>
+                        <AccordionItem value="summary" className="border-b-0">
+                          <Card className="bg-muted/50">
+                              <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                                  What it Means for Officers
+                              </AccordionTrigger>
+                              <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                                  {statute.practicalSummary}
+                              </AccordionContent>
+                          </Card>
+                        </AccordionItem>
+                        <AccordionItem value="example" className="border-b-0">
+                            <Card className="bg-muted/50">
+                                <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                                    Real-World Example
+                                </AccordionTrigger>
+                                <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                                    {statute.example}
+                                </AccordionContent>
+                            </Card>
+                        </AccordionItem>
+                      </Accordion>
+                      <div className="mt-6 flex items-center gap-2">
+                        <Summarizer
+                          documentText={
+                            statute.fullText ||
+                            `${statute.practicalSummary} ${statute.example}`
+                          }
+                          documentTitle={statute.title}
+                        />
+                        <Button asChild variant="secondary">
+                          <Link href={statute.url} target="_blank">
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            View Full Statute
+                          </Link>
+                        </Button>
                       </div>
-                      <div className="p-4 bg-muted/50 rounded-lg">
-                        <h4 className="font-semibold mb-2">
-                          Real-World Example
-                        </h4>
-                        <p className="text-muted-foreground leading-relaxed">
-                          {statute.example}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-6 flex items-center gap-2">
-                      <Summarizer
-                        documentText={
-                          statute.fullText ||
-                          `${statute.practicalSummary} ${statute.example}`
-                        }
-                        documentTitle={statute.title}
-                      />
-                      <Button asChild variant="secondary">
-                        <Link href={statute.url} target="_blank">
-                          <ExternalLink className="mr-2 h-4 w-4" />
-                          View Full Statute
-                        </Link>
-                      </Button>
                     </div>
                   </AccordionContent>
                 </Card>
@@ -207,63 +217,79 @@ export function StatuteClient({
                     </CardDescription>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="px-6 pb-6">
-                  <p className="text-sm text-muted-foreground pb-4 border-t pt-4">
-                    {aiResult.description}
-                  </p>
-                  <div className="space-y-4 text-sm">
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <h4 className="font-semibold mb-2">
-                        What it Means for Officers
-                      </h4>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {aiResult.practicalSummary}
-                      </p>
+                <AccordionContent className="px-6 pb-6 pt-0">
+                    <div className="border-t pt-4">
+                       <Accordion type="multiple" collapsible className="w-full space-y-2" defaultValue={['description']}>
+                        <AccordionItem value="description" className="border-b-0">
+                            <Card className="bg-muted/50">
+                                <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                                    AI-Generated Description
+                                </AccordionTrigger>
+                                <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                                    {aiResult.description}
+                                </AccordionContent>
+                            </Card>
+                        </AccordionItem>
+                        <AccordionItem value="summary" className="border-b-0">
+                            <Card className="bg-muted/50">
+                                <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                                    What it Means for Officers
+                                </AccordionTrigger>
+                                <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                                    {aiResult.practicalSummary}
+                                </AccordionContent>
+                            </Card>
+                        </AccordionItem>
+                        {aiResult.elementsOfTheCrime && (
+                            <AccordionItem value="elements" className="border-b-0">
+                                <Card className="bg-muted/50">
+                                    <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                                        Elements of the Crime
+                                    </AccordionTrigger>
+                                    <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                                        {aiResult.elementsOfTheCrime}
+                                    </AccordionContent>
+                                </Card>
+                            </AccordionItem>
+                        )}
+                        <AccordionItem value="example" className="border-b-0">
+                            <Card className="bg-muted/50">
+                                <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                                    Real-World Example
+                                </AccordionTrigger>
+                                <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                                    {aiResult.example}
+                                </AccordionContent>
+                            </Card>
+                        </AccordionItem>
+                      </Accordion>
+                      
+                      <div className="mt-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                        <h4 className="font-semibold mb-2 text-destructive-foreground/90">
+                          AI Result Disclaimer
+                        </h4>
+                        <p className="text-destructive-foreground/80 leading-relaxed text-sm">
+                          This information was generated by AI and has not been
+                          verified. Always consult official sources for legal
+                          decisions.
+                        </p>
+                      </div>
+                      <div className="mt-6 flex items-center gap-2">
+                        <Summarizer
+                          documentText={
+                            aiResult.fullText ||
+                            `${aiResult.practicalSummary} ${aiResult.example}`
+                          }
+                          documentTitle={aiResult.title}
+                        />
+                        <Button asChild variant="secondary">
+                          <Link href={aiResult.url} target="_blank">
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            View Full Statute
+                          </Link>
+                        </Button>
+                      </div>
                     </div>
-                     {aiResult.elementsOfTheCrime && (
-                        <div className="p-4 bg-muted/50 rounded-lg">
-                          <h4 className="font-semibold mb-2">
-                            Elements of the Crime
-                          </h4>
-                          <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                            {aiResult.elementsOfTheCrime}
-                          </p>
-                        </div>
-                      )}
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <h4 className="font-semibold mb-2">
-                        Real-World Example
-                      </h4>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {aiResult.example}
-                      </p>
-                    </div>
-                    <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                      <h4 className="font-semibold mb-2 text-destructive-foreground/90">
-                        AI Result Disclaimer
-                      </h4>
-                      <p className="text-destructive-foreground/80 leading-relaxed">
-                        This information was generated by AI and has not been
-                        verified. Always consult official sources for legal
-                        decisions.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-6 flex items-center gap-2">
-                    <Summarizer
-                      documentText={
-                        aiResult.fullText ||
-                        `${aiResult.practicalSummary} ${aiResult.example}`
-                      }
-                      documentTitle={aiResult.title}
-                    />
-                    <Button asChild variant="secondary">
-                      <Link href={aiResult.url} target="_blank">
-                        <ExternalLink className="mr-2 h-4 w-4" />
-                        View Full Statute
-                      </Link>
-                    </Button>
-                  </div>
                 </AccordionContent>
               </Card>
             </AccordionItem>
