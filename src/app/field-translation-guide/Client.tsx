@@ -20,12 +20,9 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
   phrases: Phrase[]
 }) {
   const [searchTerm, setSearchTerm] = React.useState("")
-  // This is the only state we need. It's either null, or the ID of the audio that is loading/playing.
   const [activeAudioId, setActiveAudioId] = React.useState<string | null>(null);
   
-  // This ref will hold the currently playing HTMLAudioElement instance so we can stop it.
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
-  // This ref caches the fetched audio data to prevent redundant API calls.
   const audioCache = React.useRef<Map<string, string>>(new Map());
   
 
@@ -61,52 +58,46 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
     'Emergency & Medical'
   ]
 
-  const playAudio = async (text: string, language: 'es-US' | 'ht-HT', id: string) => {
-    // Stop any currently playing audio.
+  const stopAudio = () => {
     if (audioRef.current) {
         audioRef.current.pause();
-    }
-
-    // If the user clicked the button that was already active, treat it as a 'stop' action.
-    if (activeAudioId === id) {
-        setActiveAudioId(null);
+        audioRef.current.onended = null;
         audioRef.current = null;
+    }
+    setActiveAudioId(null);
+  };
+
+  const playAudio = async (text: string, language: 'es-US' | 'ht-HT', id: string) => {
+    if (activeAudioId === id) {
+        stopAudio();
         return;
     }
 
-    // Set the loading state for the clicked button.
+    stopAudio();
     setActiveAudioId(id);
-    
-    try {
-      let audioDataUri = audioCache.current.get(id);
-      
-      if (!audioDataUri) {
-        const response = await trilingualTextToSpeech({ text, language });
-        audioDataUri = response.media;
-        audioCache.current.set(id, audioDataUri);
-      }
 
-      if (audioDataUri) {
-        const audio = new Audio(audioDataUri);
-        audioRef.current = audio; // Store the new audio instance.
+    try {
+        let audioDataUri = audioCache.current.get(id);
         
-        audio.play().catch(e => {
-            console.error("Audio playback failed:", e);
-            setActiveAudioId(null); // Reset UI on playback error
-        });
-        
-        // When this specific audio finishes playing, reset the state.
-        audio.onended = () => {
-            setActiveAudioId(null);
-            audioRef.current = null;
-        };
-      } else {
-        // If we failed to get audio data, reset the state.
-        setActiveAudioId(null);
-      }
+        if (!audioDataUri) {
+            const response = await trilingualTextToSpeech({ text, language });
+            audioDataUri = response.media;
+            audioCache.current.set(id, audioDataUri);
+        }
+
+        if (audioDataUri) {
+            const audio = new Audio(audioDataUri);
+            audioRef.current = audio;
+            audio.play();
+            audio.onended = () => {
+                if (activeAudioId === id) {
+                    stopAudio();
+                }
+            };
+        }
     } catch (error) {
-      console.error("TTS or playback error:", error);
-      setActiveAudioId(null); // Reset UI on fetch error
+        console.error("TTS or playback error:", error);
+        stopAudio();
     }
   };
 
@@ -155,7 +146,6 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
                               variant="ghost" 
                               size="icon"
                               onClick={() => playAudio(phrase.spanishText, 'es-US', spanishId)}
-                              // Disable other buttons while one is active.
                               disabled={activeAudioId !== null && !isSpanishActive}
                             >
                               {isSpanishActive ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
@@ -167,7 +157,6 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
                               variant="ghost" 
                               size="icon"
                               onClick={() => playAudio(phrase.haitianCreoleText, 'ht-HT', haitianId)}
-                              // Disable other buttons while one is active.
                               disabled={activeAudioId !== null && !isHaitianActive}
                             >
                               {isHaitianActive ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
