@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview Generates the elements of a crime for a given statute.
@@ -32,15 +33,35 @@ const prompt = ai.definePrompt({
   name: 'generateElementsPrompt',
   input: { schema: GenerateElementsOfCrimeInputSchema },
   output: { schema: GenerateElementsOfCrimeOutputSchema },
-  prompt: `You are an expert paralegal specializing in Florida criminal law. Your task is to analyze the provided Florida Statute and extract its essential elements.
+  prompt: `You are an expert paralegal specializing in Florida criminal law. Your task is to analyze the provided Florida Statute and extract its essential elements. The output must be a valid JSON object matching the requested schema.
 
 Statute Code: {{{statuteCode}}}
 Statute Title: {{{statuteTitle}}}
 Statute Description: {{{statuteText}}}
 
-Based on the provided information, generate a concise, bulleted or numbered list of the essential elements of the crime that a prosecutor must prove beyond a reasonable doubt.
+Based on the provided information, generate a concise, bulleted or numbered list of the essential elements of the crime that a prosecutor must prove beyond a reasonable doubt for the 'elements' field.
 
-If the provided statute does not define a criminal offense (e.g., it is a definition or classification statute), simply state that it does not define a specific crime. Do not invent elements.`,
+If the provided statute does not define a criminal offense (e.g., it is a definition or classification statute), the 'elements' field should contain the string "This statute does not define a criminal offense." Do not invent elements.`,
+  config: {
+    safetySettings: [
+      {
+        category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+        threshold: 'BLOCK_ONLY_HIGH',
+      },
+      {
+        category: 'HARM_CATEGORY_HATE_SPEECH',
+        threshold: 'BLOCK_ONLY_HIGH',
+      },
+      {
+        category: 'HARM_CATEGORY_HARASSMENT',
+        threshold: 'BLOCK_ONLY_HIGH',
+      },
+      {
+        category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+        threshold: 'BLOCK_ONLY_HIGH',
+      },
+    ],
+  },
 });
 
 const generateElementsFlow = ai.defineFlow(
