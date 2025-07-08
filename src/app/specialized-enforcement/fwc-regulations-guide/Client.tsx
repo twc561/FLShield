@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import { Input } from "@/components/ui/input";
-import { Search, Fish, Crosshair, Anchor, ShieldAlert, LifeBuoy, Wind, Flag, Waves, Info, Award, CircleDot } from "lucide-react";
+import { Search, Fish, Crosshair, Anchor, ShieldAlert, LifeBuoy, Wind, Flag, Waves, Info, Award, CircleDot, Siren } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -36,7 +36,7 @@ import { Button } from "@/components/ui/button";
 
 const getIcon = (iconName: string) => {
   const icons: { [key: string]: React.ElementType } = {
-    Fish, Crosshair, Anchor, ShieldAlert, LifeBuoy, Wind, Flag, Waves, Info, Award, CircleDot
+    Fish, Crosshair, Anchor, ShieldAlert, LifeBuoy, Wind, Flag, Waves, Info, Award, CircleDot, Siren
   };
   return icons[iconName] || Fish;
 };
