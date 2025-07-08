@@ -1,3 +1,4 @@
+
 import { statuteIndex, statutesFullData } from "@/data"
 import { PageHeader } from "@/components/PageHeader"
 import { StatuteClient } from "./StatuteClient"

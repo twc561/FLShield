@@ -24,9 +24,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
-
 
 type StatuteIndexItem = Omit<Statute, 'description' | 'fullText' | 'practicalSummary' | 'example' | 'elementsOfTheCrime' | 'url'>;
 
@@ -293,7 +291,7 @@ export const StatuteClient = memo(function StatuteClient({
   );
 
   return (
-    <div className="flex flex-col h-[calc(100vh-12rem)] animate-fade-in-up">
+    <div className="flex flex-col h-full animate-fade-in-up">
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
@@ -307,52 +305,52 @@ export const StatuteClient = memo(function StatuteClient({
         />
       </div>
 
-      {isAiSearching && (
-        <div className="text-center py-16">
-          <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
-          <h3 className="mt-4 text-lg font-medium">
-            AI is searching statutes...
-          </h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            This may take a moment.
-          </p>
-        </div>
-      )}
-
-      {!isAiSearching && aiResult && (
-         <Accordion type="single" collapsible className="w-full" defaultValue={aiResult.id}>
-            <AccordionItem value={aiResult.id} className="border rounded-md bg-card border-accent/50 shadow-lg shadow-accent/10">
-              <AccordionTrigger className="p-4 text-left hover:no-underline w-full">
-                <div className="flex items-center gap-4 flex-1">
-                    <div className="p-2 bg-accent/10 rounded-lg">
-                        <Sparkles className="h-6 w-6 text-accent" />
-                    </div>
-                    <div className="flex-1 text-left">
-                        <p className="font-semibold text-base text-card-foreground text-wrap">{aiResult.title}</p>
-                        <p className="text-xs text-muted-foreground">{aiResult.code} &bull; {aiResult.degreeOfCharge}</p>
-                    </div>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="p-4 pt-0">
-                  <FullStatuteContent statute={aiResult} />
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-      )}
-
-      {showNotFound && (
-        <div className="text-center py-16">
-            <BookOpen className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-medium">No Statutes Found</h3>
+      <ScrollArea className="flex-1 -mr-4 pr-4">
+        {isAiSearching && (
+          <div className="text-center py-16">
+            <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
+            <h3 className="mt-4 text-lg font-medium">
+              AI is searching statutes...
+            </h3>
             <p className="mt-1 text-sm text-muted-foreground">
-            Your search for "{searchTerm}" did not match any local or
-            AI-found statutes.
+              This may take a moment.
             </p>
-        </div>
-      )}
+          </div>
+        )}
 
-      {!isAiSearching && !aiResult && (searchTerm === "" || totalFilteredResults > 0) && (
-        <ScrollArea className="h-full -mr-4 pr-4">
+        {!isAiSearching && aiResult && (
+          <Accordion type="single" collapsible className="w-full" defaultValue={aiResult.id}>
+              <AccordionItem value={aiResult.id} className="border rounded-md bg-card border-accent/50 shadow-lg shadow-accent/10">
+                <AccordionTrigger className="p-4 text-left hover:no-underline w-full">
+                  <div className="flex items-center gap-4 flex-1">
+                      <div className="p-2 bg-accent/10 rounded-lg">
+                          <Sparkles className="h-6 w-6 text-accent" />
+                      </div>
+                      <div className="flex-1 text-left">
+                          <p className="font-semibold text-base text-card-foreground text-wrap">{aiResult.title}</p>
+                          <p className="text-xs text-muted-foreground">{aiResult.code} &bull; {aiResult.degreeOfCharge}</p>
+                      </div>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="p-4 pt-0">
+                    <FullStatuteContent statute={aiResult} />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+        )}
+
+        {showNotFound && (
+          <div className="text-center py-16">
+              <BookOpen className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-4 text-lg font-medium">No Statutes Found</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+              Your search for "{searchTerm}" did not match any local or
+              AI-found statutes.
+              </p>
+          </div>
+        )}
+
+        {!isAiSearching && !aiResult && (searchTerm === "" || totalFilteredResults > 0) && (
           <Accordion type="single" collapsible className="w-full" value={activeAccordionItem} onValueChange={handleAccordionChange}>
             {categories.map((category) => {
               const filteredStatutes = getFilteredStatutesForCategory(category);
@@ -391,8 +389,8 @@ export const StatuteClient = memo(function StatuteClient({
               )
             })}
           </Accordion>
-        </ScrollArea>
-      )}
+        )}
+      </ScrollArea>
     </div>
   )
 })

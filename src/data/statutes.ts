@@ -87,7 +87,7 @@ const allStatutes: Statute[] = [
     url: 'http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0700-0799/0784/Sections/0784.07.html'
   },
   {
-    id: 's3',
+    id: 's782-04',
     code: 'F.S. § 782.04',
     title: 'Murder',
     category: 'Crimes Against Persons',
@@ -123,7 +123,7 @@ const allStatutes: Statute[] = [
     url: 'http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0800-0899/0810/Sections/0810.02.html'
   },
   {
-    id: 's2',
+    id: 's812-014',
     code: 'F.S. § 812.014',
     title: 'Theft',
     category: 'Property Crimes',
