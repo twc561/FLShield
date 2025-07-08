@@ -1,27 +1,18 @@
-import { PageHeader } from "@/components/PageHeader"
-import { localOrdinancesData } from "@/data/legal-reference/local-ordinances"
-import { Summarizer } from "@/components/Summarizer"
-import { LocalOrdinancesClient } from "./Client"
+import { PageHeader } from "@/components/PageHeader";
+import { ordinanceIndex, ordinanceDetailsData } from "@/data";
+import { LocalOrdinancesClient } from "./Client";
 
 export default function LocalOrdinancesGuidePage() {
-  const pageContent = localOrdinancesData.map(item => 
-    `${item.topic}: ${item.summary}\nFort Pierce: ${item.fortPierceDetails}\nPort St. Lucie: ${item.portStLucieDetails}`
-  ).join('\n\n');
-
   return (
     <div className="animate-fade-in-up">
-      <div className="flex justify-between items-start gap-4">
-        <PageHeader
-          title="Local Ordinances Guide"
-          description="A guide to common local ordinances by county and municipality."
-        />
-        <Summarizer 
-          documentText={pageContent}
-          documentTitle="Local Ordinances Summary"
-        />
-      </div>
-
-      <LocalOrdinancesClient data={localOrdinancesData} />
+      <PageHeader
+        title="Local Ordinances Guide"
+        description="A searchable guide to the most common local ordinances for the City of Fort Pierce and St. Lucie County. Ordinances not found locally can be fetched on-demand with AI."
+      />
+      <LocalOrdinancesClient
+        initialIndex={ordinanceIndex}
+        initialDetails={ordinanceDetailsData}
+      />
     </div>
-  )
+  );
 }
