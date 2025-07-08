@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { generateWellnessTip, type GenerateWellnessTipOutput } from "@/ai/flows/generate-wellness-tip"
 import { LifeBuoy, Zap, Shield, PiggyBank, Users, Loader2 } from "lucide-react"
+import { DebriefClient } from "./DebriefClient"
 
 const wellnessTopics = [
   {
@@ -66,11 +67,15 @@ export default function OfficerWellnessPage() {
 
   return (
     <div className="animate-fade-in-up">
-      <PageHeader
-        title="Officer Wellness Hub"
-        description="Resources and tools to support your mental and physical well-being."
-      />
-
+      <div className="flex justify-between items-start mb-4">
+        <PageHeader
+          title="Officer Wellness Hub"
+          description="Resources and tools to support your mental and physical well-being."
+        />
+        <div className="pt-2">
+            <DebriefClient />
+        </div>
+      </div>
       <Card className="mb-8 bg-primary/5 border-primary/20">
         <CardHeader>
           <div className="flex justify-between items-center">
