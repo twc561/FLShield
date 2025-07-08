@@ -13,3 +13,4 @@ import '@/ai/flows/query-fwc-regulations.ts';
 import '@/ai/flows/summarize-debrief.ts';
 import '@/ai/flows/proofread-report.ts';
 import '@/ai/flows/roleplay-simulator.ts';
+import '@/ai/flows/text-to-speech.ts';

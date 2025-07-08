@@ -13,17 +13,21 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Loader2, Send, Bot, User } from "lucide-react";
+import { ArrowLeft, Send, Bot, User, Loader2, Volume2 } from "lucide-react";
 import type { ScenarioPack } from "@/data/training/scenarios";
 import {
   getRoleplayResponse,
   RoleplaySimulatorInput,
 } from "@/ai/flows/roleplay-simulator";
+import { textToSpeech } from "@/ai/flows/text-to-speech";
 import { cn } from "@/lib/utils";
 
 type Message = {
+  id: string;
   role: "user" | "model";
   content: string;
+  audioUrl?: string;
+  audioLoading?: boolean;
 };
 
 export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
@@ -32,16 +36,21 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const audioRefs = useRef<Map<string, HTMLAudioElement>>(new Map());
 
-  useEffect(() => {
+  const scrollToBottom = () => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTo({
         top: scrollAreaRef.current.scrollHeight,
         behavior: "smooth",
       });
     }
-  }, [messages]);
+  };
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+  
   const handleSelectScenario = (scenario: ScenarioPack) => {
     setSelectedScenario(scenario);
     setMessages([]);
@@ -55,8 +64,11 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
   const handleSendMessage = async () => {
     if (!userInput.trim() || !selectedScenario) return;
 
-    const newMessages: Message[] = [...messages, { role: "user", content: userInput }];
+    const userMessageId = `user-${Date.now()}`;
+    const newUserMessage: Message = { id: userMessageId, role: "user", content: userInput };
+    const newMessages: Message[] = [...messages, newUserMessage];
     setMessages(newMessages);
+    
     const currentInput = userInput;
     setUserInput("");
     setIsLoading(true);
@@ -75,14 +87,44 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
       };
 
       const response = await getRoleplayResponse(aiInput);
-      setMessages(prev => [...prev, { role: "model", content: response.characterResponse }]);
+
+      const modelMessageId = `model-${Date.now()}`;
+      const newModelMessage: Message = {
+        id: modelMessageId,
+        role: "model",
+        content: response.characterResponse,
+        audioLoading: true,
+      };
+
+      setMessages(prev => [...prev, newModelMessage]);
+
+      // TTS Generation
+      const audioResult = await textToSpeech(response.characterResponse);
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.id === modelMessageId
+            ? { ...msg, audioUrl: audioResult.media, audioLoading: false }
+            : msg
+        )
+      );
+
     } catch (error) {
       console.error("Failed to get AI response:", error);
-      setMessages(prev => [...prev, { role: "model", content: "[Error: Could not get a response. Please try again.]" }]);
+      const errorId = `model-error-${Date.now()}`;
+      setMessages(prev => [...prev, { id: errorId, role: "model", content: "[Error: Could not get a response. Please try again.]" }]);
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Autoplay audio when it becomes available for the latest message
+  useEffect(() => {
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage?.role === 'model' && lastMessage.audioUrl) {
+      const audio = audioRefs.current.get(lastMessage.id);
+      audio?.play().catch(e => console.error("Audio autoplay failed:", e));
+    }
+  }, [messages]);
   
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -90,6 +132,13 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
       handleSendMessage();
     }
   }
+
+  const playAudio = (id: string) => {
+    const audio = audioRefs.current.get(id);
+    if (audio) {
+      audio.play().catch(e => console.error("Audio playback failed:", e));
+    }
+  };
 
   if (!selectedScenario) {
     return (
@@ -134,13 +183,31 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
       <CardContent className="flex-1 p-0">
         <ScrollArea className="h-[calc(100vh-25rem)]" ref={scrollAreaRef as any}>
             <div className="p-6 space-y-4">
-                {messages.map((message, index) => (
-                <div key={index} className={cn("flex items-start gap-3", message.role === "user" ? "justify-end" : "justify-start")}>
+                {messages.map((message) => (
+                <div key={message.id} className={cn("flex items-start gap-3", message.role === "user" ? "justify-end" : "justify-start")}>
                     {message.role === 'model' && (
                         <div className="p-2 bg-primary/10 rounded-full"><Bot className="w-5 h-5 text-primary" /></div>
                     )}
-                    <div className={cn("max-w-xs md:max-w-md lg:max-w-lg p-3 rounded-lg", message.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted")}>
+                    <div className={cn("max-w-xs md:max-w-md lg:max-w-lg p-3 rounded-lg flex items-center gap-2", message.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted")}>
                         <p className="whitespace-pre-wrap">{message.content}</p>
+                        {message.role === 'model' && (
+                          <>
+                            <audio 
+                              ref={(el) => {
+                                if (el) audioRefs.current.set(message.id, el);
+                                else audioRefs.current.delete(message.id);
+                              }} 
+                              src={message.audioUrl}
+                            />
+                            {message.audioLoading ? (
+                              <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
+                            ) : message.audioUrl ? (
+                              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => playAudio(message.id)}>
+                                <Volume2 className="w-4 h-4" />
+                              </Button>
+                            ) : null}
+                          </>
+                        )}
                     </div>
                     {message.role === 'user' && (
                         <div className="p-2 bg-muted rounded-full"><User className="w-5 h-5" /></div>
