@@ -2,8 +2,25 @@
 import { FeatureCard } from "@/components/FeatureCard"
 import { PageHeader } from "@/components/PageHeader"
 import { featureModules } from "@/data"
+import { generateFeatureSummary } from "@/ai/flows/generate-feature-summary"
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const modulesWithSummaries = await Promise.all(
+    featureModules.map(async (module) => {
+      if (!module.summary) {
+        try {
+          const result = await generateFeatureSummary({ title: module.title });
+          return { ...module, summary: result.summary };
+        } catch (error) {
+          console.error(`Failed to generate summary for ${module.title}:`, error);
+          // Provide a fallback summary
+          return { ...module, summary: `Access tools and resources for ${module.title}.` };
+        }
+      }
+      return module;
+    })
+  );
+
   return (
     <div className="animate-fade-in-up">
       <PageHeader
@@ -14,7 +31,7 @@ export default function DashboardPage() {
         id="dashboard-grid"
         className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
       >
-        {featureModules.map((module, index) => (
+        {modulesWithSummaries.map((module, index) => (
           <FeatureCard
             key={module.id}
             module={module}
