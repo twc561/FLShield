@@ -37,3 +37,4 @@ export * from './predictive-cache-map';
 export * from './training/scenarios';
 export * from './training/knowledge-drill';
 export * from './field-translation-guide';
+export * from './daily-briefing';

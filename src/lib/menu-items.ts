@@ -19,6 +19,7 @@ type MenuItem = {
 
 export const menuItems: MenuItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
+  { href: "/daily-briefing", label: "Daily Briefing", icon: Newspaper },
   { href: "/ai-legal-advisor", label: "AI Legal Advisor", icon: Bot },
   { href: "/favorites", label: "Favorites", icon: Star },
   {
