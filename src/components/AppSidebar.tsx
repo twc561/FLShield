@@ -39,7 +39,9 @@ export function AppSidebar() {
   }, [])
 
   const isActive = (href: string) => {
-    return pathname === href || (href !== "/" && pathname.startsWith(href))
+    if (!isClient) return false;
+    if (href === "/") return pathname === "/"
+    return pathname.startsWith(href)
   }
 
   React.useEffect(() => {
@@ -79,7 +81,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       className="w-full justify-between"
                       variant="ghost"
-                      data-active={isClient && item.items.some(subItem => isActive(subItem.href))}
+                      isActive={isClient && item.items.some(subItem => isActive(subItem.href))}
                     >
                       <div className="flex items-center gap-2">
                         <item.icon className="size-5" />
