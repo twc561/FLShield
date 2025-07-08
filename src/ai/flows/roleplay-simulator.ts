@@ -8,30 +8,6 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
-/*
-  INTERACTION & FEEDBACK LOGIC BLUEPRINT:
-
-  Interaction Logic: 
-  When a simulation begins, the AI will adopt the persona of the keyCharacter. 
-  Its responses should be conversational and natural. 
-  If the officer's questions are open-ended and build rapport, the persona should 
-  become more cooperative and reveal more details. If the questions are leading, 
-  aggressive, or confusing, the persona should become more defensive, withdrawn, 
-  or confused.
-
-  Post-Simulation Debrief Framework: 
-  After the simulation ends, the AI will analyze the transcript of the hypothetical 
-  interview and provide a structured review based on these criteria:
-  - Rapport Building: "Did the officer use empathetic language?"
-  - Questioning Technique: "Rate the use of open-ended vs. closed-ended questions."
-  - Information Control: "Did the officer effectively control the flow of the conversation?"
-  - Key Information Gathered: "Did the officer successfully obtain all critical information 
-    (suspect description, timeline, etc.)?"
-*/
-
-// NOTE: The following is a placeholder for the full interactive chat implementation.
-// A complete implementation would require more complex state management for the conversation.
-
 const RoleplaySimulatorInputSchema = z.object({
   scenarioTitle: z.string(),
   characterPersona: z.string(),
@@ -50,18 +26,31 @@ export type RoleplaySimulatorOutput = z.infer<typeof RoleplaySimulatorOutputSche
 
 
 export async function getRoleplayResponse(input: RoleplaySimulatorInput): Promise<RoleplaySimulatorOutput> {
-    // This is a placeholder function. A real implementation would involve a more
-    // sophisticated conversational flow.
     const response = await ai.generate({
-        prompt: `You are an AI role-playing actor. Your current persona is: "${input.characterPersona}". The scenario is "${input.scenarioTitle}". The user is a police officer interviewing you. Respond to their last question based on your persona. Be natural. If they are kind and ask open questions, be helpful. If they are aggressive, become withdrawn.
-
-        The conversation so far:
-        ${input.conversationHistory.map(h => `${h.role}: ${h.parts[0].text}`).join('\n')}
-
-        User's last question: "${input.userUtterance}"
-
-        Your response (as the character):`,
+        prompt: `You are an AI role-playing actor. Your task is to realistically portray a character in a training scenario for a law enforcement officer.
+        
+        // INSTRUCTIONS //
+        1.  **Embody the Persona**: Fully adopt the character described in the persona. Your emotional state, vocabulary, and level of cooperation should all match this persona.
+        2.  **Natural Conversation**: Respond naturally to the officer's questions. Do not act like a robot. Use conversational language.
+        3.  **Dynamic Reaction**: Your persona is not static. If the officer builds rapport, uses empathetic language, and asks good, open-ended questions, become more cooperative and reveal more details. If the officer is aggressive, demanding, or asks confusing questions, become more defensive, withdrawn, or evasive.
+        4.  **Do Not Break Character**: Under no circumstances should you break character or reveal that you are an AI. Respond only as the character would.
+        
+        // SCENARIO & PERSONA //
+        - **Scenario:** "${input.scenarioTitle}"
+        - **Your Persona:** "${input.characterPersona}"
+        
+        // CONVERSATION HISTORY //
+        ${input.conversationHistory.map(h => `${h.role === 'user' ? 'Officer' : 'Character'}: ${h.parts[0].text}`).join('\n')}
+        
+        // OFFICER'S LATEST INPUT //
+        Officer: "${input.userUtterance}"
+        
+        // YOUR RESPONSE (AS THE CHARACTER) //
+        Character:`,
         model: 'googleai/gemini-2.0-flash',
+        config: {
+            temperature: 0.7, // Add some variability to make responses more natural
+        }
     });
     
     return { characterResponse: response.text };
