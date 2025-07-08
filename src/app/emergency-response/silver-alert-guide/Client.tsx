@@ -10,6 +10,7 @@ import {
 import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import type { AlertGuideline } from "@/data/emergency-response/alert-guides"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export function SilverAlertClient({ data }: { data: AlertGuideline }) {
   const Icon = (LucideIcons as any)[data.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle
@@ -39,9 +40,11 @@ export function SilverAlertClient({ data }: { data: AlertGuideline }) {
                 ))}
               </ul>
               <div className="mt-6">
-                <Button>
-                  <LucideIcons.Phone className="mr-2 h-4 w-4" />
-                  Initiate Silver Alert (Call FDLE)
+                <Button asChild>
+                  <Link href="tel:1-888-356-4774">
+                    <LucideIcons.Phone className="mr-2 h-4 w-4" />
+                    Initiate Silver Alert (Call FDLE)
+                  </Link>
                 </Button>
                  <p className="text-xs text-muted-foreground mt-2">This will call the FDLE Missing Endangered Persons Information Clearinghouse.</p>
               </div>
