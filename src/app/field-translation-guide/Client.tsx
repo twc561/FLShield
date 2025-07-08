@@ -57,20 +57,20 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
     'Emergency & Medical'
   ]
 
-  const stopAudio = () => {
+  const stopAudio = React.useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.src = '';
     }
     setActiveAudioId(null);
-  };
+  }, []);
 
   const playAudio = async (text: string, language: 'es-US' | 'ht-HT', id: string) => {
-    if (id === activeAudioId && audioRef.current && !audioRef.current.paused) {
+    if (id === activeAudioId) {
       stopAudio();
       return;
     }
-
+    
     stopAudio();
     setActiveAudioId(id);
 
@@ -87,20 +87,20 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
         }
       }
 
-      if (audioRef.current) {
+      if (audioRef.current && audioDataUri) {
         audioRef.current.src = audioDataUri;
         await audioRef.current.play();
       }
     } catch (error) {
-      console.error("TTS or playback error:", error);
-      stopAudio(); // Reset on error
+      console.error("Audio playback failed:", error);
+      stopAudio();
     }
   };
 
 
   return (
     <div className="space-y-6">
-      <audio ref={audioRef} onEnded={stopAudio} />
+      <audio ref={audioRef} onEnded={stopAudio} onError={stopAudio} />
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
