@@ -55,9 +55,3 @@ export const CourtTestimonyClient = React.memo(function CourtTestimonyClient({ d
     </Accordion>
   )
 })
-
-declare module "react" {
-  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-    style?: React.CSSProperties & { [key: string]: string | number };
-  }
-}

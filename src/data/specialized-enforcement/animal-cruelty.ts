@@ -1,3 +1,4 @@
+
 export type AnimalCrueltyTopic = {
   id: string;
   title: string;

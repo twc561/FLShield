@@ -50,9 +50,3 @@ export const PobrClient = React.memo(function PobrClient({ data }: { data: PobrR
     </Accordion>
   )
 })
-
-declare module "react" {
-  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-    style?: React.CSSProperties & { [key: string]: string | number };
-  }
-}

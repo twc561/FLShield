@@ -51,9 +51,3 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
     </div>
   )
 })
-
-declare module "react" {
-  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-    style?: React.CSSProperties & { [key: string]: string | number };
-  }
-}

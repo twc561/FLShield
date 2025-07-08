@@ -1,3 +1,4 @@
+
 export type HazmatPlacard = {
   id: string; // The 4-digit UN/NA number
   name: string;

@@ -41,9 +41,3 @@ export const StatutoryCaseLawUpdatesClient = React.memo(function StatutoryCaseLa
     </div>
   )
 })
-
-declare module "react" {
-  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-    style?: React.CSSProperties & { [key: string]: string | number };
-  }
-}

@@ -1,3 +1,4 @@
+
 export type FirstAidTopic = {
   id: string;
   title: string;

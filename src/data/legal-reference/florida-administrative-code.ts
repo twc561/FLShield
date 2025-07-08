@@ -1,3 +1,4 @@
+
 export type FacInfo = {
   id: string;
   title: string;

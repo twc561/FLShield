@@ -1,3 +1,4 @@
+
 export type UpdateInfo = {
   id: string;
   title: string;

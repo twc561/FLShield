@@ -1,3 +1,4 @@
+
 export type EncounterType = {
   id: string;
   title: string;
