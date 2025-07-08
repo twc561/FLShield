@@ -22,13 +22,10 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
   const [searchTerm, setSearchTerm] = React.useState("")
   const [audioState, setAudioState] = React.useState<Record<string, 'loading' | 'playing' | 'idle'>>({})
   
-  // Use a map to store refs to audio elements for stable playback
-  const audioRefs = React.useRef<Map<string, HTMLAudioElement>>(new Map());
-
-  // Use state to manage the audio sources, triggering re-renders when they are ready
-  const [audioSrc, setAudioSrc] = React.useState<Record<string, string>>({});
-
-
+  // Refs to manage audio playback and cache fetched data
+  const audioCache = React.useRef<Map<string, string>>(new Map());
+  const activeAudioRef = React.useRef<HTMLAudioElement | null>(null);
+  
   const filteredPhrases = React.useMemo(() => {
     if (!searchTerm) {
       return phrases
@@ -62,45 +59,61 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
   ]
 
   const playAudio = async (text: string, language: 'es-US' | 'ht-HT', id: string) => {
-    // Stop any other playing audio
-    audioRefs.current.forEach((audioEl) => {
-        if (audioEl && !audioEl.paused) {
-            audioEl.pause();
-            audioEl.currentTime = 0;
+    // Stop any currently playing audio and reset its state
+    if (activeAudioRef.current) {
+        activeAudioRef.current.pause();
+        const playingId = Object.keys(audioState).find(key => audioState[key] === 'playing');
+        if (playingId) {
+             setAudioState(prev => ({ ...prev, [playingId]: 'idle' }));
         }
-    });
-
-    setAudioState(prev => ({ ...prev, [id]: 'loading' }));
-
-    // If we already have the audio data, just play it
-    const audio = audioRefs.current.get(id);
-    if (audioSrc[id] && audio) {
-        audio.play().catch(e => console.error("Audio playback failed", e));
-        return;
     }
     
-    // Otherwise, fetch it from the TTS service
-    try {
-      const response = await trilingualTextToSpeech({ text, language });
-      setAudioSrc(prev => ({...prev, [id]: response.media}));
-    } catch (error) {
-      console.error("TTS Error:", error);
-      setAudioState(prev => ({ ...prev, [id]: 'idle' }));
-    }
-  };
+    // Set all other states to idle before setting the current one to loading
+    setAudioState(prev => {
+        const newState = Object.keys(prev).reduce((acc, key) => {
+            acc[key] = 'idle';
+            return acc;
+        }, {} as Record<string, 'loading' | 'playing' | 'idle'>);
+        newState[id] = 'loading';
+        return newState;
+    });
 
-  // Effect to play audio once the src is set
-  React.useEffect(() => {
-    // This effect runs when audioSrc state changes.
-    // We find the audio element by its ID and play it.
-    const playingId = Object.keys(audioState).find(key => audioState[key] === 'loading' && audioSrc[key]);
-    if (playingId) {
-        const audio = audioRefs.current.get(playingId);
-        if(audio) {
-            audio.play().catch(e => console.error("Audio playback failed", e));
+    let audioDataUri = audioCache.current.get(id);
+
+    if (!audioDataUri) {
+        try {
+          const response = await trilingualTextToSpeech({ text, language });
+          audioDataUri = response.media;
+          audioCache.current.set(id, audioDataUri);
+        } catch (error) {
+          console.error("TTS Error:", error);
+          setAudioState(prev => ({ ...prev, [id]: 'idle' }));
+          return;
         }
     }
-  }, [audioSrc, audioState]);
+    
+    const audio = new Audio(audioDataUri);
+    activeAudioRef.current = audio;
+
+    audio.onplaying = () => setAudioState(prev => ({...prev, [id]: 'playing'}));
+    audio.onended = () => {
+        setAudioState(prev => ({...prev, [id]: 'idle'}));
+        activeAudioRef.current = null;
+    };
+    audio.onerror = (e) => {
+        console.error("Audio playback error:", e);
+        setAudioState(prev => ({...prev, [id]: 'idle'}));
+        activeAudioRef.current = null;
+    }
+
+    try {
+        await audio.play();
+    } catch(e) {
+        console.error("Error playing audio:", e);
+        setAudioState(prev => ({ ...prev, [id]: 'idle' }));
+        activeAudioRef.current = null;
+    }
+  };
 
 
   return (
@@ -137,22 +150,6 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
                         {phrase.englishText}
                       </AccordionTrigger>
                       <AccordionContent className="p-4 pt-0">
-                        {/* Hidden audio elements for playback control */}
-                        <audio
-                          ref={(el) => el ? audioRefs.current.set(spanishId, el) : audioRefs.current.delete(spanishId)}
-                          src={audioSrc[spanishId]}
-                          onPlaying={() => setAudioState(prev => ({...prev, [spanishId]: 'playing'}))}
-                          onEnded={() => setAudioState(prev => ({...prev, [spanishId]: 'idle'}))}
-                          onPause={() => setAudioState(prev => ({...prev, [spanishId]: 'idle'}))}
-                        />
-                        <audio
-                          ref={(el) => el ? audioRefs.current.set(haitianId, el) : audioRefs.current.delete(haitianId)}
-                          src={audioSrc[haitianId]}
-                           onPlaying={() => setAudioState(prev => ({...prev, [haitianId]: 'playing'}))}
-                          onEnded={() => setAudioState(prev => ({...prev, [haitianId]: 'idle'}))}
-                          onPause={() => setAudioState(prev => ({...prev, [haitianId]: 'idle'}))}
-                        />
-
                         <div className="border-t pt-4 space-y-3">
                           <div className="flex items-center justify-between">
                             <p className="text-muted-foreground">{phrase.spanishText}</p>
