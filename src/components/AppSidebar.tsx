@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -20,6 +21,8 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 import { ThemeToggle } from "./ThemeToggle"
 import { cn } from "@/lib/utils"
@@ -119,22 +122,22 @@ export function AppSidebar() {
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
                 <CollapsibleContent>
-                  <ul className="mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l border-sidebar-border px-2.5 py-0.5 group-data-[collapsible=icon]:hidden">
+                  <SidebarMenuSub>
                     {item.items.map((subItem) => (
-                      <li key={subItem.label}>
+                      <SidebarMenuSubItem key={subItem.label}>
                         <Link
                           href={subItem.href}
                           className={cn(
-                            "flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-sm text-sidebar-foreground outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
-                            isActive(subItem.href) && "bg-sidebar-accent text-sidebar-accent-foreground"
+                            "flex h-full w-full items-center gap-2 rounded-md px-2 text-sm text-sidebar-foreground/80 outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2",
+                            isActive(subItem.href) && "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                           )}
                         >
-                           <subItem.icon className="size-4 shrink-0" />
-                          <span>{subItem.label}</span>
+                          <subItem.icon className="size-4 shrink-0" />
+                          <span className="truncate">{subItem.label}</span>
                         </Link>
-                      </li>
+                      </SidebarMenuSubItem>
                     ))}
-                  </ul>
+                  </SidebarMenuSub>
                 </CollapsibleContent>
               </Collapsible>
             ) : (
