@@ -52,6 +52,19 @@ export default async function DashboardPage() {
     month: "long",
     day: "numeric",
   })
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      return "Good morning";
+    } else if (hour < 18) {
+      return "Good afternoon";
+    } else {
+      return "Good evening";
+    }
+  };
+
+  const greeting = `${getGreeting()}, Officer.`;
   
   const featureGroupsWithSummaries = await generateAllSummaries(dashboardFeatureGroups);
 
@@ -60,7 +73,7 @@ export default async function DashboardPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          Good morning, Officer.
+          {greeting}
         </h1>
         <p className="text-muted-foreground">{today}</p>
         <div className="relative mt-4">
@@ -81,9 +94,7 @@ export default async function DashboardPage() {
             </CardHeader>
             <CardContent>
                 <p className="text-lg text-muted-foreground">
-                To empower every Florida officer with instant access to the
-                knowledge and tools needed to operate with confidence, safety,
-                and integrity.
+                Florida Shield is dedicated to providing every officer with immediate, reliable, and actionable information. Our mission is to enhance officer safety, ensure procedural accuracy, and reduce reporting time, allowing you to focus on what matters most: protecting the community.
                 </p>
             </CardContent>
             </Card>
