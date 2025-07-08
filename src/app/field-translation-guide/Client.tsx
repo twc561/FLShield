@@ -20,12 +20,40 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
   phrases: Phrase[]
 }) {
   const [searchTerm, setSearchTerm] = React.useState("")
-  const [audioState, setAudioState] = React.useState<Record<string, 'loading' | 'playing' | 'idle'>>({})
+  // A single state to track the ID of the audio that is loading or playing
+  const [activeAudioId, setActiveAudioId] = React.useState<string | null>(null);
+  const [isLoadingAudio, setIsLoadingAudio] = React.useState(false);
   
-  // Refs to manage audio playback and cache fetched data
+  // Ref to hold the single Audio instance
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+  // Cache for fetched audio data
   const audioCache = React.useRef<Map<string, string>>(new Map());
-  const activeAudioRef = React.useRef<HTMLAudioElement | null>(null);
   
+  // Effect to set up the audio element on the client
+  React.useEffect(() => {
+    audioRef.current = new Audio();
+    
+    const audio = audioRef.current;
+    
+    const handlePlaybackEnd = () => {
+      setActiveAudioId(null);
+      setIsLoadingAudio(false);
+    };
+
+    audio.addEventListener('ended', handlePlaybackEnd);
+    audio.addEventListener('error', handlePlaybackEnd);
+
+    // Cleanup on component unmount
+    return () => {
+      if (audio) {
+        audio.removeEventListener('ended', handlePlaybackEnd);
+        audio.removeEventListener('error', handlePlaybackEnd);
+        audio.pause();
+        audio.src = '';
+      }
+    }
+  }, []);
+
   const filteredPhrases = React.useMemo(() => {
     if (!searchTerm) {
       return phrases
@@ -59,59 +87,39 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
   ]
 
   const playAudio = async (text: string, language: 'es-US' | 'ht-HT', id: string) => {
-    // Stop any currently playing audio and reset its state
-    if (activeAudioRef.current) {
-        activeAudioRef.current.pause();
-        const playingId = Object.keys(audioState).find(key => audioState[key] === 'playing');
-        if (playingId) {
-             setAudioState(prev => ({ ...prev, [playingId]: 'idle' }));
-        }
+    // If this audio is already playing, do nothing.
+    if (activeAudioId === id && !isLoadingAudio && audioRef.current) {
+        audioRef.current.play().catch(e => console.error("Error re-playing audio:", e));
+        return;
     }
     
-    // Set all other states to idle before setting the current one to loading
-    setAudioState(prev => {
-        const newState = Object.keys(prev).reduce((acc, key) => {
-            acc[key] = 'idle';
-            return acc;
-        }, {} as Record<string, 'loading' | 'playing' | 'idle'>);
-        newState[id] = 'loading';
-        return newState;
-    });
-
-    let audioDataUri = audioCache.current.get(id);
-
-    if (!audioDataUri) {
-        try {
-          const response = await trilingualTextToSpeech({ text, language });
-          audioDataUri = response.media;
-          audioCache.current.set(id, audioDataUri);
-        } catch (error) {
-          console.error("TTS Error:", error);
-          setAudioState(prev => ({ ...prev, [id]: 'idle' }));
-          return;
-        }
+    // Stop any currently playing audio
+    if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
     }
-    
-    const audio = new Audio(audioDataUri);
-    activeAudioRef.current = audio;
 
-    audio.onplaying = () => setAudioState(prev => ({...prev, [id]: 'playing'}));
-    audio.onended = () => {
-        setAudioState(prev => ({...prev, [id]: 'idle'}));
-        activeAudioRef.current = null;
-    };
-    audio.onerror = (e) => {
-        console.error("Audio playback error:", e);
-        setAudioState(prev => ({...prev, [id]: 'idle'}));
-        activeAudioRef.current = null;
-    }
+    setActiveAudioId(id);
+    setIsLoadingAudio(true);
 
     try {
-        await audio.play();
-    } catch(e) {
-        console.error("Error playing audio:", e);
-        setAudioState(prev => ({ ...prev, [id]: 'idle' }));
-        activeAudioRef.current = null;
+      let audioDataUri = audioCache.current.get(id);
+      
+      if (!audioDataUri) {
+        const response = await trilingualTextToSpeech({ text, language });
+        audioDataUri = response.media;
+        audioCache.current.set(id, audioDataUri);
+      }
+
+      if (audioRef.current && audioDataUri) {
+        audioRef.current.src = audioDataUri;
+        await audioRef.current.play();
+        setIsLoadingAudio(false);
+      }
+    } catch (error) {
+      console.error("TTS or playback error:", error);
+      setActiveAudioId(null);
+      setIsLoadingAudio(false);
     }
   };
 
@@ -143,6 +151,10 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
                 {phrasesInCategory.map(phrase => {
                   const spanishId = `${phrase.phraseID}-es`;
                   const haitianId = `${phrase.phraseID}-ht`;
+                  
+                  const isSpanishLoading = isLoadingAudio && activeAudioId === spanishId;
+                  const isHaitianLoading = isLoadingAudio && activeAudioId === haitianId;
+
 
                   return (
                     <AccordionItem value={phrase.phraseID} key={phrase.phraseID} className="border rounded-md bg-card">
@@ -157,9 +169,9 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
                               variant="ghost" 
                               size="icon"
                               onClick={() => playAudio(phrase.spanishText, 'es-US', spanishId)}
-                              disabled={audioState[spanishId] === 'loading' || audioState[spanishId] === 'playing'}
+                              disabled={isSpanishLoading}
                             >
-                              {audioState[spanishId] === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
+                              {isSpanishLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
                             </Button>
                           </div>
                           <div className="flex items-center justify-between">
@@ -168,9 +180,9 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
                               variant="ghost" 
                               size="icon"
                               onClick={() => playAudio(phrase.haitianCreoleText, 'ht-HT', haitianId)}
-                              disabled={audioState[haitianId] === 'loading' || audioState[haitianId] === 'playing'}
+                              disabled={isHaitianLoading}
                             >
-                              {audioState[haitianId] === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
+                              {isHaitianLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
                             </Button>
                           </div>
                         </div>
