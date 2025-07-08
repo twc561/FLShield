@@ -11,3 +11,5 @@ import '@/ai/flows/suggest-charges.ts';
 import '@/ai/flows/generate-uof-narrative.ts';
 import '@/ai/flows/query-fwc-regulations.ts';
 import '@/ai/flows/summarize-debrief.ts';
+import '@/ai/flows/proofread-report.ts';
+import '@/ai/flows/roleplay-simulator.ts';

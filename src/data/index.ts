@@ -32,3 +32,4 @@ export * from './emergency-response/hazmat';
 export * from './officer-wellness-rights/pobr';
 export * from './officer-wellness-rights/court-testimony';
 export * from './predictive-cache-map';
+export * from './training/scenarios';

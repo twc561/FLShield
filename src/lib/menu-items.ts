@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import {
-  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, ShieldAlert as MessageSquareWarning, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, Flame, ShieldAlert, FlaskConical, Users, Smartphone,
+  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, ShieldAlert as MessageSquareWarning, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, Flame, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck,
 } from "lucide-react"
 
 type SubMenuItem = {
@@ -88,6 +88,14 @@ export const menuItems: MenuItem[] = [
           { href: "/reporting-development/use-of-force-wizard", label: "Use of Force Wizard", icon: ShieldQuestion },
           { href: "/reporting-development/knowledge-check", label: "Knowledge Check", icon: GraduationCap },
       ],
+  },
+  {
+    label: "Training & Development",
+    icon: GraduationCap,
+    items: [
+        { href: "/training-development/role-play-simulator", label: "AI Role-Play Simulator", icon: MessageSquare },
+        { href: "/training-development/report-proofreader", label: "Report Proofreader", icon: FileCheck },
+    ],
   },
   {
       label: "Officer Wellness & Rights",
