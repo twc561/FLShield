@@ -1,46 +1,60 @@
 
-export type InstructionInfo = {
-  id: string;
-  title: string;
-  icon: string;
-  description: string;
-  officerTakeaway: string;
+
+export type InstructionPlaceholder = {
+  id: string; // e.g., "FL_JI_CRIM_8_1"
+  instructionNumber: string; // e.g., "8.1"
+  instructionTitle: string; // e.g., "Burglary"
+  category: string; // e.g., "Property Crimes"
+  icon: string; // Adding an icon for the UI
 };
 
-export const standardJuryInstructionsData: InstructionInfo[] = [
-  {
-    id: 'sji1',
-    title: 'What are Standard Jury Instructions?',
-    icon: 'ListChecks',
-    description: 'These are the official, pre-approved set of instructions that a judge reads to the jury before they begin deliberations. They explain the law that must be applied to the facts of the case. Florida has specific instructions for every criminal offense.',
-    officerTakeaway: 'The jury instructions are essentially the "rules of the game" for the trial. They turn the complex language of a statute into a clear checklist for the jury. You should write your reports to mirror the elements in these instructions.',
-  },
-  {
-    id: 'sji2',
-    title: 'The Elements of the Crime',
-    icon: 'Target',
-    description: 'For every crime, the instructions list the specific "elements" that the State must prove beyond a reasonable doubt. If even one element is not proven, the jury must find the defendant not guilty.',
-    officerTakeaway: 'This is the most critical part for you. Your investigation and report must provide evidence for *every single element* listed in the jury instruction for the crime you are charging. If your report doesn\'t establish probable cause for each element, the case may not even be filed by the prosecutor.',
-  },
-  {
-    id: 'sji3',
-    title: 'Example: Robbery Instruction (F.S. 812.13)',
-    icon: 'Gavel',
-    description: 'A typical instruction for Robbery might say: "To prove the crime of Robbery, the State must prove the following four elements beyond a reasonable doubt: 1. The defendant took money or property from the person or custody of another. 2. The defendant intended to permanently or temporarily deprive the person of the property. 3. In the course of the taking, there was a use of force, violence, assault, or putting in fear. 4. The property taken was of some value."',
-    officerTakeaway: 'Looking at this instruction, you can see your report needs to cover more than just "he stole something." You need to articulate the force used (Element 3), the intent (Element 2), what was taken (Element 1), and its value (Element 4). This structure should guide your investigation and report writing.',
-  },
-  {
-    id: 'sji4',
-    title: 'Example: Burglary Instruction (F.S. 810.02)',
-    icon: 'Home',
-    description: 'A simplified instruction for Burglary of a Dwelling: "To prove the crime of Burglary, the State must prove these two elements beyond a reasonable doubt: 1. The defendant entered a dwelling owned by or in the possession of the victim. 2. At the time of entering, the defendant had the intent to commit an offense therein (e.g., Theft)."',
-    officerTakeaway: 'Your report must clearly establish the "intent" element. Since you can\'t read minds, this is done by documenting the circumstances. For example: "The defendant was found inside the dwelling after forcing open a locked window. This supports the inference that he entered with the intent to commit a theft." This links your observation to the required legal element.',
-  },
-  {
-    id: 'sji5',
-    title: 'Reasonable Doubt',
-    icon: 'HelpCircle',
-    description: 'The instructions provide the official definition of "proof beyond a reasonable doubt." It is not a mere possible doubt, but a real doubt that would cause a reasonable and prudent person to hesitate before acting in their own most important affairs.',
-    officerTakeaway: 'This is the high bar your evidence must meet. It reinforces the need for thorough, detailed, and unbiased investigation. Your credibility as a witness is key to overcoming the defense\'s attempts to create reasonable doubt in the minds of the jury.',
-  },
+export type ElementToProve = {
+    element: string;
+    officerActions: string;
+}
+
+export type InstructionDetail = {
+  id: string;
+  instructionNumber: string;
+  instructionTitle: string;
+  fullText: string;
+  plainLanguageSummary: string;
+  elementsToProve: {
+    title: string;
+    elements: ElementToProve[];
+  };
+  relatedStatute: string;
+};
+
+export const standardJuryInstructionsPlaceholders: InstructionPlaceholder[] = [
+  // Crimes Against Persons
+  { id: "FL_JI_CRIM_7_2", instructionNumber: "7.2", instructionTitle: "First Degree Premeditated Murder", category: "Crimes Against Persons", icon: "Swords" },
+  { id: "FL_JI_CRIM_7_3", instructionNumber: "7.3", instructionTitle: "Second Degree Murder", category: "Crimes Against Persons", icon: "Swords" },
+  { id: "FL_JI_CRIM_8_3", instructionNumber: "8.3", instructionTitle: "Assault", category: "Crimes Against Persons", icon: "UserX" },
+  { id: "FL_JI_CRIM_8_4", instructionNumber: "8.4", instructionTitle: "Aggravated Assault", category: "Crimes Against Persons", icon: "UserX" },
+  { id: "FL_JI_CRIM_8_5", instructionNumber: "8.5", instructionTitle: "Battery", category: "Crimes Against Persons", icon: "UserX" },
+  { id: "FL_JI_CRIM_8_6", instructionNumber: "8.6", instructionTitle: "Felony Battery", category: "Crimes Against Persons", icon: "UserX" },
+  { id: "FL_JI_CRIM_8_7", instructionNumber: "8.7", instructionTitle: "Aggravated Battery", category: "Crimes Against Persons", icon: "UserX" },
+  { id: "FL_JI_CRIM_9_1", instructionNumber: "9.1", instructionTitle: "Kidnapping", category: "Crimes Against Persons", icon: "UserCog" },
+  
+  // Property Crimes
+  { id: "FL_JI_CRIM_13_1", instructionNumber: "13.1", instructionTitle: "Burglary", category: "Property Crimes", icon: "Home" },
+  { id: "FL_JI_CRIM_14_1", instructionNumber: "14.1", instructionTitle: "Theft", category: "Property Crimes", icon: "ShoppingCart" },
+  { id: "FL_JI_CRIM_15_1", instructionNumber: "15.1", instructionTitle: "Robbery", category: "Property Crimes", icon: "DollarSign" },
+  { id: "FL_JI_CRIM_12_3", instructionNumber: "12.3", instructionTitle: "Criminal Mischief", category: "Property Crimes", icon: "Paintbrush" },
+  { id: "FL_JI_CRIM_14_4", instructionNumber: "14.4", instructionTitle: "Dealing in Stolen Property", category: "Property Crimes", icon: "Replace" },
+
+  // Drug Offenses
+  { id: "FL_JI_CRIM_25_2", instructionNumber: "25.2", instructionTitle: "Possession of a Controlled Substance", category: "Drug Offenses", icon: "FlaskConical" },
+  { id: "FL_JI_CRIM_25_7", instructionNumber: "25.7", instructionTitle: "Drug Trafficking", category: "Drug Offenses", icon: "Truck" },
+  { id: "FL_JI_CRIM_25_17", instructionNumber: "25.17", instructionTitle: "Possession of Drug Paraphernalia", category: "Drug Offenses", icon: "Pipette" },
+
+  // Anticipatory Crimes
+  { id: "FL_JI_CRIM_5_1", instructionNumber: "5.1", instructionTitle: "Attempt", category: "Anticipatory Crimes", icon: "IterationCw" },
+  { id: "FL_JI_CRIM_10_1", instructionNumber: "10.1", instructionTitle: "Conspiracy", category: "Anticipatory Crimes", icon: "Users" },
+  
+  // Defenses
+  { id: "FL_JI_CRIM_3_6_F", instructionNumber: "3.6(f)", instructionTitle: "Justifiable Use of Deadly Force", category: "Defenses", icon: "ShieldCheck" },
+  { id: "FL_JI_CRIM_3_6_G", instructionNumber: "3.6(g)", instructionTitle: "Justifiable Use of Non-Deadly Force", category: "Defenses", icon: "Shield" },
+  { id: "FL_JI_CRIM_3_6_A", instructionNumber: "3.6(a)", instructionTitle: "Insanity", category: "Defenses", icon: "BrainCircuit" },
 ];

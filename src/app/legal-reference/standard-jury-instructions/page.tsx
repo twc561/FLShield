@@ -1,27 +1,16 @@
+
 import { PageHeader } from "@/components/PageHeader"
-import { standardJuryInstructionsData } from "@/data/legal-reference/standard-jury-instructions"
-import { Summarizer } from "@/components/Summarizer"
+import { standardJuryInstructionsPlaceholders } from "@/data/legal-reference/standard-jury-instructions"
 import { StandardJuryInstructionsClient } from "./Client"
 
 export default function StandardJuryInstructionsPage() {
-  const pageContent = standardJuryInstructionsData.map(item => 
-    `${item.title}: ${item.description}. Officer Takeaway: ${item.officerTakeaway}`
-  ).join('\n\n');
-
   return (
-    <div className="animate-fade-in-up">
-      <div className="flex justify-between items-start gap-4">
-        <PageHeader
-          title="Standard Jury Instructions"
-          description="Access to Florida's standard jury instructions for criminal cases."
-        />
-        <Summarizer 
-          documentText={pageContent}
-          documentTitle="Standard Jury Instructions Summary"
-        />
-      </div>
-
-      <StandardJuryInstructionsClient data={standardJuryInstructionsData} />
+    <div className="animate-fade-in-up h-full flex flex-col">
+      <PageHeader
+        title="Standard Jury Instructions Navigator"
+        description="Select an instruction to get a detailed, AI-powered analysis focused on the evidence needed to build a strong case."
+      />
+      <StandardJuryInstructionsClient initialPlaceholders={standardJuryInstructionsPlaceholders} />
     </div>
   )
 }

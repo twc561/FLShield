@@ -19,4 +19,5 @@ import '@/ai/flows/trilingual-tts.ts';
 import '@/ai/flows/analyze-ordinance.ts';
 import '@/ai/flows/analyze-constitution.ts';
 import '@/ai/flows/analyze-criminal-procedure-rule.ts';
+import '@/ai/flows/analyze-jury-instruction.ts';
 
