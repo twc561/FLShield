@@ -8,6 +8,7 @@ import {
   Flame,
   ChevronDown,
   LogOut,
+  Download,
 } from "lucide-react"
 import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
@@ -36,10 +37,35 @@ export function AppSidebar() {
   const router = useRouter()
   const [openStates, setOpenStates] = React.useState<Record<string, boolean>>({})
   const [isClient, setIsClient] = React.useState(false)
+  const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null)
 
   React.useEffect(() => {
     setIsClient(true)
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault()
+      setDeferredPrompt(e)
+    }
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+
+    const handleAppInstalled = () => {
+      setDeferredPrompt(null)
+    }
+    window.addEventListener('appinstalled', handleAppInstalled)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      window.removeEventListener('appinstalled', handleAppInstalled)
+    }
   }, [])
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to the install prompt: ${outcome}`);
+    setDeferredPrompt(null);
+  };
 
   const handleSignOut = async () => {
     try {
@@ -54,7 +80,6 @@ export function AppSidebar() {
     if (!isClient) return false
     if (href === "/") return pathname === "/"
     
-    // For parent routes, we want an exact match, otherwise they are always active.
     const isParent = menuItems.some(item => item.href === href);
     if (isParent) return pathname === href;
 
@@ -150,6 +175,12 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter className="flex flex-col gap-2 p-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:items-center">
+        {deferredPrompt && (
+          <SidebarMenuButton onClick={handleInstallClick} className="w-full" tooltip={{ children: "Install App", side: "right" }}>
+            <Download className="size-5" />
+            <span className="group-data-[collapsible=icon]:hidden">Install App</span>
+          </SidebarMenuButton>
+        )}
         <SidebarMenuButton onClick={handleSignOut} className="w-full" tooltip={{ children: "Sign Out", side: "right" }}>
           <LogOut className="size-5" />
           <span className="group-data-[collapsible=icon]:hidden">Sign Out</span>
