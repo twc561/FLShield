@@ -295,128 +295,6 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
       },
     ],
   },
-  'burglary-residential-response': {
-    id: 'burglary-residential-response',
-    name: 'Burglary (Residential) Response',
-    goal: 'To safely approach, contain, and clear a residence for a suspected burglary in progress, apprehend any suspects, and preserve the scene for investigation.',
-    keyStatutes: ['F.S. §810.02 (Burglary)', 'F.S. §843.01 (Resisting w/ Violence)'],
-    initialStepId: 'start',
-    walkthrough: {
-      'start': {
-        phase: 'Initial Information & Arrival',
-        title: 'Receiving the Call',
-        content: 'Dispatch reports a possible burglary in progress at a residence. What is the most critical piece of information to get from dispatch while en route?',
-        aiTip: 'Ask dispatch if anyone is supposed to be home, if the caller is still on the line, the point of entry, and if any weapons were seen. This information will dictate your approach tactics.',
-        choices: [
-          { text: "Arriving at the location.", nextStepId: "arrival" }
-        ],
-      },
-      'arrival': {
-        phase: 'Initial Information & Arrival',
-        title: 'Scene Arrival & Containment',
-        content: 'You have arrived near the location. What are your immediate tactical priorities?',
-        aiTip: 'Park several houses away and approach on foot to maintain stealth. Coordinate with backup units to establish a perimeter covering all exit points (front, back, sides) before making any approach to the house itself.',
-        choices: [
-          { text: 'Perimeter is set. Proceeding to investigate.', nextStepId: 'investigation' },
-        ],
-      },
-      'investigation': {
-        phase: 'Scene Control & Initial Investigation',
-        title: 'Initial Investigation & Entry Decision',
-        content: 'Your perimeter is set. You observe a broken window on the side of the house. What is your next move?',
-        aiTip: "The broken window provides evidence of forced entry and strengthens the exigent circumstances needed to enter without a warrant. Before entering, make loud, clear announcements, such as 'Police Department! If you are inside, come out with your hands up!'",
-        choices: [
-          { text: 'Are you making entry to search for a suspect?', nextStepId: 'entry_yes' },
-          { text: 'Are you holding the perimeter and calling for K-9/detectives?', nextStepId: 'entry_no' },
-        ],
-      },
-      'entry_yes': {
-        phase: 'Scene Control & Initial Investigation',
-        title: 'Making Entry',
-        content: 'You have decided to make entry to search for a suspect. What are the key principles of a structure search?',
-        aiTip: "Move slowly and deliberately. Clear 'fatal funnels' like doorways quickly. Use angles and cover to your advantage. Communicate constantly with your partner. The goal is to find the suspect, not just to get through the house quickly.",
-        choices: [
-          { text: "A suspect is located inside.", nextStepId: "suspect_found" },
-          { text: "The structure is clear, no suspect found.", nextStepId: "structure_clear" }
-        ]
-      },
-      'entry_no': {
-        phase: 'Scene Control & Initial Investigation',
-        title: 'Holding the Perimeter',
-        content: 'You have decided to hold the perimeter and not make immediate entry.',
-        aiTip: "This can be a sound tactical decision, especially if you are short-handed or waiting for specialized units like K-9. Maintain 360-degree security and keep dispatch updated on any changes.",
-        choices: [
-          { text: "The homeowner has arrived on scene.", nextStepId: "resolution" }
-        ]
-      },
-      'suspect_found': {
-        phase: 'Evidence Gathering & Documentation',
-        title: 'Suspect Apprehension',
-        content: 'You have located and detained a suspect inside the residence.',
-        aiTip: 'Secure the suspect and conduct a search incident to arrest. Read Miranda rights if you intend to question them. Keep them separated from any victims or witnesses. Note their clothing, what they are carrying, and any statements they make.',
-        choices: [
-          { text: 'Proceed to securing the scene.', nextStepId: 'scene_preservation' },
-        ],
-      },
-      'structure_clear': {
-        phase: 'Evidence Gathering & Documentation',
-        title: 'Structure Clear',
-        content: 'You have completed your search and the house is clear of any suspects.',
-        aiTip: 'Even though no suspect was found, the crime of burglary has still occurred. Do not let your guard down. The suspect may still be nearby.',
-        choices: [
-          { text: 'Proceed to securing the scene.', nextStepId: 'scene_preservation' },
-        ],
-      },
-      'scene_preservation': {
-        phase: 'Resolution & Enforcement Action',
-        title: 'Crime Scene Preservation',
-        content: 'The structure is secure. What are the next steps?',
-        aiLegalNote: 'Once the immediate threat is gone, your role shifts from tactical to investigator. Do not touch or move anything. Protect the scene with crime scene tape, start a scene log, and notify your supervisor and detectives. The integrity of the evidence is now the top priority.',
-        isEnd: true,
-      },
-       'resolution': {
-        phase: 'Resolution & Enforcement Action',
-        title: 'Concluding the Incident',
-        content: 'The scene is secure and ready for processing by detectives or a crime scene unit.',
-        aiLegalNote: 'Your detailed report is critical. It must articulate the initial dispatch information, your own observations that created exigent circumstances for entry, your tactical actions, and everything you did to preserve the scene. This documentation justifies your warrantless entry and actions.',
-        isEnd: true,
-      }
-    },
-    staticChecklist: [
-      {
-        section: 'Approach & Containment',
-        icon: 'Building',
-        items: [
-          'Approach silently, park away from the scene.',
-          'Coordinate with backup to establish a 360-degree perimeter.',
-          'Visually inspect the exterior for points of entry, signs of forced entry, or movement.',
-          'Gather information from the complainant if they are on scene and it is safe to do so.',
-        ],
-      },
-      {
-        section: 'Entry, Search & Apprehension',
-        icon: 'Search',
-        items: [
-          "Make loud, clear announcements before entry ('Police Department!').",
-          "Use proper clearing techniques (e.g., slicing the pie, crossing doorways).",
-          "Communicate constantly with your team during the search.",
-          "If a suspect is located, challenge, control, and handcuff them safely.",
-          "Conduct a thorough search of the structure until it is deemed clear.",
-        ],
-      },
-      {
-        section: 'Scene Preservation & Documentation',
-        icon: 'FileText',
-        items: [
-          "Secure the scene with crime scene tape.",
-          "Establish a single point of entry/exit and start a crime scene log.",
-          "Protect potential evidence from contamination or environmental damage.",
-          "Brief your supervisor and the responding detectives.",
-          "Write a detailed report articulating your actions and justifications.",
-        ],
-      },
-    ],
-  },
   'domestic-violence-investigation': {
     id: 'domestic-violence-investigation',
     name: 'Domestic Violence Investigation',
@@ -425,100 +303,221 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
     initialStepId: 'start',
     walkthrough: {
         'start': {
-            phase: 'Initial Information & Arrival',
+            phase: 'Dispatch & Tactical Approach',
             title: 'Receiving the Call',
-            content: 'Dispatch reports a physical domestic disturbance. What key information should you request?',
-            aiTip: 'Ask about weapons, intoxication, prior DV history at the address, if children are present, and if the line is still open. Listen for background noise on the call if possible.',
-            choices: [{ text: "Arriving on scene.", nextStepId: "arrival" }]
+            content: 'You are dispatched to a physical domestic disturbance. Critical info to get from dispatch: Are weapons involved? Is anyone injured? History of calls at this address? Who is the complainant?',
+            aiTip: 'Park your vehicle at least one house away. Turn down your radio and listen at the door/windows for a few moments before knocking. Always have a cover officer.',
+            choices: [{ text: "Arrived on scene.", nextStepId: "arrival" }]
         },
         'arrival': {
-            phase: 'Initial Information & Arrival',
+            phase: 'Scene Control & Initial Contact',
             title: 'Tactical Approach & Scene Entry',
-            content: 'You and your partner have arrived. How do you approach the door?',
-            aiTip: "Never stand directly in front of the door. Stand on either side of the 'fatal funnel.' Listen for a few moments before knocking to get a sense of the situation inside.",
-            choices: [{ text: "Contact has been made at the door.", nextStepId: "scene_control" }]
-        },
-        'scene_control': {
-            phase: 'Scene Control & Initial Investigation',
-            title: 'Separation of Parties',
-            content: "You've made contact and entered the residence. What is your immediate priority?",
-            aiTip: 'Separate the parties immediately. Move them to different rooms where they cannot see or hear each other. This prevents them from intimidating each other and allows you to get independent statements.',
+            content: "You've made it to the location. When the door is opened, position yourselves to prevent it from being closed on you. Immediately move to visually identify and separate all parties involved.",
+            aiTip: 'Never let the involved parties see you write in your notepad; it can escalate tension. Observe and listen first, document later when safe.',
             choices: [{ text: "Parties are separated. Begin investigation.", nextStepId: "investigation" }]
         },
         'investigation': {
-            phase: 'Scene Control & Initial Investigation',
+            phase: 'Investigation & Evidence',
             title: 'Initial Investigation & Injury Assessment',
-            content: "You are speaking with the apparent victim. What are you looking for and what are your key questions?",
-            aiTip: "Ask about their safety first. Then use open-ended questions like 'Can you tell me what happened tonight?' Look for visible injuries, even minor redness or scratches, and ask about any pain they are having.",
-            choices: [{ text: "Are there visible injuries?", nextStepId: "injuries_yes" }, { text: "No visible injuries.", nextStepId: "injuries_no" }]
+            content: "You've separated the parties and are beginning your interviews. Are there visible injuries on any person?",
+            aiTip: "Your first priority is safety and medical aid. Even if injuries seem minor, ask if the person wants EMS to respond. This demonstrates care and is crucial for documentation.",
+            choices: [{ text: "Yes, injuries are visible.", nextStepId: "injuries_yes" }, { text: "No, no visible injuries.", nextStepId: "injuries_no" }]
         },
         'injuries_yes': {
-            phase: 'Evidence Gathering & Documentation',
-            title: 'Documenting Injuries',
-            content: 'You have observed visible injuries on one or both parties.',
-            aiTip: 'Photograph all injuries with and without a scale marker. Take photos from multiple angles. Note the location and description of each injury in your report. Ask the victim how they received each specific injury.',
-            choices: [{ text: "Proceed to determine primary aggressor.", nextStepId: "primary_aggressor" }]
+            phase: 'Investigation & Evidence',
+            title: 'Visible Injuries Found',
+            content: "Immediately call for EMS if injuries are significant. Photograph all injuries on all parties from multiple angles (with and without a scale). Ask specific questions about how the injuries occurred. Note any inconsistencies.",
+            choices: [{ text: "Next, check for children.", nextStepId: "check_children" }]
         },
         'injuries_no': {
-            phase: 'Evidence Gathering & Documentation',
+            phase: 'Investigation & Evidence',
             title: 'No Visible Injuries',
-            content: 'Neither party has obvious, visible injuries.',
-            aiTip: "The absence of visible injury does not mean a crime didn't occur. Look for other evidence: signs of a struggle (overturned furniture), torn clothing, and listen for fear in the victim's voice. A battery can be a simple unwanted touching.",
+            content: "State in your report that you observed no visible injuries on any party at the time of your investigation. Ask if anyone is hurt or requires medical attention, even without visible signs. The absence of injury does not mean a crime did not occur.",
+            choices: [{ text: "Next, check for children.", nextStepId: "check_children" }]
+        },
+        'check_children': {
+            phase: 'Investigation & Evidence',
+            title: 'Presence of Children',
+            content: 'Are children present or were they present during the altercation?',
+            choices: [{ text: "Yes, children are present.", nextStepId: "children_present" }, { text: "No, no children present.", nextStepId: "children_not_present" }]
+        },
+        'children_present': {
+            phase: 'Investigation & Evidence',
+            title: 'Children Present',
+            content: "Check on the welfare and safety of the children immediately. Conduct a brief, non-leading interview with the children if age-appropriate and away from the parents.",
+            aiLegalNote: "You are a mandatory reporter. If you have any suspicion of child abuse or neglect (F.S. §39.201), you must make a report to the DCF hotline.",
+            choices: [{ text: "Proceed to determine primary aggressor.", nextStepId: "primary_aggressor" }]
+        },
+        'children_not_present': {
+            phase: 'Investigation & Evidence',
+            title: 'No Children Present',
+            content: "Document in your report that no children were present during the incident.",
             choices: [{ text: "Proceed to determine primary aggressor.", nextStepId: "primary_aggressor" }]
         },
         'primary_aggressor': {
-            phase: 'Evidence Gathering & Documentation',
+            phase: 'Enforcement & Resolution',
             title: 'Primary Aggressor Determination',
-            content: "You are assessing both parties' statements and the evidence to determine the primary aggressor.",
-            aiLegalNote: "Florida law requires you to arrest the primary aggressor. Consider the severity of injuries, history of violence, statements from witnesses (including children), and signs of defensive versus offensive wounds. Avoid dual arrests unless both parties are clearly mutual combatants.",
-            choices: [{ text: "An arrest will be made.", nextStepId: "arrest" }, { text: "No arrest will be made.", nextStepId: "no_arrest" }]
+            content: "Based on the totality of the circumstances (injuries, statements, evidence, history), have you identified the primary aggressor?",
+            aiTip: "Review defensive vs. offensive injuries, relative size/strength of parties, and history of calls to justify your decision. Avoid dual arrests unless absolutely necessary and articulable.",
+            choices: [{ text: "Yes, primary aggressor identified.", nextStepId: "arrest" }, { text: "No, cannot determine.", nextStepId: "no_arrest" }]
         },
         'arrest': {
-            phase: 'Resolution & Enforcement Action',
-            title: 'Arrest & Victim Resources',
-            content: 'You have probable cause to arrest the primary aggressor.',
-            aiTip: 'Make the arrest. Inform the victim of the process for obtaining an injunction for protection and provide them with the contact information for the local certified domestic violence center. Document that you provided these resources.',
+            phase: 'Enforcement & Resolution',
+            title: 'Arrest Made',
+            content: 'Place the primary aggressor under arrest. Provide the victim(s) with a domestic violence information card/pamphlet, which includes contact information for local shelters and instructions on how to file for an injunction for protection. Document in your report that you provided this information.',
+            aiLegalNote: "Per F.S. §741.29, Florida has a pro-arrest policy for domestic violence. If you have probable cause to believe a domestic violence crime has been committed, you SHALL arrest and take that person into custody.",
             isEnd: true
         },
         'no_arrest': {
-            phase: 'Resolution & Enforcement Action',
-            title: 'No Arrest - Report for Information',
-            content: 'You have determined there is no probable cause for an arrest.',
-            aiTip: 'Clearly articulate in your report why no arrest was made (e.g., conflicting stories with no independent evidence). Still provide all parties with information on domestic violence resources. Ensure you complete a detailed report for documentation purposes.',
+            phase: 'Enforcement & Resolution',
+            title: 'No Arrest Made',
+            content: 'Thoroughly document in your report why a primary aggressor could not be identified (e.g., conflicting stories with no independent evidence). Strongly advise and assist with temporary separation of the parties. Provide all parties with DV resources.',
             isEnd: true
         }
     },
     staticChecklist: [
       {
-        section: 'Initial Response & Scene Management',
-        icon: 'Home',
+        section: 'Scene Management',
+        icon: 'ShieldAlert',
         items: [
-            'Wait for backup if possible; approach silently and listen at the door.',
-            'Enter and immediately separate all parties involved.',
-            'Scan for weapons and ensure the scene is safe.',
-            'Request medical assistance for any injuries observed.',
+          'Conduct a tactical, listening approach.',
+          'Immediately separate all parties upon entry.',
+          'Check on the welfare of any children present.',
+          'Call for EMS for any significant injuries.',
+          'Scan the residence for signs of a struggle or physical evidence.',
         ]
       },
       {
-        section: 'Investigation & Evidence Collection',
+        section: 'Investigation',
         icon: 'Search',
         items: [
-            'Interview victim, suspect, and any witnesses (including children) separately.',
-            'Photograph all injuries, the overall scene, and any signs of struggle.',
-            'Record any excited utterances made upon your arrival.',
-            'Check for prior DV history and active injunctions via dispatch.',
-            'Collect written statements if possible and parties are willing.',
+          'Obtain independent, recorded statements from all parties.',
+          'Photograph all injuries, damaged property, and the overall scene.',
+          'Ask about relationship status and if they live together (defines the "domestic" nature).',
+          'Run all parties for warrants and history (injunctions, prior DV calls).',
+          'Attempt to identify the primary aggressor based on the evidence.',
         ]
       },
       {
-        section: 'Concluding Actions & Paperwork',
+        section: 'Resolution & Reporting',
         icon: 'FileText',
         items: [
-            'Determine and arrest the primary aggressor based on the evidence.',
-            'Provide victim with DV shelter information and injunction paperwork instructions.',
-            'Inform victim of case number and next steps.',
-            'Complete a detailed DV supplement/report, articulating PC for the arrest or reasons for non-arrest.',
-            'If children were present, determine if a report to DCF is necessary.',
+          'If probable cause exists, arrest the primary aggressor.',
+          'Read Miranda Rights post-arrest if questioning about the crime.',
+          'Provide the victim(s) with a DV resources pamphlet/card.',
+          'Document in the narrative that the victim was provided with resources.',
+          'Complete the full offense report, ensuring all elements of Assault/Battery are articulated.',
+          'If required, make a DCF report regarding any children involved.',
+        ]
+      }
+    ]
+  },
+  'burglary-residential-in-progress': {
+    id: 'burglary-residential-in-progress',
+    name: 'Burglary (Residential) In Progress',
+    goal: 'To safely clear a structure, apprehend suspects if present, and preserve the crime scene.',
+    keyStatutes: ['F.S. §810.02 (Burglary)'],
+    initialStepId: 'start',
+    walkthrough: {
+        'start': {
+            phase: 'Dispatch & Tactical Approach',
+            title: 'Receiving the Call',
+            content: 'Dispatch reports a burglary in progress. Key info: Is the caller the homeowner? Are they inside or outside? Is there a suspect description? Were weapons seen? What was the point of entry?',
+            aiTip: 'All responding units should turn off sirens and lights several blocks away to maintain a silent approach. Determine rally points before arriving.',
+            choices: [{ text: "Arriving near scene.", nextStepId: "arrival" }]
+        },
+        'arrival': {
+            phase: 'Perimeter & Containment',
+            title: 'Containment and Observation',
+            content: 'You are the first unit on scene. What is your primary job?',
+            aiTip: 'Containment and observation from a position of cover. Do not rush to the front door. The first two units should cover the primary corners of the structure to observe all points of exit.',
+            choices: [{ text: "Perimeter is set. Any suspects seen?", nextStepId: "perimeter_check" }]
+        },
+        'perimeter_check': {
+            phase: 'Perimeter & Containment',
+            title: 'Perimeter Check',
+            content: 'You are holding the perimeter and observing the residence.',
+            choices: [{ text: "Yes, suspect is seen exiting.", nextStepId: "suspect_exiting" }, { text: "No, no suspect seen.", nextStepId: "entry_decision" }]
+        },
+        'suspect_exiting': {
+            phase: 'Perimeter & Containment',
+            title: 'Suspect Seen Exiting',
+            content: 'Give clear verbal commands from cover. Initiate a felony stop procedure. Do not abandon the perimeter until the suspect is in custody and it\'s confirmed they were acting alone.',
+            isEnd: true
+        },
+        'entry_decision': {
+            phase: 'Building Entry & Search',
+            title: 'Entry Decision',
+            content: 'Based on all available information, do you believe the suspect is still inside the residence?',
+            choices: [{ text: "Yes, believe suspect is inside.", nextStepId: "make_entry" }, { text: "No, believe suspect is gone.", nextStepId: "hold_perimeter" }]
+        },
+        'make_entry': {
+            phase: 'Building Entry & Search',
+            title: 'Making Entry',
+            content: "Form an entry team (minimum two officers). Announce your presence loudly ('Police Department! Come out with your hands up!'). Begin a slow, methodical search.",
+            aiTip: "Do not enter through the same point of entry as the burglar if possible. They may be watching it. Be mindful of 'fatal funnels' like doorways and hallways.",
+            choices: [{ text: "A suspect is located inside.", nextStepId: "suspect_found" }, { text: "The structure is clear, no suspect found.", nextStepId: "structure_clear" }]
+        },
+        'hold_perimeter': {
+            phase: 'Building Entry & Search',
+            title: 'Holding Perimeter (Suspect Gone)',
+            content: 'Do not enter. Hold the perimeter and treat the location as a crime scene. Wait for the homeowner/keyholder to arrive to avoid contaminating evidence.',
+            isEnd: true
+        },
+        'suspect_found': {
+            phase: 'Resolution & Investigation',
+            title: 'Suspect Found Inside',
+            content: 'You have located and arrested a suspect inside. Secure them away from the main crime scene area. Read Miranda Rights. After the arrest, conduct a final, slower walk-through to ensure no other suspects are present and to identify evidence.',
+            choices: [{ text: "Begin scene preservation.", nextStepId: "final_actions" }]
+        },
+        'structure_clear': {
+            phase: 'Resolution & Investigation',
+            title: 'Structure Clear (Suspect Gone)',
+            content: 'The structure is clear. Once the homeowner arrives, conduct a walk-through with them to determine what, if anything, was stolen. Establish a single entry/exit path to avoid contaminating the scene.',
+            choices: [{ text: "Begin scene preservation.", nextStepId: "final_actions" }]
+        },
+        'final_actions': {
+            phase: 'Resolution & Investigation',
+            title: 'Scene Investigation',
+            content: "The scene is safe. Photograph the scene extensively, especially points of entry/exit. Look for fingerprints, footprints, or tools left behind. Canvass the neighborhood for witnesses and video surveillance.",
+            aiLegalNote: 'Your warrantless entry was justified by exigent circumstances (a felony in progress). Once the scene is secure, you need a search warrant for a full forensic search unless you get valid consent from the homeowner.',
+            isEnd: true
+        }
+    },
+    staticChecklist: [
+      {
+        section: 'Tactical Response',
+        icon: 'Building',
+        items: [
+          'Conduct a silent, emergency response approach.',
+          'Establish a secure 360-degree perimeter with responding units.',
+          'Communicate positions and observations clearly via radio.',
+          'If a suspect is inside, make loud announcements before entry.',
+          'Conduct a slow, methodical, and safe search of the structure.',
+          'If a suspect is apprehended, conduct a safe felony arrest procedure.',
+        ]
+      },
+      {
+        section: 'Crime Scene Investigation',
+        icon: 'Search',
+        items: [
+          'After the scene is safe, secure it with crime scene tape.',
+          'Create a single path for entry/exit to minimize contamination.',
+          'Photograph the entire scene (overall, mid-range, and close-up).',
+          'Document and photograph all points of entry and exit.',
+          'Identify, flag, and collect any potential evidence (fingerprints, DNA, tools).',
+          'Interview the homeowner to get a list of stolen property with serial numbers.',
+        ]
+      },
+      {
+        section: 'Reporting & Follow-Up',
+        icon: 'FileText',
+        items: [
+          'Conduct a thorough neighborhood canvass for witnesses or video evidence.',
+          'Provide the victim with a case number and victim\'s rights information.',
+          'Complete the full offense report for Burglary (F.S. §810.02).',
+          'Enter all stolen property with serial numbers into FCIC/NCIC.',
+          'If a suspect was arrested, complete all associated arrest paperwork.',
         ]
       }
     ]
