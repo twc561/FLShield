@@ -1,4 +1,13 @@
 
+export type CriteriaPoint = {
+    criterion: string;
+    whatItLooksLike: string;
+};
+
+export type TrilingualCriteria = {
+    criteriaPoints: CriteriaPoint[];
+};
+
 export type MarchmanActGuide = {
   id: string;
   title: string;
@@ -15,10 +24,9 @@ export type MarchmanActGuide = {
   };
   criteriaForInitiation: {
     title: string;
-    criteriaPoints: {
-      criterion: string;
-      whatItLooksLike: string;
-    }[];
+    english: TrilingualCriteria;
+    spanish: TrilingualCriteria;
+    haitian_creole: TrilingualCriteria;
   };
   officerProcedure: {
     title: string;
@@ -65,20 +73,54 @@ export const marchmanActGuideData: MarchmanActGuide = {
   },
   criteriaForInitiation: {
     title: "Criteria for Involuntary Assessment (with Examples)",
-    criteriaPoints: [
-      {
-        criterion: "The person has lost the power of self-control with respect to substance use.",
-        whatItLooksLike: "Articulate specific observations: Subject admits to an inability to stop using despite negative consequences (e.g., 'I can't stop drinking'); witness statements confirm a pattern of uncontrollable use; subject is found in a state of extreme intoxication and unable to function.",
-      },
-      {
-        criterion: "The person is likely to suffer from neglect or refuse to care for themselves, and such refusal or neglect poses a real and present threat of substantial harm.",
-        whatItLooksLike: "Articulate specific observations: Subject is found in unsanitary conditions, is severely malnourished or dehydrated directly due to substance use, or is unable to provide for their own basic needs like food, shelter, or medical care for an existing serious condition.",
-      },
-      {
-        criterion: "There is a substantial likelihood the person will cause serious bodily harm to themselves or others in the near future, as evidenced by recent behavior.",
-        whatItLooksLike: "Articulate specific observations: Overt threats of suicide or harm to others while intoxicated; a recent history of physical violence while under the influence; repeated attempts to operate a vehicle while severely impaired; recent accidental overdoses requiring medical intervention.",
-      },
-    ],
+    english: {
+        criteriaPoints: [
+          {
+            criterion: "The person has lost the power of self-control with respect to substance use.",
+            whatItLooksLike: "Articulate specific observations: Subject admits to an inability to stop using despite negative consequences (e.g., 'I can't stop drinking'); witness statements confirm a pattern of uncontrollable use; subject is found in a state of extreme intoxication and unable to function.",
+          },
+          {
+            criterion: "The person is likely to suffer from neglect or refuse to care for themselves, and such refusal or neglect poses a real and present threat of substantial harm.",
+            whatItLooksLike: "Articulate specific observations: Subject is found in unsanitary conditions, is severely malnourished or dehydrated directly due to substance use, or is unable to provide for their own basic needs like food, shelter, or medical care for an existing serious condition.",
+          },
+          {
+            criterion: "There is a substantial likelihood the person will cause serious bodily harm to themselves or others in the near future, as evidenced by recent behavior.",
+            whatItLooksLike: "Articulate specific observations: Overt threats of suicide or harm to others while intoxicated; a recent history of physical violence while under the influence; repeated attempts to operate a vehicle while severely impaired; recent accidental overdoses requiring medical intervention.",
+          },
+        ],
+    },
+    spanish: {
+        criteriaPoints: [
+          {
+            criterion: "La persona ha perdido el poder de autocontrol con respecto al uso de sustancias.",
+            whatItLooksLike: "Articule observaciones específicas: El sujeto admite su incapacidad para dejar de consumir a pesar de las consecuencias negativas (p. ej., 'No puedo dejar de beber'); las declaraciones de testigos confirman un patrón de consumo incontrolable; el sujeto se encuentra en un estado de intoxicación extrema e incapaz de funcionar.",
+          },
+          {
+            criterion: "Es probable que la persona sufra de negligencia o se niegue a cuidarse a sí misma, y dicha negativa o negligencia representa una amenaza real y presente de daño sustancial.",
+            whatItLooksLike: "Articule observaciones específicas: El sujeto se encuentra en condiciones insalubres, está gravemente desnutrido o deshidratado directamente por el consumo de sustancias, o es incapaz de satisfacer sus propias necesidades básicas como comida, refugio o atención médica para una condición grave existente.",
+          },
+          {
+            criterion: "Existe una probabilidad sustancial de que la persona cause un daño corporal grave a sí misma o a otros en un futuro cercano, como lo demuestra su comportamiento reciente.",
+            whatItLooksLike: "Articule observaciones específicas: Amenazas abiertas de suicidio o de dañar a otros mientras está intoxicado; un historial reciente de violencia física bajo la influencia; intentos repetidos de operar un vehículo en estado de ebriedad grave; sobredosis accidentales recientes que requirieron intervención médica.",
+          },
+        ],
+    },
+    haitian_creole: {
+        criteriaPoints: [
+          {
+            criterion: "Moun nan pèdi pouvwa pou kontwole tèt li anrapò ak itilizasyon sibstans.",
+            whatItLooksLike: "Atikile obsèvasyon espesifik: Sijè a admèt yon enkapasite pou sispann itilize malgre konsekans negatif (pa egzanp, 'Mwen pa ka sispann bwè'); deklarasyon temwen konfime yon modèl itilizasyon san kontwòl; sijè a jwenn nan yon eta entoksikasyon ekstrèm epi li pa kapab fonksyone.",
+          },
+          {
+            criterion: "Li posib pou moun nan soufri akoz neglijans oswa refize pran swen tèt li, e refi oswa neglijans sa a reprezante yon menas reyèl e prezan pou gwo domaj.",
+            whatItLooksLike: "Atikile obsèvasyon espesifik: Yo jwenn sijè a nan kondisyon ki pa ijyenik, li soufri malnitrisyon grav oswa dezidratasyon dirèkteman akoz itilizasyon sibstans, oswa li pa kapab satisfè bezwen debaz li tankou manje, abri, oswa swen medikal pou yon kondisyon grav ki deja egziste.",
+          },
+          {
+            criterion: "Gen yon gwo chans pou moun nan koze gwo domaj kòporèl sou tèt li oswa sou lòt moun nan fiti prè, jan konpòtman resan li montre sa.",
+            whatItLooksLike: "Atikile obsèvasyon espesifik: Menas klè pou swisid oswa pou fè lòt moun mal pandan li sou; yon istwa resan vyolans fizik anba enfliyans; tantativ repete pou opere yon veyikil pandan li sou anpil; surdoz aksidantèl resan ki te mande entèvansyon medikal.",
+          },
+        ],
+    },
   },
   officerProcedure: {
     title: "Your Step-by-Step Field Procedure",

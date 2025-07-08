@@ -61,6 +61,22 @@ const Section = ({
   </AccordionItem>
 );
 
+const CriteriaDetailView = ({ criteriaPoints }: { criteriaPoints: MarchmanActGuide['criteriaForInitiation']['english']['criteriaPoints'] }) => (
+    <div className="space-y-4">
+        {criteriaPoints.map((point) => (
+            <Card key={point.criterion} className="bg-muted/50">
+                <CardHeader>
+                    <CardTitle className="text-base">{point.criterion}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground"><strong className="text-foreground/80">What it Looks Like:</strong> {point.whatItLooksLike}</p>
+                </CardContent>
+            </Card>
+        ))}
+    </div>
+);
+
+
 export const MarchmanActClient = React.memo(
   function MarchmanActClient({
     guideData,
@@ -92,16 +108,22 @@ export const MarchmanActClient = React.memo(
         </Section>
 
         <Section title={guideData.criteriaForInitiation.title} icon={Gavel} value="part2">
-          {guideData.criteriaForInitiation.criteriaPoints.map((point) => (
-             <Card key={point.criterion} className="bg-muted/50">
-                <CardHeader>
-                    <CardTitle className="text-base">{point.criterion}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-sm text-muted-foreground"><strong className="text-foreground/80">What it Looks Like:</strong> {point.whatItLooksLike}</p>
-                </CardContent>
-             </Card>
-          ))}
+           <Tabs defaultValue="english" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="english">English</TabsTrigger>
+                <TabsTrigger value="spanish">Español</TabsTrigger>
+                <TabsTrigger value="haitian_creole">Kreyòl Ayisyen</TabsTrigger>
+            </TabsList>
+            <TabsContent value="english" className="mt-4">
+                <CriteriaDetailView criteriaPoints={guideData.criteriaForInitiation.english.criteriaPoints} />
+            </TabsContent>
+            <TabsContent value="spanish" className="mt-4">
+                <CriteriaDetailView criteriaPoints={guideData.criteriaForInitiation.spanish.criteriaPoints} />
+            </TabsContent>
+            <TabsContent value="haitian_creole" className="mt-4">
+                <CriteriaDetailView criteriaPoints={guideData.criteriaForInitiation.haitian_creole.criteriaPoints} />
+            </TabsContent>
+          </Tabs>
         </Section>
 
         <Section title={guideData.officerProcedure.title} icon={CheckCircle} value="part3">
