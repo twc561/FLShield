@@ -126,7 +126,7 @@ export function AppSidebar() {
                       <SidebarMenuItem key={subItem.label}>
                         <SidebarMenuSubButton asChild isActive={isActive(subItem.href)}>
                           <Link href={subItem.href}>
-                             <subItem.icon />
+                             <subItem.icon className="size-4 shrink-0" />
                             <span>{subItem.label}</span>
                           </Link>
                         </SidebarMenuSubButton>
