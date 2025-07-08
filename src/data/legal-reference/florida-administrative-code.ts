@@ -1,48 +1,84 @@
 
-export type FacInfo = {
-  id: string;
-  title: string;
+export type FacPlaceholder = {
+  id: string; // e.g., "FAC_61A-3_0141"
+  ruleNumber: string; // e.g., "61A-3.0141"
+  ruleTitle: string;
+  category: string;
   icon: string;
-  description: string;
-  details: string[];
-  officerImpact: string;
 };
 
-export const floridaAdministrativeCodeData: FacInfo[] = [
+export type FacDetail = {
+  id: string;
+  ruleNumber: string;
+  ruleTitle: string;
+  governingAgency: string;
+  fullText: string;
+  plainLanguageSummary: string;
+  enforcementGuidance: {
+    title: string;
+    points: string[];
+  };
+  relatedStateStatute: string;
+};
+
+export const facPlaceholders: FacPlaceholder[] = [
+  // DBPR - Alcoholic Beverages & Tobacco
   {
-    id: 'fac1',
-    title: 'What is the Florida Administrative Code (FAC)?',
-    icon: 'Building',
-    description: 'The FAC is the official compilation of the rules and regulations of Florida\'s state agencies. While the Florida Statutes are the laws passed by the Legislature, the FAC contains the specific rules that agencies create to implement and enforce those laws.',
-    details: [
-      'It is a massive body of regulations covering everything from environmental protection to professional licensing.',
-      'For law enforcement, the most relevant sections are those created by the Florida Department of Law Enforcement (FDLE) and the Department of Highway Safety and Motor Vehicles (DHSMV).',
-      'The FAC provides the detailed "how-to" for many statutory requirements.'
-    ],
-    officerImpact: 'The FAC dictates the specific procedures you must follow for things like officer certification, use of the breathalyzer, and vehicle inspections. Failure to follow these rules can jeopardize a case or even your certification.',
+    id: "FAC_61A-3_0141",
+    ruleNumber: "61A-3.0141",
+    ruleTitle: "Beverage and Food Service in Licensed Premises",
+    category: "Dept. of Business & Professional Regulation (DBPR - Alcoholic Beverages & Tobacco)",
+    icon: "Beer",
   },
   {
-    id: 'fac2',
-    title: 'Chapter 11B: Criminal Justice Standards and Training Commission (CJSTC)',
-    icon: 'Award',
-    description: 'This chapter, administered by FDLE, governs all aspects of law enforcement officer certification, training, and standards of conduct in Florida.',
-    details: [
-      '11B-27: Sets forth the standards for certification, including moral character requirements and grounds for disciplinary action.',
-      '11B-30: Outlines the curriculum requirements for basic recruit training.',
-      '11B-35: Details the requirements for mandatory retraining, including firearms qualification and continuing education.'
-    ],
-    officerImpact: 'This chapter is the rulebook for your career. It defines what can get you decertified (e.g., a felony conviction, false statements, excessive force) and the training you are required to maintain to keep your job.',
+    id: "FAC_61A-4_006",
+    ruleNumber: "61A-4.006",
+    ruleTitle: "Hours of Sale and Service of Alcoholic Beverages",
+    category: "Dept. of Business & Professional Regulation (DBPR - Alcoholic Beverages & Tobacco)",
+    icon: "Clock",
+  },
+  // FWC
+  {
+    id: "FAC_68A-12_002",
+    ruleNumber: "68A-12.002",
+    ruleTitle: "General Methods of Taking Game",
+    category: "Fish & Wildlife Conservation Commission (FWC)",
+    icon: "Crosshair",
   },
   {
-    id: 'fac3',
-    title: 'Chapter 11D-8: Implied Consent Program (Breath Testing)',
-    icon: 'Wind',
-    description: 'This chapter contains the highly specific rules for administering breath alcohol tests using the Intoxilyzer or similar instruments.',
-    details: [
-      'Sets requirements for the approval and registration of breath test instruments.',
-      'Defines the qualifications and training required for breath test operators and agency inspectors.',
-      'Specifies the exact operational procedures, including observation periods, required checks, and documentation, that must be followed for a breath test to be admissible in court.'
-    ],
-    officerImpact: 'If you are a breath test operator, you must know these rules inside and out. Any deviation from the procedures outlined in 11D-8 can lead to the suppression of the breath test result in a DUI case, potentially causing the case to be lost.',
+    id: "FAC_68A-24_002",
+    ruleNumber: "68A-24.002",
+    ruleTitle: "General Provisions for Taking, Possession, and Sale of Fur-bearing Animals",
+    category: "Fish & Wildlife Conservation Commission (FWC)",
+    icon: "Cat",
+  },
+  {
+    id: "FAC_68B-22",
+    ruleNumber: "68B-22",
+    ruleTitle: "Red Drum (Redfish)",
+    category: "Fish & Wildlife Conservation Commission (FWC)",
+    icon: "Fish",
+  },
+  {
+    id: "FAC_68D-24_003",
+    ruleNumber: "68D-24.003",
+    ruleTitle: "Vessel Speed Restrictions",
+    category: "Fish & Wildlife Conservation Commission (FWC)",
+    icon: "Waves",
+  },
+  // DHSMV
+  {
+    id: "FAC_15A-6_013",
+    ruleNumber: "15A-6.013",
+    ruleTitle: "Procedures for Breath Alcohol Testing",
+    category: "Dept. of Highway Safety & Motor Vehicles (DHSMV)",
+    icon: "Wind",
+  },
+  {
+    id: "FAC_15B-11_002",
+    ruleNumber: "15B-11.002",
+    ruleTitle: "Exhaust Systems",
+    category: "Dept. of Highway Safety & Motor Vehicles (DHSMV)",
+    icon: "Truck",
   },
 ];
