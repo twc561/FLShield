@@ -8,42 +8,70 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { AlertPlaceholder } from "@/data/emergency-response"
 import type { AnalyzeAlertGuideOutput } from "@/ai/flows/analyze-alert-guide"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, Sparkles, ShieldCheck } from "lucide-react"
+import { Loader2, Sparkles, PhoneCall, Phone } from "lucide-react"
 import { analyzeAlertGuide } from "@/ai/flows/analyze-alert-guide"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
 const DetailView = React.memo(({ detail }: { detail: AnalyzeAlertGuideOutput }) => (
-  <div className="space-y-4">
-    <p className="text-muted-foreground">{detail.purpose}</p>
-
-    <h3 className="font-semibold text-lg">Activation Criteria</h3>
-    <ul className="list-decimal pl-5 space-y-2 text-muted-foreground">
-      {detail.activationCriteria.map((item, i) => <li key={i}>{item}</li>)}
-    </ul>
-
-    <Alert className="bg-accent/20 border-accent/50">
-      <ShieldCheck className="h-4 w-4 text-accent" />
-      <AlertTitle>Initiation Procedure</AlertTitle>
-      <AlertDescription>
-        <ol className="list-decimal pl-5 space-y-1 mt-2">
-            {detail.initiationProcedure.map((item, i) => <li key={i}>{item}</li>)}
-        </ol>
-      </AlertDescription>
-    </Alert>
-
-    <Button asChild>
-      <Link href="tel:1-888-356-4774">
-        <LucideIcons.Phone className="mr-2 h-4 w-4" />
-        Initiate Alert (Call FDLE MEPIC)
-      </Link>
-    </Button>
-  </div>
-));
+    <div className="space-y-6">
+      <p className="text-muted-foreground">{detail.purpose}</p>
+  
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Activation Criteria Checklist</CardTitle>
+          <CardDescription>All criteria must be met to issue the alert.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ul className="list-decimal pl-5 space-y-2 text-muted-foreground">
+            {detail.activationCriteria.map((item, i) => <li key={i}>{item}</li>)}
+          </ul>
+        </CardContent>
+      </Card>
+  
+      <Card>
+          <CardHeader>
+              <CardTitle className="text-lg">Key Information to Have Ready</CardTitle>
+              <CardDescription>Before calling, gather this information to expedite the process.</CardDescription>
+          </CardHeader>
+          <CardContent>
+              <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
+                  {detail.keyInformationForLEO.map((item, i) => <li key={i}>{item}</li>)}
+              </ul>
+          </CardContent>
+      </Card>
+  
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Initiation Procedure</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ol className="list-decimal pl-5 space-y-2 text-muted-foreground">
+              {detail.initiationProcedure.map((item, i) => <li key={i}>{item}</li>)}
+          </ol>
+          <Alert className="mt-4">
+              <PhoneCall className="h-4 w-4" />
+              <AlertTitle>{detail.contactInfo.agency}</AlertTitle>
+              <AlertDescription>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-2">
+                      <p>Phone: {detail.contactInfo.phone}</p>
+                      <Button asChild variant="secondary" size="sm" className="mt-2 sm:mt-0">
+                          <Link href={`tel:${detail.contactInfo.phone}`}>
+                              <Phone className="mr-2 h-4 w-4" />
+                              Call Now
+                          </Link>
+                      </Button>
+                  </div>
+              </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
+    </div>
+  ));
 
 export const AlertGuidesClient = React.memo(function AlertGuidesClient({
   placeholders,

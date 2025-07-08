@@ -19,6 +19,12 @@ const AnalyzeAlertGuideOutputSchema = z.object({
   purpose: z.string().describe("A brief, one-sentence description of the alert's purpose."),
   activationCriteria: z.array(z.string()).describe("The official, numbered list of criteria that must ALL be met to activate the alert."),
   initiationProcedure: z.array(z.string()).describe("The step-by-step procedure for a law enforcement agency to request activation."),
+  keyInformationForLEO: z.array(z.string()).describe("A checklist of essential investigative details an officer must have ready before calling MEPIC."),
+  contactInfo: z.object({
+    agency: z.string().describe("The agency to contact, e.g., 'FDLE Missing Endangered Persons Information Clearinghouse (MEPIC)'"),
+    phone: z.string().describe("The direct phone number to call to initiate an alert."),
+    website: z.string().describe("The official website for more information.")
+  })
 });
 export type AnalyzeAlertGuideOutput = z.infer<typeof AnalyzeAlertGuideOutputSchema>;
 
@@ -31,7 +37,7 @@ const prompt = ai.definePrompt({
   name: 'analyzeAlertGuidePrompt',
   input: { schema: AnalyzeAlertGuideInputSchema },
   output: { schema: AnalyzeAlertGuideOutputSchema },
-  prompt: `You are a public safety systems analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured procedural guide for a specific public alert system. For the given ID, retrieve the official FDLE criteria and procedures. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema.
+  prompt: `You are a public safety systems analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured procedural guide for a specific public alert system. For the given ID, retrieve the official FDLE criteria, procedures, and contact information. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema. Ensure the keyInformationForLEO field contains a checklist of essential details an officer needs before making the call.
 
 Alert ID: {{{alertId}}}`,
 });
