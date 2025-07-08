@@ -11,7 +11,8 @@ import {
 import Link from "next/link"
 import React, { useState, useEffect } from "react"
 
-import { dashboardFeatureGroups, dailyBriefingData } from "@/data"
+import { dashboardFeatureGroups } from "@/data/dashboard-features"
+import { dailyBriefingData } from "@/data/daily-briefing"
 import { FeatureCard } from "@/components/FeatureCard"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
