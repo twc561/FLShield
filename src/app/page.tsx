@@ -223,6 +223,15 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      
+      {/* Disclaimer Footer */}
+      <footer className="py-12 px-4 border-t border-border/50">
+        <div className="container mx-auto text-center">
+            <p className="text-xs text-muted-foreground max-w-4xl mx-auto">
+              <strong className="font-semibold text-foreground/80">Disclaimer & CJIS Warning:</strong> The Florida Shield application is for informational and training purposes only and is not a substitute for legal advice, agency policy, or certified training. All information should be independently verified. <strong className="text-destructive">This is NOT a CJIS-compliant environment.</strong> Users are strictly prohibited from entering, storing, or transmitting any real Personally Identifiable Information (PII), Criminal Justice Information (CJI), or any other sensitive case-specific details. All user-input fields must be treated as unsecure and for training or note-taking purposes only. Violation of this policy may result in disciplinary action.
+            </p>
+        </div>
+      </footer>
     </div>
   )
 }
