@@ -1,3 +1,4 @@
+
 import {
   BookOpen,
   History,
@@ -71,6 +72,25 @@ export default function DashboardPage() {
         </Card>
       </div>
 
+      {/* What's New */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <Lightbulb className="w-6 h-6 text-primary" />
+            <CardTitle>What's New</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">
+            New Feature Added: The{" "}
+            <Link href="/training-development/role-play-simulator" className="font-semibold text-primary hover:underline">
+              AI Role-Play Simulator
+            </Link>{" "}
+            is now live. Practice your de-escalation skills today!
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Main Navigator */}
       <div className="space-y-6">
         {dashboardFeatureGroups.map((group) => (
@@ -94,7 +114,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Personalized Widgets */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -117,23 +137,6 @@ export default function DashboardPage() {
                   <p className="truncate text-muted-foreground">DUI Checklist</p>
               </Link>
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <Lightbulb className="w-6 h-6 text-primary" />
-              <CardTitle>What's New</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              New Feature Added: The{" "}
-              <Link href="/training-development/role-play-simulator" className="font-semibold text-primary hover:underline">
-                AI Role-Play Simulator
-              </Link>{" "}
-              is now live. Practice your de-escalation skills today!
-            </p>
           </CardContent>
         </Card>
       </div>
