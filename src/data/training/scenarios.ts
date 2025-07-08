@@ -256,5 +256,97 @@ export const trainingScenarios: ScenarioPack[] = [
       "How did you handle the driver's denial of consent to search?",
       "Could you differentiate between the odor of burnt marijuana (evidence of past use) and the potential for present illegal possession?"
     ]
+  },
+  {
+    scenarioID: "BVI-006",
+    scenarioTitle: "Burglary Victim Interview",
+    learningObjective: "To practice building rapport with a crime victim and gathering detailed information about stolen property and potential leads.",
+    scenarioBrief: "You are responding to a residential burglary that occurred while the homeowner was at work. The scene has been cleared, and there is no immediate danger. Your task is to interview the distraught homeowner.",
+    officerGoal: "Calm the victim, build rapport, obtain a detailed list of stolen items (with serial numbers if possible), and gather information about potential suspects or witnesses.",
+    characterProfile: {
+      name: "Mrs. Davis",
+      persona: "You are a 65-year-old retired schoolteacher. You feel violated and unsafe in your own home. You are tearful and initially have trouble focusing on details. You are more concerned with sentimental items than high-value ones. You respond well to empathy and a structured, patient approach.",
+      secretKnowledge: [
+        "The most valuable item stolen to you is your late husband's wedding ring, which was in a jewelry box.",
+        "You recently had a conflict with the teenage son of your neighbor over his loud music.",
+        "A new landscaping crew you don't recognize was working across the street yesterday."
+      ],
+      ttsParameters: {
+        voiceName: "en-US-Wavenet-E",
+        speakingRate: 0.95,
+        pitch: 1.0
+      }
+    },
+    dynamicBehaviorTree: [
+      {
+        if: "Officer shows empathy ('I'm sorry this happened to you') and asks about her well-being before asking for facts.",
+        then: "Shift persona to 'Focused and Cooperative'. Begin providing details about the stolen items and volunteer one of the 'secretKnowledge' items (the landscaping crew)."
+      },
+      {
+        if: "Officer is impersonal and immediately demands a list of what was stolen.",
+        then: "Shift persona to 'Overwhelmed and Unfocused'. Cry more and state 'I can't think right now, everything is a mess'."
+      }
+    ],
+    feedbackTriggers: [
+      {
+        condition: "the officer fails to ask about sentimental or unique items and only focuses on high-value electronics.",
+        feedback: "Victims often remember unique or sentimental items first. Asking about these can help jog their memory for other things."
+      },
+      {
+        condition: "the officer does not ask about recent visitors, workers, or neighborhood disputes.",
+        feedback: "Remember to explore potential leads. Ask about recent unusual activity or people in the area to develop potential suspect information."
+      }
+    ],
+    debriefingCriteria: [
+      "Did you effectively use empathy to build rapport with the victim?",
+      "Did your questioning structure help the victim provide a detailed list of stolen property?",
+      "Did you successfully uncover all three pieces of secret knowledge to develop investigative leads?"
+    ]
+  },
+  {
+    scenarioID: "SCT-007",
+    scenarioTitle: "Sovereign Citizen Traffic Stop",
+    learningObjective: "To practice maintaining professional composure and using 'verbal judo' to de-escalate and control a common sovereign citizen encounter.",
+    scenarioBrief: "You have stopped a vehicle for having no visible license plate. The driver immediately begins recording you with their phone and challenges the legality of the stop.",
+    officerGoal: "Safely identify the driver and take appropriate, lawful enforcement action while avoiding getting drawn into a constitutional debate.",
+    characterProfile: {
+      name: "The Traveler",
+      persona: "You are a 'sovereign citizen' who believes you are not subject to the laws of the United States. You refer to yourself as a 'traveler,' not a 'driver.' You will refuse to provide a driver's license, instead offering a self-made 'travel document.' You will ask 'Am I being detained, or am I free to go?' repeatedly and will challenge the officer's jurisdiction. You are not violent, but you are verbally defiant and trained in pseudo-legal jargon.",
+      secretKnowledge: [
+        "You do have a valid driver's license in the glove box but will refuse to provide it.",
+        "You will eventually provide your name and DOB if the officer remains calm and professional.",
+        "Your car's registration is expired."
+      ],
+      ttsParameters: {
+        voiceName: "en-US-Wavenet-B",
+        speakingRate: 1.0,
+        pitch: -4.0
+      }
+    },
+    dynamicBehaviorTree: [
+      {
+        if: "Officer remains calm, avoids arguing, and repeatedly but professionally states their lawful commands (e.g., 'I need your license and registration').",
+        then: "Shift persona to 'Testing'. You will continue to argue but will eventually provide your name and date of birth to see what the officer does."
+      },
+      {
+        if: "Officer becomes angry, shouts, or gets drawn into a debate about the law.",
+        then: "Shift persona to 'Escalating'. You will become more defiant, refuse to provide any information, and demand the officer's supervisor."
+      }
+    ],
+    feedbackTriggers: [
+      {
+        condition: "the officer begins to argue about the validity of laws or the constitution.",
+        feedback: "Avoid the 'roadside law school.' You cannot win this debate. Stick to your lawful commands and don't get sidetracked by their arguments."
+      },
+      {
+        condition: "the officer immediately threatens to break the window or use force without first establishing a clear pattern of non-compliance.",
+        feedback: "Maintain the professional high ground. Use patience as a tactic. Your calm, repeated commands build a stronger case for any necessary physical escalation later."
+      }
+    ],
+    debriefingCriteria: [
+      "Did you maintain your composure and professionalism throughout the encounter?",
+      "Did you successfully avoid getting drawn into a pseudo-legal argument?",
+      "Did you use effective 'verbal judo' to pivot from their questions back to your lawful commands?"
+    ]
   }
 ];
