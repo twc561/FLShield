@@ -1,13 +1,6 @@
 "use client"
 
 import * as React from "react"
-import * as LucideIcons from "lucide-react"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
 import {
   Card,
   CardContent,
@@ -17,26 +10,55 @@ import {
 } from "@/components/ui/card"
 import type { AnalyzeBakerMarchmanOutput } from "@/ai/flows/analyze-baker-marchman"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, Sparkles, ShieldCheck } from "lucide-react"
+import { Loader2, ShieldCheck } from "lucide-react"
 import { analyzeBakerMarchman } from "@/ai/flows/analyze-baker-marchman"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-const ActDetailView = React.memo(({ actData }: { actData: AnalyzeBakerMarchmanOutput['bakerAct'] | AnalyzeBakerMarchmanOutput['marchmanAct'] }) => (
+// Type for the trilingual content, to make the component reusable
+type TrilingualContent = AnalyzeBakerMarchmanOutput['bakerAct']['english'];
+
+const ActDetailView = React.memo(({ data }: { data: TrilingualContent }) => (
     <div className="space-y-4">
-        <h3 className="font-semibold text-lg">{actData.legalStandard}</h3>
-        <p className="text-muted-foreground">{actData.officerTakeaway}</p>
+        <h3 className="font-semibold text-lg">{data.legalStandard}</h3>
+        <p className="text-muted-foreground">{data.officerTakeaway}</p>
         <Alert className="bg-accent/20 border-accent/50">
         <ShieldCheck className="h-4 w-4 text-accent" />
         <AlertTitle>Criteria for Involuntary Examination</AlertTitle>
         <AlertDescription>
             <ul className="list-decimal pl-5 space-y-1 mt-2">
-            {actData.criteria.map((item, i) => <li key={i}>{item}</li>)}
+            {data.criteria.map((item, i) => <li key={i}>{item}</li>)}
             </ul>
         </AlertDescription>
         </Alert>
   </div>
 ))
+
+const ActTabView = React.memo(({ actData }: { actData: AnalyzeBakerMarchmanOutput['bakerAct'] | AnalyzeBakerMarchmanOutput['marchmanAct'] }) => (
+    <Card>
+        <CardHeader>
+            <CardTitle>{actData.title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <Tabs defaultValue="english" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="english">English</TabsTrigger>
+                    <TabsTrigger value="spanish">Español</TabsTrigger>
+                    <TabsTrigger value="haitian_creole">Kreyòl Ayisyen</TabsTrigger>
+                </TabsList>
+                <TabsContent value="english" className="mt-4">
+                    <ActDetailView data={actData.english} />
+                </TabsContent>
+                <TabsContent value="spanish" className="mt-4">
+                    <ActDetailView data={actData.spanish} />
+                </TabsContent>
+                <TabsContent value="haitian_creole" className="mt-4">
+                    <ActDetailView data={actData.haitian_creole} />
+                </TabsContent>
+            </Tabs>
+        </CardContent>
+    </Card>
+));
 
 export const BakerMarchmanClient = React.memo(function BakerMarchmanClient() {
   const [details, setDetails] = React.useState<AnalyzeBakerMarchmanOutput | null>(null);
@@ -63,9 +85,8 @@ export const BakerMarchmanClient = React.memo(function BakerMarchmanClient() {
   if (isLoading) {
     return (
         <div className="space-y-4">
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-10 w-1/3" />
+            <Skeleton className="h-64 w-full" />
         </div>
     )
   }
@@ -82,58 +103,17 @@ export const BakerMarchmanClient = React.memo(function BakerMarchmanClient() {
   if (!details) return null;
 
   return (
-    <div className="space-y-6">
-        <Card>
-            <CardHeader>
-                <CardTitle>{details.bakerAct.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <ActDetailView actData={details.bakerAct} />
-            </CardContent>
-        </Card>
-        <Card>
-            <CardHeader>
-                <CardTitle>{details.marchmanAct.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <ActDetailView actData={details.marchmanAct} />
-            </CardContent>
-        </Card>
-        <Card>
-            <CardHeader>
-                <CardTitle>{details.proceduralForms_Trilingual.title}</CardTitle>
-                <CardDescription>{details.proceduralForms_Trilingual.explanation}</CardDescription>
-            </CardHeader>
-            <CardContent>
-                 <Tabs defaultValue="english" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
-                        <TabsTrigger value="english">English</TabsTrigger>
-                        <TabsTrigger value="spanish">Español</TabsTrigger>
-                        <TabsTrigger value="haitian_creole">Kreyòl Ayisyen</TabsTrigger>
-                    </TabsList>
-                    {Object.entries(details.proceduralForms_Trilingual).filter(([key]) => key !== 'title' && key !== 'explanation').map(([key, value]) => (
-                        <TabsContent key={key} value={key} className="mt-4 space-y-4">
-                            <Card className="bg-muted/50">
-                                <CardHeader>
-                                    <CardTitle className="text-base">{value.formTitle}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-sm text-muted-foreground">{value.criteriaSummary}</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="bg-muted/50">
-                                 <CardHeader>
-                                    <CardTitle className="text-base">Transport Explanation</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                     <p className="text-sm text-muted-foreground">{value.transportExplanation}</p>
-                                </CardContent>
-                            </Card>
-                        </TabsContent>
-                    ))}
-                </Tabs>
-            </CardContent>
-        </Card>
-    </div>
+    <Tabs defaultValue="bakerAct" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="bakerAct">Baker Act (Mental Health)</TabsTrigger>
+            <TabsTrigger value="marchmanAct">Marchman Act (Substance Abuse)</TabsTrigger>
+        </TabsList>
+        <TabsContent value="bakerAct" className="mt-4">
+            <ActTabView actData={details.bakerAct} />
+        </TabsContent>
+        <TabsContent value="marchmanAct" className="mt-4">
+            <ActTabView actData={details.marchmanAct} />
+        </TabsContent>
+    </Tabs>
   );
 });
