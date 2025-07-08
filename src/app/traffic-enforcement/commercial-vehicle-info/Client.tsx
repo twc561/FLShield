@@ -1,7 +1,7 @@
+
 "use client";
 
 import * as React from "react";
-import * as LucideIcons from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -16,12 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type {
-  CommercialVehicleGuide,
-  ChecklistItem,
-  InspectionCategory,
-  HazmatPlacard,
-  OversizeQuestion,
-  CmvViolation,
+  CommercialVehicleGuide
 } from "@/data/traffic-enforcement/commercial-vehicle";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -33,10 +28,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Biohazard, ClipboardCheck, Gavel, Info, ShieldAlert, Wrench } from "lucide-react";
 
 const Section = ({
   title,
-  icon,
+  icon: Icon,
   children,
   value,
 }: {
@@ -50,7 +47,7 @@ const Section = ({
       <AccordionTrigger className="p-6 text-left hover:no-underline">
         <div className="flex items-center gap-4 flex-1">
           <div className="p-3 bg-primary/10 rounded-lg">
-            <LucideIcons.Icon iconNode={icon.iconNode} className="w-6 h-6 text-primary" />
+            <Icon className="w-6 h-6 text-primary" />
           </div>
           <div className="flex-1 text-left">
             <CardTitle>{title}</CardTitle>
@@ -72,7 +69,7 @@ export const CommercialVehicleClient = React.memo(
   }) {
     return (
       <Accordion type="single" collapsible className="w-full space-y-4">
-        <Section title="The 'First 5 Minutes' Roadside Checklist" icon={LucideIcons.ClipboardCheck} value="part1">
+        <Section title="The 'First 5 Minutes' Roadside Checklist" icon={ClipboardCheck} value="part1">
           <Table>
             <TableHeader>
               <TableRow>
@@ -93,7 +90,7 @@ export const CommercialVehicleClient = React.memo(
           </Table>
         </Section>
 
-        <Section title="The 'Walk-Around' Inspection Guide" icon={LucideIcons.Wrench} value="part2">
+        <Section title="The 'Walk-Around' Inspection Guide" icon={Wrench} value="part2">
           <Accordion type="single" collapsible className="w-full space-y-2">
             {guideData.walkAroundInspectionGuide.map((category) => (
               <AccordionItem key={category.CategoryName} value={category.CategoryName} className="border rounded-md">
@@ -108,7 +105,7 @@ export const CommercialVehicleClient = React.memo(
                       ))}
                     </ul>
                     <Alert>
-                      <LucideIcons.Info className="h-4 w-4" />
+                      <Info className="h-4 w-4" />
                       <AlertTitle>Officer Notes & Governing Rule</AlertTitle>
                       <AlertDescription>
                         {category.OfficerNotes} (Ref: {category.GoverningRule})
@@ -121,7 +118,7 @@ export const CommercialVehicleClient = React.memo(
           </Accordion>
         </Section>
 
-        <Section title="Specialized Cargo Quick Reference" icon={LucideIcons.Biohazard} value="part3">
+        <Section title="Specialized Cargo Quick Reference" icon={Biohazard} value="part3">
           <Tabs defaultValue="hazmat" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="hazmat">HazMat Placards</TabsTrigger>
@@ -144,7 +141,7 @@ export const CommercialVehicleClient = React.memo(
                     </CardHeader>
                     <CardContent>
                       <Alert variant="destructive">
-                        <LucideIcons.ShieldAlert className="h-4 w-4" />
+                        <ShieldAlert className="h-4 w-4" />
                         <AlertTitle>Key Emergency Actions</AlertTitle>
                         <AlertDescription>{placard.KeyEmergencyActions}</AlertDescription>
                       </Alert>
@@ -170,7 +167,7 @@ export const CommercialVehicleClient = React.memo(
           </Tabs>
         </Section>
         
-        <Section title="Common Violations Database" icon={LucideIcons.Gavel} value="part4">
+        <Section title="Common Violations Database" icon={Gavel} value="part4">
             {guideData.commonCmvViolations.map((violation, index) => (
               <Card key={index} className="bg-card">
                  <CardHeader>
