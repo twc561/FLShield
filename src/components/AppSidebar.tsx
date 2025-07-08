@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import * as React from "react"
 import {
-  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, MessageSquareWarning, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ChevronDown, Flame,
+  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, MessageSquareWarning, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ChevronDown, Flame, ShieldAlert, FlaskConical, Users, Smartphone,
 } from "lucide-react"
 
 import {
@@ -60,6 +60,19 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
+    label: "Field Procedures",
+    icon: ListChecks,
+    items: [
+      { href: "/field-procedures/scenario-checklists", label: "Scenario Checklists", icon: ListChecks },
+      { href: "/field-procedures/crime-scene-management", label: "Crime Scene Manage...", icon: Siren },
+      { href: "/field-procedures/domestic-violence-protocol", label: "Domestic Violence Pr...", icon: ShieldAlert },
+      { href: "/field-procedures/field-interview-contact", label: "Field Interview & Con...", icon: Users },
+      { href: "/field-procedures/interview-techniques", label: "Interview Techniques", icon: BrainCircuit },
+      { href: "/field-procedures/digital-evidence-field-guide", label: "Digital Evidence Fiel...", icon: Smartphone },
+      { href: "/field-procedures/risk-protection-orders", label: "Risk Protection Orde...", icon: ShieldCheck },
+    ],
+  },
+  {
     label: "Traffic Enforcement",
     icon: Car,
     items: [
@@ -75,6 +88,7 @@ const menuItems: MenuItem[] = [
         { href: "/specialized-enforcement/k9-officer-guide", label: "K-9 Officer Guide", icon: Dog },
         { href: "/specialized-enforcement/fwc-regulations-guide", label: "FWC Regulations Gui...", icon: Fish },
         { href: "/specialized-enforcement/animal-cruelty-investigation", label: "Animal Cruelty Inves...", icon: Stethoscope },
+        { href: "/specialized-enforcement/controlled-substances-guide", label: "Controlled Substanc...", icon: FlaskConical },
     ],
   },
   {

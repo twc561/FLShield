@@ -1,10 +1,10 @@
 import { PageHeader } from "@/components/PageHeader"
-import { crisisInterventionData } from "@/data"
+import { domesticViolenceData } from "@/data"
 import { Summarizer } from "@/components/Summarizer"
-import { BakerMarchmanActClient } from "./Client"
+import { DomesticViolenceProtocolClient } from "./Client"
 
-export default function BakerMarchmanActPage() {
-  const pageContent = crisisInterventionData.map(item => 
+export default function DomesticViolenceProtocolPage() {
+  const pageContent = domesticViolenceData.map(item => 
     `${item.title}: ${item.description} Key Points: ${item.details.join('. ')}. Officer Takeaway: ${item.officerTakeaway}`
   ).join('\n\n');
 
@@ -12,16 +12,16 @@ export default function BakerMarchmanActPage() {
     <div className="animate-fade-in-up">
       <div className="flex justify-between items-start gap-4">
         <PageHeader
-          title="Crisis Intervention Guide"
-          description="Legal criteria and tactical guidance for Baker Act and Marchman Act encounters."
+          title="Domestic Violence Protocol"
+          description="Guides on evidence gathering, victim resources, and enforcing injunctions."
         />
         <Summarizer 
           documentText={pageContent}
-          documentTitle="Crisis Intervention Summary"
+          documentTitle="DV Protocol Summary"
         />
       </div>
 
-      <BakerMarchmanActClient data={crisisInterventionData} />
+      <DomesticViolenceProtocolClient data={domesticViolenceData} />
     </div>
   )
 }
