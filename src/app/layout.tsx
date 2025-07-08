@@ -33,7 +33,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={cn("antialiased min-h-screen")}>
+      <body className={cn("antialiased min-h-screen")} suppressHydrationWarning>
           {isLandingPage ? (
             <>
               {children}
