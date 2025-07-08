@@ -7,3 +7,4 @@ import '@/ai/flows/generate-feature-summary.ts';
 import '@/ai/flows/generate-wellness-tip.ts';
 import '@/ai/flows/find-statute.ts';
 import '@/ai/flows/generate-elements-flow.ts';
+import '@/ai/flows/suggest-charges.ts';
