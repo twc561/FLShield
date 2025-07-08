@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useMemo, useEffect, memo } from "react"
+import React, { useState, useMemo, useEffect, memo } from "react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import {
@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button"
 import { Summarizer } from "@/components/Summarizer"
 import type { Statute } from "@/data"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search, ExternalLink, BookOpen, Loader2, Sparkles } from "lucide-react"
+import { Search, ExternalLink, BookOpen, Loader2, Sparkles, Scale } from "lucide-react"
 import { findStatute } from "@/ai/flows/find-statute"
 import { generateElementsOfCrime } from "@/ai/flows/generate-elements-flow"
 import {
@@ -290,24 +290,22 @@ export const StatuteClient = memo(function StatuteClient({
       )}
 
       {!isAiSearching && aiResult && (
-         <Accordion type="single" collapsible className="w-full space-y-4" defaultValue={aiResult.id}>
-            <AccordionItem value={aiResult.id} className="border-b-0">
-              <Card className="animate-fade-in-up border-accent/50 shadow-lg shadow-accent/10">
-                <AccordionTrigger className="p-4 text-left hover:no-underline">
-                  <div className="flex-1 text-left">
-                    <div className="flex items-center gap-3">
-                      <Sparkles className="h-5 w-5 text-accent flex-shrink-0" />
-                      <p className="font-semibold text-base leading-snug">{aiResult.title}</p>
+         <Accordion type="single" collapsible className="w-full" defaultValue={aiResult.id}>
+            <AccordionItem value={aiResult.id} className="border rounded-md bg-card border-accent/50 shadow-lg shadow-accent/10">
+              <AccordionTrigger className="p-4 text-left hover:no-underline w-full">
+                <div className="flex items-center gap-4 flex-1">
+                    <div className="p-2 bg-accent/10 rounded-lg">
+                        <Sparkles className="h-6 w-6 text-accent" />
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {aiResult.code} &bull; {aiResult.degreeOfCharge}
-                    </p>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 pt-0">
-                    <FullStatuteContent statute={aiResult} />
-                </AccordionContent>
-              </Card>
+                    <div className="flex-1 text-left">
+                        <p className="font-semibold text-base text-card-foreground text-wrap">{aiResult.title}</p>
+                        <p className="text-xs text-muted-foreground">{aiResult.code} &bull; {aiResult.degreeOfCharge}</p>
+                    </div>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="p-4 pt-0">
+                  <FullStatuteContent statute={aiResult} />
+              </AccordionContent>
             </AccordionItem>
           </Accordion>
       )}
@@ -324,65 +322,46 @@ export const StatuteClient = memo(function StatuteClient({
       )}
 
       {!isAiSearching && !aiResult && (searchTerm === "" || totalFilteredResults > 0) && (
-        <Tabs defaultValue={categories[0]} className="flex flex-col flex-1 -mr-4">
-            <div className="overflow-x-auto pb-2 -mb-2 pr-4">
-                <TabsList className="inline-flex h-auto">
-                    {categories.map((category) => (
-                    <TabsTrigger key={category} value={category} className="px-4 py-2 text-sm">
-                        {category}
-                    </TabsTrigger>
-                    ))}
-                </TabsList>
-            </div>
-            
+        <ScrollArea className="h-full -mr-4 pr-4">
+          <Accordion type="single" collapsible className="w-full" value={activeAccordionItem} onValueChange={handleAccordionChange}>
             {categories.map((category) => {
               const filteredStatutes = getFilteredStatutesForCategory(category);
+              if (filteredStatutes.length === 0) return null;
+
               return (
-                <TabsContent key={category} value={category} className="flex-1 mt-4 overflow-hidden">
-                    <ScrollArea className="h-full pr-4">
-                        {filteredStatutes.length > 0 ? (
-                            <Accordion type="single" collapsible className="w-full space-y-4" value={activeAccordionItem} onValueChange={handleAccordionChange}>
-                                {filteredStatutes.map((statute, index) => (
-                                <AccordionItem
-                                    value={statute.id}
-                                    key={statute.id}
-                                    className="border-b-0"
-                                >
-                                    <Card
-                                    className="animate-fade-in-up"
-                                    style={{ animationDelay: `${index * 50}ms` }}
-                                    >
-                                    <AccordionTrigger className="p-4 text-left hover:no-underline">
-                                        <div className="flex-1 text-left">
-                                        <p className="font-semibold text-base leading-snug">{statute.title}</p>
-                                        <p className="text-sm text-muted-foreground mt-1">
-                                            {statute.code} &bull; {statute.degreeOfCharge}
-                                        </p>
-                                        </div>
-                                    </AccordionTrigger>
-                                    <AccordionContent className="px-4 pb-4 pt-0">
-                                      {loadingId === statute.id && (
-                                        <div className="pt-4 space-y-4">
-                                          <Skeleton className="h-24 w-full" />
-                                          <Skeleton className="h-24 w-full" />
-                                        </div>
-                                      )}
-                                      {cachedData[statute.id] && <FullStatuteContent statute={cachedData[statute.id]} />}
-                                    </AccordionContent>
-                                    </Card>
-                                </AccordionItem>
-                                ))}
-                            </Accordion>
-                        ) : (
-                            <div className="text-center py-16">
-                                <p className="text-muted-foreground">No statutes found in this category for "{searchTerm}".</p>
+                <React.Fragment key={category}>
+                  <h2 className="text-lg font-bold tracking-tight mt-6 mb-2 px-1">{category}</h2>
+                  <div className="space-y-2">
+                    {filteredStatutes.map((statute, index) => (
+                        <AccordionItem value={statute.id} key={statute.id} className="border rounded-md bg-card">
+                          <AccordionTrigger className="p-4 hover:no-underline w-full text-left">
+                            <div className="flex items-center gap-4 flex-1">
+                              <div className="p-2 bg-primary/10 rounded-lg">
+                                <Scale className="w-6 h-6 text-primary" />
+                              </div>
+                              <div className="flex-1 text-left">
+                                <p className="font-semibold text-base text-card-foreground text-wrap">{statute.title}</p>
+                                <p className="text-xs text-muted-foreground">{statute.code} &bull; {statute.degreeOfCharge}</p>
+                              </div>
                             </div>
-                        )}
-                    </ScrollArea>
-                </TabsContent>
-              );
+                          </AccordionTrigger>
+                          <AccordionContent className="p-4 pt-0">
+                            {loadingId === statute.id && (
+                              <div className="pt-4 space-y-4 border-t">
+                                <Skeleton className="h-24 w-full" />
+                                <Skeleton className="h-24 w-full" />
+                              </div>
+                            )}
+                            {cachedData[statute.id] && <FullStatuteContent statute={cachedData[statute.id]} />}
+                          </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                  </div>
+                </React.Fragment>
+              )
             })}
-        </Tabs>
+          </Accordion>
+        </ScrollArea>
       )}
     </div>
   )
