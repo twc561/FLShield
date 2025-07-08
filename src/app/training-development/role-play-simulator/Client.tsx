@@ -112,7 +112,13 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
         
         // TTS Generation
         try {
-            const audioResult = await textToSpeech(response.characterResponse);
+            const ttsParams = selectedScenario.characterProfile.ttsParameters;
+            const audioResult = await textToSpeech({
+              text: response.characterResponse,
+              voiceName: ttsParams.voiceName,
+              speakingRate: ttsParams.speakingRate,
+              pitch: ttsParams.pitch,
+            });
             setMessages(prev =>
                 prev.map(msg =>
                 msg.id === modelMessageId

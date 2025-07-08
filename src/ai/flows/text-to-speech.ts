@@ -2,9 +2,10 @@
 'use server';
 
 /**
- * @fileOverview Converts text to speech using a Genkit AI flow.
+ * @fileOverview Converts text to speech using a Genkit AI flow, with customizable voice parameters.
  *
- * - textToSpeech - A function that takes a string and returns a playable audio data URI.
+ * - textToSpeech - A function that takes text and voice options and returns a playable audio data URI.
+ * - TextToSpeechInput - The input type for the textToSpeech function.
  * - TextToSpeechOutput - The return type for the textToSpeech function.
  */
 
@@ -13,23 +14,33 @@ import { googleAI } from '@genkit-ai/googleai';
 import { z } from 'zod';
 import wav from 'wav';
 
+const TextToSpeechInputSchema = z.object({
+  text: z.string().describe("The text to synthesize."),
+  voiceName: z.string().optional().describe("The voice model name, e.g., 'en-US-Wavenet-F'"),
+  speakingRate: z.number().min(0.25).max(4.0).optional().describe("Speaking rate, where 1.0 is normal."),
+  pitch: z.number().min(-20.0).max(20.0).optional().describe("Speaking pitch in semitones."),
+});
+export type TextToSpeechInput = z.infer<typeof TextToSpeechInputSchema>;
+
 const TextToSpeechOutputSchema = z.object({
   media: z.string().describe('The base64 encoded WAV audio data URI.'),
 });
 export type TextToSpeechOutput = z.infer<typeof TextToSpeechOutputSchema>;
 
-export async function textToSpeech(query: string): Promise<TextToSpeechOutput> {
+export async function textToSpeech(input: TextToSpeechInput): Promise<TextToSpeechOutput> {
   const { media } = await ai.generate({
     model: googleAI.model('gemini-2.5-flash-preview-tts'),
     config: {
       responseModalities: ['AUDIO'],
       speechConfig: {
         voiceConfig: {
-          prebuiltVoiceConfig: { voiceName: 'Algenib' },
+          prebuiltVoiceConfig: { voiceName: input.voiceName || 'Algenib' },
         },
+        speakingRate: input.speakingRate,
+        pitch: input.pitch,
       },
     },
-    prompt: query,
+    prompt: input.text,
   });
 
   if (!media) {

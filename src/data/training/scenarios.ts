@@ -1,5 +1,4 @@
 
-
 export type ScenarioPack = {
   scenarioID: string;
   scenarioTitle: string;
@@ -10,6 +9,11 @@ export type ScenarioPack = {
     name: string;
     persona: string;
     secretKnowledge: string[];
+    ttsParameters: {
+      voiceName: string;
+      speakingRate: number;
+      pitch: number;
+    };
   };
   dynamicBehaviorTree: {
     if: string;
@@ -36,7 +40,12 @@ export const trainingScenarios: ScenarioPack[] = [
         "The suspect had a small spider tattoo on the left side of his neck.",
         "The suspect fled west on foot, behind the neighboring laundromat.",
         "The suspect specifically stole two 'Bang' energy drinks and a box of 'Swisher Sweets' cigars."
-      ]
+      ],
+      ttsParameters: {
+        voiceName: "en-US-Wavenet-F",
+        speakingRate: 1.15,
+        pitch: 2.0
+      }
     },
     dynamicBehaviorTree: [
       {
@@ -77,7 +86,12 @@ export const trainingScenarios: ScenarioPack[] = [
         "It's his friend Mark's 30th birthday.",
         "The neighbor has complained about him before for minor things.",
         "He is willing to turn it down but doesn't want to be 'ordered around' like a child."
-      ]
+      ],
+      ttsParameters: {
+        voiceName: "en-US-Standard-D",
+        speakingRate: 1.05,
+        pitch: -2.0
+      }
     },
     dynamicBehaviorTree: [
       {
@@ -118,7 +132,12 @@ export const trainingScenarios: ScenarioPack[] = [
         "He is waiting for his friend, Maria, who works at the 'Good Morning Bakery' at the end of the plaza.",
         "His phone died, which is why he can't call her.",
         "He does not have his ID on him because he just walked from his nearby apartment."
-      ]
+      ],
+      ttsParameters: {
+        voiceName: "en-US-Wavenet-A",
+        speakingRate: 0.9,
+        pitch: 0.0
+      }
     },
     dynamicBehaviorTree: [
       {
@@ -159,7 +178,12 @@ export const trainingScenarios: ScenarioPack[] = [
         "The 'loud crash' was him throwing a plate against the wall, not at his partner.",
         "The argument is over his recent job loss.",
         "He will not physically touch his partner in front of the police, but his body language is intimidating."
-      ]
+      ],
+      ttsParameters: {
+        voiceName: "en-US-Standard-D",
+        speakingRate: 1.1,
+        pitch: -3.0
+      }
     },
     dynamicBehaviorTree: [
       {
@@ -200,7 +224,12 @@ export const trainingScenarios: ScenarioPack[] = [
         "You smoked marijuana about an hour ago at a friend's house.",
         "There is no marijuana in the car, only a legally purchased CBD vape in the center console.",
         "You are nervous because you have a prior arrest for possession from years ago."
-      ]
+      ],
+      ttsParameters: {
+        voiceName: "en-US-Standard-C",
+        speakingRate: 0.85,
+        pitch: -1.0
+      }
     },
     dynamicBehaviorTree: [
       {
