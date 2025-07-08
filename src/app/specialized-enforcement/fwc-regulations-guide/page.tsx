@@ -2,11 +2,15 @@ import { PageHeader } from "@/components/PageHeader";
 import { FwcClient } from "./Client";
 import { 
   fishingRegulations, 
-  huntingRegulations, 
-  boatingSafetyEquipment, 
-  buiReference, 
-  manateeZoneInfo, 
-  protectedSpeciesInfo 
+  invertebrateRegulations,
+  gearRegulations,
+  huntingRegulations,
+  trappingRegulations,
+  firearmsMethodsGuide,
+  boatingTopics,
+  boatingSafetyEquipment,
+  protectedSpeciesInfo,
+  licenseData
 } from "@/data/specialized-enforcement/fwc-regulations";
 
 export default function FWCRegulationsGuidePage() {
@@ -18,11 +22,15 @@ export default function FWCRegulationsGuidePage() {
       />
       <FwcClient
         fishingData={fishingRegulations}
+        invertebrateData={invertebrateRegulations}
+        gearData={gearRegulations}
         huntingData={huntingRegulations}
-        boatingSafetyData={boatingSafetyEquipment}
-        buiData={buiReference}
-        manateeData={manateeZoneInfo}
+        trappingData={trappingRegulations}
+        firearmsData={firearmsMethodsGuide}
+        boatingData={boatingTopics}
+        boatingEquipmentData={boatingSafetyEquipment}
         speciesData={protectedSpeciesInfo}
+        licenseData={licenseData}
       />
     </div>
   );
