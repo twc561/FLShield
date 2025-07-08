@@ -20,6 +20,7 @@ export * from './legal-reference/local-ordinances';
 export * from './legal-reference/rights-reference';
 export * from './traffic-enforcement/fst-trilingual';
 export * from './traffic-enforcement/traffic-violations';
+export * from './traffic-enforcement/commercial-vehicle';
 export * from './emergency-response/crisis-intervention';
 export * from './specialized-enforcement/controlled-substances';
 export * from './specialized-enforcement/k9-guide';
