@@ -23,6 +23,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export function KnowledgeCheckClient({ questions }: { questions: DrillQuestion[] }) {
+  const [isMounted, setIsMounted] = useState(false);
   const [shuffledQuestions, setShuffledQuestions] = useState<DrillQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -31,15 +32,17 @@ export function KnowledgeCheckClient({ questions }: { questions: DrillQuestion[]
   const [isFinished, setIsFinished] = useState(false);
   const [answerOptions, setAnswerOptions] = useState<string[]>([]);
 
+  // This effect runs only on the client, after the initial render.
   useEffect(() => {
-    // This shuffle only runs on the client, preventing a hydration mismatch.
+    setIsMounted(true);
+    // Initial shuffle of questions.
     setShuffledQuestions(shuffleArray(questions).slice(0, 10));
   }, [questions]);
 
   const currentQuestion = useMemo(() => shuffledQuestions[currentQuestionIndex], [shuffledQuestions, currentQuestionIndex]);
 
+  // This effect shuffles the answer options whenever the question changes.
   useEffect(() => {
-    // This effect runs on the client whenever the question changes, ensuring the answer order is random but stable for the current question.
     if (currentQuestion) {
       setAnswerOptions(shuffleArray([...currentQuestion.incorrectAnswers, currentQuestion.correctAnswer]));
     }
@@ -72,7 +75,8 @@ export function KnowledgeCheckClient({ questions }: { questions: DrillQuestion[]
     setIsFinished(false);
   };
 
-  if (shuffledQuestions.length === 0) {
+  // This prevents hydration errors by rendering a skeleton on the server and initial client render.
+  if (!isMounted || shuffledQuestions.length === 0) {
     return (
       <Card>
         <CardHeader>
