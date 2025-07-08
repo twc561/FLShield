@@ -155,8 +155,8 @@ export default function LandingPage() {
                 <Image 
                     src="https://placehold.co/1280x720.png"
                     alt="App Preview Animation"
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    className="object-cover"
                     data-ai-hint="app animation video"
                 />
             </div>
