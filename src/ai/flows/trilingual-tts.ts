@@ -18,13 +18,13 @@ import wav from 'wav';
 // Define the supported language codes
 const supportedLanguages = z.enum(['es-US', 'ht-HT']);
 
-export const TrilingualTextToSpeechInputSchema = z.object({
+const TrilingualTextToSpeechInputSchema = z.object({
   text: z.string().describe('The text to be converted to speech.'),
   language: supportedLanguages.describe('The language of the text.'),
 });
 export type TrilingualTextToSpeechInput = z.infer<typeof TrilingualTextToSpeechInputSchema>;
 
-export const TrilingualTextToSpeechOutputSchema = z.object({
+const TrilingualTextToSpeechOutputSchema = z.object({
   media: z.string().describe('The base64 encoded WAV audio data URI.'),
 });
 export type TrilingualTextToSpeechOutput = z.infer<typeof TrilingualTextToSpeechOutputSchema>;
