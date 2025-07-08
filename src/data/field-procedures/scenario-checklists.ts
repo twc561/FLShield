@@ -28,7 +28,7 @@ export type Scenario = {
 export const scenarioChecklistsData: Record<string, Scenario> = {
   'dui-investigation': {
     id: 'dui-investigation',
-    name: 'DUI (Driving Under the Influence) Investigation',
+    name: 'DUI Investigation',
     goal: 'To safely stop, investigate, and if probable cause exists, arrest an impaired driver. To thoroughly document evidence for successful prosecution.',
     keyStatutes: ['F.S. §316.193 (DUI)', 'F.S. §316.1932 (Implied Consent)'],
     initialStepId: 'start',
@@ -36,26 +36,26 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
       'start': {
         phase: 'Initial Information & Arrival',
         title: 'Receiving the Call',
-        content: 'What is the critical information you need from dispatch for a potential DUI?',
-        aiTip: "Listen for details like vehicle description, location, direction of travel, and the specific driving pattern reported (e.g., 'swerving all over the road,' 'driving without headlights'). This forms the basis of your reasonable suspicion.",
+        content: 'You receive a BOLO for a possible impaired driver.',
+        aiTip: "Listen for details like vehicle description, location, direction of travel, and the specific driving pattern reported (e.g., 'swerving all over the road,'). This forms the basis of your reasonable suspicion.",
         choices: [
-          { text: "I have the information. Proceed to arrival.", nextStepId: "arrival" }
+          { text: "I have located the vehicle.", nextStepId: "arrival" }
         ],
       },
       'arrival': {
         phase: 'Initial Information & Arrival',
-        title: 'Arrival & Observation',
-        content: 'You have located the suspect vehicle. What are your top priorities for assessing the scene and positioning your patrol vehicle before initiating the stop?',
-        aiTip: 'Position your patrol car to the left of the suspect vehicle and at an angle. This provides a safety barrier from passing traffic and illuminates the interior of the suspect vehicle with your takedown lights.',
+        title: 'Observation of Driving Pattern',
+        content: 'You are now behind the suspect vehicle and observing its movement. What specific driving cues are you looking for to corroborate the BOLO?',
+        aiTip: 'Document any observed traffic infractions. This independent observation is crucial and will be the legal foundation for your traffic stop, separate from the initial BOLO.',
         choices: [
-          { text: 'I have observed the driving and am ready to stop.', nextStepId: 'scene_control' },
+          { text: 'I have observed a violation and initiated a stop.', nextStepId: 'scene_control' },
         ],
       },
       'scene_control': {
         phase: 'Scene Control & Initial Investigation',
         title: 'Personal Contact',
-        content: 'You have initiated the traffic stop. What are your first steps to control the scene and what are the most important initial questions to ask the driver?',
-        aiTip: "Observe the driver's reaction to your lights and siren. Note how they pull over. During your approach, watch their hands. Ask for license and registration first to observe their fine motor skills.",
+        content: 'You have initiated the traffic stop and are making a driver-side approach. As you get to the window, what are your first sensory observations?',
+        aiTip: "Engage your senses. Note the odor of alcoholic beverages, the driver's appearance (bloodshot/watery eyes), their speech (slurred/thick-tongued), and their ability to produce their documents. These are key elements for your report.",
         choices: [
           { text: 'Does the driver admit to drinking?', nextStepId: 'admitted_drinking' },
           { text: 'The driver denies drinking.', nextStepId: 'denied_drinking' },
@@ -64,7 +64,7 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
       'admitted_drinking': {
         phase: 'Scene Control & Initial Investigation',
         title: 'Admission of Consumption',
-        content: 'The driver has admitted to consuming alcohol. What are your next 2-3 investigative steps?',
+        content: 'The driver has admitted to consuming alcohol. What are your next 2-3 investigative questions?',
         aiTip: "Don't stop at the first admission. Ask clarifying questions: 'How much have you had to drink?' 'What time was your last drink?' 'Where were you drinking?' This helps establish a timeline and context for their impairment.",
         choices: [
           { text: "Proceed to evidence gathering (FSTs).", nextStepId: "evidence_gathering" }
@@ -73,8 +73,8 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
       'denied_drinking': {
         phase: 'Scene Control & Initial Investigation',
         title: 'Denial of Consumption',
-        content: 'The driver denies drinking. What are your next steps?',
-        aiTip: "Rely on your own senses and observations. Document the odor of an alcoholic beverage, bloodshot/watery eyes, slurred speech, and any fumbling with documents. A denial in the face of strong evidence can show consciousness of guilt.",
+        content: 'The driver denies drinking despite your sensory observations.',
+        aiTip: "Rely on your own senses and observations. A denial in the face of strong evidence can show consciousness of guilt. Document the denial alongside your direct observations in your report.",
         choices: [
           { text: "Proceed to evidence gathering (FSTs).", nextStepId: "evidence_gathering" }
         ]
@@ -82,8 +82,8 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
       'evidence_gathering': {
         phase: 'Evidence Gathering & Documentation',
         title: 'Field Sobriety Tests (FSTs)',
-        content: 'You are preparing to conduct Field Sobriety Tests. What are the top 5 pieces of evidence or observations you must document?',
-        aiTip: 'The top 5 are: 1. Odor of alcohol/drugs. 2. Driver\'s appearance/speech. 3. Any admissions. 4. Driving pattern. 5. Performance on FSTs. Document everything.',
+        content: 'You are preparing to conduct Field Sobriety Tests. Do you have a safe, level, and well-lit area to perform them?',
+        aiTip: 'Officer safety and test validity are paramount. Ensure the location is free of hazards and away from the flashing lights of your patrol car, which can affect the HGN test.',
         choices: [
           { text: 'Does the driver consent to FSTs?', nextStepId: 'fst_consent' },
           { text: 'The driver refuses FSTs.', nextStepId: 'fst_refusal' },
@@ -93,7 +93,7 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
         phase: 'Evidence Gathering & Documentation',
         title: 'FSTs - Consent Given',
         content: 'The driver has consented to perform FSTs. What is your procedure?',
-        content: 'Administer the Standardized Field Sobriety Tests (SFSTs) on a flat, dry, well-lit surface, away from your vehicle\'s flashing lights. Document every clue you observe for the Horizontal Gaze Nystagmus (HGN), Walk-and-Turn, and One-Leg Stand tests. Your detailed notes are critical for your report.',
+        content: 'Administer the Standardized Field Sobriety Tests (SFSTs) per NHTSA guidelines. Document every clue you observe for the Horizontal Gaze Nystagmus (HGN), Walk-and-Turn, and One-Leg Stand tests. Your detailed notes are critical for your report.',
         choices: [
           { text: 'The investigation is complete. Proceed to resolution.', nextStepId: 'resolution' },
         ],
@@ -166,6 +166,133 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
           "Read Miranda rights before any post-arrest questioning.",
           "Arrange for vehicle to be towed/impounded per department policy.",
           "Complete detailed and thorough Probable Cause Affidavit (PCA), documenting all observations from initial call to transport.",
+        ],
+      },
+    ],
+  },
+  'traffic-stop-moving-violation': {
+    id: 'traffic-stop-moving-violation',
+    name: 'Traffic Stop (Moving Violation)',
+    goal: 'To safely conduct a traffic stop for an observed moving violation, issue the appropriate enforcement action (citation/warning), and document the encounter thoroughly.',
+    keyStatutes: ['F.S. §316 (State Uniform Traffic Control)', 'F.S. §322 (Driver Licenses)'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Observation of Violation',
+        content: 'You observe a vehicle commit a moving violation. What is the first piece of information you should relay to dispatch before activating your lights?',
+        aiTip: "Radioing the license plate, vehicle description, location, and number of occupants to dispatch *before* the stop ensures that the information is recorded and available to backup units if the stop goes bad.",
+        choices: [
+          { text: "I've relayed the info and initiated the stop.", nextStepId: "arrival" }
+        ],
+      },
+      'arrival': {
+        phase: 'Initial Information & Arrival',
+        title: 'Scene Safety & Positioning',
+        content: 'You have initiated the stop and the driver is pulling over. What are your top 3 priorities for scene safety as you come to a stop?',
+        aiTip: '1. Location: Ensure you are out of active traffic lanes. 2. Positioning: Angle your patrol car to create a safety buffer. 3. Illumination: Use your lights to illuminate the suspect vehicle\'s interior and warn other drivers.',
+        choices: [
+          { text: 'The scene is safe. Proceeding with approach.', nextStepId: 'scene_control' },
+        ],
+      },
+      'scene_control': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Driver Contact',
+        content: 'You are at the driver\'s window. What is your standard opening line and initial request?',
+        aiTip: "A professional greeting sets the tone. 'Good evening, I'm Officer [Name] with the [Agency]. The reason I stopped you is for [violation]. May I please see your license, registration, and proof of insurance?'",
+        choices: [
+          { text: "The driver's license/ID is valid.", nextStepId: 'valid_license' },
+          { text: "The driver's license is suspended/revoked.", nextStepId: 'suspended_license' },
+          { text: "The driver has no ID.", nextStepId: 'no_id' },
+        ],
+      },
+      'valid_license': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Routine Stop Procedure',
+        content: 'The driver has a valid license and there are no other immediate issues.',
+        aiTip: 'Even on a routine stop, maintain situational awareness. Watch all occupants\' hands and check your mirrors frequently. Write the citation in your vehicle for safety.',
+        choices: [
+          { text: "Proceed to enforcement action.", nextStepId: "evidence_gathering" }
+        ]
+      },
+      'suspended_license': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Suspended License',
+        content: 'Dispatch advises the driver\'s license is suspended.',
+        aiLegalNote: "Confirm the suspension is criminal ('DWLS with Knowledge') before making a custodial arrest. If it is, this is a mandatory arrest situation in many jurisdictions. The original traffic stop is now a criminal investigation.",
+        choices: [
+          { text: "Proceed with criminal investigation/arrest.", nextStepId: "resolution" }
+        ]
+      },
+      'no_id': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'No Identification',
+        content: 'The driver cannot produce identification.',
+        aiTip: "Attempt to identify the driver through other means (verbal information, vehicle registration, mobile fingerprint scanner if available). If you cannot positively identify the driver to issue a citation, a custodial arrest may be necessary.",
+        choices: [
+          { text: "Proceed with investigation.", nextStepId: "evidence_gathering" }
+        ]
+      },
+      'evidence_gathering': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Enforcement Decision',
+        content: 'You have the driver\'s information and have decided on your enforcement action (citation or warning).',
+        aiTip: 'Before writing, double-check the statute number for the violation. An incorrect statute can lead to the citation being dismissed.',
+        choices: [
+          { text: 'Did the stop reveal probable cause for a search?', nextStepId: 'search_pc' },
+          { text: 'No search is necessary.', nextStepId: 'resolution' },
+        ],
+      },
+      'search_pc': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Probable Cause for Search',
+        content: 'During the stop, you developed probable cause to search the vehicle (e.g., odor of marijuana, contraband in plain view).',
+        aiLegalNote: 'Clearly articulate the *separate* probable cause for the search in your report. The initial traffic violation justifies the stop, but not the search. The automobile exception allows a warrantless search of the vehicle based on this new PC.',
+        choices: [
+          { text: 'The search is complete. Proceed to resolution.', nextStepId: 'resolution' },
+        ],
+      },
+      'resolution': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Concluding the Stop',
+        content: 'You have completed your investigation and are ready to issue the citation/warning or make an arrest.',
+        aiLegalNote: "The mission of a traffic stop is complete once the enforcement action is issued. Under `Rodriguez v. United States`, you cannot prolong the stop to conduct further investigation (like asking for consent to search) without developing separate, articulable reasonable suspicion.",
+        isEnd: true,
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Pre-Stop & Stop',
+        icon: 'Car',
+        items: [
+          'Observe moving violation.',
+          'Radio dispatch with plate, vehicle description, location, and violation.',
+          'Activate emergency lights and select a safe stopping location.',
+          'Position patrol car angled to the left for a safety lane and illumination.',
+          'Visually scan the vehicle interior and occupants during approach.',
+        ],
+      },
+      {
+        section: 'Driver Contact & Investigation',
+        icon: 'Search',
+        items: [
+          "Introduce self, state reason for stop.",
+          "Obtain driver's license, registration, and proof of insurance.",
+          "Run driver and vehicle through dispatch/MDT for wants/warrants and license status.",
+          "Check for signs of impairment or other criminal indicators.",
+          "Make enforcement decision (citation or warning).",
+          "If a search is conducted, articulate the separate probable cause for it.",
+        ],
+      },
+      {
+        section: 'Concluding Actions & Paperwork',
+        icon: 'FileText',
+        items: [
+          "Write and double-check citation for accuracy.",
+          "Explain the citation and the driver's options clearly.",
+          "Return documents to the driver.",
+          "Wait for the driver to safely pull back into traffic before leaving.",
+          "Clear the call with dispatch.",
         ],
       },
     ],
