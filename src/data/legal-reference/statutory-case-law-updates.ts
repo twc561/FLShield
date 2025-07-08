@@ -1,42 +1,101 @@
 
-export type UpdateInfo = {
-  id: string;
-  title: string;
-  date: string;
-  type: 'Statute Change' | 'Case Law';
+export type UpdatePlaceholder = {
+  updateID: string;
+  headline: string;
+  subheading: string;
+  updateDate: string;
+  category: string;
   icon: 'Newspaper' | 'Gavel';
-  summary: string;
-  officerImpact: string;
 };
 
-// NOTE: This data is for demonstration purposes. In a real-world application, this content would be
-// populated from a frequently updated legal database or news feed.
-export const statutoryCaseLawUpdatesData: UpdateInfo[] = [
+export type UpdateDetail = {
+  updateID: string;
+  headline: string;
+  sourceInfo: {
+    sourceName: string;
+    citation: string;
+    sourceType: "Case Law" | "Statutory Change";
+  };
+  plainLanguageSummary: string;
+  tacticalImpactForOfficers: {
+    title: string;
+    points: string[];
+  };
+  keyQuoteOrText: string;
+};
+
+
+export const statutoryCaseLawUpdatesIndex: UpdatePlaceholder[] = [
   {
-    id: 'update1',
-    title: 'New "Permitless Carry" Law',
-    date: 'Effective July 1, 2023',
-    type: 'Statute Change',
-    icon: 'Newspaper',
-    summary: 'House Bill 543 amended Florida Statutes to allow eligible individuals to carry a concealed weapon or firearm without a government-issued permit. It does not change who is eligible to own or possess a firearm, only the requirement for a permit to carry concealed.',
-    officerImpact: 'You can no longer demand to see a concealed weapons permit from someone lawfully carrying concealed. A Terry stop must still be based on reasonable suspicion of a crime, not just the presence of a firearm. The list of prohibited persons (convicted felons, etc.) and prohibited places (courthouses, schools) remains the same.',
-  },
-  {
-    id: 'update2',
-    title: 'Vega v. Tekoh (U.S. Supreme Court)',
-    date: 'June 23, 2022',
-    type: 'Case Law',
+    updateID: "CASELAW_SC24_5678",
+    headline: "Court Clarifies 'Plain Smell' Doctrine for Vehicle Searches",
+    subheading: "Jones v. State",
+    updateDate: "2025-07-08",
+    category: "Case Law - Search & Seizure",
     icon: 'Gavel',
-    summary: 'The Supreme Court ruled that a violation of Miranda rules is not, by itself, a violation of the Fifth Amendment for which an officer can be sued civilly under § 1983.',
-    officerImpact: 'This ruling protects you from being personally sued in a civil rights lawsuit for a Miranda violation. However, the primary consequence remains: any statement obtained in violation of Miranda will be suppressed in the criminal case. The incentive to get Miranda right is still extremely high, as it directly impacts the strength of your case.',
   },
   {
-    id: 'update3',
-    title: 'Fentanyl Penalty Enhancements',
-    date: 'Effective October 1, 2022',
-    type: 'Statute Change',
+    updateID: "STATUTE_HB543_2023",
+    headline: "Permitless Carry Goes Into Effect",
+    subheading: "F.S. § 790.01",
+    updateDate: "2023-07-01",
+    category: "Statutory Change - Firearms",
     icon: 'Newspaper',
-    summary: 'A new state law enhanced penalties for trafficking in fentanyl and other synthetic opioids, making it a capital felony to sell fentanyl that results in a death.',
-    officerImpact: 'For any overdose death, the investigation must now include a focus on identifying the dealer who supplied the narcotics. Your evidence collection at the scene, including the victim\'s phone and paraphernalia, is critical for tracing the drugs back to the source for a potential homicide prosecution.',
+  },
+   {
+    updateID: "CASELAW_USSC_VEGA_2022",
+    headline: "SCOTUS Rules Miranda Violation Not Grounds for Civil Suit",
+    subheading: "Vega v. Tekoh",
+    updateDate: "2022-06-23",
+    category: "Case Law - Custodial Interrogation",
+    icon: 'Gavel',
+  },
+  {
+    updateID: "CASELAW_FLA_JARDINES_2013",
+    headline: "K-9 Sniff at Front Door Ruled a Search",
+    subheading: "Florida v. Jardines",
+    updateDate: "2013-03-26",
+    category: "Case Law - K-9 Operations",
+    icon: 'Gavel',
+  },
+  {
+    updateID: "STATUTE_FENTANYL_2022",
+    headline: "Enhanced Penalties for Fentanyl Trafficking",
+    subheading: "F.S. § 893.135",
+    updateDate: "2022-10-01",
+    category: "Statutory Change - Drug Offenses",
+    icon: 'Newspaper',
+  },
+   {
+    updateID: "CASELAW_USSC_RILEY_2014",
+    headline: "Warrant Required for Cell Phone Search Incident to Arrest",
+    subheading: "Riley v. California",
+    updateDate: "2014-06-25",
+    category: "Case Law - Search & Seizure",
+    icon: 'Gavel',
+  },
+  {
+    updateID: "CASELAW_USSC_RODRIGUEZ_2015",
+    headline: "Traffic Stop Cannot Be Prolonged for K-9 Sniff",
+    subheading: "Rodriguez v. United States",
+    updateDate: "2015-04-21",
+    category: "Case Law - Traffic Stops",
+    icon: 'Gavel',
+  },
+   {
+    updateID: "CASELAW_USSC_CARPENTER_2018",
+    headline: "Warrant Required for Historical Cell-Site Location Data",
+    subheading: "Carpenter v. United States",
+    updateDate: "2018-06-22",
+    category: "Case Law - Search & Seizure",
+    icon: 'Gavel',
+  },
+  {
+    updateID: "STATUTE_HB7065_2021",
+    headline: "New Law Clarifies 'Stand Your Ground' for Law Enforcement",
+    subheading: "F.S. § 776.012",
+    updateDate: "2021-06-29",
+    category: "Statutory Change - Use of Force",
+    icon: 'Newspaper',
   },
 ];
