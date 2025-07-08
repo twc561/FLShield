@@ -38,11 +38,10 @@ export async function trilingualTextToSpeech(
       responseModalities: ['AUDIO'],
       speechConfig: {
         voiceConfig: {
-          // Use a standard, high-quality voice. The model is capable of
-          // detecting the language from the prompt text (Spanish/Haitian Creole)
-          // and generating the appropriate audio.
           prebuiltVoiceConfig: { voiceName: 'Algenib' },
         },
+        // Explicitly set the language code for the synthesizer.
+        languageCode: input.language,
       },
     },
     prompt: input.text,
