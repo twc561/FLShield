@@ -1,59 +1,40 @@
-export interface FeatureModule {
-  id: string
-  title: string
-  summary: string // Can be an empty string "" to trigger AI generation.
-  icon: string // Corresponds to a name in the lucide-react library
-  targetPage: string
-  category: string
-}
-
-export const featureModules: FeatureModule[] = [
-  {
-    id: "ai-report-writer",
-    title: "AI Report Writer",
-    summary: "Dictate or type free-form narratives and let the AI automatically structure, format, and proofread them into professional reports.",
-    icon: "ClipboardEdit",
-    targetPage: "/reporting-development/ai-report-writer",
-    category: "AI Tools",
-  },
-  {
-    id: "legal-reference",
-    title: "Legal Reference",
-    summary: "Access a comprehensive library of Florida statutes, case law, and procedural guides.",
-    icon: "Book",
-    targetPage: "/legal-reference/statutes",
-    category: "Reference",
-  },
-  {
-    id: "use-of-force-wizard",
-    title: "Use of Force Wizard",
-    summary: "An interactive AI tool that guides you through a Graham v. Connor analysis to help articulate justifications for use of force.",
-    icon: "ShieldQuestion",
-    targetPage: "/reporting-development/use-of-force-wizard",
-    category: "Reporting",
-  },
-  {
-    id: "traffic-enforcement",
-    title: "Traffic Enforcement",
-    summary: "Instant access to Florida traffic statutes, fine schedules, and AI-powered DUI/FST procedure guides.",
-    icon: "Car",
-    targetPage: "/traffic-enforcement/traffic-statutes-schedules",
-    category: "Tools",
-  },
-  {
-    id: "emergency-response",
-    title: "Emergency Response",
-    summary: "AI-driven guides for critical incidents, including Baker/Marchman Acts, HAZMAT placards, and First Aid.",
-    icon: "Siren",
-    targetPage: "/emergency-response/baker-marchman-act",
-    category: "Response",
-  },
-  {
-    id: "officer-wellness",
-    title: "Officer Wellness & Rights",
-    summary: "Resources for your well-being, including an AI guide to the Police Officer's Bill of Rights and court testimony prep.",
-    icon: "ShieldHelp",
-    targetPage: "/officer-wellness-rights/police-officers-bill-of-rights",
-    category: "Wellness",
-  },
-]
+export * from './case-law';
+export * from './statutes';
+export * from './report-templates';
+export * from './dashboard-features';
+export * from './field-procedures/crime-scene-management';
+export * from './field-procedures/digital-evidence';
+export * from './field-procedures/field-interview-contact';
+export * from './field-procedures/interview-techniques';
+export * from './field-procedures/risk-protection-orders';
+export * from './field-procedures/scenario-checklists';
+export * from './field-procedures/domestic-violence';
+export * from './flowcharts';
+export * from './legal-reference/constitutional-law';
+export * from './legal-reference/rules-of-criminal-procedure';
+export * from './legal-reference/standard-jury-instructions';
+export * from './legal-reference/florida-administrative-code';
+export * from './legal-reference/statutory-case-law-updates';
+export * from './legal-reference/local-ordinances';
+export * from './legal-reference/rights-reference';
+export * from './legal-reference/miranda-warning-guide';
+export * from './traffic-enforcement/dui-investigation';
+export * from './traffic-enforcement/traffic-violations';
+export * from './traffic-enforcement/commercial-vehicle';
+export * from './emergency-response/crisis-intervention';
+export * from './specialized-enforcement/controlled-substances';
+export * from './specialized-enforcement/k9-guide';
+export * from './specialized-enforcement/fwc-regulations';
+export * from './specialized-enforcement/animal-cruelty';
+export * from './emergency-response/alert-guides';
+export * from './emergency-response/first-aid';
+export * from './emergency-response/hazmat';
+export * from './officer-wellness-rights/pobr';
+export * from './officer-wellness-rights/court-testimony';
+export * from './officer-wellness-rights/decompression-sessions';
+export * from './officer-wellness-rights/wellness-resources';
+export * from './predictive-cache-map';
+export * from './training/scenarios';
+export * from './training/knowledge-drill';
+export * from './field-translation-guide';
+export * from './daily-briefing';

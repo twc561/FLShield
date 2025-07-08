@@ -1,51 +1,142 @@
+import {
+  BookOpen,
+  History,
+  Lightbulb,
+  Newspaper,
+  Search,
+} from "lucide-react"
+import Link from "next/link"
 
+import { dashboardFeatureGroups } from "@/data"
+import { dailyBriefingData } from "@/data/daily-briefing"
 import { FeatureCard } from "@/components/FeatureCard"
-import { PageHeader } from "@/components/PageHeader"
-import { featureModules } from "@/data"
-import { generateFeatureSummary } from "@/ai/flows/generate-feature-summary"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 
-export default async function DashboardPage() {
-  const modulesWithSummaries = await Promise.all(
-    featureModules.map(async (module) => {
-      if (!module.summary) {
-        try {
-          const result = await generateFeatureSummary({ title: module.title });
-          return { ...module, summary: result.summary };
-        } catch (error) {
-          console.error(`Failed to generate summary for ${module.title}:`, error);
-          // Provide a fallback summary
-          return { ...module, summary: `Access tools and resources for ${module.title}.` };
-        }
-      }
-      return module;
-    })
-  );
+export default function DashboardPage() {
+  const today = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
 
   return (
-    <div className="animate-fade-in-up">
-      <PageHeader
-        title="Dashboard"
-        description="Welcome to Florida Shield. Your digital toolkit for modern law enforcement."
-      />
-      <div
-        id="dashboard-grid"
-        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
-      >
-        {modulesWithSummaries.map((module, index) => (
-          <FeatureCard
-            key={module.id}
-            module={module}
-            style={{ animationDelay: `${index * 100}ms` }}
-            className="animate-fade-in-up"
+    <div className="animate-fade-in-up space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          Good morning, Officer.
+        </h1>
+        <p className="text-muted-foreground">{today}</p>
+        <div className="relative mt-4">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Input
+            placeholder="Search all guides & statutes..."
+            className="pl-10 h-12"
           />
+        </div>
+      </div>
+
+      {/* Core Content Area */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>Florida Shield Mission</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-lg text-muted-foreground">
+              To empower every Florida officer with instant access to the
+              knowledge and tools needed to operate with confidence, safety,
+              and integrity.
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <Newspaper className="w-6 h-6 text-primary" />
+              <CardTitle>Daily Briefing</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="font-semibold text-foreground/90">
+              {dailyBriefingData.headline}
+            </p>
+            <Button variant="link" asChild className="p-0 h-auto">
+              <Link href="/daily-briefing">View Full Briefing</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Navigator */}
+      <div className="space-y-6">
+        {dashboardFeatureGroups.map((group) => (
+          <div key={group.category}>
+            <h2 className="text-lg font-bold tracking-tight my-4 px-1 flex items-center gap-3">
+              <group.icon className="h-5 w-5 text-primary" />
+              {group.category}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {group.features.map((feature, index) => (
+                <FeatureCard
+                  key={feature.id}
+                  module={feature}
+                  style={{ animationDelay: `${index * 50}ms` }}
+                  className="animate-fade-in-up"
+                />
+              ))}
+            </div>
+          </div>
         ))}
+      </div>
+
+      {/* Personalized Widgets */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <History className="w-6 h-6 text-primary" />
+              <CardTitle>Recently Viewed</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex space-x-4 overflow-x-auto pb-2">
+              <Link href="/legal-reference/statutes?search=784.03" className="block text-center text-xs w-24 shrink-0">
+                  <div className="p-4 bg-muted rounded-md flex items-center justify-center mb-1">
+                      <BookOpen className="h-8 w-8 text-muted-foreground"/>
+                  </div>
+                  <p className="truncate text-muted-foreground">F.S. 784.03</p>
+              </Link>
+               <Link href="/field-procedures/scenario-checklists" className="block text-center text-xs w-24 shrink-0">
+                  <div className="p-4 bg-muted rounded-md flex items-center justify-center mb-1">
+                      <BookOpen className="h-8 w-8 text-muted-foreground"/>
+                  </div>
+                  <p className="truncate text-muted-foreground">DUI Checklist</p>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <Lightbulb className="w-6 h-6 text-primary" />
+              <CardTitle>What's New</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              New Feature Added: The{" "}
+              <Link href="/training-development/role-play-simulator" className="font-semibold text-primary hover:underline">
+                AI Role-Play Simulator
+              </Link>{" "}
+              is now live. Practice your de-escalation skills today!
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
-}
-
-declare module "react" {
-  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-    style?: React.CSSProperties & { [key: string]: string | number }
-  }
 }
