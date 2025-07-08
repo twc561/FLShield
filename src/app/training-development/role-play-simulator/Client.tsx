@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
@@ -18,6 +19,7 @@ import {
   getRoleplayResponse,
   RoleplaySimulatorInput,
 } from "@/ai/flows/roleplay-simulator";
+import { cn } from "@/lib/utils";
 
 type Message = {
   role: "user" | "model";
