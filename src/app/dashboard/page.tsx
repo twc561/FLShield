@@ -8,20 +8,52 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
-import { dashboardFeatureGroups } from "@/data"
-import { dailyBriefingData } from "@/data/daily-briefing"
+import { dashboardFeatureGroups, dailyBriefingData } from "@/data"
+import type { FeatureModule } from "@/types"
+import { generateFeatureSummary } from "@/ai/flows/generate-feature-summary"
 import { FeatureCard } from "@/components/FeatureCard"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
-export default function DashboardPage() {
+// Helper function to generate summaries for all features
+async function generateAllSummaries(groups: typeof dashboardFeatureGroups) {
+  const allFeatures = groups.flatMap((group) => group.features)
+  const summaryPromises = allFeatures.map((feature) =>
+    generateFeatureSummary({ title: feature.title }).catch((e) => {
+      console.error(`Failed to generate summary for ${feature.title}:`, e)
+      return { summary: feature.summary } // Fallback to default summary
+    })
+  )
+
+  const summaries = await Promise.all(summaryPromises)
+
+  const featuresWithSummaries = allFeatures.map((feature, index) => ({
+    ...feature,
+    summary: summaries[index].summary,
+  }))
+
+  const featuresById = featuresWithSummaries.reduce((acc, feature) => {
+    acc[feature.id] = feature
+    return acc
+  }, {} as Record<string, FeatureModule>)
+
+  return groups.map((group) => ({
+    ...group,
+    features: group.features.map((feature) => featuresById[feature.id]),
+  }))
+}
+
+
+export default async function DashboardPage() {
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   })
+  
+  const featureGroupsWithSummaries = await generateAllSummaries(dashboardFeatureGroups);
 
   return (
     <div className="animate-fade-in-up space-y-8">
@@ -72,8 +104,8 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      {/* What's New */}
-      <Card>
+       {/* What's New */}
+       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
             <Lightbulb className="w-6 h-6 text-primary" />
@@ -90,10 +122,10 @@ export default function DashboardPage() {
           </p>
         </CardContent>
       </Card>
-
+      
       {/* Main Navigator */}
       <div className="space-y-6">
-        {dashboardFeatureGroups.map((group) => (
+        {featureGroupsWithSummaries.map((group) => ( // Using the new variable here
           <div key={group.category}>
             <h2 className="text-lg font-bold tracking-tight my-4 px-1 flex items-center gap-3">
               <group.icon className="h-5 w-5 text-primary" />
@@ -103,7 +135,7 @@ export default function DashboardPage() {
               {group.features.map((feature, index) => (
                 <FeatureCard
                   key={feature.id}
-                  module={feature}
+                  module={feature} // The module now includes the generated summary
                   style={{ animationDelay: `${index * 50}ms` }}
                   className="animate-fade-in-up"
                 />
