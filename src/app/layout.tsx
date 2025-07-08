@@ -5,6 +5,7 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { ContextualPanel } from "@/components/ContextualPanel"
 import { Toaster } from "@/components/ui/toaster"
+import { ThemeScript } from "@/components/ThemeScript"
 
 export const metadata: Metadata = {
   title: "Florida Shield",
@@ -19,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <ThemeScript />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
