@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import {
-  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, ShieldAlert as MessageSquareWarning, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, Flame, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck,
+  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, ShieldAlert as MessageSquareWarning, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, Flame, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon,
 } from "lucide-react"
 
 type SubMenuItem = {
@@ -47,6 +47,13 @@ export const menuItems: MenuItem[] = [
       { href: "/field-procedures/interview-techniques", label: "Interview Techniques", icon: BrainCircuit },
       { href: "/field-procedures/digital-evidence-field-guide", label: "Digital Evidence Fiel...", icon: Smartphone },
       { href: "/field-procedures/risk-protection-orders", label: "Risk Protection Orde...", icon: ShieldCheck },
+    ],
+  },
+  {
+    label: "Communication Tools",
+    icon: LanguagesIcon,
+    items: [
+      { href: "/field-translation-guide", label: "Field Translation Guide", icon: LanguagesIcon },
     ],
   },
   {

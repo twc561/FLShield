@@ -15,3 +15,4 @@ import '@/ai/flows/proofread-report.ts';
 import '@/ai/flows/roleplay-simulator.ts';
 import '@/ai/flows/text-to-speech.ts';
 import '@/ai/flows/active-listener.ts';
+import '@/ai/flows/trilingual-tts.ts';
