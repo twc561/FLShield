@@ -1,9 +1,8 @@
-
 import { PageHeader } from "@/components/PageHeader";
 import { dailyBriefingData } from "@/data/daily-briefing";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Scale, MessageCircle, AlertTriangle } from "lucide-react";
+import { Scale, MessageCircle, AlertTriangle, ShieldCheck } from "lucide-react";
 
 export default function DailyBriefingPage() {
   const briefing = dailyBriefingData;
