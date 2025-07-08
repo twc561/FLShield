@@ -1,3 +1,4 @@
+
 export type RuleInfo = {
   id: string;
   title: string;
@@ -26,14 +27,22 @@ export const rulesOfCriminalProcedureData: RuleInfo[] = [
   },
   {
     id: 'rule3',
-    title: 'Discovery',
-    ruleNumber: 'Rule 3.220',
-    icon: 'Search',
-    summary: 'This rule governs the exchange of information and evidence between the prosecution and the defense. It requires the prosecutor to disclose a wide range of materials to the defendant, including witness lists, statements, expert reports, and any exculpatory evidence.',
-    officerImpact: 'Everything you document can be subject to discovery. This includes your report, notes, body camera footage, and even emails about the case. It also means you may be deposed by the defense attorney, where they can ask you detailed questions about your report and investigation under oath before trial.',
+    title: 'Pretrial Detention and Release',
+    ruleNumber: 'Rule 3.131 & 3.132',
+    icon: 'Lock',
+    summary: 'These rules govern who is entitled to pretrial release and under what conditions. They also outline the procedures for holding a defendant with no bond ("pretrial detention"), which is reserved for specific dangerous crimes when there is a substantial probability the defendant poses a threat to the community.',
+    officerImpact: 'When you arrest someone for a serious felony, your report should articulate any facts that suggest the defendant is a danger to the community. This information can be used by the prosecutor to argue for pretrial detention or a high bond amount at first appearance.',
   },
   {
     id: 'rule4',
+    title: 'Discovery',
+    ruleNumber: 'Rule 3.220',
+    icon: 'Search',
+    summary: 'This rule governs the exchange of information and evidence between the prosecution and the defense. It requires the prosecutor to disclose a wide range of materials to the defendant, including witness lists, statements, expert reports, and any exculpatory evidence (Brady Material).',
+    officerImpact: 'Everything you document can be subject to discovery. This includes your report, notes, body camera footage, and even emails about the case. It also means you may be deposed by the defense attorney, where they can ask you detailed questions about your report and investigation under oath before trial.',
+  },
+  {
+    id: 'rule5',
     title: 'Motion to Suppress Evidence',
     ruleNumber: 'Rule 3.190(g)',
     icon: 'ShieldOff',

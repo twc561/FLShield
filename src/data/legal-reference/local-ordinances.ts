@@ -1,47 +1,44 @@
-export type OrdinanceInfo = {
+
+export type OrdinanceTopic = {
   id: string;
-  title: string;
+  topic: string;
   icon: string;
-  description: string;
-  examples: string[];
-  officerTakeaway: string;
+  summary: string;
+  fortPierceDetails: string;
+  portStLucieDetails: string;
 };
 
-export const localOrdinancesData: OrdinanceInfo[] = [
+export const localOrdinancesData: OrdinanceTopic[] = [
   {
     id: 'ord1',
-    title: 'What are Local Ordinances?',
-    icon: 'Home',
-    description: 'Local ordinances are laws passed by a city or county government. They regulate issues within that specific jurisdiction and are enforceable by law enforcement, though they are subordinate to state and federal law.',
-    examples: [
-        'Open Container Laws: Many cities have ordinances prohibiting open containers of alcohol in public areas like parks or streets, which may be more restrictive than state law.',
-        'Noise Ordinances: These set specific times and decibel levels for what constitutes a noise violation, giving you objective criteria for enforcement.',
-        'Parking Regulations: Ordinances detail where parking is prohibited (e.g., within a certain distance of a fire hydrant or crosswalk).',
-        'Juvenile Curfews: Some municipalities have specific hours during which minors are not allowed in public without a valid reason.',
-    ],
-    officerTakeaway: 'You are expected to know and enforce the ordinances of the jurisdiction you work in. These are often the basis for your initial contact with the public and can be effective tools for addressing quality-of-life issues. Always be sure what you are enforcing is a local ordinance and not just a "common practice."',
+    topic: 'Alcohol in Public Places',
+    icon: 'Beer',
+    summary: 'Regulations concerning the possession and consumption of alcoholic beverages in public areas such as parks, streets, and beaches.',
+    fortPierceDetails: 'Generally prohibited in public parks, beaches, and city-owned property without a special event permit. See Fort Pierce City Code, Chapter 6, Article III.',
+    portStLucieDetails: 'Consumption of alcohol is prohibited on any public street, sidewalk, or in any public park, except in designated areas with a city permit. See Port St. Lucie City Code, Section 40.06.',
   },
   {
     id: 'ord2',
-    title: 'Enforcement and Penalties',
-    icon: 'Gavel',
-    description: 'Enforcement of local ordinances typically results in a civil citation or notice to appear, rather than a physical arrest, though some can be criminal in nature.',
-    examples: [
-        'A noise ordinance violation usually results in a written warning or a citation with a fine.',
-        'An open container violation is typically a non-criminal infraction requiring a citation.',
-        'Some ordinances, particularly those mirroring state misdemeanors, can be arrestable offenses. It is crucial to know which is which.',
-    ],
-    officerTakeaway: 'Confirm your authority to arrest for a specific ordinance violation. Many are non-arrestable, and an unlawful arrest can lead to civil liability and suppression of evidence. The ordinance itself will specify the penalty and enforcement mechanism.',
+    topic: 'Noise Ordinances',
+    icon: 'Volume2',
+    summary: 'Rules defining what constitutes excessive noise and the permissible hours for activities that generate loud sounds.',
+    fortPierceDetails: 'Generally, it is unlawful to make any "unreasonably loud, excessive, unnecessary or unusual noise." Specific quiet hours are typically from 10:00 PM to 7:00 AM. See Fort Pierce City Code, Chapter 32, Article IV.',
+    portStLucieDetails: 'Prohibits "loud and raucous noise" that is plainly audible from 50 feet away. Construction and similar activities are restricted during evening and overnight hours. Quiet hours are generally 10:00 PM to 7:00 AM. See Port St. Lucie City Code, Section 96.06.',
   },
   {
     id: 'ord3',
-    title: 'Ordinances vs. State Statutes',
-    icon: 'Scale',
-    description: 'A local ordinance cannot conflict with a state statute. If a state law and a local ordinance both cover the same topic, the state law preempts (overrides) the local one if they are in conflict.',
-    examples: [
-        'Firearms: The state of Florida has preempted all local regulation of firearms. A city cannot create an ordinance banning a type of firearm that is legal under state law.',
-        'Traffic: Most moving violations are covered by state statute (Chapter 316). Localities typically only regulate parking and non-moving infractions.',
-    ],
-    officerTakeaway: 'When in doubt, charge under the state statute. It has broader applicability and avoids any challenges of preemption. However, for issues not covered by state law (like local noise levels), ordinances are your primary tool.',
+    topic: 'Animal Control',
+    icon: 'Dog',
+    summary: 'Rules regarding pet ownership, including leash laws, licensing, and addressing animals at large.',
+    fortPierceDetails: 'All dogs and cats must be licensed and vaccinated. Animals must be on a leash when off the owner\'s property. Specific rules address "dangerous dogs." See Fort Pierce City Code, Chapter 10.',
+    portStLucieDetails: 'Requires dogs to be leashed when not on the owner\'s property. Establishes regulations for animal nuisances like excessive barking. Limits the number of dogs/cats per household in most residential zones. See Port St. Lucie City Code, Chapter 90.',
+  },
+  {
+    id: 'ord4',
+    topic: 'Parking Regulations',
+    icon: 'ParkingCircle',
+    summary: 'Ordinances governing where vehicles can and cannot be parked on public streets and property.',
+    fortPierceDetails: 'Prohibits parking commercial vehicles in residential areas, parking on sidewalks, and parking against the flow of traffic. Specific time-limited parking in the downtown area. See Fort Pierce City Code, Chapter 70.',
+    portStLucieDetails: 'Strict regulations against parking on any part of a residential lawn ("all tires must be off the grass"). Prohibits parking of trailers, RVs, and boats in most driveways for extended periods. See Port St. Lucie City Code, Title VII, Chapter 76.',
   },
 ];
