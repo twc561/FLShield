@@ -38,7 +38,7 @@ export async function trilingualTextToSpeech(
       responseModalities: ['AUDIO'],
       speechConfig: {
         voiceConfig: {
-          customVoice: { languageCode: input.language }, // Use the provided language code
+          languageCode: input.language, // Correctly specify the language code.
         },
       },
     },
