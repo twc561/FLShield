@@ -6,6 +6,7 @@ import { AppSidebar } from "@/components/AppSidebar"
 import { ContextualPanel } from "@/components/ContextualPanel"
 import { Toaster } from "@/components/ui/toaster"
 import { ThemeScript } from "@/components/ThemeScript"
+import { MobileBottomNav } from "@/components/MobileBottomNav"
 
 export const metadata: Metadata = {
   title: "Florida Shield",
@@ -32,12 +33,13 @@ export default function RootLayout({
         <SidebarProvider>
           <div className="flex min-h-screen">
             <AppSidebar />
-            <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+            <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto pb-20 md:pb-6">
               {children}
             </main>
             <ContextualPanel />
           </div>
         </SidebarProvider>
+        <MobileBottomNav />
         <Toaster />
       </body>
     </html>
