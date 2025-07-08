@@ -1,6 +1,6 @@
-
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -11,7 +11,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { OrdinanceTopic } from "@/data/legal-reference/local-ordinances"
 
-export function LocalOrdinancesClient({ data }: { data: OrdinanceTopic[] }) {
+export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({ data }: { data: OrdinanceTopic[] }) {
   return (
     <div className="space-y-6">
       {data.map((item, index) => {
@@ -54,7 +54,7 @@ export function LocalOrdinancesClient({ data }: { data: OrdinanceTopic[] }) {
       })}
     </div>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

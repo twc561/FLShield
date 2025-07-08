@@ -1,5 +1,6 @@
 "use client"
 
+import { memo } from "react"
 import Image from "next/image"
 import {
   Card,
@@ -11,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import type { ControlledSubstance } from "@/data/specialized-enforcement/controlled-substances"
 
-export function ControlledSubstancesClient({ data }: { data: ControlledSubstance[] }) {
+export const ControlledSubstancesClient = memo(function ControlledSubstancesClient({ data }: { data: ControlledSubstance[] }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {data.map((substance, index) => (
@@ -31,6 +32,7 @@ export function ControlledSubstancesClient({ data }: { data: ControlledSubstance
                 data-ai-hint={substance.imageAiHint}
                 alt={substance.name}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover"
               />
             </div>
@@ -55,7 +57,7 @@ export function ControlledSubstancesClient({ data }: { data: ControlledSubstance
       ))}
     </div>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

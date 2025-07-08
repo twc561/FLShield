@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -12,7 +13,7 @@ import type { InstructionInfo } from "@/data/legal-reference/standard-jury-instr
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ShieldCheck } from "lucide-react"
 
-export function StandardJuryInstructionsClient({ data }: { data: InstructionInfo[] }) {
+export const StandardJuryInstructionsClient = React.memo(function StandardJuryInstructionsClient({ data }: { data: InstructionInfo[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
       {data.map((item, index) => {
@@ -53,7 +54,7 @@ export function StandardJuryInstructionsClient({ data }: { data: InstructionInfo
       })}
     </Accordion>
   )
-}
+})
 
 
 declare module "react" {

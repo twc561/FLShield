@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import * as LucideIcons from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { HazmatPlacard } from "@/data/emergency-response/hazmat"
@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
-export function HazmatClient({ data }: { data: HazmatPlacard[] }) {
+export const HazmatClient = memo(function HazmatClient({ data }: { data: HazmatPlacard[] }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [result, setResult] = useState<HazmatPlacard | null | undefined>(undefined)
 
@@ -81,4 +81,4 @@ export function HazmatClient({ data }: { data: HazmatPlacard[] }) {
       )}
     </div>
   )
-}
+})

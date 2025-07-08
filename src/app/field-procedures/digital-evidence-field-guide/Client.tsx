@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -12,7 +13,7 @@ import type { DigitalEvidencePrinciple } from "@/data"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Terminal } from "lucide-react"
 
-export function DigitalEvidenceClient({ data }: { data: DigitalEvidencePrinciple[] }) {
+export const DigitalEvidenceClient = React.memo(function DigitalEvidenceClient({ data }: { data: DigitalEvidencePrinciple[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
       {data.map((principle, index) => {
@@ -59,7 +60,7 @@ export function DigitalEvidenceClient({ data }: { data: DigitalEvidencePrinciple
       })}
     </Accordion>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

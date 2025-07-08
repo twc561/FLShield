@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -10,7 +11,7 @@ import {
 import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import type { InterviewTechnique } from "@/data"
 
-export function InterviewTechniquesClient({ data }: { data: InterviewTechnique[] }) {
+export const InterviewTechniquesClient = React.memo(function InterviewTechniquesClient({ data }: { data: InterviewTechnique[] }) {
   return (
     <>
       {data.map((technique, index) => {
@@ -55,7 +56,7 @@ export function InterviewTechniquesClient({ data }: { data: InterviewTechnique[]
       })}
     </>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

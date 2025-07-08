@@ -1,11 +1,12 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { UpdateInfo } from "@/data/legal-reference/statutory-case-law-updates"
 import { Badge } from "@/components/ui/badge"
 
-export function StatutoryCaseLawUpdatesClient({ data }: { data: UpdateInfo[] }) {
+export const StatutoryCaseLawUpdatesClient = React.memo(function StatutoryCaseLawUpdatesClient({ data }: { data: UpdateInfo[] }) {
   return (
     <div className="space-y-6">
       {data.map((update, index) => {
@@ -39,7 +40,7 @@ export function StatutoryCaseLawUpdatesClient({ data }: { data: UpdateInfo[] }) 
       })}
     </div>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

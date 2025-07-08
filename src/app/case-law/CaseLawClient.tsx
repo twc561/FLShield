@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, memo } from "react"
 import { Input } from "@/components/ui/input"
 import {
   Card,
@@ -15,7 +15,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export function CaseLawClient({ initialCases }: { initialCases: CaseLaw[] }) {
+export const CaseLawClient = memo(function CaseLawClient({ initialCases }: { initialCases: CaseLaw[] }) {
   const [searchTerm, setSearchTerm] = useState("")
 
   const categories = useMemo(() => {
@@ -139,7 +139,7 @@ export function CaseLawClient({ initialCases }: { initialCases: CaseLaw[] }) {
       </Tabs>
     </div>
   );
-}
+})
 
 declare module "react" {
     interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -11,7 +12,7 @@ import { Card, CardTitle } from "@/components/ui/card"
 import type { RuleInfo } from "@/data/legal-reference/rules-of-criminal-procedure"
 import { Badge } from "@/components/ui/badge"
 
-export function RulesOfCriminalProcedureClient({ data }: { data: RuleInfo[] }) {
+export const RulesOfCriminalProcedureClient = React.memo(function RulesOfCriminalProcedureClient({ data }: { data: RuleInfo[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
       {data.map((item, index) => {
@@ -54,7 +55,7 @@ export function RulesOfCriminalProcedureClient({ data }: { data: RuleInfo[] }) {
       })}
     </Accordion>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

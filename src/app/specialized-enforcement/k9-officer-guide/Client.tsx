@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -11,7 +12,7 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import type { K9Topic } from "@/data/specialized-enforcement/k9-guide"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
-export function K9Client({ data }: { data: K9Topic[] }) {
+export const K9Client = React.memo(function K9Client({ data }: { data: K9Topic[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4" defaultValue={data[0].id}>
       {data.map((item, index) => {
@@ -57,7 +58,7 @@ export function K9Client({ data }: { data: K9Topic[] }) {
       })}
     </Accordion>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -12,7 +13,7 @@ import type { AlertGuideline } from "@/data/emergency-response/alert-guides"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
-export function SilverAlertClient({ data }: { data: AlertGuideline }) {
+export const SilverAlertClient = React.memo(function SilverAlertClient({ data }: { data: AlertGuideline }) {
   const Icon = (LucideIcons as any)[data.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle
 
   return (
@@ -54,4 +55,4 @@ export function SilverAlertClient({ data }: { data: AlertGuideline }) {
       </AccordionItem>
     </Accordion>
   )
-}
+})

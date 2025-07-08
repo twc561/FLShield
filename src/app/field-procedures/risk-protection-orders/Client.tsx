@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -11,7 +12,7 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import type { RpoGuideline } from "@/data"
 import { Badge } from "@/components/ui/badge"
 
-export function RiskProtectionOrdersClient({ data }: { data: RpoGuideline[] }) {
+export const RiskProtectionOrdersClient = React.memo(function RiskProtectionOrdersClient({ data }: { data: RpoGuideline[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
       {data.map((item, index) => {
@@ -47,7 +48,7 @@ export function RiskProtectionOrdersClient({ data }: { data: RpoGuideline[] }) {
       })}
     </Accordion>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

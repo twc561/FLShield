@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import {
   Accordion,
   AccordionContent,
@@ -11,7 +12,7 @@ import type { CrisisInterventionGuideline } from "@/data/emergency-response/cris
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import * as LucideIcons from "lucide-react"
 
-export function BakerMarchmanActClient({ data }: { data: CrisisInterventionGuideline[] }) {
+export const BakerMarchmanActClient = React.memo(function BakerMarchmanActClient({ data }: { data: CrisisInterventionGuideline[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
       {data.map((item, index) => {
@@ -56,7 +57,7 @@ export function BakerMarchmanActClient({ data }: { data: CrisisInterventionGuide
       })}
     </Accordion>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -13,7 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Terminal } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
-export function FieldInterviewClient({ data }: { data: EncounterType[] }) {
+export const FieldInterviewClient = React.memo(function FieldInterviewClient({ data }: { data: EncounterType[] }) {
   const getBadgeVariant = (standard: string) => {
     if (standard.includes("Probable Cause")) return "destructive";
     if (standard.includes("Reasonable Suspicion")) return "default";
@@ -76,7 +77,7 @@ export function FieldInterviewClient({ data }: { data: EncounterType[] }) {
       })}
     </Accordion>
   )
-}
+})
 
 
 declare module "react" {

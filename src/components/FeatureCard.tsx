@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, memo } from "react"
 import Link from "next/link"
 import * as LucideIcons from "lucide-react"
 import {
@@ -22,7 +22,7 @@ type FeatureCardProps = {
   className?: string
 }
 
-export function FeatureCard({
+export const FeatureCard = memo(function FeatureCard({
   module,
   style,
   className,
@@ -90,4 +90,4 @@ export function FeatureCard({
       </Card>
     </Link>
   )
-}
+})

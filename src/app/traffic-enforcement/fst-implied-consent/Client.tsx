@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import {
   Accordion,
   AccordionContent,
@@ -14,7 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import type { FstGuideline, SftsTest } from "@/data/traffic-enforcement/fst"
 import * as LucideIcons from "lucide-react"
 
-export function FstImpliedConsentClient({ data }: { data: FstGuideline[] }) {
+export const FstImpliedConsentClient = memo(function FstImpliedConsentClient({ data }: { data: FstGuideline[] }) {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
   const handleCheckboxChange = (id: string) => {
@@ -89,7 +89,7 @@ export function FstImpliedConsentClient({ data }: { data: FstGuideline[] }) {
       })}
     </Accordion>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

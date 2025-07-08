@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -11,7 +12,7 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import type { FirstAidTopic } from "@/data/emergency-response/first-aid"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
-export function FirstAidClient({ data }: { data: FirstAidTopic[] }) {
+export const FirstAidClient = React.memo(function FirstAidClient({ data }: { data: FirstAidTopic[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
       {data.map((item, index) => {
@@ -57,7 +58,7 @@ export function FirstAidClient({ data }: { data: FirstAidTopic[] }) {
       })}
     </Accordion>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -12,7 +13,7 @@ import type { FacInfo } from "@/data/legal-reference/florida-administrative-code
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ShieldCheck } from "lucide-react"
 
-export function FloridaAdministrativeCodeClient({ data }: { data: FacInfo[] }) {
+export const FloridaAdministrativeCodeClient = React.memo(function FloridaAdministrativeCodeClient({ data }: { data: FacInfo[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
       {data.map((item, index) => {
@@ -54,7 +55,7 @@ export function FloridaAdministrativeCodeClient({ data }: { data: FacInfo[] }) {
       })}
     </Accordion>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -10,7 +11,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { ProcedureStep } from "@/data"
 
-export function CrimeSceneManagementClient({ data }: { data: ProcedureStep[] }) {
+export const CrimeSceneManagementClient = React.memo(function CrimeSceneManagementClient({ data }: { data: ProcedureStep[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
       {data.map((step, index) => {
@@ -53,7 +54,7 @@ export function CrimeSceneManagementClient({ data }: { data: ProcedureStep[] }) 
       })}
     </Accordion>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

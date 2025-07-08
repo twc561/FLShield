@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -11,7 +12,7 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import type { FwcTopic } from "@/data/specialized-enforcement/fwc-regulations"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
-export function FwcClient({ data }: { data: FwcTopic[] }) {
+export const FwcClient = React.memo(function FwcClient({ data }: { data: FwcTopic[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4" defaultValue={data[0].id}>
       {data.map((item, index) => {
@@ -55,7 +56,7 @@ export function FwcClient({ data }: { data: FwcTopic[] }) {
       })}
     </Accordion>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

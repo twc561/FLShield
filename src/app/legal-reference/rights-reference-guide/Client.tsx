@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -12,7 +13,7 @@ import type { RightsInfo } from "@/data/legal-reference/rights-reference"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ShieldCheck } from "lucide-react"
 
-export function RightsReferenceClient({ data }: { data: RightsInfo[] }) {
+export const RightsReferenceClient = React.memo(function RightsReferenceClient({ data }: { data: RightsInfo[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
       {data.map((item, index) => {
@@ -59,7 +60,7 @@ export function RightsReferenceClient({ data }: { data: RightsInfo[] }) {
       })}
     </Accordion>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

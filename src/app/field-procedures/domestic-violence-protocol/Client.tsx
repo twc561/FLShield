@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import {
   Accordion,
   AccordionContent,
@@ -11,7 +12,7 @@ import type { DomesticViolenceProtocol } from "@/data/field-procedures/domestic-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import * as LucideIcons from "lucide-react"
 
-export function DomesticViolenceProtocolClient({ data }: { data: DomesticViolenceProtocol[] }) {
+export const DomesticViolenceProtocolClient = React.memo(function DomesticViolenceProtocolClient({ data }: { data: DomesticViolenceProtocol[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
       {data.map((item, index) => {
@@ -58,7 +59,7 @@ export function DomesticViolenceProtocolClient({ data }: { data: DomesticViolenc
       })}
     </Accordion>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

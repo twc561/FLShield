@@ -1,11 +1,12 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { Scenario } from "@/data"
 import { Check } from "lucide-react"
 
-export function ScenarioChecklistsClient({ data }: { data: Scenario[] }) {
+export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsClient({ data }: { data: Scenario[] }) {
   return (
     <div className="space-y-6">
       {data.map((scenario, index) => {
@@ -49,7 +50,7 @@ export function ScenarioChecklistsClient({ data }: { data: Scenario[] }) {
       })}
     </div>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

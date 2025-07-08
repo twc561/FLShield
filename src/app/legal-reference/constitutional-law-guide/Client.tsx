@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -12,7 +13,7 @@ import type { ConstitutionalAmendment } from "@/data/legal-reference/constitutio
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ShieldCheck } from "lucide-react"
 
-export function ConstitutionalLawClient({ data }: { data: ConstitutionalAmendment[] }) {
+export const ConstitutionalLawClient = React.memo(function ConstitutionalLawClient({ data }: { data: ConstitutionalAmendment[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
       {data.map((amendment, index) => {
@@ -59,7 +60,7 @@ export function ConstitutionalLawClient({ data }: { data: ConstitutionalAmendmen
       })}
     </Accordion>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {

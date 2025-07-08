@@ -1,7 +1,6 @@
-
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, memo } from "react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import {
@@ -26,7 +25,7 @@ import {
 } from "@/components/ui/accordion"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export function StatuteClient({
+export const StatuteClient = memo(function StatuteClient({
   initialStatutes,
 }: {
   initialStatutes: Statute[]
@@ -414,7 +413,7 @@ export function StatuteClient({
       )}
     </div>
   )
-}
+})
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
