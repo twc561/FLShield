@@ -30,7 +30,7 @@ type SidebarContext = {
   state: "expanded" | "collapsed"
   open: boolean
   setOpen: (open: boolean) => void
-  isMobile: boolean
+  isMobile: boolean | null
   toggleSidebar: () => void
 }
 
@@ -526,6 +526,11 @@ const SidebarMenuButton = React.forwardRef<
     )
 
     if (!tooltip) {
+      return button
+    }
+
+    // Avoide hydration mismatch by not rendering tooltip on server or on initial client render
+    if (isMobile === null) {
       return button
     }
 
