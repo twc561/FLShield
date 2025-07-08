@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import * as React from "react"
 import {
-  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, MessageSquareWarning, ClipboardList, ListTodo, Users, Mic, Search, Smartphone, ShieldAlert, Car, Route, Footprints, Truck, LogIn, ChevronDown, Flame
+  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, MessageSquareWarning, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ChevronDown, Flame,
 } from "lucide-react"
 
 import {
@@ -60,18 +60,6 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    label: "Field Procedures",
-    icon: ClipboardList,
-    items: [
-      { href: "/field-procedures/scenario-checklists", label: "Scenario Checklists", icon: ListTodo },
-      { href: "/field-procedures/field-interview-contact", label: "Field Interview & Con...", icon: Users },
-      { href: "/field-procedures/interview-techniques", label: "Interview Techniques...", icon: Mic },
-      { href: "/field-procedures/crime-scene-management", label: "Crime Scene Manage...", icon: Search },
-      { href: "/field-procedures/digital-evidence-field-guide", label: "Digital Evidence Field...", icon: Smartphone },
-      { href: "/field-procedures/risk-protection-orders", label: "Risk Protection Order...", icon: ShieldAlert },
-    ],
-  },
-  {
     label: "Traffic Enforcement",
     icon: Car,
     items: [
@@ -80,6 +68,46 @@ const menuItems: MenuItem[] = [
       { href: "/traffic-enforcement/commercial-vehicle-info", label: "Commercial Vehicle ...", icon: Truck },
     ],
   },
+  {
+    label: "Specialized Enforcement",
+    icon: Wrench,
+    items: [
+        { href: "/specialized-enforcement/k9-officer-guide", label: "K-9 Officer Guide", icon: Dog },
+        { href: "/specialized-enforcement/fwc-regulations-guide", label: "FWC Regulations Gui...", icon: Fish },
+        { href: "/specialized-enforcement/animal-cruelty-investigation", label: "Animal Cruelty Inves...", icon: Stethoscope },
+    ],
+  },
+  {
+      label: "Emergency Response",
+      icon: Siren,
+      items: [
+          { href: "/emergency-response/baker-marchman-act", label: "Baker Act & Marchma...", icon: BrainCircuit },
+          { href: "/emergency-response/first-aid-field-guide", label: "First Aid Field Guide", icon: HeartPulse },
+          { href: "/emergency-response/hazmat-placard-guide", label: "HAZMAT Placard Gui...", icon: Biohazard },
+          { href: "/emergency-response/amber-alert-guide", label: "Amber Alert Guide", icon: AlertCircle },
+          { href: "/emergency-response/silver-alert-guide", label: "Silver Alert Guide", icon: UserSearch },
+      ],
+  },
+  {
+      label: "Reporting & Development",
+      icon: Briefcase,
+      items: [
+          { href: "/reporting-development/ai-charge-assistant", label: "AI Charge Assistant", icon: Gavel },
+          { href: "/reporting-development/ai-report-writer", label: "AI Report Writer", icon: ClipboardEdit },
+          { href: "/reporting-development/use-of-force-wizard", label: "Use of Force Wizard", icon: ShieldQuestion },
+          { href: "/reporting-development/knowledge-check", label: "Knowledge Check", icon: GraduationCap },
+      ],
+  },
+  {
+      label: "Officer Wellness & Rights",
+      icon: ShieldQuestion,
+      items: [
+          { href: "/officer-wellness-rights/police-officers-bill-of-rights", label: "Police Officer's Bill of...", icon: ShieldCheck },
+          { href: "/officer-wellness-rights/court-testimony-guide", label: "Court Testimony Guide", icon: Landmark },
+      ],
+  },
+  { href: "/notes", label: "Field Notes", icon: FileText },
+  { href: "/wellness", label: "Wellness Hub", icon: ShieldQuestion },
 ]
 
 export function AppSidebar() {
@@ -161,21 +189,6 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter className="flex flex-col gap-2 p-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:items-center">
-         <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                tooltip={{ children: "Sign In", side: "right" }}
-              >
-                <Link href="#">
-                  <LogIn className="size-5" />
-                  <span className="group-data-[collapsible=icon]:hidden">
-                    Sign In
-                  </span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
          <ThemeToggle />
       </SidebarFooter>
     </Sidebar>
