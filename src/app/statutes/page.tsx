@@ -9,7 +9,7 @@ export default function StatutePage() {
     <div className="h-full flex flex-col">
       <PageHeader
         title="Statute Navigator"
-        description="Search and review Florida statutes. Use the AI Summarizer for quick insights."
+        description="Search by keyword or statute number. If no local results are found, our AI will automatically search the Florida Statutes for you. You can also generate the 'Elements of the Crime' for any statute using AI."
       />
       <StatuteClient initialStatutes={allStatutes} />
     </div>
