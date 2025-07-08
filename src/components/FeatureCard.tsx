@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import type { FeatureModule } from "@/data/features"
+import type { FeatureModule } from "@/types"
 import { ArrowRight } from "lucide-react"
 
 type FeatureCardProps = {
