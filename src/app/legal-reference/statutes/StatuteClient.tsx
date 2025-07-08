@@ -10,6 +10,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Summarizer } from "@/components/Summarizer"
@@ -243,9 +244,6 @@ export const StatuteClient = memo(function StatuteClient({
                   <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
                       {(() => {
                           const elementState = generatedElements[statute.id];
-                          if (elementState?.isLoading) {
-                              return <div className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Generating...</div>
-                          }
                           if (elementState?.content) {
                               return <div className="whitespace-pre-wrap">{elementState.content}</div>
                           }
@@ -253,10 +251,18 @@ export const StatuteClient = memo(function StatuteClient({
                               <Button 
                                   variant="secondary" 
                                   size="sm" 
-                                  onClick={() => handleGenerateElements(statute)}
+                                  onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleGenerateElements(statute);
+                                  }}
+                                  disabled={elementState?.isLoading}
                               >
-                                  <Sparkles className="mr-2 h-4 w-4 text-accent" />
-                                  Generate with AI
+                                  {elementState?.isLoading ? (
+                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  ) : (
+                                      <Sparkles className="mr-2 h-4 w-4 text-accent" />
+                                  )}
+                                  {elementState?.isLoading ? 'Generating...' : 'Generate with AI'}
                               </Button>
                           )
                       })()}
@@ -408,5 +414,3 @@ declare module "react" {
     style?: React.CSSProperties & { [key: string]: string | number }
   }
 }
-
-
