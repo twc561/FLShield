@@ -25,7 +25,6 @@ export default function ScenarioChecklistsPage() {
           </TabsList>
           {scenarios.map(scenario => (
             <TabsContent key={scenario.id} value={scenario.id} className="mt-6">
-              <PageHeader title={scenario.name} description={scenario.goal} />
               <ScenarioChecklistsClient scenario={scenario} />
             </TabsContent>
           ))}

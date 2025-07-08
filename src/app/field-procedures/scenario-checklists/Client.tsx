@@ -67,7 +67,14 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
   }
 
   return (
-    <div className="animate-fade-in-up">
+    <div className="animate-fade-in-up space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>{scenario.name}</CardTitle>
+          <CardDescription>{scenario.goal}</CardDescription>
+        </CardHeader>
+      </Card>
+      
       <Tabs defaultValue="walkthrough" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="walkthrough">
