@@ -74,18 +74,37 @@ export default async function DashboardPage() {
 
       {/* Core Content Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Florida Shield Mission</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-lg text-muted-foreground">
-              To empower every Florida officer with instant access to the
-              knowledge and tools needed to operate with confidence, safety,
-              and integrity.
-            </p>
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-2 space-y-6">
+            <Card>
+            <CardHeader>
+                <CardTitle>Florida Shield Mission</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-lg text-muted-foreground">
+                To empower every Florida officer with instant access to the
+                knowledge and tools needed to operate with confidence, safety,
+                and integrity.
+                </p>
+            </CardContent>
+            </Card>
+            <Card>
+            <CardHeader>
+                <div className="flex items-center gap-3">
+                <Lightbulb className="w-6 h-6 text-primary" />
+                <CardTitle>What's New</CardTitle>
+                </div>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground">
+                New Feature Added: The{" "}
+                <Link href="/training-development/role-play-simulator" className="font-semibold text-primary hover:underline">
+                    AI Role-Play Simulator
+                </Link>{" "}
+                is now live. Practice your de-escalation skills today!
+                </p>
+            </CardContent>
+            </Card>
+        </div>
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -103,25 +122,6 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </div>
-
-       {/* What's New */}
-       <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <Lightbulb className="w-6 h-6 text-primary" />
-            <CardTitle>What's New</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            New Feature Added: The{" "}
-            <Link href="/training-development/role-play-simulator" className="font-semibold text-primary hover:underline">
-              AI Role-Play Simulator
-            </Link>{" "}
-            is now live. Practice your de-escalation skills today!
-          </p>
-        </CardContent>
-      </Card>
       
       {/* Main Navigator */}
       <div className="space-y-6">
@@ -176,7 +176,7 @@ export default async function DashboardPage() {
       {/* Footer Disclaimer */}
       <footer className="mt-8 pt-6 border-t border-border/50 text-center">
         <p className="text-xs text-muted-foreground max-w-4xl mx-auto">
-          <strong className="font-semibold text-foreground/80">Disclaimer:</strong> The Florida Shield application and all its content are for informational and training purposes only and are not a substitute for legal advice, agency policy, or certified training. All information should be independently verified. Officers must consult their agency's legal counsel, policies, and official training materials before taking any official action. This is a CJIS-compliant environment. Users are prohibited from entering, storing, or transmitting any real Personally Identifiable Information (PII), Criminal Justice Information (CJI), or case-specific details in any non-official fields.
+          <strong className="font-semibold text-foreground/80">Disclaimer & CJIS Warning:</strong> The Florida Shield application is for informational and training purposes only and is not a substitute for legal advice, agency policy, or certified training. All information should be independently verified. <strong className="text-destructive">This is NOT a CJIS-compliant environment.</strong> Users are strictly prohibited from entering, storing, or transmitting any real Personally Identifiable Information (PII), Criminal Justice Information (CJI), or any other sensitive case-specific details. All user-input fields must be treated as unsecure and for training or note-taking purposes only. Violation of this policy may result in disciplinary action.
         </p>
       </footer>
     </div>
