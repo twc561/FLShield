@@ -25,16 +25,26 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Skeleton } from "@/components/ui/skeleton"
+
+
+type StatuteIndexItem = Omit<Statute, 'description' | 'fullText' | 'practicalSummary' | 'example' | 'elementsOfTheCrime' | 'url'>;
+
 
 export const StatuteClient = memo(function StatuteClient({
-  initialStatutes,
+  initialStatuteIndex,
+  statutesFullData,
 }: {
-  initialStatutes: Statute[]
+  initialStatuteIndex: StatuteIndexItem[],
+  statutesFullData: Record<string, Statute>,
 }) {
   const [searchTerm, setSearchTerm] = useState("")
   const [isAiSearching, setIsAiSearching] = useState(false)
   const [aiResult, setAiResult] = useState<Statute | null>(null)
   const [generatedElements, setGeneratedElements] = useState<Record<string, { content: string; isLoading: boolean }>>({})
+
+  const [cachedData, setCachedData] = useState<Record<string, Statute>>({});
+  const [loadingId, setLoadingId] = useState<string | null>(null);
 
   const categories = useMemo(() => {
     const categoryOrder = [
@@ -45,7 +55,7 @@ export const StatuteClient = memo(function StatuteClient({
       'Traffic Offenses',
       'Public Order & Obstruction',
     ];
-    const uniqueCategories = [...new Set(initialStatutes.map((s) => s.category))];
+    const uniqueCategories = [...new Set(initialStatuteIndex.map((s) => s.category))];
     return uniqueCategories.sort((a, b) => {
         const indexA = categoryOrder.indexOf(a);
         const indexB = categoryOrder.indexOf(b);
@@ -53,20 +63,17 @@ export const StatuteClient = memo(function StatuteClient({
         if (indexB === -1) return -1;
         return indexA - indexB;
     });
-  }, [initialStatutes]);
+  }, [initialStatuteIndex]);
 
   const totalFilteredResults = useMemo(() => {
-    if (!searchTerm) return initialStatutes.length;
+    if (!searchTerm) return initialStatuteIndex.length;
     const lowercasedTerm = searchTerm.toLowerCase();
-    return initialStatutes.filter(
+    return initialStatuteIndex.filter(
       (s) =>
         s.title.toLowerCase().includes(lowercasedTerm) ||
-        s.code.toLowerCase().includes(lowercasedTerm) ||
-        s.description.toLowerCase().includes(lowercasedTerm) ||
-        s.practicalSummary.toLowerCase().includes(lowercasedTerm) ||
-        s.example.toLowerCase().includes(lowercasedTerm)
+        s.code.toLowerCase().includes(lowercasedTerm)
     ).length;
-  }, [searchTerm, initialStatutes]);
+  }, [searchTerm, initialStatuteIndex]);
 
   useEffect(() => {
     if (searchTerm === "") {
@@ -128,6 +135,20 @@ export const StatuteClient = memo(function StatuteClient({
       clearTimeout(handler);
     };
   }, [searchTerm, totalFilteredResults]);
+  
+  const handleAccordionChange = async (value: string | undefined) => {
+    if (!value) return; 
+    if (cachedData[value] || loadingId === value) return;
+
+    setLoadingId(value);
+    await new Promise(res => setTimeout(res, 300)); // Simulate network delay
+
+    const fullData = statutesFullData[value];
+    if (fullData) {
+        setCachedData(prev => ({ ...prev, [value]: fullData }));
+    }
+    setLoadingId(null);
+  }
 
   const handleGenerateElements = async (statute: Statute) => {
     setGeneratedElements(prev => ({ ...prev, [statute.id]: { content: '', isLoading: true } }));
@@ -145,7 +166,7 @@ export const StatuteClient = memo(function StatuteClient({
   };
 
   const getFilteredStatutesForCategory = (category: string) => {
-    const filteredByCategory = initialStatutes.filter((s) => s.category === category);
+    const filteredByCategory = initialStatuteIndex.filter((s) => s.category === category);
     if (!searchTerm) {
       return filteredByCategory;
     }
@@ -153,14 +174,91 @@ export const StatuteClient = memo(function StatuteClient({
     return filteredByCategory.filter(
       (s) =>
         s.title.toLowerCase().includes(lowercasedTerm) ||
-        s.code.toLowerCase().includes(lowercasedTerm) ||
-        s.description.toLowerCase().includes(lowercasedTerm) ||
-        s.practicalSummary.toLowerCase().includes(lowercasedTerm) ||
-        s.example.toLowerCase().includes(lowercasedTerm)
+        s.code.toLowerCase().includes(lowercasedTerm)
     );
   };
 
   const showNotFound = !isAiSearching && !aiResult && searchTerm.length > 0 && totalFilteredResults === 0;
+  
+  const FullStatuteContent = ({ statute }: { statute: Statute }) => (
+    <div className="border-t pt-4">
+      <Accordion type="multiple" collapsible className="w-full space-y-2" defaultValue={['description']}>
+          <AccordionItem value="description" className="border-b-0">
+          <Card className="bg-muted/50">
+              <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                  Official Description
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                  {statute.description}
+              </AccordionContent>
+          </Card>
+          </AccordionItem>
+          <AccordionItem value="summary" className="border-b-0">
+          <Card className="bg-muted/50">
+              <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                  What it Means for Officers
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                  {statute.practicalSummary}
+              </AccordionContent>
+          </Card>
+          </AccordionItem>
+          <AccordionItem value="elements" className="border-b-0">
+              <Card className="bg-muted/50">
+                  <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                      Elements of the Crime
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                      {(() => {
+                          const elementState = generatedElements[statute.id];
+                          if (elementState?.isLoading) {
+                              return <div className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Generating...</div>
+                          }
+                          if (elementState?.content) {
+                              return <div className="whitespace-pre-wrap">{elementState.content}</div>
+                          }
+                          return (
+                              <Button 
+                                  variant="secondary" 
+                                  size="sm" 
+                                  onClick={() => handleGenerateElements(statute)}
+                              >
+                                  <Sparkles className="mr-2 h-4 w-4 text-accent" />
+                                  Generate with AI
+                              </Button>
+                          )
+                      })()}
+                  </AccordionContent>
+              </Card>
+          </AccordionItem>
+          <AccordionItem value="example" className="border-b-0">
+              <Card className="bg-muted/50">
+                  <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                      Real-World Example
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                      {statute.example}
+                  </AccordionContent>
+              </Card>
+          </AccordionItem>
+      </Accordion>
+      <div className="mt-6 flex items-center gap-2">
+          <Summarizer
+          documentText={
+              statute.fullText ||
+              `${statute.practicalSummary} ${statute.example}`
+          }
+          documentTitle={statute.title}
+          />
+          <Button asChild variant="secondary">
+          <Link href={statute.url} target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="mr-2 h-4 w-4" />
+              View Full Statute
+          </Link>
+          </Button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex flex-col h-[calc(100vh-12rem)] animate-fade-in-up">
@@ -205,68 +303,7 @@ export const StatuteClient = memo(function StatuteClient({
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-6 pt-0">
-                    <div className="border-t pt-4">
-                       <Accordion type="multiple" collapsible className="w-full space-y-2" defaultValue={['description']}>
-                        <AccordionItem value="description" className="border-b-0">
-                            <Card className="bg-muted/50">
-                                <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-                                    Practical Summary for Officers
-                                </AccordionTrigger>
-                                <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
-                                    {aiResult.description}
-                                </AccordionContent>
-                            </Card>
-                        </AccordionItem>
-                        {aiResult.elementsOfTheCrime && (
-                            <AccordionItem value="elements" className="border-b-0">
-                                <Card className="bg-muted/50">
-                                    <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-                                        Elements of the Crime
-                                    </AccordionTrigger>
-                                    <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                                        {aiResult.elementsOfTheCrime}
-                                    </AccordionContent>
-                                </Card>
-                            </AccordionItem>
-                        )}
-                        <AccordionItem value="example" className="border-b-0">
-                            <Card className="bg-muted/50">
-                                <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-                                    Real-World Example
-                                </AccordionTrigger>
-                                <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
-                                    {aiResult.example}
-                                </AccordionContent>
-                            </Card>
-                        </AccordionItem>
-                      </Accordion>
-                      
-                      <div className="mt-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                        <h4 className="font-semibold mb-2 text-destructive-foreground/90">
-                          AI Result Disclaimer
-                        </h4>
-                        <p className="text-destructive-foreground/80 leading-relaxed text-sm">
-                          This information was generated by AI and has not been
-                          verified. Always consult official sources for legal
-                          decisions.
-                        </p>
-                      </div>
-                      <div className="mt-6 flex items-center gap-2">
-                        <Summarizer
-                          documentText={
-                            aiResult.fullText ||
-                            `${aiResult.description} ${aiResult.example}`
-                          }
-                          documentTitle={aiResult.title}
-                        />
-                        <Button asChild variant="secondary">
-                          <Link href={aiResult.url} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="mr-2 h-4 w-4" />
-                            View Full Statute
-                          </Link>
-                        </Button>
-                      </div>
-                    </div>
+                    <FullStatuteContent statute={aiResult} />
                 </AccordionContent>
               </Card>
             </AccordionItem>
@@ -302,7 +339,7 @@ export const StatuteClient = memo(function StatuteClient({
                 <TabsContent key={category} value={category} className="flex-1 mt-4 overflow-hidden">
                     <ScrollArea className="h-full pr-4">
                         {filteredStatutes.length > 0 ? (
-                            <Accordion type="single" collapsible className="w-full space-y-4">
+                            <Accordion type="single" collapsible className="w-full space-y-4" onValueChange={handleAccordionChange}>
                                 {filteredStatutes.map((statute, index) => (
                                 <AccordionItem
                                     value={statute.id}
@@ -322,83 +359,13 @@ export const StatuteClient = memo(function StatuteClient({
                                         </div>
                                     </AccordionTrigger>
                                     <AccordionContent className="px-6 pb-6 pt-0">
-                                        <div className="border-t pt-4">
-                                        <Accordion type="multiple" collapsible className="w-full space-y-2" defaultValue={['description']}>
-                                            <AccordionItem value="description" className="border-b-0">
-                                            <Card className="bg-muted/50">
-                                                <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-                                                    Official Description
-                                                </AccordionTrigger>
-                                                <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
-                                                    {statute.description}
-                                                </AccordionContent>
-                                            </Card>
-                                            </AccordionItem>
-                                            <AccordionItem value="summary" className="border-b-0">
-                                            <Card className="bg-muted/50">
-                                                <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-                                                    What it Means for Officers
-                                                </AccordionTrigger>
-                                                <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
-                                                    {statute.practicalSummary}
-                                                </AccordionContent>
-                                            </Card>
-                                            </AccordionItem>
-                                            <AccordionItem value="elements" className="border-b-0">
-                                                <Card className="bg-muted/50">
-                                                    <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-                                                        Elements of the Crime
-                                                    </AccordionTrigger>
-                                                    <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
-                                                        {(() => {
-                                                            const elementState = generatedElements[statute.id];
-                                                            if (elementState?.isLoading) {
-                                                                return <div className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Generating...</div>
-                                                            }
-                                                            if (elementState?.content) {
-                                                                return <div className="whitespace-pre-wrap">{elementState.content}</div>
-                                                            }
-                                                            return (
-                                                                <Button 
-                                                                    variant="secondary" 
-                                                                    size="sm" 
-                                                                    onClick={() => handleGenerateElements(statute)}
-                                                                >
-                                                                    <Sparkles className="mr-2 h-4 w-4 text-accent" />
-                                                                    Generate with AI
-                                                                </Button>
-                                                            )
-                                                        })()}
-                                                    </AccordionContent>
-                                                </Card>
-                                            </AccordionItem>
-                                            <AccordionItem value="example" className="border-b-0">
-                                                <Card className="bg-muted/50">
-                                                    <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-                                                        Real-World Example
-                                                    </AccordionTrigger>
-                                                    <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
-                                                        {statute.example}
-                                                    </AccordionContent>
-                                                </Card>
-                                            </AccordionItem>
-                                        </Accordion>
-                                        <div className="mt-6 flex items-center gap-2">
-                                            <Summarizer
-                                            documentText={
-                                                statute.fullText ||
-                                                `${statute.practicalSummary} ${statute.example}`
-                                            }
-                                            documentTitle={statute.title}
-                                            />
-                                            <Button asChild variant="secondary">
-                                            <Link href={statute.url} target="_blank" rel="noopener noreferrer">
-                                                <ExternalLink className="mr-2 h-4 w-4" />
-                                                View Full Statute
-                                            </Link>
-                                            </Button>
+                                      {loadingId === statute.id && (
+                                        <div className="pt-4 space-y-4">
+                                          <Skeleton className="h-24 w-full" />
+                                          <Skeleton className="h-24 w-full" />
                                         </div>
-                                        </div>
+                                      )}
+                                      {cachedData[statute.id] && <FullStatuteContent statute={cachedData[statute.id]} />}
                                     </AccordionContent>
                                     </Card>
                                 </AccordionItem>

@@ -11,7 +11,7 @@ export type CaseLaw = {
   overturned: boolean;
 };
 
-export const caseLaws: CaseLaw[] = [
+const allCaseLaws: CaseLaw[] = [
   // Crisis Intervention
   {
     id: 'doe-v-public-health-trust',
@@ -664,3 +664,22 @@ export const caseLaws: CaseLaw[] = [
     overturned: false,
   },
 ];
+
+type CaseLawIndexItem = {
+  id: string;
+  title: string;
+  citation: string;
+  category: string;
+}
+
+export const caseLawIndex: CaseLawIndexItem[] = allCaseLaws.map(c => ({
+  id: c.id,
+  title: c.title,
+  citation: c.citation,
+  category: c.category,
+}));
+
+export const caseLawsFullData: Record<string, CaseLaw> = allCaseLaws.reduce((acc, c) => {
+  acc[c.id] = c;
+  return acc;
+}, {} as Record<string, CaseLaw>);

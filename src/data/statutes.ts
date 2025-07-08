@@ -13,7 +13,7 @@ export type Statute = {
   category: string;
 };
 
-export const statutes: Statute[] = [
+const allStatutes: Statute[] = [
   {
     id: 's784-011',
     code: 'F.S. § 784.011',
@@ -255,3 +255,18 @@ export const statutes: Statute[] = [
     url: 'http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0700-0799/0790/Sections/0790.15.html'
   }
 ];
+
+type StatuteIndexItem = Omit<Statute, 'description' | 'fullText' | 'practicalSummary' | 'example' | 'elementsOfTheCrime' | 'url'>;
+
+export const statuteIndex: StatuteIndexItem[] = allStatutes.map(s => ({
+  id: s.id,
+  code: s.code,
+  title: s.title,
+  degreeOfCharge: s.degreeOfCharge,
+  category: s.category,
+}));
+
+export const statutesFullData: Record<string, Statute> = allStatutes.reduce((acc, s) => {
+  acc[s.id] = s;
+  return acc;
+}, {} as Record<string, Statute>);

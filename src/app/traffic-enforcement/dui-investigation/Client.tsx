@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -198,7 +199,7 @@ export const DuiInvestigationClient = memo(function DuiInvestigationClient({ dat
                     <Card>
                          <AccordionTrigger className="p-6 text-left hover:no-underline">
                            <div className="flex items-center gap-3">
-                                <LucideIcons.Handcuffs className="h-5 w-5 text-primary"/>
+                                <LucideIcons.Gavel className="h-5 w-5 text-primary"/>
                                 <CardTitle>Part 3: Arrest, Implied Consent &amp; Testing</CardTitle>
                             </div>
                         </AccordionTrigger>
