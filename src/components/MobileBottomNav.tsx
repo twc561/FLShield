@@ -10,6 +10,7 @@ import {
   FileText,
   Menu,
   X,
+  ChevronDown,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
@@ -86,12 +87,12 @@ export function MobileBottomNav() {
                     {item.items ? (
                       <Collapsible defaultOpen={item.items.some(subItem => isActive(subItem.href))}>
                         <CollapsibleTrigger asChild>
-                          <Button variant="ghost" className="w-full justify-between">
+                          <Button variant="ghost" className="w-full justify-between group">
                             <div className="flex items-center gap-3">
                               <item.icon className="h-5 w-5" />
                               <span>{item.label}</span>
                             </div>
-                            <ListChecks className="h-4 w-4" />
+                            <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                           </Button>
                         </CollapsibleTrigger>
                         <CollapsibleContent>

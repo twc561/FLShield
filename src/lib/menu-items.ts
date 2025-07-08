@@ -1,6 +1,6 @@
 import * as React from "react"
 import {
-  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, MessageSquareWarning, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, Flame, ShieldAlert, FlaskConical, Users, Smartphone,
+  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, ShieldAlert as MessageSquareWarning, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, Flame, ShieldAlert, FlaskConical, Users, Smartphone,
 } from "lucide-react"
 
 type SubMenuItem = {
@@ -32,7 +32,7 @@ export const menuItems: MenuItem[] = [
       { href: "/legal-reference/florida-administrative-code", label: "Florida Administrati...", icon: Building },
       { href: "/legal-reference/statutory-case-law-updates", label: "Statutory & Case Law...", icon: Newspaper },
       { href: "/legal-reference/local-ordinances-guide", label: "Local Ordinances Gui...", icon: Home },
-      { href: "/legal-reference/rights-reference-guide", label: "Rights Reference Gui...", icon: MessageSquareWarning },
+      { href: "/legal-reference/rights-reference-guide", label: "Rights Reference Gui...", icon: ShieldAlert },
     ],
   },
   {

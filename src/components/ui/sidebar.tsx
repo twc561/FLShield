@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Tooltip,
@@ -31,8 +30,6 @@ type SidebarContext = {
   state: "expanded" | "collapsed"
   open: boolean
   setOpen: (open: boolean) => void
-  openMobile: boolean
-  setOpenMobile: (open: boolean) => void
   isMobile: boolean
   toggleSidebar: () => void
 }
@@ -69,7 +66,6 @@ const SidebarProvider = React.forwardRef<
     ref
   ) => {
     const isMobile = useIsMobile()
-    const [openMobile, setOpenMobile] = React.useState(false)
 
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
@@ -92,10 +88,8 @@ const SidebarProvider = React.forwardRef<
 
     // Helper to toggle the sidebar.
     const toggleSidebar = React.useCallback(() => {
-      return isMobile
-        ? setOpenMobile((open) => !open)
-        : setOpen((open) => !open)
-    }, [isMobile, setOpen, setOpenMobile])
+      setOpen((open) => !open)
+    }, [setOpen])
 
     // Adds a keyboard shortcut to toggle the sidebar.
     React.useEffect(() => {
@@ -123,11 +117,9 @@ const SidebarProvider = React.forwardRef<
         open,
         setOpen,
         isMobile,
-        openMobile,
-        setOpenMobile,
         toggleSidebar,
       }),
-      [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
+      [state, open, setOpen, isMobile, toggleSidebar]
     )
 
     return (
@@ -169,33 +161,14 @@ const Sidebar = React.forwardRef<
     {
       side = "left",
       variant = "sidebar",
-      collapsible = "offcanvas",
+      collapsible = "icon",
       className,
       children,
       ...props
     },
     ref
   ) => {
-    const { isMobile, state } = useSidebar()
-
-    if (isMobile) {
-      return null
-    }
-
-    if (collapsible === "none") {
-      return (
-        <div
-          className={cn(
-            "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
-            className
-          )}
-          ref={ref}
-          {...props}
-        >
-          {children}
-        </div>
-      )
-    }
+    const { state } = useSidebar()
 
     return (
       <div

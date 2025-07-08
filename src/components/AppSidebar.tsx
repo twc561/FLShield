@@ -31,10 +31,21 @@ import { menuItems } from "@/lib/menu-items"
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const [openStates, setOpenStates] = React.useState<Record<string, boolean>>({})
 
   const isActive = (href: string) => {
     return pathname === href || (href !== "/" && pathname.startsWith(href))
   }
+
+  React.useEffect(() => {
+    const initialStates: Record<string, boolean> = {}
+    menuItems.forEach((item) => {
+      if (item.items) {
+        initialStates[item.label] = item.items.some((subItem) => isActive(subItem.href))
+      }
+    })
+    setOpenStates(initialStates)
+  }, [pathname])
 
   return (
     <Sidebar>
@@ -50,7 +61,13 @@ export function AppSidebar() {
         <SidebarMenu>
           {menuItems.map((item) =>
             item.items ? (
-              <Collapsible key={item.label} defaultOpen={item.items.some(subItem => isActive(subItem.href))}>
+              <Collapsible
+                key={item.label}
+                open={openStates[item.label] || false}
+                onOpenChange={(isOpen) =>
+                  setOpenStates((prev) => ({ ...prev, [item.label]: isOpen }))
+                }
+              >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
