@@ -84,8 +84,8 @@ export const menuItems: MenuItem[] = [
       icon: Briefcase,
       items: [
           { href: "/reporting-development/ai-charge-assistant", label: "AI Charge Assistant", icon: Gavel },
-          { href: "/reporting-development/ai-report-writer", label: "AI Report Writer", icon: ClipboardEdit },
           { href: "/reporting-development/use-of-force-wizard", label: "Use of Force Wizard", icon: ShieldQuestion },
+          { href: "/reporting-development/ai-report-writer", label: "AI Report Writer", icon: ClipboardEdit },
           { href: "/reporting-development/knowledge-check", label: "Knowledge Check", icon: GraduationCap },
       ],
   },
