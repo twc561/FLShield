@@ -1,114 +1,296 @@
+// --- Data Types ---
 
-export type FwcTopic = {
-  id: string;
-  title: string;
-  icon: string;
-  description: string;
-  points: string[];
-  note?: string;
+export type FishingRegulation = {
+  speciesName: string;
+  commonNames: string;
+  facRule: string;
+  licenseRequired: string;
+  gearRestrictions: string;
+  officerNotes: string;
+  atlantic: {
+    season: string;
+    slotLimit: string;
+    bagLimit: string;
+  };
+  gulf: {
+    season: string;
+    slotLimit: string;
+    bagLimit: string;
+  };
 };
 
-export const fwcData: FwcTopic[] = [
+export type HuntingRegulation = {
+  speciesName: string;
+  facRule: string;
+  licensePermits: string;
+  legalHours: string;
+  legalMethods: string;
+  bagLimit: string;
+  antlerRules?: string;
+  officerNotes: string;
+  seasonDates: Record<string, Record<string, string>>;
+};
+
+export type BoatingTopic = {
+  title: string;
+  icon: string;
+  details: string[];
+}
+
+export type BoatingSafetyEquipment = {
+    title: string;
+    icon: string;
+    checklists: Record<string, string[]>;
+    topics: BoatingTopic[];
+};
+
+export type BuiReference = {
+    title: string;
+    icon: string;
+    details: string[];
+}
+
+export type ManateeZoneInfo = {
+    title: string;
+    icon: string;
+    details: string[];
+    url: string;
+}
+
+export type ProtectedSpeciesInfo = {
+  speciesName: string;
+  category: string;
+  protocol: string;
+};
+
+
+// --- FISHING REGULATIONS DATABASE ---
+
+export const fishingRegulations: FishingRegulation[] = [
   {
-    id: "boating-safety",
+    speciesName: "Snook",
+    commonNames: "Linesider, Robalo",
+    facRule: "68B-21, F.A.C.",
+    licenseRequired: "Yes, Saltwater License + Snook Permit Required",
+    gearRestrictions: "Hook and line only. No snatch hooks.",
+    officerNotes: "Common violation is possession during closed season or keeping an out-of-slot fish. Check date and location of catch. Fish must be landed in whole condition.",
+    atlantic: {
+      season: "Open Feb. 1–May 31 & Sept. 1–Dec. 14",
+      slotLimit: 'Not less than 28" or more than 32" total length',
+      bagLimit: "1 per person, per day",
+    },
+    gulf: {
+      season: "Open March 1–April 30 & Sept. 1–Nov. 30",
+      slotLimit: 'Not less than 28" or more than 33" total length',
+      bagLimit: "1 per person, per day",
+    },
+  },
+  {
+    speciesName: "Redfish (Red Drum)",
+    commonNames: "Red, Channel Bass",
+    facRule: "68B-22, F.A.C.",
+    licenseRequired: "Yes, Saltwater License",
+    gearRestrictions: "Hook and line, cast net. Cannot be harvested commercially.",
+    officerNotes: "Catch-and-release only in all of Florida. Possession is a common violation. Check for fish hidden in coolers or livewells.",
+    atlantic: {
+      season: "Catch-and-release only",
+      slotLimit: "N/A (Possession Prohibited)",
+      bagLimit: "0 (Possession Prohibited)",
+    },
+    gulf: {
+      season: "Catch-and-release only",
+      slotLimit: "N/A (Possession Prohibited)",
+      bagLimit: "0 (Possession Prohibited)",
+    },
+  },
+  {
+    speciesName: "Spotted Sea Trout",
+    commonNames: "Trout, Gator Trout",
+    facRule: "68B-37, F.A.C.",
+    licenseRequired: "Yes, Saltwater License",
+    gearRestrictions: "Hook and line, cast net.",
+    officerNotes: "Regulations vary significantly by management zone. It is critical to know which zone the angler was fishing in.",
+    atlantic: {
+      season: "Open year-round",
+      slotLimit: 'Not less than 15" or more than 19" total length. May possess one over 19".',
+      bagLimit: "2 per person (in NE Zone), 3 per person (in SE Zone)",
+    },
+    gulf: {
+      season: "Open year-round",
+      slotLimit: 'Not less than 15" or more than 19" total length. May possess one over 19".',
+      bagLimit: "3 per person",
+    },
+  },
+  {
+    speciesName: "Largemouth Bass",
+    commonNames: "Black Bass",
+    facRule: "68A-23.005, F.A.C.",
+    licenseRequired: "Yes, Freshwater License",
+    gearRestrictions: "Hook and line only. No snatch hooks.",
+    officerNotes: "Check for compliance with bag limits. Possession of undersized fish is a common violation. Tournament anglers may have specific exemptions.",
+    atlantic: { // Note: Freshwater regs are statewide, but structure is kept for consistency.
+      season: "Open year-round",
+      slotLimit: 'No minimum length. Only one bass may be 16" or longer.',
+      bagLimit: "5 per person, per day",
+    },
+    gulf: {
+      season: "Open year-round",
+      slotLimit: 'No minimum length. Only one bass may be 16" or longer.',
+      bagLimit: "5 per person, per day",
+    },
+  },
+];
+
+
+// --- HUNTING REGULATIONS DATABASE ---
+
+export const huntingRegulations: HuntingRegulation[] = [
+  {
+    speciesName: "White-tailed Deer",
+    facRule: "68A-13, F.A.C.",
+    licensePermits: "Hunting License, Deer Permit",
+    legalHours: "One-half hour before sunrise to one-half hour after sunset",
+    legalMethods: "Rifles, shotguns, muzzleloaders, bows, crossbows during appropriate seasons.",
+    bagLimit: "2 per day (combined zones). Annual limit of 5 deer.",
+    antlerRules: "Must have at least one antler at least 5 inches in length, OR at least 3 points on one side, OR a main beam of at least 10 inches. Varies by WMA.",
+    officerNotes: "Common violations include hunting out of season, hunting without license/permits, taking deer without legal antlers, and untagged deer. Check for properly notched tags.",
+    seasonDates: {
+      "Zone A": { Archery: "Aug 3-Sep 1", General_Gun: "Oct 26-Jan 5" },
+      "Zone B": { Archery: "Oct 12-Nov 10", General_Gun: "Nov 23-Feb 16" },
+      "Zone C": { Archery: "Sep 14-Oct 13", General_Gun: "Nov 2-Jan 19" },
+      "Zone D": { Archery: "Sep 28-Oct 27", General_Gun: "Nov 9-Jan 1" },
+    }
+  },
+  {
+    speciesName: "Osceola Turkey",
+    facRule: "68A-13.004, F.A.C.",
+    licensePermits: "Hunting License, Turkey Permit",
+    legalHours: "One-half hour before sunrise until sunset",
+    legalMethods: "Shotguns (10 gauge or smaller), bows, crossbows. No rifles or handguns.",
+    bagLimit: "2 per season. Only bearded turkeys or gobblers.",
+    officerNotes: "Main violations are hunting over bait, using illegal firearms/ammo (e.g., rifle or shot larger than No. 2), and taking hens.",
+    seasonDates: {
+      "South of SR 70": { Spring: "Mar 7-Apr 12", Fall: "N/A" },
+      "North of SR 70": { Spring: "Mar 21-Apr 26", Fall: "N/A" },
+    }
+  },
+  {
+    speciesName: "Wild Hog",
+    facRule: "68A-12.002, F.A.C.",
+    licensePermits: "No license required for wild hogs on private land.",
+    legalHours: "Daylight hours. Night hunting allowed on private land with landowner permission.",
+    legalMethods: "Any legal rifle, shotgun, crossbow, bow, or pistol. No restrictions on magazine capacity.",
+    bagLimit: "No size or bag limit on private lands.",
+    officerNotes: "Wild hogs are not considered game animals. Primary violations involve hunting on public land without permission or hunting from a roadway.",
+    seasonDates: {
+      "Private Land": { All_Year: "Year-round" },
+      "Public Land": { Varies: "Check specific WMA regulations" }
+    }
+  }
+];
+
+// --- BOATING & SPECIES GUIDE ---
+
+export const boatingSafetyEquipment: BoatingSafetyEquipment = {
     title: "Boating Safety Equipment",
     icon: "LifeBuoy",
-    description: "Minimum required safety equipment for recreational vessels in Florida.",
-    points: [
-      "One wearable, USCG-approved Personal Flotation Device (PFD) for each person on board. Children under 6 must wear a PFD at all times on a vessel under 26 feet.",
-      "Vessels 16 feet or longer must have at least one Type IV (throwable) PFD.",
-      "A sound-producing device (horn, whistle) is required.",
-      "Fire extinguisher(s) are required on most motorboats with enclosed compartments or fuel tanks.",
-      "Visual distress signals (flares, flags) are required for coastal waters, and for all boats on federally controlled waters.",
-      "Navigation lights are required for operation between sunset and sunrise.",
-    ],
-    note: "These are minimums. Requirements can change based on vessel length and whether you are on state or federal waters. When in doubt, check the latest FWC regulations.",
-  },
-  {
-    id: "fishing-license",
-    title: "Fishing License Requirements",
-    icon: "Fish",
-    description: "General requirements for saltwater and freshwater fishing licenses.",
-    points: [
-      "A fishing license is required to attempt to take fish. If you are casting a line, you need a license.",
-      "Florida residents fishing from land or a structure fixed to land in saltwater do not need a saltwater fishing license.",
-      "Residents 65 years of age or older are exempt.",
-      "Children under 16 are exempt.",
-      "Specific permits are required for certain species, like snook, lobster, and tarpon.",
-      "Licenses can be purchased online via the FWC website or at most bait and tackle shops.",
-    ],
-    note: "License requirements are complex and have many exemptions. Always verify the specific situation. The 'GoOutdoorsFL' app is an official resource.",
-  },
-  {
-    id: "dui-bui",
+    checklists: {
+        "< 16 feet": [
+            "PFD: One USCG-approved wearable for each person.",
+            "Registration: Certificate of Registration on board.",
+            "Fire Extinguisher: One B-I type required if vessel has built-in fuel tank.",
+            "Sound Device: Whistle or horn.",
+            "Nav Lights: Required for sunset to sunrise operation.",
+        ],
+        "16 to < 26 feet": [
+            "PFD: One USCG-approved wearable for each person AND one Type IV (throwable).",
+            "Registration: Certificate of Registration on board.",
+            "Fire Extinguisher: One B-I type required.",
+            "Sound Device: Whistle or horn.",
+            "Nav Lights: Required for sunset to sunrise operation.",
+            "Visual Distress Signals: 3 handheld red flares (or approved equivalent) for coastal waters.",
+        ],
+        "26 to < 40 feet": [
+            "PFD: One USCG-approved wearable for each person AND one Type IV (throwable).",
+            "Registration: Certificate of Registration on board.",
+            "Fire Extinguisher: Two B-I types or one B-II type.",
+            "Sound Device: Bell and horn/whistle.",
+            "Nav Lights: Required for sunset to sunrise operation.",
+            "Visual Distress Signals: 3 handheld red flares (or approved equivalent) for coastal waters.",
+        ]
+    },
+    topics: [
+      {
+        title: "PWC (Jet Ski) Regulations",
+        icon: "Waves",
+        details: [
+          "Operator must be at least 14 years of age.",
+          "Anyone born on or after Jan 1, 1988, must have a Boating Safety Education ID Card.",
+          "Operator must wear an approved, non-inflatable PFD.",
+          "Safety lanyard must be attached to the operator.",
+          "Operation is prohibited from 1/2 hour after sunset to 1/2 hour before sunrise.",
+        ]
+      },
+      {
+        title: "Diver-Down Flag Rules",
+        icon: "Flag",
+        details: [
+          "Flag must be at least 20x24 inches on a vessel, or 12x12 inches on a float.",
+          "Boaters must stay at least 300 feet away in open water.",
+          "Boaters must stay at least 100 feet away in inlets, rivers, and channels.",
+          "Boaters must operate at idle speed within these distances.",
+        ]
+      },
+    ]
+};
+
+export const buiReference: BuiReference = {
     title: "Boating Under the Influence (BUI)",
-    icon: "Beer",
-    description: "Operating a vessel while under the influence of alcohol or drugs is a crime.",
-    points: [
-      "The legal blood alcohol limit for BUI is 0.08%, the same as for DUI.",
-      "For persons under 21, the limit is 0.02%.",
-      "By operating a vessel on Florida waters, you have given implied consent to submit to a breath or urine test.",
-      "Penalties for BUI are similar to DUI, including fines, imprisonment, and suspension of your boating privileges.",
-      "FWC officers have the authority to stop a vessel for safety checks or if they observe reckless operation, which can lead to a BUI investigation.",
+    icon: "Wind",
+    details: [
+        "Elements of the Offense (F.S. §327.35): Operating a vessel while normal faculties are impaired by alcohol/drugs, or with a BAC/BAL of 0.08 or higher.",
+        "Legal Limit: 0.08 BAC for adults, 0.02 BAC for persons under 21.",
+        "Implied Consent: By operating a vessel, a person has consented to a breath or urine test.",
+        "Penalties for Refusal: Civil penalty and potential for misdemeanor charge on second refusal.",
+        "FWC officers have authority to conduct BUI investigations. Local LEOs do as well on waters within their jurisdiction.",
+    ]
+}
+
+export const manateeZoneInfo: ManateeZoneInfo = {
+    title: "Manatee & Speed Zone Guide",
+    icon: "Info",
+    details: [
+        "Manatee zones are legally enforceable speed restrictions posted on markers.",
+        "'Idle Speed / No Wake': The minimum speed required to maintain steerage.",
+        "'Slow Speed / Minimum Wake': Vessel is fully settled in the water, not on a plane, and creating the smallest possible wake.",
+        "Violating a posted manatee zone is a noncriminal infraction. Repeat violations can be criminal.",
+        "These zones are critical for preventing boat strikes on manatees.",
     ],
+    url: "https://myfwc.com/conservation/manatee/boat-operators/"
+}
+
+
+// --- PROTECTED & NUISANCE SPECIES GUIDE ---
+
+export const protectedSpeciesInfo: ProtectedSpeciesInfo[] = [
+  {
+    speciesName: "Gopher Tortoise",
+    category: "Protected",
+    protocol: "It is illegal to harass, possess, or damage burrows (a third-degree felony). Stop all site work (e.g., construction, mowing). Call FWC Dispatch to report the violation and get an FWC officer to respond.",
   },
   {
-    id: "manatee-zones",
-    title: "Vessel Speed & Manatee Zones",
-    icon: "AlertTriangle",
-    description: "Rules for operating vessels in designated manatee protection zones.",
-    points: [
-      "Manatee zones are legally enforceable speed zones, marked by waterway signs.",
-      "'Slow Speed / Minimum Wake' means the vessel is fully settled in the water and creating the smallest wake possible.",
-      "'Idle Speed / No Wake' means the minimum speed needed to maintain steerage.",
-      "Violations are a noncriminal infraction, but can become a misdemeanor if the operator has prior convictions.",
-      "These zones are critical for protecting Florida's manatee population from boat strikes."
-    ],
-    note: "Zone boundaries can change seasonally. Always refer to the posted signs on the water and official FWC maps for current regulations."
+    speciesName: "American Alligator",
+    category: "Nuisance",
+    protocol: "It is illegal to kill, harass, or possess an alligator without proper permits. For nuisance gators (in pools, garages, posing a threat), do not attempt to capture. Call the FWC's Statewide Nuisance Alligator Program (SNAP) at 866-FWC-GATOR.",
   },
   {
-    id: "diver-down",
-    title: "Diver-Down Flag Rules",
-    icon: "Flag",
-    description: "Requirements for displaying and operating around diver-down flags to protect snorkelers and scuba divers.",
-    points: [
-      "Two types of flags are recognized: the traditional red flag with a white diagonal stripe, and the blue and white 'Alpha' flag.",
-      "On a vessel, the flag must be at least 20x24 inches and displayed at the highest point for 360-degree visibility.",
-      "On a float/buoy, the flag must be at least 12x12 inches.",
-      "Vessel operators must make a reasonable effort to stay at least 300 feet away from a diver-down flag in open water.",
-      "In rivers, inlets, and navigation channels, boaters must stay at least 100 feet away.",
-      "Boaters must operate at idle speed if they must come within these distances."
-    ],
-    note: "This is a critical safety rule. Violations can lead to serious accidents and carry significant penalties. The responsibility is on both the diver to display the flag properly and the boater to respect it."
+    speciesName: "Sea Turtles",
+    category: "Protected",
+    protocol: "All five species in Florida are protected. It is illegal to harass, take, or possess turtles, nests, or eggs. For a stranded or dead turtle, or a disturbed nest, call FWC's Wildlife Alert Hotline at 888-404-3922. Secure the area until an FWC officer arrives.",
   },
   {
-    id: "pwc-rules",
-    title: "Personal Watercraft (PWC) Regulations",
-    icon: "Waves",
-    description: "Specific rules governing the operation of personal watercraft like Jet Skis, Sea-Doos, etc.",
-    points: [
-        "A person must be at least 14 years of age to operate a PWC in Florida.",
-        "Anyone born on or after January 1, 1988, must have successfully completed a boating safety course and possess a Boating Safety Education ID Card.",
-        "The operator must wear an approved, non-inflatable PFD.",
-        "A safety lanyard must be attached from the start/stop switch to the operator's person or PFD.",
-        "PWCs cannot be operated from 1/2 hour after sunset to 1/2 hour before sunrise.",
-        "Reckless operation includes weaving through congested traffic, jumping the wake of another vessel unreasonably close, or swerving at the last minute to avoid a collision."
-    ],
-    note: "PWC operators are often tourists or new boaters. Education is a key component of enforcement for minor infractions. Reckless operation, however, poses a serious danger and should be addressed accordingly."
+    speciesName: "Florida Panther",
+    category: "Protected",
+    protocol: "Federally protected as an endangered species. Illegal to harass or harm. If you encounter an injured or dead panther (e.g., roadkill), secure the scene and immediately notify FWC Dispatch for response by their biologists.",
   },
-  {
-    id: "hunting-regs",
-    title: "Hunting License & Regulations Overview",
-    icon: "Crosshair",
-    description: "Basic overview of hunting license requirements and key regulations.",
-    points: [
-        "A hunting license is required to attempt to take game.",
-        "Specific permits are required for certain species, like deer, turkey, and waterfowl.",
-        "It is illegal to hunt on or from any state or county road right-of-way.",
-        "It is prohibited to take wildlife on another person's property without landowner permission.",
-        "It is illegal to discharge a firearm over or across any public road.",
-        "Taking or attempting to take game at night with a light is generally illegal and known as 'night hunting'."
-    ],
-    note: "FWC has primary jurisdiction, but local LEOs may encounter violations like illegal night hunting, trespassing, or unsafe shooting. Always verify season dates and specific Wildlife Management Area (WMA) rules if applicable."
-  }
 ];
