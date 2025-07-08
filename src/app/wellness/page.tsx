@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -7,6 +6,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -23,7 +23,7 @@ import { decompressionSessions } from "@/data/officer-wellness-rights/decompress
 import { wellnessResources } from "@/data/officer-wellness-rights/wellness-resources"
 import Link from "next/link"
 
-import { LifeBuoy, Zap, Shield, PiggyBank, Users, Loader2, MessageSquare, Headphones, Building } from "lucide-react"
+import { LifeBuoy, Zap, Shield, PiggyBank, Users, Loader2, MessageSquare, Headphones, Building, RefreshCw } from "lucide-react"
 
 export default function OfficerWellnessPage() {
   const [dailyTip, setDailyTip] = useState<GenerateWellnessTipOutput | null>(null)
@@ -64,11 +64,14 @@ export default function OfficerWellnessPage() {
             </div>
             <CardDescription>A confidential, non-judgmental space to talk through anything on your mind. Conversations are not saved or monitored.</CardDescription>
           </CardHeader>
-          <CardContent className="flex-grow flex items-end">
+          <CardContent className="flex-grow">
+            {/* Flex grow pushes footer to the bottom */}
+          </CardContent>
+          <CardFooter>
             <Button asChild>
                 <Link href="/wellness/active-listener">Start Conversation</Link>
             </Button>
-          </CardContent>
+          </CardFooter>
         </Card>
 
         {/* AI Daily Tip */}
@@ -93,12 +96,12 @@ export default function OfficerWellnessPage() {
                 </div>
             ) : null}
             </CardContent>
-            <CardContent>
+            <CardFooter>
                  <Button variant="ghost" size="sm" onClick={fetchTip} disabled={isLoading}>
                     {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                     <span className="ml-2">Get New Tip</span>
                 </Button>
-            </CardContent>
+            </CardFooter>
         </Card>
 
          {/* Guided Decompression */}
