@@ -12,13 +12,23 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import type { Scenario, WalkthroughStep } from "@/data/field-procedures/scenario-checklists"
-import { Check, Bot, Milestone, AlertTriangle, Repeat, FileText, Search, Car } from "lucide-react"
+import { Check, Bot, Milestone, AlertTriangle, Repeat, FileText, Search, Car, Building, Home, ShoppingCart, Siren, UserSearch, KeyRound, HeartPulse, FileBadge, Users, ShieldAlert } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 const ICONS: { [key: string]: React.ElementType } = {
   Car,
   Search,
-  FileText
+  FileText,
+  Building,
+  Home,
+  ShoppingCart,
+  Siren,
+  UserSearch,
+  KeyRound,
+  HeartPulse,
+  FileBadge,
+  Users,
+  ShieldAlert,
 }
 
 export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsClient({
@@ -35,6 +45,25 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
 
   const handleRestart = () => {
     setCurrentStepId(scenario.initialStepId)
+  }
+
+  // Effect to reset the walkthrough when the scenario changes
+  React.useEffect(() => {
+    setCurrentStepId(scenario.initialStepId);
+  }, [scenario]);
+
+  if (!currentStep) {
+    return (
+      <div className="text-center p-8 border-2 border-dashed rounded-lg">
+        <AlertTriangle className="mx-auto h-12 w-12 text-destructive" />
+        <h3 className="mt-4 text-lg font-semibold">Scenario Error</h3>
+        <p className="text-muted-foreground">Could not load the current step. Please try restarting.</p>
+        <Button onClick={handleRestart} className="mt-4">
+          <Repeat className="mr-2 h-4 w-4" />
+          Restart Scenario
+        </Button>
+      </div>
+    );
   }
 
   return (

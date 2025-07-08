@@ -16,9 +16,9 @@ export default function ScenarioChecklistsPage() {
 
       {scenarios.length > 0 ? (
         <Tabs defaultValue={defaultScenarioId} className="w-full">
-          <TabsList className="grid w-full grid-cols-1 md:grid-cols-2">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-2 h-auto flex-wrap">
             {scenarios.map(scenario => (
-              <TabsTrigger key={scenario.id} value={scenario.id}>
+              <TabsTrigger key={scenario.id} value={scenario.id} className="flex-1">
                 {scenario.name}
               </TabsTrigger>
             ))}

@@ -92,8 +92,7 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
       'fst_consent': {
         phase: 'Evidence Gathering & Documentation',
         title: 'FSTs - Consent Given',
-        content: 'The driver has consented to perform FSTs. What is your procedure?',
-        content: 'Administer the Standardized Field Sobriety Tests (SFSTs) per NHTSA guidelines. Document every clue you observe for the Horizontal Gaze Nystagmus (HGN), Walk-and-Turn, and One-Leg Stand tests. Your detailed notes are critical for your report.',
+        content: 'The driver has consented to perform FSTs. Administer the Standardized Field Sobriety Tests (SFSTs) per NHTSA guidelines. Document every clue you observe for the Horizontal Gaze Nystagmus (HGN), Walk-and-Turn, and One-Leg Stand tests. Your detailed notes are critical for your report.',
         choices: [
           { text: 'The investigation is complete. Proceed to resolution.', nextStepId: 'resolution' },
         ],
@@ -101,8 +100,7 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
       'fst_refusal': {
         phase: 'Evidence Gathering & Documentation',
         title: 'FSTs - Refusal',
-        content: 'The driver has refused to perform FSTs. How do you proceed?',
-        content: "Clearly document the driver's refusal in your report. Make sure your body camera captures the refusal. Explain to the driver that you will now make your arrest decision based on the evidence you have gathered so far (driving pattern, physical observations, admissions, etc.). The refusal itself can be used as evidence of consciousness of guilt.",
+        content: "The driver has refused to perform FSTs. Clearly document the driver's refusal in your report. Make sure your body camera captures the refusal. Explain to the driver that you will now make your arrest decision based on the evidence you have gathered so far (driving pattern, physical observations, admissions, etc.). The refusal itself can be used as evidence of consciousness of guilt.",
         choices: [
           { text: 'The investigation is complete. Proceed to resolution.', nextStepId: 'resolution' },
         ],
@@ -198,7 +196,7 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
       'scene_control': {
         phase: 'Scene Control & Initial Investigation',
         title: 'Driver Contact',
-        content: 'You are at the driver\'s window. What is your standard opening line and initial request?',
+        content: "You are at the driver's window. What is your standard opening line and initial request?",
         aiTip: "A professional greeting sets the tone. 'Good evening, I'm Officer [Name] with the [Agency]. The reason I stopped you is for [violation]. May I please see your license, registration, and proof of insurance?'",
         choices: [
           { text: "The driver's license/ID is valid.", nextStepId: 'valid_license' },
@@ -296,5 +294,1108 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
         ],
       },
     ],
+  },
+  'burglary-residential-response': {
+    id: 'burglary-residential-response',
+    name: 'Burglary (Residential) Response',
+    goal: 'To safely approach, contain, and clear a residence for a suspected burglary in progress, apprehend any suspects, and preserve the scene for investigation.',
+    keyStatutes: ['F.S. §810.02 (Burglary)', 'F.S. §843.01 (Resisting w/ Violence)'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Receiving the Call',
+        content: 'Dispatch reports a possible burglary in progress at a residence. What is the most critical piece of information to get from dispatch while en route?',
+        aiTip: 'Ask dispatch if anyone is supposed to be home, if the caller is still on the line, the point of entry, and if any weapons were seen. This information will dictate your approach tactics.',
+        choices: [
+          { text: "Arriving at the location.", nextStepId: "arrival" }
+        ],
+      },
+      'arrival': {
+        phase: 'Initial Information & Arrival',
+        title: 'Scene Arrival & Containment',
+        content: 'You have arrived near the location. What are your immediate tactical priorities?',
+        aiTip: 'Park several houses away and approach on foot to maintain stealth. Coordinate with backup units to establish a perimeter covering all exit points (front, back, sides) before making any approach to the house itself.',
+        choices: [
+          { text: 'Perimeter is set. Proceeding to investigate.', nextStepId: 'investigation' },
+        ],
+      },
+      'investigation': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Initial Investigation & Entry Decision',
+        content: 'Your perimeter is set. You observe a broken window on the side of the house. What is your next move?',
+        aiTip: "The broken window provides evidence of forced entry and strengthens the exigent circumstances needed to enter without a warrant. Before entering, make loud, clear announcements, such as 'Police Department! If you are inside, come out with your hands up!'",
+        choices: [
+          { text: 'Are you making entry to search for a suspect?', nextStepId: 'entry_yes' },
+          { text: 'Are you holding the perimeter and calling for K-9/detectives?', nextStepId: 'entry_no' },
+        ],
+      },
+      'entry_yes': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Making Entry',
+        content: 'You have decided to make entry to search for a suspect. What are the key principles of a structure search?',
+        aiTip: "Move slowly and deliberately. Clear 'fatal funnels' like doorways quickly. Use angles and cover to your advantage. Communicate constantly with your partner. The goal is to find the suspect, not just to get through the house quickly.",
+        choices: [
+          { text: "A suspect is located inside.", nextStepId: "suspect_found" },
+          { text: "The structure is clear, no suspect found.", nextStepId: "structure_clear" }
+        ]
+      },
+      'entry_no': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Holding the Perimeter',
+        content: 'You have decided to hold the perimeter and not make immediate entry.',
+        aiTip: "This can be a sound tactical decision, especially if you are short-handed or waiting for specialized units like K-9. Maintain 360-degree security and keep dispatch updated on any changes.",
+        choices: [
+          { text: "The homeowner has arrived on scene.", nextStepId: "resolution" }
+        ]
+      },
+      'suspect_found': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Suspect Apprehension',
+        content: 'You have located and detained a suspect inside the residence.',
+        aiTip: 'Secure the suspect and conduct a search incident to arrest. Read Miranda rights if you intend to question them. Keep them separated from any victims or witnesses. Note their clothing, what they are carrying, and any statements they make.',
+        choices: [
+          { text: 'Proceed to securing the scene.', nextStepId: 'scene_preservation' },
+        ],
+      },
+      'structure_clear': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Structure Clear',
+        content: 'You have completed your search and the house is clear of any suspects.',
+        aiTip: 'Even though no suspect was found, the crime of burglary has still occurred. Do not let your guard down. The suspect may still be nearby.',
+        choices: [
+          { text: 'Proceed to securing the scene.', nextStepId: 'scene_preservation' },
+        ],
+      },
+      'scene_preservation': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Crime Scene Preservation',
+        content: 'The structure is secure. What are the next steps?',
+        aiLegalNote: 'Once the immediate threat is gone, your role shifts from tactical to investigator. Do not touch or move anything. Protect the scene with crime scene tape, start a scene log, and notify your supervisor and detectives. The integrity of the evidence is now the top priority.',
+        isEnd: true,
+      },
+       'resolution': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Concluding the Incident',
+        content: 'The scene is secure and ready for processing by detectives or a crime scene unit.',
+        aiLegalNote: 'Your detailed report is critical. It must articulate the initial dispatch information, your own observations that created exigent circumstances for entry, your tactical actions, and everything you did to preserve the scene. This documentation justifies your warrantless entry and actions.',
+        isEnd: true,
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Approach & Containment',
+        icon: 'Building',
+        items: [
+          'Approach silently, park away from the scene.',
+          'Coordinate with backup to establish a 360-degree perimeter.',
+          'Visually inspect the exterior for points of entry, signs of forced entry, or movement.',
+          'Gather information from the complainant if they are on scene and it is safe to do so.',
+        ],
+      },
+      {
+        section: 'Entry, Search & Apprehension',
+        icon: 'Search',
+        items: [
+          "Make loud, clear announcements before entry ('Police Department!').",
+          "Use proper clearing techniques (e.g., slicing the pie, crossing doorways).",
+          "Communicate constantly with your team during the search.",
+          "If a suspect is located, challenge, control, and handcuff them safely.",
+          "Conduct a thorough search of the structure until it is deemed clear.",
+        ],
+      },
+      {
+        section: 'Scene Preservation & Documentation',
+        icon: 'FileText',
+        items: [
+          "Secure the scene with crime scene tape.",
+          "Establish a single point of entry/exit and start a crime scene log.",
+          "Protect potential evidence from contamination or environmental damage.",
+          "Brief your supervisor and the responding detectives.",
+          "Write a detailed report articulating your actions and justifications.",
+        ],
+      },
+    ],
+  },
+  'domestic-violence-investigation': {
+    id: 'domestic-violence-investigation',
+    name: 'Domestic Violence Investigation',
+    goal: 'To safely intervene, ensure victim safety, identify the primary aggressor, and gather sufficient evidence for an evidence-based prosecution.',
+    keyStatutes: ['F.S. §741.28 (DV Definition)', 'F.S. §784.03 (Battery)', 'F.S. §741.31 (Injunction Violation)'],
+    initialStepId: 'start',
+    walkthrough: {
+        'start': {
+            phase: 'Initial Information & Arrival',
+            title: 'Receiving the Call',
+            content: 'Dispatch reports a physical domestic disturbance. What key information should you request?',
+            aiTip: 'Ask about weapons, intoxication, prior DV history at the address, if children are present, and if the line is still open. Listen for background noise on the call if possible.',
+            choices: [{ text: "Arriving on scene.", nextStepId: "arrival" }]
+        },
+        'arrival': {
+            phase: 'Initial Information & Arrival',
+            title: 'Tactical Approach & Scene Entry',
+            content: 'You and your partner have arrived. How do you approach the door?',
+            aiTip: "Never stand directly in front of the door. Stand on either side of the 'fatal funnel.' Listen for a few moments before knocking to get a sense of the situation inside.",
+            choices: [{ text: "Contact has been made at the door.", nextStepId: "scene_control" }]
+        },
+        'scene_control': {
+            phase: 'Scene Control & Initial Investigation',
+            title: 'Separation of Parties',
+            content: "You've made contact and entered the residence. What is your immediate priority?",
+            aiTip: 'Separate the parties immediately. Move them to different rooms where they cannot see or hear each other. This prevents them from intimidating each other and allows you to get independent statements.',
+            choices: [{ text: "Parties are separated. Begin investigation.", nextStepId: "investigation" }]
+        },
+        'investigation': {
+            phase: 'Scene Control & Initial Investigation',
+            title: 'Initial Investigation & Injury Assessment',
+            content: "You are speaking with the apparent victim. What are you looking for and what are your key questions?",
+            aiTip: "Ask about their safety first. Then use open-ended questions like 'Can you tell me what happened tonight?' Look for visible injuries, even minor redness or scratches, and ask about any pain they are having.",
+            choices: [{ text: "Are there visible injuries?", nextStepId: "injuries_yes" }, { text: "No visible injuries.", nextStepId: "injuries_no" }]
+        },
+        'injuries_yes': {
+            phase: 'Evidence Gathering & Documentation',
+            title: 'Documenting Injuries',
+            content: 'You have observed visible injuries on one or both parties.',
+            aiTip: 'Photograph all injuries with and without a scale marker. Take photos from multiple angles. Note the location and description of each injury in your report. Ask the victim how they received each specific injury.',
+            choices: [{ text: "Proceed to determine primary aggressor.", nextStepId: "primary_aggressor" }]
+        },
+        'injuries_no': {
+            phase: 'Evidence Gathering & Documentation',
+            title: 'No Visible Injuries',
+            content: 'Neither party has obvious, visible injuries.',
+            aiTip: "The absence of visible injury does not mean a crime didn't occur. Look for other evidence: signs of a struggle (overturned furniture), torn clothing, and listen for fear in the victim's voice. A battery can be a simple unwanted touching.",
+            choices: [{ text: "Proceed to determine primary aggressor.", nextStepId: "primary_aggressor" }]
+        },
+        'primary_aggressor': {
+            phase: 'Evidence Gathering & Documentation',
+            title: 'Primary Aggressor Determination',
+            content: "You are assessing both parties' statements and the evidence to determine the primary aggressor.",
+            aiLegalNote: "Florida law requires you to arrest the primary aggressor. Consider the severity of injuries, history of violence, statements from witnesses (including children), and signs of defensive versus offensive wounds. Avoid dual arrests unless both parties are clearly mutual combatants.",
+            choices: [{ text: "An arrest will be made.", nextStepId: "arrest" }, { text: "No arrest will be made.", nextStepId: "no_arrest" }]
+        },
+        'arrest': {
+            phase: 'Resolution & Enforcement Action',
+            title: 'Arrest & Victim Resources',
+            content: 'You have probable cause to arrest the primary aggressor.',
+            aiTip: 'Make the arrest. Inform the victim of the process for obtaining an injunction for protection and provide them with the contact information for the local certified domestic violence center. Document that you provided these resources.',
+            isEnd: true
+        },
+        'no_arrest': {
+            phase: 'Resolution & Enforcement Action',
+            title: 'No Arrest - Report for Information',
+            content: 'You have determined there is no probable cause for an arrest.',
+            aiTip: 'Clearly articulate in your report why no arrest was made (e.g., conflicting stories with no independent evidence). Still provide all parties with information on domestic violence resources. Ensure you complete a detailed report for documentation purposes.',
+            isEnd: true
+        }
+    },
+    staticChecklist: [
+      {
+        section: 'Initial Response & Scene Management',
+        icon: 'Home',
+        items: [
+            'Wait for backup if possible; approach silently and listen at the door.',
+            'Enter and immediately separate all parties involved.',
+            'Scan for weapons and ensure the scene is safe.',
+            'Request medical assistance for any injuries observed.',
+        ]
+      },
+      {
+        section: 'Investigation & Evidence Collection',
+        icon: 'Search',
+        items: [
+            'Interview victim, suspect, and any witnesses (including children) separately.',
+            'Photograph all injuries, the overall scene, and any signs of struggle.',
+            'Record any excited utterances made upon your arrival.',
+            'Check for prior DV history and active injunctions via dispatch.',
+            'Collect written statements if possible and parties are willing.',
+        ]
+      },
+      {
+        section: 'Concluding Actions & Paperwork',
+        icon: 'FileText',
+        items: [
+            'Determine and arrest the primary aggressor based on the evidence.',
+            'Provide victim with DV shelter information and injunction paperwork instructions.',
+            'Inform victim of case number and next steps.',
+            'Complete a detailed DV supplement/report, articulating PC for the arrest or reasons for non-arrest.',
+            'If children were present, determine if a report to DCF is necessary.',
+        ]
+      }
+    ]
+  },
+  'retail-theft': {
+    id: 'retail-theft',
+    name: 'Retail Theft (Shoplifting)',
+    goal: 'To investigate a retail theft, identify the suspect, recover stolen merchandise, and take appropriate enforcement action based on the value of the goods.',
+    keyStatutes: ['F.S. §812.014 (Theft)', 'F.S. §812.015 (Retail Theft)'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Receiving the Call',
+        content: 'You are dispatched to a local business for a shoplifter in custody with Loss Prevention (LP).',
+        aiTip: 'While en route, ask dispatch if the suspect is cooperative, their description, and the value of the merchandise. This helps you prepare for your contact.',
+        choices: [
+          { text: "Arriving at the business.", nextStepId: "arrival" }
+        ],
+      },
+      'arrival': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Contact with Loss Prevention',
+        content: 'You meet the LP officer. What are the first three things you need from them?',
+        aiTip: '1. The suspect. 2. The stolen merchandise. 3. The video evidence. A good LP officer will have all three ready for you.',
+        choices: [
+          { text: "LP has suspect, merchandise, and video.", nextStepId: "evidence_gathering" },
+          { text: "Suspect has fled (BOLO).", nextStepId: "bolo" }
+        ],
+      },
+      'bolo': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Suspect Fled - BOLO',
+        content: 'The suspect fled before your arrival. What information do you need for a BOLO?',
+        aiTip: 'Get a detailed description of the suspect, their direction and method of travel (foot/vehicle), and a description of the stolen goods. Broadcast this immediately.',
+        choices: [
+          { text: "Proceed to gather evidence for a warrant.", nextStepId: "evidence_gathering_bolo" }
+        ]
+      },
+      'evidence_gathering': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Reviewing Evidence (Suspect in Custody)',
+        content: 'You are reviewing the evidence with LP.',
+        aiTip: "Watch the surveillance video with the LP officer. Have them narrate what they saw, specifically pointing out the moment the suspect selected the merchandise and the moment they passed all points of sale without attempting to pay. This establishes intent.",
+        choices: [
+          { text: "What is the total value of the stolen merchandise?", nextStepId: "value_determination" }
+        ]
+      },
+      'evidence_gathering_bolo': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Reviewing Evidence (For Warrant)',
+        content: 'You are reviewing evidence to identify the suspect who fled.',
+        aiTip: 'Secure a high-quality copy of the surveillance footage and a receipt for the stolen items. If the suspect used a credit card or loyalty card during any part of their visit, that can be a valuable investigative lead.',
+        isEnd: true
+      },
+      'value_determination': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Determining Value',
+        content: 'The LP officer provides you with a receipt for the stolen items.',
+        aiLegalNote: 'The value of the merchandise is the single most important factor for charging. Under $100 is Petit Theft (2nd Deg Misd). $100-$749.99 is Petit Theft (1st Deg Misd). $750 or more is Grand Theft (Felony). Confirm the value from an official store receipt.',
+        choices: [
+          { text: "The value is under $750 (Misdemeanor).", nextStepId: "misdemeanor_theft" },
+          { text: "The value is $750 or more (Felony).", nextStepId: "felony_theft" }
+        ]
+      },
+      'misdemeanor_theft': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Misdemeanor Theft Resolution',
+        content: 'The theft is a misdemeanor. The suspect is identified and cooperative.',
+        aiTip: 'For most misdemeanor thefts, issuing a Notice to Appear (NTA) is the most efficient resolution. This saves a trip to the jail and court time. Ensure you have positive ID and the suspect signs the NTA.',
+        isEnd: true
+      },
+      'felony_theft': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Felony Theft Resolution',
+        content: 'The theft is a felony due to the value of the items.',
+        aiLegalNote: 'A felony charge requires a physical arrest and transport to the county jail. Your PC affidavit must clearly state the total value of the stolen goods and reference the store receipt.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Initial Response & Scene Management',
+        icon: 'ShoppingCart',
+        items: [
+          'Respond to the location and contact Loss Prevention (LP).',
+          'Secure the suspect if they are detained and not already in a secure office.',
+          'Take possession of the stolen merchandise.',
+          'Request a copy of the surveillance footage.',
+        ],
+      },
+      {
+        section: 'Investigation & Evidence Collection',
+        icon: 'Search',
+        items: [
+          'Watch surveillance video to confirm all elements of the theft.',
+          'Obtain a printed receipt detailing the exact value of all stolen items.',
+          'Interview the LP officer and obtain a written statement.',
+          'Identify the suspect via ID, or run a criminal history check if needed.',
+          'Read Miranda rights if you plan to question the suspect about the incident.',
+        ],
+      },
+      {
+        section: 'Concluding Actions & Paperwork',
+        icon: 'FileText',
+        items: [
+          'Determine the correct charge (Petit or Grand Theft) based on value.',
+          'Take appropriate enforcement action: physical arrest for felony, or Notice to Appear (NTA) for misdemeanor.',
+          'Return recovered property to the business and have them sign a property receipt.',
+          'Complete a detailed offense report including the value of items and PC.',
+        ],
+      },
+    ]
+  },
+  'traffic-crash-investigation': {
+    id: 'traffic-crash-investigation',
+    name: 'Traffic Crash Investigation',
+    goal: 'To safely manage a traffic crash scene, render aid, conduct a thorough investigation, determine the at-fault party, and restore normal traffic flow.',
+    keyStatutes: ['F.S. §316.061 (Crashes involving damage)', 'F.S. §316.066 (Written reports of crashes)'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Receiving the Call',
+        content: 'You are dispatched to a vehicle crash. What key information will determine your response mode?',
+        aiTip: "The single most important piece of information is 'Are there injuries?' A crash with injuries requires an expedited response (lights and sirens) and an immediate request for Fire/EMS.",
+        choices: [
+          { text: "Arriving on scene.", nextStepId: "arrival" }
+        ]
+      },
+      'arrival': {
+        phase: 'Initial Information & Arrival',
+        title: 'Scene Arrival & Safety',
+        content: 'You are the first officer on scene. What are your top 3 priorities?',
+        aiTip: '1. Position your vehicle to protect the scene and create a safety lane for other responders. 2. Check for injuries and render aid. 3. Identify all involved vehicles and drivers.',
+        choices: [
+          { text: "The scene is safe, no major injuries. Begin investigation.", nextStepId: "investigation" }
+        ]
+      },
+      'investigation': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Driver & Witness Interviews',
+        content: 'You are beginning your investigation. How should you conduct your interviews?',
+        aiTip: 'Separate the drivers and interview them individually. Get their account of what happened. Then, locate independent witnesses; their neutral perspective is invaluable. Ask for license, registration, and insurance from all drivers.',
+        choices: [
+          { text: "Is this a criminal traffic investigation (e.g., DUI, leaving the scene)?", nextStepId: "criminal_crash" },
+          { text: "This is a standard civil traffic investigation.", nextStepId: "civil_crash" }
+        ]
+      },
+      'criminal_crash': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Criminal Crash Investigation',
+        content: 'Your investigation reveals evidence of a crime (like DUI). How does this change your approach?',
+        aiLegalNote: 'The investigation now requires Miranda warnings before you question the at-fault driver about the criminal aspect. The "accident report privilege" does not apply to criminal investigations. What they tell you for the crash report can be used against them for the criminal charge.',
+        choices: [
+          { text: "Proceed to gathering physical evidence.", nextStepId: "evidence_gathering" }
+        ]
+      },
+      'civil_crash': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Civil Crash Investigation',
+        content: 'This is a non-criminal crash investigation.',
+        aiLegalNote: 'Under the "accident report privilege," statements a driver makes to you for the purpose of completing the crash report cannot be used against them in court for a traffic citation. Your citation must be based on your independent evidence (witness statements, physical evidence).',
+        choices: [
+          { text: "Proceed to gathering physical evidence.", nextStepId: "evidence_gathering" }
+        ]
+      },
+      'evidence_gathering': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Documenting Physical Evidence',
+        content: 'You are ready to document the physical evidence at the scene.',
+        aiTip: 'Look for skid marks, tire marks, debris fields, and damage to vehicles. Photograph everything. These pieces of evidence help you reconstruct the crash and determine fault independently of driver statements.',
+        choices: [
+          { text: "Do you have conflicting statements from drivers?", nextStepId: "conflicting_statements" },
+          { text: "The facts and statements are clear.", nextStepId: "clear_facts" }
+        ]
+      },
+      'conflicting_statements': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Conflicting Statements',
+        content: 'The drivers are giving completely different versions of events.',
+        aiTip: 'Rely on the physical evidence and independent witness statements to determine fault. If you cannot determine who was at fault based on this independent evidence, you may have to issue no citations and document that the fault was indeterminable.',
+        choices: [
+          { text: "Investigation complete. Proceed to resolution.", nextStepId: "resolution" }
+        ]
+      },
+      'clear_facts': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Determining Fault',
+        content: 'The evidence and statements clearly indicate which driver was at fault.',
+        aiTip: 'Issue the at-fault driver a citation for the violation that caused the crash (e.g., Failure to Yield, Following Too Closely). Explain the citation and the process to the driver.',
+        choices: [
+          { text: "Proceed to resolution.", nextStepId: "resolution" }
+        ]
+      },
+      'resolution': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Concluding the Investigation',
+        content: 'You have gathered all information and are ready to clear the scene.',
+        aiTip: 'Complete your field sketch and notes. Ensure all drivers have exchanged information. Once safe, clear the vehicles and debris from the roadway to restore normal traffic flow. You will complete the official Florida Traffic Crash Report (long or short form) later.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Initial Response & Scene Management',
+        icon: 'Siren',
+        items: [
+          'Position vehicle to protect the scene. Request Fire/EMS if injuries are reported.',
+          'Check all parties for injuries and render aid as needed.',
+          'Identify and separate all involved drivers and locate independent witnesses.',
+          'Secure hazardous areas and direct traffic if necessary.',
+        ],
+      },
+      {
+        section: 'Investigation & Evidence Collection',
+        icon: 'Search',
+        items: [
+          'Obtain license, registration, and insurance from all drivers.',
+          'Interview all drivers and witnesses separately.',
+          'Photograph vehicle damage, final rest positions, skid marks, and the overall scene.',
+          'Measure and document skid marks and the location of key evidence for your field sketch.',
+          'Determine the at-fault driver based on physical evidence and independent witness statements.',
+        ],
+      },
+      {
+        section: 'Concluding Actions & Paperwork',
+        icon: 'FileText',
+        items: [
+          'Issue citation(s) to the at-fault driver(s) if applicable.',
+          'Provide all drivers with the case number and instructions on how to obtain the report.',
+          'Ensure drivers exchange information.',
+          'Clear the roadway and restore normal traffic flow.',
+          'Complete and submit the official Florida Traffic Crash Report.',
+        ],
+      },
+    ]
+  },
+  'missing-person-adult': {
+    id: 'missing-person-adult',
+    name: 'Missing Person (Adult)',
+    goal: 'To conduct a thorough initial investigation for a missing adult, assess risk factors, and initiate appropriate alerts or resources.',
+    keyStatutes: ['F.S. §937.021 (Missing Persons Investigations)', 'Silver/Purple Alert criteria'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Receiving the Call',
+        content: 'You are dispatched to a report of a missing adult.',
+        aiTip: 'Ask the reporting person to gather a recent, clear photograph of the missing person before your arrival. This is the single most important tool you will have.',
+        choices: [
+          { text: "Arriving on scene to meet the complainant.", nextStepId: "arrival" }
+        ]
+      },
+      'arrival': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Initial Interview',
+        content: 'You are meeting with the person reporting the missing individual. What is your primary goal?',
+        aiTip: "Your primary goal is to gather a complete description and assess risk. Use a standard agency form if available. Get their full name, DOB, height, weight, hair/eye color, clothing worn, and any distinguishing scars, marks, or tattoos.",
+        choices: [
+          { text: "Begin risk assessment.", nextStepId: "risk_assessment" }
+        ]
+      },
+      'risk_assessment': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Risk Factor Assessment',
+        content: 'You are assessing if the person is missing under endangered circumstances.',
+        aiTip: "Ask key questions: Do they have any cognitive impairments (dementia, Alzheimer's)? Any known mental health issues or suicidal statements? Are they dependent on medication they don't have? Is this completely out of character for them?",
+        choices: [
+          { text: "Does the person meet criteria for a state-level alert (Silver/Purple)?", nextStepId: "alert_criteria_met" },
+          { text: "No state-level alert criteria met.", nextStepId: "no_alert" }
+        ]
+      },
+      'alert_criteria_met': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'State Alert Criteria Met',
+        content: 'The missing person appears to meet criteria for a Silver or Purple Alert.',
+        aiLegalNote: 'Silver Alert: 60+ with cognitive impairment OR 18-59 with irreversible deterioration of faculties, and in a vehicle. Purple Alert: 18+ and has a mental/developmental disability and is in danger. You must gather all information to pass to the FDLE Missing Endangered Persons Information Clearinghouse.',
+        choices: [
+          { text: "Proceed with investigation.", nextStepId: "evidence_gathering" }
+        ]
+      },
+      'no_alert': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'No State Alert Criteria',
+        content: 'The person is missing, but does not meet the strict criteria for a state-level alert.',
+        aiTip: 'The person is still considered missing. Your investigation continues. You must still enter them into FCIC/NCIC as a missing person.',
+        choices: [
+          { text: "Proceed with investigation.", nextStepId: "evidence_gathering" }
+        ]
+      },
+      'evidence_gathering': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Investigative Steps',
+        content: 'You are continuing your on-scene investigation.',
+        aiTip: "Obtain the photo. Get contact info for their friends and family. Ask about their cell phone number and recent activity. Get a description of their vehicle if applicable. Get consent to search their room/residence for clues (e.g., a note, travel plans).",
+        choices: [
+          { text: "Have you entered the person into FCIC/NCIC?", nextStepId: "fcic_entry" }
+        ]
+      },
+      'fcic_entry': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'FCIC/NCIC Entry',
+        content: 'You are preparing to enter the missing person into the system.',
+        aiLegalNote: 'Florida Statute §937.022 requires law enforcement to enter a missing person into FCIC/NCIC within 2 hours of receiving the report. There is NO 24-hour waiting period to take a missing person report.',
+        choices: [
+          { text: "The initial investigation is complete.", nextStepId: "resolution" }
+        ]
+      },
+      'resolution': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Concluding Initial Investigation',
+        content: 'You have completed your preliminary investigation and documentation.',
+        aiTip: 'Broadcast a local BOLO with the photo and description to all units. Provide the complainant with your case number and contact information. The case will be forwarded to detectives for follow-up.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Initial Response & Information Gathering',
+        icon: 'UserSearch',
+        items: [
+          'Obtain a recent photograph of the missing person.',
+          'Interview the complainant and gather a full physical description and clothing worn.',
+          'Determine the last known location, time, and circumstances of when they were seen.',
+          'Assess for any risk factors (medical issues, mental health, foul play suspected).',
+        ],
+      },
+      {
+        section: 'Investigation & Resources',
+        icon: 'Search',
+        items: [
+          'Determine if criteria are met for a Silver or Purple Alert.',
+          'Obtain contact information for friends, family, and employer.',
+          'Gather information on their cell phone, vehicle, and social media habits.',
+          'Conduct a preliminary search of the immediate area and their residence.',
+          'Broadcast a local BOLO to all patrol units.',
+        ],
+      },
+      {
+        section: 'Concluding Actions & Paperwork',
+        icon: 'FileText',
+        items: [
+          'Enter the missing person into FCIC/NCIC within the 2-hour state mandate.',
+          'Complete a detailed offense/incident report.',
+          'Provide the complainant with the case number and your contact information.',
+          'Forward all information to the appropriate investigative unit (e.g., detectives).',
+        ],
+      },
+    ]
+  },
+   'stolen-vehicle-recovery': {
+    id: 'stolen-vehicle-recovery',
+    name: 'Stolen Vehicle Recovery',
+    goal: 'To safely conduct a high-risk traffic stop on an occupied stolen vehicle, apprehend suspects, and recover the vehicle.',
+    keyStatutes: ['F.S. §812.014 (Grand Theft of a Motor Vehicle)'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Vehicle Identification',
+        content: 'You have received an LPR (License Plate Reader) hit or have visually identified a vehicle that is listed as stolen in FCIC/NCIC.',
+        aiTip: 'Immediately request backup and confirm the stolen status with dispatch. Do not initiate a stop until backup units are in position. This is now a high-risk stop.',
+        choices: [
+          { text: "The stolen status is confirmed and backup is arriving.", nextStepId: "arrival" }
+        ]
+      },
+      'arrival': {
+        phase: 'Initial Information & Arrival',
+        title: 'High-Risk Stop Coordination',
+        content: 'You and your backup units are in position to conduct a high-risk traffic stop.',
+        aiTip: 'Choose a location that offers tactical advantage (e.g., well-lit, open area, away from crowds). The primary unit should be the contact officer giving commands. All other units provide cover.',
+        choices: [
+          { text: "The stop has been initiated.", nextStepId: "scene_control" }
+        ]
+      },
+      'scene_control': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Verbal Commands & Suspect Removal',
+        content: "You are giving loud, clear verbal commands to the occupants of the vehicle.",
+        aiTip: 'Use a standard, systematic command sequence. "Driver, show me your hands! Turn off the vehicle! Toss the keys out the window!" Remove occupants one at a time, directing them back to a position of cover.',
+        choices: [
+          { text: "All occupants are out and secured.", nextStepId: "evidence_gathering" },
+          { text: "The vehicle flees.", nextStepId: "vehicle_flees" }
+        ]
+      },
+      'vehicle_flees': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Vehicle Flees',
+        content: 'The suspect vehicle has fled from the stop.',
+        aiLegalNote: 'Do not pursue unless it meets your agency\'s pursuit policy. The safety of the public outweighs the recovery of the vehicle. Broadcast the vehicle\'s last known direction of travel and request aviation assets if available.',
+        isEnd: true
+      },
+      'evidence_gathering': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Clearing and Securing the Vehicle',
+        content: 'All occupants are in custody. What is the next step?',
+        aiTip: 'After all occupants are secured, conduct a systematic clear of the vehicle to ensure no one else is hiding inside. Once clear, the vehicle is a crime scene.',
+        choices: [
+          { text: "Is there evidence of other crimes in plain view?", nextStepId: "plain_view_evidence" },
+          { text: "The vehicle is clear.", nextStepId: "resolution" }
+        ]
+      },
+      'plain_view_evidence': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Plain View Evidence',
+        content: 'While clearing the vehicle, you observe narcotics or a weapon in plain view.',
+        aiLegalNote: 'This plain view observation provides separate probable cause to search the vehicle for additional evidence related to that crime. Your report must articulate what you saw and where you saw it from a lawful vantage point.',
+        choices: [
+          { text: "Proceed to process the scene.", nextStepId: "resolution" }
+        ]
+      },
+      'resolution': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Processing and Recovery',
+        content: 'The scene is secure. How do you process the vehicle?',
+        aiTip: 'The vehicle will need to be towed to a secure facility for processing by a forensics unit. They will search for fingerprints, DNA, and other evidence. Document the condition of the vehicle, any damage, and the location of recovery.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Identification & Pre-Stop Actions',
+        icon: 'KeyRound',
+        items: [
+          'Receive LPR hit or visually identify a stolen vehicle.',
+          'Confirm stolen status with dispatch via VIN/Tag.',
+          'Request backup units and wait for them to get in position.',
+          'Select a safe location to conduct a high-risk traffic stop.',
+        ],
+      },
+      {
+        section: 'High-Risk Stop & Apprehension',
+        icon: 'Search',
+        items: [
+          'Initiate the stop and provide loud, clear verbal commands.',
+          'Direct occupants to show hands, turn off the car, and remove keys.',
+          'Call out occupants one at a time and secure them in handcuffs.',
+          'Once all occupants are secured, safely clear the interior of the vehicle.',
+        ],
+      },
+      {
+        section: 'Concluding Actions & Paperwork',
+        icon: 'FileText',
+        items: [
+          'Secure the vehicle as a crime scene.',
+          'Conduct a search incident to arrest of all occupants.',
+          'Read Miranda warnings to all suspects before questioning.',
+          'Arrange for the vehicle to be towed to a secure location for processing.',
+          'Notify the original reporting agency and owner of the recovery.',
+          'Complete a detailed report documenting the high-risk stop procedures.',
+        ],
+      },
+    ]
+  },
+  'unattended-death': {
+    id: 'unattended-death',
+    name: 'Unattended Death Investigation',
+    goal: 'To professionally and respectfully manage an unattended death scene, determine if it is suspicious, and coordinate with the Medical Examiner\'s office.',
+    keyStatutes: ['F.S. §406 (Medical Examiners)'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Receiving the Call',
+        content: 'You are dispatched to a residence for a welfare check or a report of an unattended death.',
+        aiTip: 'Request EMS to respond with you. Even if death is obvious, EMS can provide an official pronouncement, which is necessary for your report.',
+        choices: [
+          { text: "Arriving on scene.", nextStepId: "arrival" }
+        ]
+      },
+      'arrival': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Scene Entry & Assessment',
+        content: 'You have arrived and need to make entry. What is your priority?',
+        aiTip: "If the door is locked, you may need to force entry for a welfare check. Upon entry, your first priority is to confirm if the person is deceased. Your second priority is to treat the entire scene as a potential crime scene until proven otherwise. Don't touch anything.",
+        choices: [
+          { text: "The person is confirmed deceased. Begin scene assessment.", nextStepId: "scene_assessment" }
+        ]
+      },
+      'scene_assessment': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Assessing for Suspicious Circumstances',
+        content: 'You are conducting a preliminary assessment of the scene.',
+        aiTip: 'Look for signs of a struggle, forced entry, or weapons. Note the position of the body. Are there prescription bottles or signs of drug use? Is there a note? Observe everything from a distance.',
+        choices: [
+          { text: "The death appears suspicious.", nextStepId: "suspicious_death" },
+          { text: "The death appears non-suspicious.", nextStepId: "non_suspicious_death" }
+        ]
+      },
+      'suspicious_death': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Suspicious Death Protocol',
+        content: 'The circumstances of the death appear suspicious.',
+        aiLegalNote: 'This is now a homicide investigation until proven otherwise. Immediately exit the primary scene, secure it with crime scene tape, and notify your supervisor and homicide detectives. Start a crime scene log.',
+        isEnd: true
+      },
+      'non_suspicious_death': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Non-Suspicious Death Investigation',
+        content: 'The death appears to be from natural causes or is an obvious suicide.',
+        aiTip: 'Even if it appears non-suspicious, limit your movement in the scene. Your job now is to identify the deceased, locate next of kin, and gather information for the Medical Examiner.',
+        choices: [
+          { text: "Have you notified the Medical Examiner's office?", nextStepId: "me_notified" }
+        ]
+      },
+      'me_notified': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Medical Examiner Notification',
+        content: 'You have contacted the on-call Medical Examiner Investigator.',
+        aiLegalNote: 'Florida Statute §406.12 requires you to report any unattended death to the ME. The ME has jurisdiction over the body and determines if they will respond to the scene or release the body to a funeral home.',
+        choices: [
+          { text: "The ME will respond to the scene.", nextStepId: "me_responding" },
+          { text: "The ME has released the body.", nextStepId: "me_release" }
+        ]
+      },
+      'me_responding': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'ME Responding',
+        content: "The Medical Examiner's Investigator is en route.",
+        aiTip: 'Preserve the scene until the ME Investigator arrives. Do not move or cover the body unless instructed to do so. Prepare a summary of your findings to brief the investigator.',
+        isEnd: true
+      },
+      'me_release': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'ME Release',
+        content: "The Medical Examiner has released the body and will not be responding.",
+        aiTip: 'You will need to coordinate with the next of kin to arrange for a funeral home to take custody of the body. Document the name of the ME Investigator who gave the release, the funeral home, and the time of removal in your report.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Initial Response & Scene Management',
+        icon: 'HeartPulse',
+        items: [
+          'Request EMS to respond to the scene.',
+          'Make entry and confirm the subject is deceased.',
+          'Assess for any immediate threats or hazards.',
+          'Treat the location as a crime scene; limit movement and do not touch anything.',
+        ],
+      },
+      {
+        section: 'Investigation & Notifications',
+        icon: 'Search',
+        items: [
+          'Look for signs of foul play, forced entry, or a struggle.',
+          'Notify your supervisor. If suspicious, notify detectives immediately.',
+          'Notify the Medical Examiner\'s office of the death.',
+          'Attempt to identify the deceased through ID, mail, or other documents.',
+          'Locate contact information for next of kin.',
+        ],
+      },
+      {
+        section: 'Concluding Actions & Paperwork',
+        icon: 'FileText',
+        items: [
+          'Brief the ME Investigator upon their arrival or document their release instructions.',
+          'Assist with notifying next of kin if necessary and per agency policy.',
+          'Coordinate with the funeral home for removal if released by ME.',
+          'Document all observations, notifications, and actions in a detailed report.',
+        ],
+      },
+    ]
+  },
+  'serving-arrest-warrant': {
+    id: 'serving-arrest-warrant',
+    name: 'Serving an Arrest Warrant',
+    goal: 'To safely and lawfully take a wanted person into custody at a known location based on a valid arrest warrant.',
+    keyStatutes: ['F.S. §901.02 (Issuance of arrest warrants)', 'F.S. §901.16 (Method of arrest by officer with warrant)'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Warrant Confirmation & Planning',
+        content: 'You have received information on the location of a person with an active arrest warrant.',
+        aiTip: 'Before taking any action, confirm the warrant is still active and valid through dispatch. Review the warrant for any special conditions (e.g., no-knock, bond amount). Formulate a brief tactical plan.',
+        choices: [
+          { text: "The warrant is confirmed. Proceed to location.", nextStepId: "arrival" }
+        ]
+      },
+      'arrival': {
+        phase: 'Initial Information & Arrival',
+        title: 'Approach and Positioning',
+        content: 'You and your backup units have arrived at the location.',
+        aiTip: 'Approach with caution. The suspect may be aware of the warrant and could be hostile. Have at least one officer cover the rear of the location to prevent escape.',
+        choices: [
+          { text: "Ready to make contact at the door.", nextStepId: "contact" }
+        ]
+      },
+      'contact': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Making Contact',
+        content: 'You are at the door of the residence where the suspect is believed to be.',
+        aiLegalNote: 'Under Payton v. New York, an arrest warrant founded on probable cause implicitly carries the limited authority to enter a dwelling in which the suspect lives when there is reason to believe the suspect is within.',
+        choices: [
+          { text: "Make contact and announce presence.", nextStepId: "announcement" }
+        ]
+      },
+      'announcement': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Knock and Announce',
+        content: 'You knock on the door and announce your presence.',
+        aiLegalNote: 'Florida Statute §901.19 requires you to announce your authority and purpose before forcing entry, unless there are exigent circumstances or the warrant specifies "no-knock".',
+        choices: [
+          { text: "The suspect answers the door and is compliant.", nextStepId: "compliant_arrest" },
+          { text: "The suspect refuses to exit or is not at the door.", nextStepId: "forced_entry" }
+        ]
+      },
+      'compliant_arrest': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Compliant Arrest',
+        content: 'The suspect has surrendered without incident.',
+        aiTip: 'Give clear commands. Handcuff, search incident to arrest, and secure the suspect in a patrol vehicle. Verify their identity against the warrant information.',
+        choices: [
+          { text: "Suspect is in custody. Proceed to resolution.", nextStepId: "resolution" }
+        ]
+      },
+      'forced_entry': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Forced Entry & Search',
+        content: 'After announcing your purpose and being denied entry, you force the door open.',
+        aiTip: 'Once entry is made, your priority is locating and securing the suspect. Conduct a methodical search of the structure for the person named in the warrant. This is a search for a person, not for evidence.',
+        aiLegalNote: 'The arrest warrant only authorizes you to search for the person named in it, in places where a person could reasonably be hiding. It is not a search warrant for the entire premises.',
+        choices: [
+          { text: "The suspect is located and arrested.", nextStepId: "resolution" }
+        ]
+      },
+      'resolution': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Post-Arrest Procedures',
+        content: 'The wanted person is in custody.',
+        aiTip: 'Transport the suspect to the appropriate detention facility. Complete the arrest affidavit and your agency\'s use of force report if applicable. Ensure the warrant is cleared from the system by dispatch or records personnel.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Planning & Approach',
+        icon: 'FileBadge',
+        items: [
+          'Confirm the arrest warrant is active and valid with dispatch.',
+          'Review warrant for charges, bond info, and special conditions.',
+          'Formulate a tactical plan with backup units.',
+          'Approach the location cautiously and establish a perimeter.',
+        ],
+      },
+      {
+        section: 'Execution & Arrest',
+        icon: 'Search',
+        items: [
+          'Knock and announce your identity and purpose ("Police, with a warrant!").',
+          'If entry is denied or there is no answer, consider forcing entry.',
+          'Locate, identify, and secure the suspect.',
+          'Conduct a search incident to arrest for weapons or contraband.',
+          'Clear the location to ensure no other threats are present.',
+        ],
+      },
+      {
+        section: 'Concluding Actions & Paperwork',
+        icon: 'FileText',
+        items: [
+          'Transport the prisoner to the appropriate facility.',
+          'Notify dispatch to clear the warrant from FCIC/NCIC.',
+          'Complete a detailed arrest report and any necessary supplements.',
+          'Turn in the original warrant with a "return of service" documenting the arrest.',
+        ],
+      },
+    ]
+  },
+  'protest-crowd-management': {
+    id: 'protest-crowd-management',
+    name: 'Protest & Crowd Management',
+    goal: 'To protect the First Amendment rights of protestors while maintaining public order, protecting property, and ensuring the safety of all parties.',
+    keyStatutes: ['F.S. §870.01 (Affrays and riots)', 'F.S. §877.03 (Breach of the peace; disorderly conduct)'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Pre-Event Intelligence',
+        content: 'You are assigned to a planned protest or demonstration.',
+        aiTip: 'Before the event, gather intelligence. What group is protesting? What is their message? Have their past events been violent? What is the planned route or location? This information helps determine staffing and tactical needs.',
+        choices: [
+          { text: "The event is beginning.", nextStepId: "arrival" }
+        ]
+      },
+      'arrival': {
+        phase: 'Initial Information & Arrival',
+        title: 'Initial Deployment & Observation',
+        content: 'You are on scene as the crowd gathers.',
+        aiTip: 'Maintain a visible but non-confrontational presence. Your initial role is observation. Identify any potential counter-protestors or agitators. Try to make contact with the protest organizers to establish a line of communication.',
+        choices: [
+          { text: "The protest is peaceful.", nextStepId: "peaceful_protest" },
+          { text: "Unlawful activity is beginning.", nextStepId: "unlawful_activity" }
+        ]
+      },
+      'peaceful_protest': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Monitoring a Lawful Assembly',
+        content: 'The crowd is lawfully exercising their First Amendment rights.',
+        aiLegalNote: 'Citizens have a right to be in public spaces and to express unpopular opinions. Your role is to facilitate this right by providing security, managing traffic, and keeping them separate from any counter-protestors. Do not take enforcement action based on the content of their speech.',
+        choices: [
+          { text: "An unlawful act occurs.", nextStepId: "unlawful_activity" },
+          { text: "The event concludes peacefully.", nextStepId: "resolution_peaceful" }
+        ]
+      },
+      'unlawful_activity': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Unlawful Activity Begins',
+        content: 'Members of the crowd are beginning to engage in unlawful acts (e.g., blocking traffic, destroying property, fighting).',
+        aiTip: 'Your posture must now shift from monitoring to enforcement. If possible, use a specialized team to make targeted arrests of the specific individuals breaking the law, rather than moving on the entire crowd. This can de-escalate the situation by removing agitators.',
+        choices: [
+          { text: "Is the entire crowd becoming violent and uncontrollable?", nextStepId: "riot_conditions" },
+          { text: "We are making targeted arrests.", nextStepId: "targeted_arrests" }
+        ]
+      },
+      'riot_conditions': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Unlawful Assembly / Riot Conditions',
+        content: 'The situation has escalated to a large-scale disturbance.',
+        aiLegalNote: 'Before taking widespread enforcement action, a clear dispersal order must be given. This order must be loud, clear, repeated, and give the crowd a reasonable amount of time and a clear exit path to comply. This is a legal prerequisite for an unlawful assembly charge.',
+        choices: [
+          { text: "Dispersal orders have been given.", nextStepId: "resolution_dispersal" }
+        ]
+      },
+      'targeted_arrests': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Targeted Arrests',
+        content: 'You are making arrests of specific violators.',
+        aiTip: 'Ensure your body camera is recording. Clearly articulate the specific crime the individual is being arrested for (e.g., "You are under arrest for vandalizing that vehicle."). This is crucial for defending against claims of retaliatory arrest.',
+        choices: [
+          { text: "Arrests are made. The crowd remains.", nextStepId: "peaceful_protest" }
+        ]
+      },
+      'resolution_peaceful': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Peaceful Conclusion',
+        content: 'The protest has ended and the crowd is dispersing on its own.',
+        aiTip: 'Continue to monitor the area until traffic returns to normal and all groups have left the area to prevent any post-event confrontations.',
+        isEnd: true
+      },
+      'resolution_dispersal': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Enforcing Dispersal Order',
+        content: 'The crowd has been given lawful orders to disperse but has refused.',
+        aiTip: 'Your agency\'s specialized response team (e.g., riot squad) should take the lead. Actions may include use of chemical agents and mass arrest procedures. All actions must be documented thoroughly.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Planning & Initial Deployment',
+        icon: 'Users',
+        items: [
+          'Gather intelligence on the protesting group and any counter-protestors.',
+          'Establish communication with event organizers if possible.',
+          'Deploy resources to monitor and provide security.',
+          'Ensure traffic control plans are in place for any marches.',
+        ],
+      },
+      {
+        section: 'Scene Management & Enforcement',
+        icon: 'Search',
+        items: [
+          'Protect the First Amendment rights of peaceful protestors.',
+          'Keep opposing groups separated to prevent conflict.',
+          'Identify and record individuals engaging in criminal acts.',
+          'If necessary, use a specialized team to make targeted arrests of law-breakers.',
+          'If the assembly becomes unlawful, issue clear and repeated dispersal orders.',
+          'Provide a clear and safe exit route for those attempting to comply with dispersal orders.',
+        ],
+      },
+      {
+        section: 'Concluding Actions & Paperwork',
+        icon: 'FileText',
+        items: [
+          'Maintain a presence until all crowds have dispersed and order is restored.',
+          'Process any arrestees according to department policy.',
+          'Document all enforcement actions, including use of force and dispersal orders, in detailed reports.',
+          'Debrief with command staff to evaluate the response.',
+        ],
+      },
+    ]
+  },
+   'active-assailant-response-initial': {
+    id: 'active-assailant-response-initial',
+    name: 'Active Assailant (Initial Response)',
+    goal: 'To immediately enter a hostile environment, locate, and neutralize an active threat to stop the killing of innocent persons.',
+    keyStatutes: ['N/A (Focus is on immediate tactical action)'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Receiving the Call',
+        content: 'Dispatch reports an active shooter at a school, mall, or office building.',
+        aiTip: 'This is the most dangerous call you will ever receive. Your mindset must shift immediately from "patrol officer" to "hunter." Your singular goal is to move to the sound of the guns and stop the killing.',
+        choices: [
+          { text: "I am en route. What is the priority?", nextStepId: "arrival" }
+        ]
+      },
+      'arrival': {
+        phase: 'Initial Information & Arrival',
+        title: 'Arrival and Entry',
+        content: 'You are the first officer arriving on scene.',
+        aiTip: "Do not wait for backup. Do not wait for SWAT. The moment you arrive, you must make entry. Every second you wait, more people could be killed. Communicate your point of entry to dispatch.",
+        choices: [
+          { text: "I am making entry.", nextStepId: "entry" }
+        ]
+      },
+      'entry': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Movement to Threat',
+        content: 'You have entered the building. How do you locate the threat?',
+        aiTip: "Move to the sound of gunfire. If there is no gunfire, move towards areas with the highest concentration of victims or screams. Bypass wounded victims; you cannot stop to render aid until the threat is neutralized. Your job is to stop the killing.",
+        choices: [
+          { text: "I have located the assailant.", nextStepId: "contact" }
+        ]
+      },
+      'contact': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Contact with Assailant',
+        content: 'You have made contact with the active assailant.',
+        aiLegalNote: 'Your use of deadly force is justified to stop the threat to innocent life. Engage the threat immediately and decisively. Do not attempt to negotiate. Do not try to make a routine arrest. Neutralize the threat.',
+        choices: [
+          { text: "The threat is neutralized.", nextStepId: "threat_neutralized" }
+        ]
+      },
+      'threat_neutralized': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Threat Neutralized & Aftermath',
+        content: 'The primary assailant is down.',
+        aiTip: 'Do not assume the threat is over. There may be more than one attacker. Begin a slow, methodical clear of the immediate area. Be prepared for improvised explosive devices (IEDs). Communicate that the threat is down to responding units.',
+        choices: [
+          { text: "The immediate area is secure. What now?", nextStepId: "resolution" }
+        ]
+      },
+      'resolution': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Transition to Rescue Task Force',
+        content: 'Additional officers have arrived on scene.',
+        aiTip: "Once the threat is confirmed to be neutralized, the mission transitions. The next wave of officers will form Rescue Task Forces (RTFs) with Fire/EMS personnel to enter the 'warm zone' and begin treating and evacuating the wounded. You may be assigned to provide security for one of these teams.",
+        isEnd: true
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Initial Response & Entry',
+        icon: 'ShieldAlert',
+        items: [
+          'Immediately recognize the nature of the call and shift to an active-threat mindset.',
+          'Upon arrival, make solo entry or form up with the first available officers.',
+          'Move directly to the sound of gunfire or other indicators of the threat.',
+          'Bypass wounded victims; the priority is to stop the killing.',
+        ],
+      },
+      {
+        section: 'Locating & Neutralizing Threat',
+        icon: 'Search',
+        items: [
+          'Utilize cover and concealment while moving through the structure.',
+          'Maintain 360-degree awareness.',
+          'Upon contact with the assailant, use decisive and effective force to neutralize the threat.',
+          'Communicate to dispatch that the threat is down.',
+          'Reload and prepare for additional threats; do not assume there is only one assailant.',
+        ],
+      },
+      {
+        section: 'Post-Neutralization & Coordination',
+        icon: 'FileText',
+        items: [
+          'Begin a slow, methodical clear of the immediate area.',
+          'Be aware of the potential for IEDs.',
+          'Link up with other responding officers to establish a unified command.',
+          'Transition to providing security for Rescue Task Forces (RTFs) to facilitate medical aid.',
+          'Provide a detailed debrief to command staff once relieved.',
+        ],
+      },
+    ]
   },
 };
