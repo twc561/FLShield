@@ -69,23 +69,22 @@ export const StatuteClient = memo(function StatuteClient({
   }, [searchTerm, initialStatutes]);
 
   useEffect(() => {
-    if (searchTerm === "" || aiResult) {
-        if (searchTerm === "") {
-            setAiResult(null)
-            setIsAiSearching(false)
-        }
-        return
+    if (searchTerm === "") {
+      setAiResult(null);
+      setIsAiSearching(false);
+      return;
+    }
+    if (totalFilteredResults > 0) {
+      setAiResult(null);
+      return;
     }
 
     const handler = setTimeout(() => {
-      if (
-        totalFilteredResults === 0 &&
-        !isAiSearching &&
-        !aiResult
-      ) {
-        setIsAiSearching(true)
-        findStatute({ query: searchTerm })
-          .then((result) => {
+      const currentSearchTerm = searchTerm;
+      setIsAiSearching(true);
+      findStatute({ query: currentSearchTerm })
+        .then((result) => {
+          if (searchTerm === currentSearchTerm) {
             if (result && result.code) {
               const newStatute: Statute = {
                 id: result.code.toLowerCase().replace(/[^a-z0-9]/g, "-"),
@@ -105,26 +104,30 @@ export const StatuteClient = memo(function StatuteClient({
                   result.title || result.code
                 )}&context=statutes`,
                 category: 'AI Result'
-              }
-              setAiResult(newStatute)
+              };
+              setAiResult(newStatute);
             } else {
-              setAiResult(null) 
+              setAiResult(null);
             }
-          })
-          .catch((error) => {
-            console.error("AI search failed:", error)
-            setAiResult(null)
-          })
-          .finally(() => {
-            setIsAiSearching(false)
-          })
-      }
-    }, 800) 
+          }
+        })
+        .catch((error) => {
+          console.error("AI search failed:", error);
+          if (searchTerm === currentSearchTerm) {
+            setAiResult(null);
+          }
+        })
+        .finally(() => {
+          if (searchTerm === currentSearchTerm) {
+            setIsAiSearching(false);
+          }
+        });
+    }, 800);
 
     return () => {
-      clearTimeout(handler) 
-    }
-  }, [searchTerm, totalFilteredResults, isAiSearching, aiResult])
+      clearTimeout(handler);
+    };
+  }, [searchTerm, totalFilteredResults]);
 
   const handleGenerateElements = async (statute: Statute) => {
     setGeneratedElements(prev => ({ ...prev, [statute.id]: { content: '', isLoading: true } }));
