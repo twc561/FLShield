@@ -1,103 +1,91 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - Florida Shield</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
         .notification {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            color: white;
-            z-index: 50;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            max-width: 320px;
-        }
-        .notification.show {
-            opacity: 1;
-        }
-        .notification.success {
-            background-color: #22c55e; /* green-500 */
-        }
-        .notification.error {
-            background-color: #ef4444; /* red-500 */
+            transition: opacity 0.3s, transform 0.3s;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200">
-    <div id="notification-area"></div>
-    <div class="flex min-h-screen flex-col items-center justify-center px-4">
-        <div class="w-full max-w-md">
-            <!-- Header -->
-            <div class="mb-8 text-center">
-                <div class="inline-block">
-                    <svg class="h-12 w-12 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2L2 7V17C2 21.42 6.42 23 12 23C17.58 23 22 21.42 22 17V7L12 2ZM11 15.29L7.71 12L6.29 13.41L11 18.12L17.71 11.41L16.29 10L11 15.29Z" />
-                    </svg>                    
-                </div>
-                <h1 class="mt-4 text-3xl font-bold tracking-tight text-white">Florida Shield</h1>
-                <p class="mt-2 text-gray-400">Sign in to access your dashboard</p>
+<body class="bg-gray-900 text-gray-200 font-sans">
+    <div id="notification-area" class="fixed top-5 right-5 z-50"></div>
+
+    <div class="flex min-h-screen flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <main class="mx-auto w-full max-w-md px-4">
+            <div class="text-center">
+                <svg class="mx-auto h-12 w-auto text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm0 13.036h.008v.008h-.008v-.008z" />
+                </svg>
+                <h2 class="mt-6 text-2xl font-bold tracking-tight text-white">Florida Shield</h2>
+                <p class="mt-2 text-sm text-gray-400">Sign in to access your dashboard.</p>
             </div>
 
-            <!-- Form Container -->
-            <div class="rounded-lg bg-gray-800 p-8 shadow-lg">
+            <div class="mt-8 bg-gray-800 p-8 rounded-lg shadow-lg">
                 <form id="auth-form" class="space-y-6">
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-400">Email address</label>
-                        <div class="mt-1">
-                            <input id="email" name="email" type="email" autocomplete="email" required
-                                class="block w-full appearance-none rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm">
+                        <label for="email" class="block text-sm font-medium leading-6 text-gray-300">Email address</label>
+                        <div class="mt-2">
+                            <input id="email" name="email" type="email" autocomplete="email" required class="block w-full rounded-md border-0 bg-gray-700 py-2.5 px-3 text-white shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6" />
                         </div>
                     </div>
 
                     <div>
-                        <label for="password" class="block text-sm font-medium text-gray-400">Password</label>
-                        <div class="mt-1">
-                            <input id="password" name="password" type="password" autocomplete="current-password" required
-                                class="block w-full appearance-none rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm">
+                        <label for="password" class="block text-sm font-medium leading-6 text-gray-300">Password</label>
+                        <div class="mt-2">
+                            <input id="password" name="password" type="password" autocomplete="current-password" required class="block w-full rounded-md border-0 bg-gray-700 py-2.5 px-3 text-white shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm sm:leading-6" />
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-end">
-                        <div class="text-sm">
-                            <button type="button" id="forgot-password-btn" class="font-medium text-blue-400 hover:text-blue-300">Forgot your password?</button>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-4">
-                        <button type="submit" id="signin-btn"
-                            class="flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800">
-                            Sign In
+                    <div class="flex items-center justify-between gap-4">
+                        <button id="signin-btn" type="button" class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                            Sign in
                         </button>
-                         <button type="button" id="signup-btn"
-                            class="flex w-full justify-center rounded-md border border-blue-500 py-2 px-4 text-sm font-medium text-blue-400 shadow-sm hover:bg-blue-500/10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800">
-                            Sign Up
+                        <button id="signup-btn" type="button" class="flex w-full justify-center rounded-md bg-gray-700 px-3 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-600">
+                            Sign up
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-    
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            sendPasswordResetEmail,
-            onAuthStateChanged
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-        // Your web app's Firebase configuration
+                <div class="relative my-6">
+                  <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-600"></div>
+                  </div>
+                  <div class="relative flex justify-center text-sm">
+                    <span class="bg-gray-800 px-2 text-gray-400">Or continue with</span>
+                  </div>
+                </div>
+
+                <div>
+                  <button id="google-signin-btn" type="button" class="inline-flex w-full justify-center items-center gap-3 rounded-md bg-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-200 shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+                      <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                          <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path>
+                          <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path>
+                          <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path>
+                          <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C42.012,36.494,44,30.638,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path>
+                      </svg>
+                      Sign in with Google
+                  </button>
+                </div>
+
+                <div class="mt-6 text-center">
+                    <a href="#" id="forgot-password-link" class="text-sm font-medium text-blue-400 hover:text-blue-300">Forgot password?</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyAKOZL2TdqleyUtbrbKHJfjObRqpBz2s28",
             authDomain: "florida-shield.firebaseapp.com",
@@ -107,144 +95,107 @@
             appId: "1:320998993928:web:79043e80e835f9c3eee1bd"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // UI Elements
-        const authForm = document.getElementById('auth-form');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
-        const signInBtn = document.getElementById('signin-btn');
-        const signUpBtn = document.getElementById('signup-btn');
-        const forgotPasswordBtn = document.getElementById('forgot-password-btn');
+        const signinBtn = document.getElementById('signin-btn');
+        const signupBtn = document.getElementById('signup-btn');
+        const googleSigninBtn = document.getElementById('google-signin-btn');
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
         const notificationArea = document.getElementById('notification-area');
+        
+        // Redirect if already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user && window.location.pathname.endsWith('login.html')) {
+                showNotification('Already logged in. Redirecting...', 'info');
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 500);
+            }
+        });
 
-        // Notification function
-        function showNotification(message, type = 'success') {
+
+        let notificationTimeout;
+        function showNotification(message, type = 'info') {
+            clearTimeout(notificationTimeout);
+            const bgColor = type === 'error' ? 'bg-red-500' : type === 'success' ? 'bg-green-500' : 'bg-blue-500';
             const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
+            notification.className = `notification ${bgColor} text-white text-sm font-bold px-4 py-3 rounded-md shadow-lg opacity-0 transform -translate-y-2`;
             notification.textContent = message;
-            notificationArea.appendChild(notification);
             
-            // Trigger fade in
+            notificationArea.innerHTML = '';
+            notificationArea.appendChild(notification);
+
             setTimeout(() => {
-                notification.classList.add('show');
+                notification.classList.remove('opacity-0', '-translate-y-2');
+                notification.classList.add('opacity-100', 'translate-y-0');
             }, 10);
 
-            // Hide and remove notification after 3 seconds
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            }, 3000);
+            notificationTimeout = setTimeout(() => {
+                notification.classList.remove('opacity-100', 'translate-y-0');
+                notification.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
         }
 
-        // Check auth state on page load
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // If user is logged in and somehow lands on the login page, redirect them.
-                if (window.location.pathname.endsWith('login.html')) {
-                    window.location.href = '/dashboard';
-                }
-            }
-        });
-
-        // Event Listeners
-        authForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            // Default action is sign in
-            handleSignIn();
-        });
-
-        // Although the main submit button is handled above, this is for clarity.
-        signInBtn.addEventListener('click', (e) => {
-             e.preventDefault();
-             handleSignIn();
-        });
-
-        signUpBtn.addEventListener('click', (e) => {
-             e.preventDefault();
-             handleSignUp();
-        });
-
-        forgotPasswordBtn.addEventListener('click', (e) => {
-             e.preventDefault();
-             handleForgotPassword();
-        });
-
-
-        function handleSignIn() {
+        signupBtn.addEventListener('click', () => {
             const email = emailInput.value;
             const password = passwordInput.value;
-            if (!email || !password) {
-                showNotification('Please enter email and password.', 'error');
-                return;
-            }
-
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    showNotification('Sign-in successful! Redirecting...', 'success');
-                    // Redirect to the main application page
-                    window.location.href = '/dashboard';
-                })
-                .catch((error) => {
-                    showNotification(getFriendlyErrorMessage(error.code), 'error');
-                });
-        }
-        
-        function handleSignUp() {
-            const email = emailInput.value;
-            const password = passwordInput.value;
-             if (!email || !password) {
-                showNotification('Please enter email and password.', 'error');
-                return;
-            }
-
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    showNotification('Account created successfully! Redirecting...', 'success');
-                     // Redirect to the main application page
-                     window.location.href = '/dashboard';
+                    showNotification('Sign up successful! Redirecting...', 'success');
+                    setTimeout(() => {
+                       window.location.href = '/dashboard';
+                    }, 1500);
                 })
-                .catch((error) => {
-                    showNotification(getFriendlyErrorMessage(error.code), 'error');
-                });
-        }
-        
-        function handleForgotPassword() {
+                .catch((error) => showNotification(error.message, 'error'));
+        });
+
+        signinBtn.addEventListener('click', () => {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    showNotification('Sign in successful! Redirecting...', 'success');
+                     setTimeout(() => {
+                       window.location.href = '/dashboard';
+                    }, 1500);
+                })
+                .catch((error) => showNotification("Invalid email or password.", 'error'));
+        });
+
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
             const email = emailInput.value;
             if (!email) {
-                showNotification('Please enter your email address to reset your password.', 'error');
+                showNotification('Please enter your email to reset password.', 'info');
                 return;
             }
-
             sendPasswordResetEmail(auth, email)
                 .then(() => {
-                    showNotification('Password reset email sent. Check your inbox.', 'success');
+                    showNotification('Password reset email sent!', 'success');
                 })
-                .catch((error) => {
-                    showNotification(getFriendlyErrorMessage(error.code), 'error');
-                });
-        }
+                .catch((error) => showNotification(error.message, 'error'));
+        });
         
-        function getFriendlyErrorMessage(errorCode) {
-            switch (errorCode) {
-                case 'auth/invalid-email':
-                    return 'Please enter a valid email address.';
-                case 'auth/user-not-found':
-                case 'auth/wrong-password':
-                case 'auth/invalid-credential':
-                    return 'Invalid email or password.';
-                case 'auth/email-already-in-use':
-                    return 'An account with this email already exists.';
-                case 'auth/weak-password':
-                    return 'Password should be at least 6 characters.';
-                default:
-                    return 'An unexpected error occurred. Please try again.';
-            }
-        }
+        const provider = new GoogleAuthProvider();
+        googleSigninBtn.addEventListener('click', () => {
+            showNotification('Opening Google Sign-In...', 'info');
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
+                    showNotification(`Welcome, ${user.displayName}! Redirecting...`, 'success');
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1500);
+                }).catch((error) => {
+                    const errorMessage = error.message || "An error occurred during Google sign-in.";
+                    showNotification(errorMessage, 'error');
+                });
+        });
+
     </script>
 </body>
 </html>
