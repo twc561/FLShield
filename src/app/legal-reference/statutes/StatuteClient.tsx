@@ -30,6 +30,21 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 type StatuteIndexItem = Omit<Statute, 'description' | 'fullText' | 'practicalSummary' | 'example' | 'elementsOfTheCrime' | 'url'>;
 
+// Define a list of "popular" statute IDs to pre-load for a faster user experience.
+const popularStatutes = [
+  's784-011', // Assault
+  's784-03',  // Battery
+  's784-021', // Aggravated Assault
+  's784-045', // Aggravated Battery
+  's812-014', // Theft
+  's810-02',  // Burglary
+  's812-13',  // Robbery
+  's843-01',  // Resisting w/ Violence
+  's843-02',  // Resisting w/o Violence
+  's316-193', // DUI
+  's893-13',  // Drug Possession
+  's790-23',  // Possession of Firearm by Felon
+];
 
 export const StatuteClient = memo(function StatuteClient({
   initialStatuteIndex,
@@ -46,6 +61,19 @@ export const StatuteClient = memo(function StatuteClient({
   const [cachedData, setCachedData] = useState<Record<string, Statute>>({});
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [activeAccordionItem, setActiveAccordionItem] = useState<string | undefined>();
+
+  useEffect(() => {
+    // Smart Pre-loading: Pre-load popular statutes into the cache on initial mount
+    // to make accessing them feel instantaneous.
+    const preloadedData: Record<string, Statute> = {};
+    popularStatutes.forEach(id => {
+      if (statutesFullData[id]) {
+        preloadedData[id] = statutesFullData[id];
+      }
+    });
+    setCachedData(prev => ({ ...prev, ...preloadedData }));
+  }, [statutesFullData]);
+
 
   const categories = useMemo(() => {
     const categoryOrder = [
@@ -153,6 +181,8 @@ export const StatuteClient = memo(function StatuteClient({
   }
 
   const handleGenerateElements = async (statute: Statute) => {
+    // Keep the accordion item open while generating
+    setActiveAccordionItem(statute.id);
     setGeneratedElements(prev => ({ ...prev, [statute.id]: { content: '', isLoading: true } }));
     try {
         const result = await generateElementsOfCrime({
