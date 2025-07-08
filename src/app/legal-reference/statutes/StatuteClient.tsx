@@ -140,6 +140,8 @@ export const StatuteClient = memo(function StatuteClient({
                 category: 'AI Result'
               };
               setAiResult(newStatute);
+              // Auto-expand the accordion to show the AI result
+              setActiveAccordionItem(newStatute.id);
             } else {
               setAiResult(null);
             }
@@ -319,9 +321,14 @@ export const StatuteClient = memo(function StatuteClient({
         )}
 
         {!isAiSearching && aiResult && (
-          <Accordion type="single" collapsible className="w-full" defaultValue={aiResult.id}>
+          <div>
+            <h2 className="text-lg font-bold tracking-tight my-4 px-1 flex items-center gap-3">
+              <Sparkles className="h-5 w-5 text-accent" />
+              AI Search Result
+            </h2>
+            <Accordion type="single" collapsible className="w-full space-y-2" value={activeAccordionItem} onValueChange={handleAccordionChange}>
               <AccordionItem value={aiResult.id} className="border rounded-md bg-card border-accent/50 shadow-lg shadow-accent/10">
-                <AccordionTrigger className="p-4 text-left hover:no-underline w-full">
+                <AccordionTrigger className="p-4 hover:no-underline w-full text-left">
                   <div className="flex items-center gap-4 flex-1">
                       <div className="p-2 bg-accent/10 rounded-lg">
                           <Sparkles className="h-6 w-6 text-accent" />
@@ -337,6 +344,7 @@ export const StatuteClient = memo(function StatuteClient({
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
+          </div>
         )}
 
         {showNotFound && (
@@ -400,3 +408,4 @@ declare module "react" {
     style?: React.CSSProperties & { [key: string]: string | number }
   }
 }
+
