@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import {
   LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, ShieldAlert as MessageSquareWarning, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, Flame, ShieldAlert, FlaskConical, Users, Smartphone,
@@ -17,7 +18,7 @@ type MenuItem = {
 }
 
 export const menuItems: MenuItem[] = [
-  { href: "/", label: "Dashboard", icon: LayoutGrid },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
   { href: "/ai-legal-advisor", label: "AI Legal Advisor", icon: Bot },
   { href: "/favorites", label: "Favorites", icon: Star },
   {

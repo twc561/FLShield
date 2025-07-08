@@ -1,4 +1,7 @@
-import type { Metadata } from "next"
+
+'use client'
+
+import { usePathname } from "next/navigation"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 import { SidebarProvider } from "@/components/ui/sidebar"
@@ -8,19 +11,19 @@ import { Toaster } from "@/components/ui/toaster"
 import { ThemeScript } from "@/components/ThemeScript"
 import { MobileBottomNav } from "@/components/MobileBottomNav"
 
-export const metadata: Metadata = {
-  title: "Florida Shield",
-  description: "A digital toolkit for law enforcement.",
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const pathname = usePathname()
+  const isLandingPage = pathname === "/"
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <title>Florida Shield</title>
+        <meta name="description" content="A digital toolkit for law enforcement." />
         <ThemeScript />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -30,17 +33,24 @@ export default function RootLayout({
         />
       </head>
       <body className={cn("antialiased min-h-screen")}>
-        <SidebarProvider>
-          <div className="flex min-h-screen">
-            <AppSidebar />
-            <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto pb-20 md:pb-6">
-              {children}
-            </main>
-            <ContextualPanel />
-          </div>
-        </SidebarProvider>
-        <MobileBottomNav />
-        <Toaster />
+        {isLandingPage ? (
+          <>
+            {children}
+            <Toaster />
+          </>
+        ) : (
+          <SidebarProvider>
+            <div className="flex min-h-screen">
+              <AppSidebar />
+              <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto pb-20 md:pb-6">
+                {children}
+              </main>
+              <ContextualPanel />
+            </div>
+            <MobileBottomNav />
+            <Toaster />
+          </SidebarProvider>
+        )}
       </body>
     </html>
   )
