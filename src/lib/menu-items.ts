@@ -54,7 +54,7 @@ export const menuItems: MenuItem[] = [
     icon: Car,
     items: [
       { href: "/traffic-enforcement/traffic-statutes-schedules", label: "Traffic Statutes & Sc...", icon: Route },
-      { href: "/traffic-enforcement/fst-implied-consent", label: "FST & Implied Conse...", icon: Footprints },
+      { href: "/traffic-enforcement/dui-investigation", label: "DUI Investigation", icon: Footprints },
       { href: "/traffic-enforcement/commercial-vehicle-info", label: "Commercial Vehicle ...", icon: Truck },
     ],
   },
