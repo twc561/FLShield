@@ -1,19 +1,18 @@
+
 import { PageHeader } from "@/components/PageHeader"
-import { fstData } from "@/data"
+import { fstTrilingualData } from "@/data"
 import { Summarizer } from "@/components/Summarizer"
 import { FstImpliedConsentClient } from "./Client"
 
 export default function FstImpliedConsentPage() {
-  const pageContent = fstData.map(item => 
-    `${item.title}: ${item.description} Details: ${item.details?.join('. ') || ''} Script: ${item.script || ''}`
-  ).join('\n\n');
+  const pageContent = `This guide provides standardized instructions and legal warnings for DUI investigations in English, Spanish, and Haitian Creole. It covers proper FST administration and the precise language for Florida's Implied Consent laws.`;
 
   return (
     <div className="animate-fade-in-up">
       <div className="flex justify-between items-start gap-4">
         <PageHeader
-          title="FST & Implied Consent Guide"
-          description="Interactive walkthrough for DUI investigations, SFSTs, and Implied Consent warnings."
+          title="Trilingual FST & Implied Consent Guide"
+          description="Standardized instructions and warnings in English, Spanish, and Haitian Creole."
         />
         <Summarizer 
           documentText={pageContent}
@@ -21,7 +20,7 @@ export default function FstImpliedConsentPage() {
         />
       </div>
 
-      <FstImpliedConsentClient data={fstData} />
+      <FstImpliedConsentClient data={fstTrilingualData} />
     </div>
   )
 }
