@@ -17,6 +17,7 @@ import type { Statute } from "@/data"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search, ExternalLink, BookOpen, Loader2, Sparkles } from "lucide-react"
 import { findStatute } from "@/ai/flows/find-statute"
+import { generateElementsOfCrime } from "@/ai/flows/generate-elements-flow"
 import {
   Accordion,
   AccordionContent,
@@ -32,6 +33,7 @@ export function StatuteClient({
   const [searchTerm, setSearchTerm] = useState("")
   const [isAiSearching, setIsAiSearching] = useState(false)
   const [aiResult, setAiResult] = useState<Statute | null>(null)
+  const [generatedElements, setGeneratedElements] = useState<Record<string, { content: string; isLoading: boolean }>>({})
 
   const filteredStatutes = useMemo(() => {
     if (!searchTerm) {
@@ -103,8 +105,23 @@ export function StatuteClient({
     }
   }, [searchTerm, filteredStatutes.length, isAiSearching, aiResult])
 
+  const handleGenerateElements = async (statute: Statute) => {
+    setGeneratedElements(prev => ({ ...prev, [statute.id]: { content: '', isLoading: true } }));
+    try {
+        const result = await generateElementsOfCrime({
+            statuteCode: statute.code,
+            statuteTitle: statute.title,
+            statuteText: statute.fullText || statute.description,
+        });
+        setGeneratedElements(prev => ({ ...prev, [statute.id]: { content: result.elements, isLoading: false } }));
+    } catch (error) {
+        console.error("Failed to generate elements:", error);
+        setGeneratedElements(prev => ({ ...prev, [statute.id]: { content: 'Error generating elements.', isLoading: false } }));
+    }
+  };
+
   const showLocalResults = filteredStatutes.length > 0 && searchTerm !== ""
-  const showAiResult = !showLocalResults && aiResult
+  const showAiResult = !showLocalResults && aiResult && !isAiSearching
   const showLoading = !showLocalResults && isAiSearching
   const showNotFound =
     !showLocalResults && !aiResult && !isAiSearching && searchTerm.length > 0
@@ -170,6 +187,34 @@ export function StatuteClient({
                                   {statute.practicalSummary}
                               </AccordionContent>
                           </Card>
+                        </AccordionItem>
+                         <AccordionItem value="elements" className="border-b-0">
+                            <Card className="bg-muted/50">
+                                <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                                    Elements of the Crime
+                                </AccordionTrigger>
+                                <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                                    {(() => {
+                                        const elementState = generatedElements[statute.id];
+                                        if (elementState?.isLoading) {
+                                            return <div className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Generating...</div>
+                                        }
+                                        if (elementState?.content) {
+                                            return <div className="whitespace-pre-wrap">{elementState.content}</div>
+                                        }
+                                        return (
+                                            <Button 
+                                                variant="secondary" 
+                                                size="sm" 
+                                                onClick={() => handleGenerateElements(statute)}
+                                            >
+                                                <Sparkles className="mr-2 h-4 w-4 text-accent" />
+                                                Generate with AI
+                                            </Button>
+                                        )
+                                    })()}
+                                </AccordionContent>
+                            </Card>
                         </AccordionItem>
                         <AccordionItem value="example" className="border-b-0">
                             <Card className="bg-muted/50">
