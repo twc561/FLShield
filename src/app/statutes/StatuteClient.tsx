@@ -120,7 +120,9 @@ export function StatuteClient({
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value)
-            setAiResult(null)
+            if (!aiResult) {
+              setAiResult(null)
+            }
             if (e.target.value !== "" && filteredStatutes.length > 0) {
               setIsAiSearching(false)
             }
@@ -142,17 +144,11 @@ export function StatuteClient({
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <AccordionTrigger className="p-6 text-left hover:no-underline">
-                    <div className="flex w-full items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <CardTitle>{statute.title}</CardTitle>
-                        <CardDescription>{statute.code}</CardDescription>
-                      </div>
-                      <Badge
-                        variant="secondary"
-                        className="ml-4 shrink-0"
-                      >
-                        {statute.degreeOfCharge}
-                      </Badge>
+                    <div className="flex-1 text-left">
+                      <CardTitle>{statute.title}</CardTitle>
+                      <CardDescription>
+                        {statute.code} &bull; {statute.degreeOfCharge}
+                      </CardDescription>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="px-6 pb-6">
@@ -201,20 +197,14 @@ export function StatuteClient({
             <AccordionItem value={aiResult.id} className="border-b-0">
               <Card className="animate-fade-in-up border-accent/50">
                 <AccordionTrigger className="p-6 text-left hover:no-underline">
-                  <div className="flex w-full items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3">
-                        <Sparkles className="h-5 w-5 text-accent flex-shrink-0" />
-                        <CardTitle>{aiResult.title}</CardTitle>
-                      </div>
-                      <CardDescription>{aiResult.code}</CardDescription>
+                  <div className="flex-1 text-left">
+                    <div className="flex items-center gap-3">
+                      <Sparkles className="h-5 w-5 text-accent flex-shrink-0" />
+                      <CardTitle>{aiResult.title}</CardTitle>
                     </div>
-                    <Badge
-                      variant="outline"
-                      className="border-accent text-accent ml-4 shrink-0"
-                    >
-                      {aiResult.degreeOfCharge}
-                    </Badge>
+                    <CardDescription>
+                      {aiResult.code} &bull; {aiResult.degreeOfCharge}
+                    </CardDescription>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-6">
