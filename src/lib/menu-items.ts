@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import {
-  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, ShieldAlert as MessageSquareWarning, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, Flame, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, MicOff,
+  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, MicOff,
 } from "lucide-react"
 
 type SubMenuItem = {
@@ -81,11 +81,10 @@ export const menuItems: MenuItem[] = [
       label: "Emergency Response",
       icon: Siren,
       items: [
-          { href: "/emergency-response/baker-marchman-act", label: "Baker Act & Marchma...", icon: BrainCircuit },
-          { href: "/emergency-response/first-aid-field-guide", label: "First Aid Field Guide", icon: HeartPulse },
-          { href: "/emergency-response/hazmat-placard-guide", label: "HAZMAT Placard Gui...", icon: Biohazard },
-          { href: "/emergency-response/amber-alert-guide", label: "Amber Alert Guide", icon: AlertCircle },
-          { href: "/emergency-response/silver-alert-guide", label: "Silver Alert Guide", icon: UserSearch },
+          { href: "/emergency-response/baker-marchman-guide", label: "Baker/Marchman Guide", icon: BrainCircuit },
+          { href: "/emergency-response/first-aid-guide", label: "First Aid Field Guide", icon: HeartPulse },
+          { href: "/emergency-response/hazmat-guide", label: "HAZMAT Placard Guide", icon: Biohazard },
+          { href: "/emergency-response/alert-guides", label: "Amber/Silver Alerts", icon: AlertCircle },
       ],
   },
   {
