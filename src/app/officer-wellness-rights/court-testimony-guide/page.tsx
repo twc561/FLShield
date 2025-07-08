@@ -1,23 +1,27 @@
-
 import { PageHeader } from "@/components/PageHeader"
-import { Landmark } from "lucide-react"
+import { courtTestimonyData } from "@/data/officer-wellness-rights/court-testimony"
+import { Summarizer } from "@/components/Summarizer"
+import { CourtTestimonyClient } from "./Client"
 
 export default function CourtTestimonyGuidePage() {
+  const pageContent = courtTestimonyData.map(item => 
+    `${item.title}: ${item.points.join('. ')}. Takeaway: ${item.takeaway}`
+  ).join('\n\n');
+
   return (
     <div className="animate-fade-in-up">
-      <PageHeader
-        title="Court Testimony Guide"
-        description="AI-powered preparation tool for delivering clear and professional testimony."
-      />
-      <div className="p-8 text-center border-2 border-dashed rounded-lg mt-8">
-        <div className="flex justify-center mb-4">
-          <Landmark className="w-12 h-12 text-muted-foreground" />
-        </div>
-        <h3 className="text-lg font-semibold">Feature Coming Soon</h3>
-        <p className="text-muted-foreground max-w-lg mx-auto">
-          This section will feature an AI-powered tool to help you prepare for court, including checklists and common questions.
-        </p>
+      <div className="flex justify-between items-start gap-4">
+        <PageHeader
+          title="Court Testimony Guide"
+          description="Preparation and best practices for delivering clear and professional testimony."
+        />
+        <Summarizer 
+          documentText={pageContent}
+          documentTitle="Court Testimony Summary"
+        />
       </div>
+
+      <CourtTestimonyClient data={courtTestimonyData} />
     </div>
   )
 }

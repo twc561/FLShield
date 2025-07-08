@@ -1,23 +1,27 @@
-
 import { PageHeader } from "@/components/PageHeader"
-import { ShieldCheck } from "lucide-react"
+import { pobrData } from "@/data/officer-wellness-rights/pobr"
+import { Summarizer } from "@/components/Summarizer"
+import { PobrClient } from "./Client"
 
 export default function PoliceOfficersBillOfRightsPage() {
+  const pageContent = pobrData.map(item => 
+    `${item.title} (F.S. ${item.statuteRef}): ${item.explanation}`
+  ).join('\n\n');
+
   return (
     <div className="animate-fade-in-up">
-      <PageHeader
-        title="Police Officer's Bill of Rights"
-        description="AI-powered guide to your rights under F.S. §§ 112.531-112.535."
-      />
-      <div className="p-8 text-center border-2 border-dashed rounded-lg mt-8">
-        <div className="flex justify-center mb-4">
-          <ShieldCheck className="w-12 h-12 text-muted-foreground" />
-        </div>
-        <h3 className="text-lg font-semibold">Feature Coming Soon</h3>
-        <p className="text-muted-foreground max-w-lg mx-auto">
-          This section will feature an AI-powered search to answer your questions about the Police Officer's Bill of Rights in Florida.
-        </p>
+      <div className="flex justify-between items-start gap-4">
+        <PageHeader
+          title="Police Officer's Bill of Rights"
+          description="Your rights under F.S. §§ 112.531-112.535 during internal investigations."
+        />
+        <Summarizer 
+          documentText={pageContent}
+          documentTitle="Police Officer's Bill of Rights Summary"
+        />
       </div>
+
+      <PobrClient data={pobrData} />
     </div>
   )
 }

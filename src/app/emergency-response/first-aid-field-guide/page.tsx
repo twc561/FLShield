@@ -1,23 +1,26 @@
-
 import { PageHeader } from "@/components/PageHeader"
-import { HeartPulse } from "lucide-react"
+import { firstAidData } from "@/data/emergency-response/first-aid"
+import { Summarizer } from "@/components/Summarizer"
+import { FirstAidClient } from "./Client"
 
 export default function FirstAidFieldGuidePage() {
+  const pageContent = firstAidData.map(item => 
+    `${item.title}: ${item.steps.map(s => `${s.title} - ${s.text}`).join('. ')}. Officer Takeaway: ${item.officerTakeaway}`
+  ).join('\n\n');
+
   return (
     <div className="animate-fade-in-up">
-      <PageHeader
-        title="First Aid Field Guide"
-        description="AI-powered tactical medical guide for common field injuries."
-      />
-      <div className="p-8 text-center border-2 border-dashed rounded-lg mt-8">
-        <div className="flex justify-center mb-4">
-          <HeartPulse className="w-12 h-12 text-muted-foreground" />
-        </div>
-        <h3 className="text-lg font-semibold">Feature Coming Soon</h3>
-        <p className="text-muted-foreground">
-          This section will provide an AI-powered tactical medical guide for immediate field use.
-        </p>
+      <div className="flex justify-between items-start gap-4">
+        <PageHeader
+          title="First Aid Field Guide"
+          description="A tactical medical guide for common field injuries, based on TECC principles."
+        />
+        <Summarizer 
+          documentText={pageContent}
+          documentTitle="First Aid Summary"
+        />
       </div>
+      <FirstAidClient data={firstAidData} />
     </div>
   )
 }

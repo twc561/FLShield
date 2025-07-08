@@ -1,25 +1,25 @@
-
 import { PageHeader } from "@/components/PageHeader"
-import { UserSearch } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { alertGuideData } from "@/data/emergency-response/alert-guides"
+import { SilverAlertClient } from "./Client"
+import { Summarizer } from "@/components/Summarizer"
 
 export default function SilverAlertGuidePage() {
+  const data = alertGuideData.silver
+  const pageContent = `${data.title}: ${data.criteria.map(c => `${c.title}: ${c.text}`).join('. ')}`;
+
   return (
     <div className="animate-fade-in-up">
-      <PageHeader
-        title="Silver Alert Guide"
-        description="Criteria for issuing a Silver Alert in Florida and quick contact info."
-      />
-      <div className="p-8 text-center border-2 border-dashed rounded-lg mt-8">
-        <div className="flex justify-center mb-4">
-          <UserSearch className="w-12 h-12 text-muted-foreground" />
-        </div>
-        <h3 className="text-lg font-semibold">Feature Coming Soon</h3>
-        <p className="text-muted-foreground max-w-lg mx-auto">
-          This section will provide the exact FDLE criteria for Silver Alerts and a one-touch button to initiate contact.
-        </p>
-        <Button className="mt-6" disabled>Contact FDLE Regional Office</Button>
+      <div className="flex justify-between items-start gap-4">
+        <PageHeader
+          title="Silver Alert Guide"
+          description="Criteria for issuing a Silver Alert in Florida and quick contact info."
+        />
+        <Summarizer 
+          documentText={pageContent}
+          documentTitle="Silver Alert Summary"
+        />
       </div>
+      <SilverAlertClient data={data} />
     </div>
   )
 }
