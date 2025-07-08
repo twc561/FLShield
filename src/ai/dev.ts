@@ -23,4 +23,4 @@ import '@/ai/flows/analyze-jury-instruction.ts';
 import '@/ai/flows/analyze-fac-rule.ts';
 import '@/ai/flows/analyze-legal-update.ts';
 import '@/ai/flows/analyze-substance.ts';
-
+import '@/ai/flows/analyze-k9-topic.ts';
