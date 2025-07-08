@@ -172,6 +172,13 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Footer Disclaimer */}
+      <footer className="mt-8 pt-6 border-t border-border/50 text-center">
+        <p className="text-xs text-muted-foreground max-w-4xl mx-auto">
+          <strong className="font-semibold text-foreground/80">Disclaimer:</strong> The Florida Shield application and all its content are for informational and training purposes only and are not a substitute for legal advice, agency policy, or certified training. All information should be independently verified. Officers must consult their agency's legal counsel, policies, and official training materials before taking any official action. This is a CJIS-compliant environment. Users are prohibited from entering, storing, or transmitting any real Personally Identifiable Information (PII), Criminal Justice Information (CJI), or case-specific details in any non-official fields.
+        </p>
+      </footer>
     </div>
   )
 }
