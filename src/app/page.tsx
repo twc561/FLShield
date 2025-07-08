@@ -37,7 +37,7 @@ export default function LandingPage() {
           </p>
           <div className="mt-8 flex justify-center gap-4">
             <Button size="lg" asChild>
-              <Link href="/dashboard">Get Started</Link>
+              <Link href="/login.html">Get Started</Link>
             </Button>
             <Button size="lg" variant="outline">
               Request Agency Demo
@@ -218,7 +218,7 @@ export default function LandingPage() {
           </p>
           <div className="mt-8">
             <Button size="lg" asChild>
-              <Link href="/dashboard">Get Started</Link>
+              <Link href="/login.html">Get Started</Link>
             </Button>
           </div>
         </div>
