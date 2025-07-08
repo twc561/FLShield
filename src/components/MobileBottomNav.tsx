@@ -35,8 +35,14 @@ const mainNavItems = [
 export function MobileBottomNav() {
   const pathname = usePathname()
   const [isSheetOpen, setIsSheetOpen] = React.useState(false)
+  const [isClient, setIsClient] = React.useState(false)
+
+  React.useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   const isActive = (href: string) => {
+    if (!isClient) return false
     if (href === "/") return pathname === "/"
     // For parent routes, we want an exact match, otherwise they are always active.
     const isParent = menuItems.some(item => item.href === href);
