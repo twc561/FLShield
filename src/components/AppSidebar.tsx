@@ -25,7 +25,6 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { ThemeToggle } from "./ThemeToggle"
 import { cn } from "@/lib/utils"
 import { menuItems } from "@/lib/menu-items"
 
@@ -133,7 +132,6 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter className="flex flex-col gap-2 p-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:items-center">
-         <ThemeToggle />
       </SidebarFooter>
     </Sidebar>
   )

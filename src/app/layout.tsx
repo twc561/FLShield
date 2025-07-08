@@ -8,7 +8,6 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { ContextualPanel } from "@/components/ContextualPanel"
 import { Toaster } from "@/components/ui/toaster"
-import { ThemeScript } from "@/components/ThemeScript"
 import { MobileBottomNav } from "@/components/MobileBottomNav"
 
 export default function RootLayout({
@@ -21,11 +20,10 @@ export default function RootLayout({
   const isLandingPage = pathname === "/"
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark">
       <head>
         <title>Florida Shield</title>
         <meta name="description" content="A digital toolkit for law enforcement." />
-        <ThemeScript />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
