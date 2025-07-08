@@ -10,13 +10,13 @@ import {
   ListChecks,
   FileText,
   Menu,
+  Flame,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   Sheet,
   SheetContent,
   SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { menuItems } from "@/lib/menu-items"
@@ -83,7 +83,16 @@ export function MobileBottomNav() {
         </SheetTrigger>
         <SheetContent side="left" className="w-3/4 p-0 flex flex-col">
           <SheetHeader className="p-4 border-b">
-            <SheetTitle className="text-left">All Features</SheetTitle>
+            <Link
+              href="/"
+              className="flex items-center gap-2.5"
+              onClick={handleLinkClick}
+            >
+              <Flame className="w-8 h-8 text-primary" />
+              <span className="font-bold text-lg text-foreground">
+                Florida Shield
+              </span>
+            </Link>
           </SheetHeader>
           <div className="overflow-y-auto flex-1">
              <nav className="p-2">
