@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Send, Bot, User, Loader2, Volume2 } from "lucide-react";
+import { ArrowLeft, Send, Bot, User, Loader2, Volume2, Lightbulb } from "lucide-react";
 import type { ScenarioPack } from "@/data/training/scenarios";
 import {
   getRoleplayResponse,
@@ -21,10 +21,11 @@ import {
 } from "@/ai/flows/roleplay-simulator";
 import { textToSpeech } from "@/ai/flows/text-to-speech";
 import { cn } from "@/lib/utils";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 type Message = {
   id: string;
-  role: "user" | "model";
+  role: "user" | "model" | "system";
   content: string;
   audioUrl?: string;
   audioLoading?: boolean;
@@ -74,9 +75,11 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
     setIsLoading(true);
 
     try {
-      const historyForAI = newMessages.map(msg => ({
-        role: msg.role,
-        parts: [{ text: msg.content }],
+      const historyForAI = newMessages
+        .filter(msg => msg.role !== 'system') // Don't send system hints back to the AI
+        .map(msg => ({
+          role: msg.role,
+          parts: [{ text: msg.content }],
       }));
       
       const aiInput: RoleplaySimulatorInput = {
@@ -84,34 +87,58 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
         characterPersona: selectedScenario.characterProfile.persona,
         userUtterance: currentInput,
         conversationHistory: historyForAI,
+        dynamicBehaviorTree: selectedScenario.dynamicBehaviorTree,
+        feedbackTriggers: selectedScenario.feedbackTriggers,
       };
 
       const response = await getRoleplayResponse(aiInput);
 
-      const modelMessageId = `model-${Date.now()}`;
-      const newModelMessage: Message = {
-        id: modelMessageId,
-        role: "model",
-        content: response.characterResponse,
-        audioLoading: true,
-      };
+      if (response && response.characterResponse) {
+        const modelMessageId = `model-${Date.now()}`;
+        const newModelMessage: Message = {
+          id: modelMessageId,
+          role: "model",
+          content: response.characterResponse,
+          audioLoading: true,
+        };
+        
+        setMessages(prev => [...prev, newModelMessage]);
 
-      setMessages(prev => [...prev, newModelMessage]);
+        if (response.feedback) {
+            const feedbackId = `system-${Date.now()}`;
+            const feedbackMessage: Message = { id: feedbackId, role: 'system', content: response.feedback };
+            setMessages(prev => [...prev, feedbackMessage]);
+        }
+        
+        // TTS Generation
+        try {
+            const audioResult = await textToSpeech(response.characterResponse);
+            setMessages(prev =>
+                prev.map(msg =>
+                msg.id === modelMessageId
+                    ? { ...msg, audioUrl: audioResult.media, audioLoading: false }
+                    : msg
+                )
+            );
+        } catch (ttsError) {
+             console.error("TTS generation failed:", ttsError);
+             setMessages(prev =>
+                prev.map(msg =>
+                msg.id === modelMessageId
+                    ? { ...msg, audioLoading: false } // Stop loading state on error
+                    : msg
+                )
+            );
+        }
 
-      // TTS Generation
-      const audioResult = await textToSpeech(response.characterResponse);
-      setMessages(prev =>
-        prev.map(msg =>
-          msg.id === modelMessageId
-            ? { ...msg, audioUrl: audioResult.media, audioLoading: false }
-            : msg
-        )
-      );
+      } else {
+         throw new Error("Received an empty response from the AI.");
+      }
 
     } catch (error) {
       console.error("Failed to get AI response:", error);
       const errorId = `model-error-${Date.now()}`;
-      setMessages(prev => [...prev, { id: errorId, role: "model", content: "[Error: Could not get a response. Please try again.]" }]);
+      setMessages(prev => [...prev, { id: errorId, role: "system", content: "[Error: Could not get a response. The model may be unavailable. Please try again.]" }]);
     } finally {
       setIsLoading(false);
     }
@@ -183,37 +210,50 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
       <CardContent className="flex-1 p-0">
         <ScrollArea className="h-[calc(100vh-25rem)]" ref={scrollAreaRef as any}>
             <div className="p-6 space-y-4">
-                {messages.map((message) => (
-                <div key={message.id} className={cn("flex items-start gap-3", message.role === "user" ? "justify-end" : "justify-start")}>
-                    {message.role === 'model' && (
-                        <div className="p-2 bg-primary/10 rounded-full"><Bot className="w-5 h-5 text-primary" /></div>
-                    )}
-                    <div className={cn("max-w-xs md:max-w-md lg:max-w-lg p-3 rounded-lg flex items-center gap-2", message.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted")}>
-                        <p className="whitespace-pre-wrap">{message.content}</p>
-                        {message.role === 'model' && (
-                          <>
-                            <audio 
-                              ref={(el) => {
-                                if (el) audioRefs.current.set(message.id, el);
-                                else audioRefs.current.delete(message.id);
-                              }} 
-                              src={message.audioUrl}
-                            />
-                            {message.audioLoading ? (
-                              <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
-                            ) : message.audioUrl ? (
-                              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => playAudio(message.id)}>
-                                <Volume2 className="w-4 h-4" />
-                              </Button>
-                            ) : null}
-                          </>
-                        )}
-                    </div>
-                    {message.role === 'user' && (
-                        <div className="p-2 bg-muted rounded-full"><User className="w-5 h-5" /></div>
-                    )}
-                </div>
-                ))}
+                {messages.map((message) => {
+                    if (message.role === 'system') {
+                        return (
+                            <Alert key={message.id} className="bg-accent/20 border-accent/50">
+                                <Lightbulb className="h-4 w-4 text-accent" />
+                                <AlertTitle>Tactical Tip</AlertTitle>
+                                <AlertDescription>
+                                    {message.content}
+                                </AlertDescription>
+                            </Alert>
+                        )
+                    }
+                    return (
+                        <div key={message.id} className={cn("flex items-start gap-3", message.role === "user" ? "justify-end" : "justify-start")}>
+                            {message.role === 'model' && (
+                                <div className="p-2 bg-primary/10 rounded-full"><Bot className="w-5 h-5 text-primary" /></div>
+                            )}
+                            <div className={cn("max-w-xs md:max-w-md lg:max-w-lg p-3 rounded-lg flex items-center gap-2", message.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted")}>
+                                <p className="whitespace-pre-wrap">{message.content}</p>
+                                {message.role === 'model' && (
+                                <>
+                                    <audio 
+                                    ref={(el) => {
+                                        if (el) audioRefs.current.set(message.id, el);
+                                        else audioRefs.current.delete(message.id);
+                                    }} 
+                                    src={message.audioUrl}
+                                    />
+                                    {message.audioLoading ? (
+                                    <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
+                                    ) : message.audioUrl ? (
+                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => playAudio(message.id)}>
+                                        <Volume2 className="w-4 h-4" />
+                                    </Button>
+                                    ) : null}
+                                </>
+                                )}
+                            </div>
+                            {message.role === 'user' && (
+                                <div className="p-2 bg-muted rounded-full"><User className="w-5 h-5" /></div>
+                            )}
+                        </div>
+                    )
+                })}
                 {isLoading && (
                     <div className="flex items-start gap-3 justify-start">
                          <div className="p-2 bg-primary/10 rounded-full"><Bot className="w-5 h-5 text-primary" /></div>

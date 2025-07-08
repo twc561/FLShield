@@ -1,4 +1,5 @@
 
+
 export type ScenarioPack = {
   scenarioID: string;
   scenarioTitle: string;
@@ -13,6 +14,10 @@ export type ScenarioPack = {
   dynamicBehaviorTree: {
     if: string;
     then: string;
+  }[];
+  feedbackTriggers: {
+    condition: string;
+    feedback: string;
   }[];
   debriefingCriteria: string[];
 };
@@ -42,6 +47,16 @@ export const trainingScenarios: ScenarioPack[] = [
         if: "Officer asks rapid-fire, complex, or leading questions.",
         then: "Shift persona to 'Confused and Withdrawn'. Give shorter answers like 'I don't know' or 'I'm not sure'."
       }
+    ],
+    feedbackTriggers: [
+        {
+            condition: "the officer asks multiple questions in one sentence or uses complex police jargon.",
+            feedback: "The witness seems confused. Try asking simple, singular questions to help them focus."
+        },
+        {
+            condition: "the officer fails to show empathy and immediately starts demanding facts.",
+            feedback: "This witness is a nervous civilian, not a suspect. Building rapport first might yield more information."
+        }
     ],
     debriefingCriteria: [
       "Did you effectively build rapport to calm the nervous witness?",
@@ -74,6 +89,16 @@ export const trainingScenarios: ScenarioPack[] = [
         then: "Shift persona to 'Defiant'. Argue about his rights. State 'This is my apartment, I can do what I want.' Become less cooperative."
       }
     ],
+     feedbackTriggers: [
+        {
+            condition: "the officer's first statement is a direct order like 'Turn the music down'.",
+            feedback: "Issuing immediate orders can make people defensive. Try explaining the reason for your presence first to de-escalate."
+        },
+        {
+            condition: "the officer threatens arrest or a citation for a simple noise complaint immediately.",
+            feedback: "Escalating to enforcement too quickly can backfire. Focus on gaining voluntary compliance first. It's often more effective."
+        }
+    ],
     debriefingCriteria: [
       "Did you use active listening to acknowledge the subject's perspective before stating your request?",
       "Did you successfully de-escalate the situation using your words instead of immediate commands?",
@@ -104,6 +129,16 @@ export const trainingScenarios: ScenarioPack[] = [
         if: "Officer immediately asks 'What are you doing here?' in an accusatory tone or demands ID without explanation.",
         then: "Shift persona to 'Defensive and Evasive'. Give vague answers like 'Just hanging out' or 'Why are you bothering me?'."
       }
+    ],
+    feedbackTriggers: [
+        {
+            condition: "the officer's opening is an accusation, like 'What are you doing back here?'",
+            feedback: "This person isn't being detained yet. A less accusatory, more conversational opening might make them more willing to talk."
+        },
+        {
+            condition: "the officer demands to search the person without any legal basis.",
+            feedback: "Remember, this is a consensual encounter. You need probable cause or consent to search. Articulate your reasonable suspicion for the stop, but don't overstep."
+        }
     ],
     debriefingCriteria: [
       "Could you articulate sufficient reasonable suspicion for the initial stop based on the scenario?",
@@ -136,6 +171,16 @@ export const trainingScenarios: ScenarioPack[] = [
         then: "Shift persona to 'Actively Defiant'. Refuse to separate. Yell 'You don't have a warrant! Get out of my house!'."
       }
     ],
+     feedbackTriggers: [
+        {
+            condition: "the officer fails to separate the parties and tries to interview them together.",
+            feedback: "Parties in a domestic dispute should be separated immediately. This prevents them from intimidating each other and allows you to get independent statements."
+        },
+        {
+            condition: "the officer gets drawn into an argument about their right to be there.",
+            feedback: "Don't get into a debate. State your lawful purpose clearly and maintain control of the scene. Your priority is to check for a crime and ensure safety."
+        }
+    ],
     debriefingCriteria: [
       "Did you maintain tactical advantage and officer safety upon entry?",
       "Did you use effective verbal commands to gain control of the scene and separate the parties?",
@@ -166,6 +211,16 @@ export const trainingScenarios: ScenarioPack[] = [
         if: "Officer immediately accuses you ('I know you have weed in here!') and demands to search.",
         then: "Shift persona to 'Argumentative'. Question the legality of the stop. Repeatedly state 'You can't search my car without a warrant'."
       }
+    ],
+    feedbackTriggers: [
+        {
+            condition: "the officer asks to search the car based only on the odor of burnt marijuana.",
+            feedback: "The odor of burnt marijuana suggests past use, not necessarily present possession. Try to develop more probable cause, such as observing paraphernalia in plain view, conflicting statements, or physical signs of impairment."
+        },
+        {
+            condition: "the officer continues to detain the driver after the traffic stop's mission is complete without new reasonable suspicion.",
+            feedback: "Remember Rodriguez v. U.S. Once you've written the ticket/warning, the stop is over. You need fresh reasonable suspicion to prolong the detention."
+        }
     ],
     debriefingCriteria: [
       "Did you successfully articulate additional factors (e.g., nervousness, physical signs, evasive answers) to build probable cause beyond just the odor?",
