@@ -30,7 +30,7 @@ import * as React from "react"
 import { Button } from "./ui/button"
 
 const mainNavItems = [
-  { href: "/", label: "Dashboard", icon: LayoutGrid },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
   { href: "/legal-reference/statutes", label: "Statutes", icon: Scale },
   {
     href: "/field-procedures/scenario-checklists",
@@ -44,16 +44,30 @@ export function MobileBottomNav() {
   const pathname = usePathname()
   const [isSheetOpen, setIsSheetOpen] = React.useState(false)
   const [isClient, setIsClient] = React.useState(false)
+  const [openStates, setOpenStates] = React.useState<Record<string, boolean>>({})
 
   React.useEffect(() => {
     setIsClient(true)
   }, [])
 
   const isActive = (href: string) => {
-    if (!isClient) return false;
+    if (!isClient) return false
     if (href === "/") return pathname === "/"
     return pathname.startsWith(href)
   }
+
+  React.useEffect(() => {
+    if (!isClient) return
+    const initialStates: Record<string, boolean> = {}
+    menuItems.forEach((item) => {
+      if (item.items) {
+        initialStates[item.label] = item.items.some((subItem) =>
+          isActive(subItem.href)
+        )
+      }
+    })
+    setOpenStates(initialStates)
+  }, [pathname, isClient])
 
   const handleLinkClick = () => {
     setIsSheetOpen(false)
@@ -75,12 +89,6 @@ export function MobileBottomNav() {
         </Link>
       ))}
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetTrigger asChild>
-          <button className="flex flex-col items-center justify-center text-muted-foreground w-full h-full">
-            <Menu className="h-6 w-6" />
-            <span className="text-xs">More</span>
-          </button>
-        </SheetTrigger>
         <SheetContent side="left" className="w-3/4 p-0 flex flex-col">
           <SheetHeader className="p-4 border-b">
             <SheetTitle className="text-left">All Features</SheetTitle>
@@ -91,9 +99,20 @@ export function MobileBottomNav() {
                 {menuItems.map((item) => (
                   <li key={item.label}>
                     {item.items ? (
-                      <Collapsible defaultOpen={item.items.some(subItem => isActive(subItem.href))}>
+                      <Collapsible
+                        open={isClient ? openStates[item.label] || false : false}
+                        onOpenChange={(isOpen) =>
+                          setOpenStates((prev) => ({
+                            ...prev,
+                            [item.label]: isOpen,
+                          }))
+                        }
+                      >
                         <CollapsibleTrigger asChild>
-                          <Button variant="ghost" className="w-full justify-between group">
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-between group"
+                          >
                             <div className="flex items-center gap-3">
                               <item.icon className="h-5 w-5" />
                               <span>{item.label}</span>
@@ -110,7 +129,8 @@ export function MobileBottomNav() {
                                   onClick={handleLinkClick}
                                   className={cn(
                                     "block p-2 rounded-md text-muted-foreground hover:bg-muted",
-                                    isActive(subItem.href) && "bg-muted font-semibold text-primary"
+                                    isActive(subItem.href) &&
+                                      "bg-muted font-semibold text-primary"
                                   )}
                                 >
                                   {subItem.label}
@@ -126,7 +146,8 @@ export function MobileBottomNav() {
                         onClick={handleLinkClick}
                         className={cn(
                           "flex items-center gap-3 p-2 rounded-md text-foreground hover:bg-muted",
-                           isActive(item.href!) && "bg-muted font-semibold text-primary"
+                          isActive(item.href!) &&
+                            "bg-muted font-semibold text-primary"
                         )}
                       >
                         <item.icon className="h-5 w-5" />
