@@ -36,8 +36,9 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [activeAudioId, setActiveAudioId] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const audioRefs = useRef<Map<string, HTMLAudioElement>>(new Map());
+  const audioPlayerRef = useRef<HTMLAudioElement>(null);
 
   const scrollToBottom = () => {
     if (scrollAreaRef.current) {
@@ -62,6 +63,29 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
     setSelectedScenario(null);
   };
 
+  const playAudio = async (messageId: string, audioUrl: string | undefined) => {
+    if (!audioUrl || !audioPlayerRef.current) return;
+  
+    if (activeAudioId === messageId && !audioPlayerRef.current.paused) {
+      audioPlayerRef.current.pause();
+      setActiveAudioId(null);
+      return;
+    }
+    
+    setActiveAudioId(messageId);
+    audioPlayerRef.current.src = audioUrl;
+    try {
+      await audioPlayerRef.current.play();
+    } catch (error) {
+      console.error("Audio playback failed:", error);
+      setActiveAudioId(null);
+    }
+  };
+
+  const onAudioEnded = () => {
+    setActiveAudioId(null);
+  }
+
   const handleSendMessage = async () => {
     if (!userInput.trim() || !selectedScenario) return;
 
@@ -76,7 +100,7 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
 
     try {
       const historyForAI = newMessages
-        .filter(msg => msg.role !== 'system') // Don't send system hints back to the AI
+        .filter(msg => msg.role !== 'system')
         .map(msg => ({
           role: msg.role,
           parts: [{ text: msg.content }],
@@ -110,7 +134,6 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
             setMessages(prev => [...prev, feedbackMessage]);
         }
         
-        // TTS Generation
         try {
             const ttsParams = selectedScenario.characterProfile.ttsParameters;
             const audioResult = await textToSpeech({
@@ -131,7 +154,7 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
              setMessages(prev =>
                 prev.map(msg =>
                 msg.id === modelMessageId
-                    ? { ...msg, audioLoading: false } // Stop loading state on error
+                    ? { ...msg, audioLoading: false }
                     : msg
                 )
             );
@@ -150,12 +173,10 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
     }
   };
 
-  // Autoplay audio when it becomes available for the latest message
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
-    if (lastMessage?.role === 'model' && lastMessage.audioUrl) {
-      const audio = audioRefs.current.get(lastMessage.id);
-      audio?.play().catch(e => console.error("Audio autoplay failed:", e));
+    if (lastMessage?.role === 'model' && lastMessage.audioUrl && !lastMessage.audioLoading) {
+        playAudio(lastMessage.id, lastMessage.audioUrl);
     }
   }, [messages]);
   
@@ -165,13 +186,6 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
       handleSendMessage();
     }
   }
-
-  const playAudio = (id: string) => {
-    const audio = audioRefs.current.get(id);
-    if (audio) {
-      audio.play().catch(e => console.error("Audio playback failed:", e));
-    }
-  };
 
   if (!selectedScenario) {
     return (
@@ -200,6 +214,7 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
 
   return (
     <Card className="flex flex-col flex-1">
+      <audio ref={audioPlayerRef} onEnded={onAudioEnded} onError={onAudioEnded} />
       <CardHeader className="border-b">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={handleGoBack}>
@@ -237,17 +252,12 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
                                 <p className="whitespace-pre-wrap">{message.content}</p>
                                 {message.role === 'model' && (
                                 <>
-                                    <audio 
-                                    ref={(el) => {
-                                        if (el) audioRefs.current.set(message.id, el);
-                                        else audioRefs.current.delete(message.id);
-                                    }} 
-                                    src={message.audioUrl}
-                                    />
                                     {message.audioLoading ? (
-                                    <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
+                                        <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
+                                    ) : activeAudioId === message.id ? (
+                                        <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
                                     ) : message.audioUrl ? (
-                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => playAudio(message.id)}>
+                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => playAudio(message.id, message.audioUrl)}>
                                         <Volume2 className="w-4 h-4" />
                                     </Button>
                                     ) : null}
