@@ -45,6 +45,7 @@ export const StatuteClient = memo(function StatuteClient({
 
   const [cachedData, setCachedData] = useState<Record<string, Statute>>({});
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [activeAccordionItem, setActiveAccordionItem] = useState<string | undefined>();
 
   const categories = useMemo(() => {
     const categoryOrder = [
@@ -137,6 +138,7 @@ export const StatuteClient = memo(function StatuteClient({
   }, [searchTerm, totalFilteredResults]);
   
   const handleAccordionChange = async (value: string | undefined) => {
+    setActiveAccordionItem(value);
     if (!value) return; 
     if (cachedData[value] || loadingId === value) return;
 
@@ -291,18 +293,18 @@ export const StatuteClient = memo(function StatuteClient({
          <Accordion type="single" collapsible className="w-full space-y-4" defaultValue={aiResult.id}>
             <AccordionItem value={aiResult.id} className="border-b-0">
               <Card className="animate-fade-in-up border-accent/50 shadow-lg shadow-accent/10">
-                <AccordionTrigger className="p-6 text-left hover:no-underline">
+                <AccordionTrigger className="p-4 text-left hover:no-underline">
                   <div className="flex-1 text-left">
                     <div className="flex items-center gap-3">
                       <Sparkles className="h-5 w-5 text-accent flex-shrink-0" />
-                      <CardTitle>{aiResult.title}</CardTitle>
+                      <p className="font-semibold text-base leading-snug">{aiResult.title}</p>
                     </div>
-                    <CardDescription>
+                    <p className="text-sm text-muted-foreground mt-1">
                       {aiResult.code} &bull; {aiResult.degreeOfCharge}
-                    </CardDescription>
+                    </p>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="px-6 pb-6 pt-0">
+                <AccordionContent className="px-4 pb-4 pt-0">
                     <FullStatuteContent statute={aiResult} />
                 </AccordionContent>
               </Card>
@@ -339,7 +341,7 @@ export const StatuteClient = memo(function StatuteClient({
                 <TabsContent key={category} value={category} className="flex-1 mt-4 overflow-hidden">
                     <ScrollArea className="h-full pr-4">
                         {filteredStatutes.length > 0 ? (
-                            <Accordion type="single" collapsible className="w-full space-y-4" onValueChange={handleAccordionChange}>
+                            <Accordion type="single" collapsible className="w-full space-y-4" value={activeAccordionItem} onValueChange={handleAccordionChange}>
                                 {filteredStatutes.map((statute, index) => (
                                 <AccordionItem
                                     value={statute.id}
@@ -350,15 +352,15 @@ export const StatuteClient = memo(function StatuteClient({
                                     className="animate-fade-in-up"
                                     style={{ animationDelay: `${index * 50}ms` }}
                                     >
-                                    <AccordionTrigger className="p-6 text-left hover:no-underline">
+                                    <AccordionTrigger className="p-4 text-left hover:no-underline">
                                         <div className="flex-1 text-left">
-                                        <CardTitle>{statute.title}</CardTitle>
-                                        <CardDescription>
+                                        <p className="font-semibold text-base leading-snug">{statute.title}</p>
+                                        <p className="text-sm text-muted-foreground mt-1">
                                             {statute.code} &bull; {statute.degreeOfCharge}
-                                        </CardDescription>
+                                        </p>
                                         </div>
                                     </AccordionTrigger>
-                                    <AccordionContent className="px-6 pb-6 pt-0">
+                                    <AccordionContent className="px-4 pb-4 pt-0">
                                       {loadingId === statute.id && (
                                         <div className="pt-4 space-y-4">
                                           <Skeleton className="h-24 w-full" />
