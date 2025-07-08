@@ -51,8 +51,13 @@ export function AppSidebar() {
   }
 
   const isActive = (href: string) => {
-    if (!isClient) return false;
+    if (!isClient) return false
     if (href === "/") return pathname === "/"
+    
+    // For parent routes, we want an exact match, otherwise they are always active.
+    const isParent = menuItems.some(item => item.href === href);
+    if (isParent) return pathname === href;
+
     return pathname.startsWith(href)
   }
 
