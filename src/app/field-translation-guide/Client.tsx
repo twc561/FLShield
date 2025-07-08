@@ -21,7 +21,13 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
 }) {
   const [searchTerm, setSearchTerm] = React.useState("")
   const [audioState, setAudioState] = React.useState<Record<string, 'loading' | 'playing' | 'idle'>>({})
-  const audioRef = React.useRef<HTMLAudioElement | null>(null)
+  
+  // Use a map to store refs to audio elements for stable playback
+  const audioRefs = React.useRef<Map<string, HTMLAudioElement>>(new Map());
+
+  // Use state to manage the audio sources, triggering re-renders when they are ready
+  const [audioSrc, setAudioSrc] = React.useState<Record<string, string>>({});
+
 
   const filteredPhrases = React.useMemo(() => {
     if (!searchTerm) {
@@ -56,27 +62,46 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
   ]
 
   const playAudio = async (text: string, language: 'es-US' | 'ht-HT', id: string) => {
-    if (audioRef.current && !audioRef.current.paused) {
-      audioRef.current.pause();
-    }
+    // Stop any other playing audio
+    audioRefs.current.forEach((audioEl) => {
+        if (audioEl && !audioEl.paused) {
+            audioEl.pause();
+            audioEl.currentTime = 0;
+        }
+    });
 
     setAudioState(prev => ({ ...prev, [id]: 'loading' }));
+
+    // If we already have the audio data, just play it
+    const audio = audioRefs.current.get(id);
+    if (audioSrc[id] && audio) {
+        audio.play().catch(e => console.error("Audio playback failed", e));
+        return;
+    }
     
+    // Otherwise, fetch it from the TTS service
     try {
       const response = await trilingualTextToSpeech({ text, language });
-      const audio = new Audio(response.media);
-      audioRef.current = audio;
-      
-      audio.onplaying = () => setAudioState(prev => ({ ...prev, [id]: 'playing' }));
-      audio.onended = () => setAudioState(prev => ({ ...prev, [id]: 'idle' }));
-      audio.onpause = () => setAudioState(prev => ({ ...prev, [id]: 'idle' }));
-
-      await audio.play();
+      setAudioSrc(prev => ({...prev, [id]: response.media}));
     } catch (error) {
       console.error("TTS Error:", error);
       setAudioState(prev => ({ ...prev, [id]: 'idle' }));
     }
   };
+
+  // Effect to play audio once the src is set
+  React.useEffect(() => {
+    // This effect runs when audioSrc state changes.
+    // We find the audio element by its ID and play it.
+    const playingId = Object.keys(audioState).find(key => audioState[key] === 'loading' && audioSrc[key]);
+    if (playingId) {
+        const audio = audioRefs.current.get(playingId);
+        if(audio) {
+            audio.play().catch(e => console.error("Audio playback failed", e));
+        }
+    }
+  }, [audioSrc, audioState]);
+
 
   return (
     <div className="space-y-6">
@@ -102,39 +127,60 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
                 {category}
               </h2>
               <Accordion type="single" collapsible className="w-full space-y-2">
-                {phrasesInCategory.map(phrase => (
-                  <AccordionItem value={phrase.phraseID} key={phrase.phraseID} className="border rounded-md bg-card">
-                    <AccordionTrigger className="p-4 hover:no-underline font-semibold text-base text-card-foreground">
-                      {phrase.englishText}
-                    </AccordionTrigger>
-                    <AccordionContent className="p-4 pt-0">
-                      <div className="border-t pt-4 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <p className="text-muted-foreground">{phrase.spanishText}</p>
-                          <Button 
-                            variant="ghost" 
-                            size="icon"
-                            onClick={() => playAudio(phrase.spanishText, 'es-US', `${phrase.phraseID}-es`)}
-                            disabled={audioState[`${phrase.phraseID}-es`] === 'loading'}
-                          >
-                            {audioState[`${phrase.phraseID}-es`] === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
-                          </Button>
+                {phrasesInCategory.map(phrase => {
+                  const spanishId = `${phrase.phraseID}-es`;
+                  const haitianId = `${phrase.phraseID}-ht`;
+
+                  return (
+                    <AccordionItem value={phrase.phraseID} key={phrase.phraseID} className="border rounded-md bg-card">
+                      <AccordionTrigger className="p-4 hover:no-underline font-semibold text-base text-card-foreground">
+                        {phrase.englishText}
+                      </AccordionTrigger>
+                      <AccordionContent className="p-4 pt-0">
+                        {/* Hidden audio elements for playback control */}
+                        <audio
+                          ref={(el) => el ? audioRefs.current.set(spanishId, el) : audioRefs.current.delete(spanishId)}
+                          src={audioSrc[spanishId]}
+                          onPlaying={() => setAudioState(prev => ({...prev, [spanishId]: 'playing'}))}
+                          onEnded={() => setAudioState(prev => ({...prev, [spanishId]: 'idle'}))}
+                          onPause={() => setAudioState(prev => ({...prev, [spanishId]: 'idle'}))}
+                        />
+                        <audio
+                          ref={(el) => el ? audioRefs.current.set(haitianId, el) : audioRefs.current.delete(haitianId)}
+                          src={audioSrc[haitianId]}
+                           onPlaying={() => setAudioState(prev => ({...prev, [haitianId]: 'playing'}))}
+                          onEnded={() => setAudioState(prev => ({...prev, [haitianId]: 'idle'}))}
+                          onPause={() => setAudioState(prev => ({...prev, [haitianId]: 'idle'}))}
+                        />
+
+                        <div className="border-t pt-4 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <p className="text-muted-foreground">{phrase.spanishText}</p>
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              onClick={() => playAudio(phrase.spanishText, 'es-US', spanishId)}
+                              disabled={audioState[spanishId] === 'loading' || audioState[spanishId] === 'playing'}
+                            >
+                              {audioState[spanishId] === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
+                            </Button>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <p className="text-muted-foreground">{phrase.haitianCreoleText}</p>
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              onClick={() => playAudio(phrase.haitianCreoleText, 'ht-HT', haitianId)}
+                              disabled={audioState[haitianId] === 'loading' || audioState[haitianId] === 'playing'}
+                            >
+                              {audioState[haitianId] === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
+                            </Button>
+                          </div>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <p className="text-muted-foreground">{phrase.haitianCreoleText}</p>
-                          <Button 
-                            variant="ghost" 
-                            size="icon"
-                            onClick={() => playAudio(phrase.haitianCreoleText, 'ht-HT', `${phrase.phraseID}-ht`)}
-                            disabled={audioState[`${phrase.phraseID}-ht`] === 'loading'}
-                          >
-                            {audioState[`${phrase.phraseID}-ht`] === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-5 w-5" />}
-                          </Button>
-                        </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
+                      </AccordionContent>
+                    </AccordionItem>
+                  )
+                })}
               </Accordion>
             </div>
           )
