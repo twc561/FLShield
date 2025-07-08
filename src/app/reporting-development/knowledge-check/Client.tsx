@@ -11,6 +11,16 @@ import { cn } from '@/lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
+
+function shuffleArray<T>(array: T[]): T[] {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
 
 export function KnowledgeCheckClient({ questions }: { questions: DrillQuestion[] }) {
   const [shuffledQuestions, setShuffledQuestions] = useState<DrillQuestion[]>([]);
@@ -19,15 +29,20 @@ export function KnowledgeCheckClient({ questions }: { questions: DrillQuestion[]
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [answerOptions, setAnswerOptions] = useState<string[]>([]);
 
   useEffect(() => {
-    setShuffledQuestions([...questions].sort(() => Math.random() - 0.5).slice(0, 10)); // Select 10 random questions
+    // This shuffle only runs on the client, preventing a hydration mismatch.
+    setShuffledQuestions(shuffleArray(questions).slice(0, 10));
   }, [questions]);
 
   const currentQuestion = useMemo(() => shuffledQuestions[currentQuestionIndex], [shuffledQuestions, currentQuestionIndex]);
-  const answerOptions = useMemo(() => {
-    if (!currentQuestion) return [];
-    return [...currentQuestion.incorrectAnswers, currentQuestion.correctAnswer].sort(() => Math.random() - 0.5);
+
+  useEffect(() => {
+    // This effect runs on the client whenever the question changes, ensuring the answer order is random but stable for the current question.
+    if (currentQuestion) {
+      setAnswerOptions(shuffleArray([...currentQuestion.incorrectAnswers, currentQuestion.correctAnswer]));
+    }
   }, [currentQuestion]);
 
   const handleAnswerSubmit = () => {
@@ -49,7 +64,7 @@ export function KnowledgeCheckClient({ questions }: { questions: DrillQuestion[]
   };
   
   const handleRestart = () => {
-    setShuffledQuestions([...questions].sort(() => Math.random() - 0.5).slice(0, 10));
+    setShuffledQuestions(shuffleArray(questions).slice(0, 10));
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
     setIsAnswered(false);
@@ -58,7 +73,22 @@ export function KnowledgeCheckClient({ questions }: { questions: DrillQuestion[]
   };
 
   if (shuffledQuestions.length === 0) {
-    return <div>Loading questions...</div>;
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Knowledge Drill</CardTitle>
+          <CardDescription>Loading questions...</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Skeleton className="h-8 w-3/4" />
+          <div className="space-y-2">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
 
   if (isFinished) {
