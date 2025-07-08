@@ -10,7 +10,6 @@ import { ContextualPanel } from "@/components/ContextualPanel"
 import { Toaster } from "@/components/ui/toaster"
 import { ThemeScript } from "@/components/ThemeScript"
 import { MobileBottomNav } from "@/components/MobileBottomNav"
-import { useState, useEffect } from "react"
 
 export default function RootLayout({
   children,
@@ -18,11 +17,6 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   const pathname = usePathname()
-  const [isMounted, setIsMounted] = useState(false)
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
   
   const isLandingPage = pathname === "/"
 
@@ -40,12 +34,7 @@ export default function RootLayout({
         />
       </head>
       <body className={cn("antialiased min-h-screen")}>
-        {/*
-          This pattern prevents a hydration mismatch.
-          We only render the full layout on the client after the component has mounted.
-        */}
-        {isMounted && (
-          isLandingPage ? (
+          {isLandingPage ? (
             <>
               {children}
               <Toaster />
@@ -62,8 +51,7 @@ export default function RootLayout({
               <MobileBottomNav />
               <Toaster />
             </SidebarProvider>
-          )
-        )}
+          )}
       </body>
     </html>
   )
