@@ -333,5 +333,3 @@ export const translationPhrases: Phrase[] = [
     haitianCreoleText: 'Rete avè m. Èd la ap vini.',
   },
 ];
-
-    

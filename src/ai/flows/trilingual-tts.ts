@@ -4,7 +4,7 @@
 /**
  * @fileOverview Converts text to speech in multiple languages using Genkit AI.
  *
- * - trilingualTextToSpeech - A function that takes text and a language code,
+ * - trilingualTextToSpeech - a function that takes text and a language code,
  *   and returns a playable audio data URI.
  * - TrilingualTextToSpeechInput - The input schema for the flow.
  * - TrilingualTextToSpeechOutput - The return type for the flow.
