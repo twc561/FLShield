@@ -433,6 +433,18 @@ const allStatutes: Statute[] = [
     example: 'A person is walking down a public sidewalk with a handgun visibly tucked into their waistband, not covered by a shirt. This is a violation of the open carry statute.',
     url: 'http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0700-0799/0790/Sections/0790.053.html'
   },
+  {
+    id: 's790-10',
+    code: 'F.S. § 790.10',
+    title: 'Improper exhibition of dangerous weapons or firearms',
+    category: 'Weapons Offenses',
+    description: 'If any person having or carrying any dirk, sword, sword cane, firearm, electric weapon or device, or other weapon shall, in the presence of one or more persons, exhibit the same in a rude, careless, angry, or threatening manner, not in necessary self-defense, the person so offending shall be guilty of a misdemeanor of the first degree, punishable as provided in s. 775.082 or s. 775.083.',
+    fullText: 'If any person having or carrying any dirk, sword, sword cane, firearm, electric weapon or device, or other weapon shall, in the presence of one or more persons, exhibit the same in a rude, careless, angry, or threatening manner, not in necessary self-defense, the person so offending shall be guilty of a misdemeanor of the first degree, punishable as provided in s. 775.082 or s. 775.083.',
+    degreeOfCharge: 'First-degree Misdemeanor',
+    practicalSummary: 'This statute makes it illegal to display a weapon or firearm in a rude, careless, angry, or threatening way in front of others, when not acting in necessary self-defense. The key is the manner of exhibition—it must be done in a way that is intimidating or reckless. Simply having a firearm is not a crime; exhibiting it improperly is.',
+    example: 'During a heated argument over a parking spot, one driver lifts his shirt to reveal a handgun tucked in his waistband to intimidate the other driver. This act constitutes improper exhibition because the firearm was displayed in a threatening manner, not for self-defense.',
+    url: 'http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0700-0799/0790/Sections/0790.10.html'
+  },
 ];
 
 type StatuteIndexItem = Omit<Statute, 'description' | 'fullText' | 'practicalSummary' | 'example' | 'elementsOfTheCrime' | 'url'>;
