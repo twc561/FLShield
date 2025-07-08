@@ -81,7 +81,8 @@ export const menuItems: MenuItem[] = [
       label: "Emergency Response",
       icon: Siren,
       items: [
-          { href: "/emergency-response/baker-marchman-guide", label: "Baker/Marchman Guide", icon: BrainCircuit },
+          { href: "/emergency-response/baker-act-guide", label: "Baker Act Guide", icon: BrainCircuit },
+          { href: "/emergency-response/marchman-act-guide", label: "Marchman Act Guide", icon: BrainCircuit },
           { href: "/emergency-response/first-aid-guide", label: "First Aid Field Guide", icon: HeartPulse },
           { href: "/emergency-response/hazmat-guide", label: "HAZMAT Placard Guide", icon: Biohazard },
           { href: "/emergency-response/alert-guides", label: "Amber/Silver Alerts", icon: AlertCircle },

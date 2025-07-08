@@ -36,3 +36,4 @@ export * from './training/scenarios';
 export * from './training/knowledge-drill';
 export * from './field-translation-guide';
 export * from './daily-briefing';
+export * from './emergency-response/marchman-act-guide';

@@ -1,14 +1,13 @@
+// This file is deprecated and will be removed. The content has been split into separate guides.
 import { PageHeader } from "@/components/PageHeader";
-import { BakerMarchmanClient } from "./Client";
 
-export default function BakerMarchmanGuidePage() {
+export default function DeprecatedPage() {
   return (
     <div className="animate-fade-in-up">
       <PageHeader
-        title="Baker Act & Marchman Act Guide"
-        description="AI-powered guide to involuntary commitment criteria for mental health and substance abuse."
+        title="Guide Deprecated"
+        description="This guide has been split into separate Baker Act and Marchman Act guides for clarity."
       />
-      <BakerMarchmanClient />
     </div>
   );
 }
