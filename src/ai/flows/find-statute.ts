@@ -22,37 +22,31 @@ export type FindStatuteInput = z.infer<typeof FindStatuteInputSchema>;
 const FindStatuteOutputSchema = z.object({
   code: z
     .string()
-    .nullable()
     .describe(
-      'The official Florida Statute number (e.g., "F.S. § 812.014"). If not found, return null.'
+      'The official Florida Statute number (e.g., "F.S. § 812.014"). If not found, return "N/A".'
     ),
   title: z
     .string()
-    .nullable()
-    .describe('The official title of the statute. If not found, return null.'),
+    .describe('The official title of the statute. If not found, return "N/A".'),
   description: z
     .string()
-    .nullable()
     .describe(
-      'A practical summary for a law enforcement officer explaining what this statute means, what constitutes a violation, and key points to be aware of. If not found, return null.'
+      'A practical summary for a law enforcement officer explaining what this statute means, what constitutes a violation, and key points to be aware of. If not found, return "Information not available.".'
     ),
   degreeOfCharge: z
     .string()
-    .nullable()
     .describe(
-      'The typical degree of the charge (e.g., "Varies (by value)", "Misdemeanor", "Third-degree felony"). If not found, return null.'
+      'The typical degree of the charge (e.g., "Varies (by value)", "Misdemeanor", "Third-degree felony"). If not found, return "N/A".'
     ),
   elementsOfTheCrime: z
     .string()
-    .nullable()
     .describe(
-      'A concise, bulleted or numbered list of the essential elements of the crime that must be proven. If not a criminal statute, return null.'
+      'A concise, bulleted or numbered list of the essential elements of the crime that must be proven. If not a criminal statute, return "This statute does not define a criminal offense.".'
     ),
   example: z
     .string()
-    .nullable()
     .describe(
-      'A real-world example of the statute being applied. If not found, return null.'
+      'A real-world example of the statute being applied. If not found, return "No example available.".'
     ),
 });
 export type FindStatuteOutput = z.infer<typeof FindStatuteOutputSchema>;
@@ -76,10 +70,11 @@ The search should prioritize criminal statutes, particularly those found within 
 Search for the Florida Statute that best answers the following query:
 "{{{query}}}"
 
-IMPORTANT: Only return information for a single statute. Do not provide lists or multiple options. The response must be in the specified JSON format.
+CRITICAL RULE: Every key in the required JSON schema MUST be present in your response. If you cannot determine the information for a specific field, you MUST return a specific placeholder string like 'Information not available' or 'No specific case law found', not null or an empty string. The statute code must be in the format "F.S. § [number]".
+
 - The 'description' field MUST be a practical summary tailored for a law enforcement officer. It should explain what the statute means, what constitutes a violation, and key points for an officer to know. DO NOT provide a dry, official summary here.
 - If the statute defines a crime, you must populate the 'elementsOfTheCrime' field with a clear, concise list of the elements that must be proven.
-- If you cannot find a single, highly relevant statute, return null for all fields. Do not guess or invent statutes. The statute code must be in the format "F.S. § [number]".`,
+- If you cannot find a single, highly relevant statute, return "N/A" for all fields. Do not guess or invent statutes.`,
 });
 
 const findStatuteFlow = ai.defineFlow(

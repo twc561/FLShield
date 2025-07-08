@@ -41,12 +41,12 @@ Statute Description: {{{statuteText}}}
 
 Based on the provided information, generate a concise, bulleted or numbered list of the essential elements of the crime that a prosecutor must prove beyond a reasonable doubt for the 'elements' field.
 
-If the provided statute does not define a criminal offense (e.g., it is a definition or classification statute), the 'elements' field should contain the string "This statute does not define a criminal offense." Do not invent elements.`,
+CRITICAL RULE: Your response must always contain the 'elements' key. If the provided statute does not define a criminal offense (e.g., it is a definition or classification statute), the 'elements' field MUST contain the string "This statute does not define a criminal offense." Do not invent elements or return an empty string or null.`,
   config: {
     safetySettings: [
       {
         category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-        threshold: 'BLOCK_ONLY_HIGH',
+        threshold: 'BLOCK_NONE',
       },
       {
         category: 'HARM_CATEGORY_HATE_SPEECH',

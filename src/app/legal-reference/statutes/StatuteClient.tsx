@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState, useMemo, useEffect, memo } from "react"
+import React, { useState, useMemo, useEffect, memo, useCallback } from "react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import {
@@ -45,6 +45,101 @@ const popularStatutes = [
   's790-23',  // Possession of Firearm by Felon
 ];
 
+const FullStatuteContent = memo(function FullStatuteContent({
+  statute,
+  onGenerateElements,
+  generatedElements,
+}: {
+  statute: Statute
+  onGenerateElements: (statute: Statute) => Promise<void>
+  generatedElements: Record<string, { content: string; isLoading: boolean }>
+}) {
+  return (
+    <div className="border-t pt-4">
+      <Accordion type="multiple" collapsible className="w-full space-y-2" defaultValue={['description']}>
+          <AccordionItem value="description" className="border-b-0">
+          <Card className="bg-muted/50">
+              <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                  Official Description
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                  {statute.description}
+              </AccordionContent>
+          </Card>
+          </AccordionItem>
+          <AccordionItem value="summary" className="border-b-0">
+          <Card className="bg-muted/50">
+              <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                  What it Means for Officers
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                  {statute.practicalSummary}
+              </AccordionContent>
+          </Card>
+          </AccordionItem>
+          <AccordionItem value="elements" className="border-b-0">
+              <Card className="bg-muted/50">
+                  <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                      Elements of the Crime
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                      {(() => {
+                          const elementState = generatedElements[statute.id];
+                          if (elementState?.content) {
+                              return <div className="whitespace-pre-wrap">{elementState.content}</div>
+                          }
+                          return (
+                              <Button
+                                  variant="secondary"
+                                  size="sm"
+                                  onClick={(e) => {
+                                      e.stopPropagation();
+                                      onGenerateElements(statute);
+                                  }}
+                                  disabled={elementState?.isLoading}
+                              >
+                                  {elementState?.isLoading ? (
+                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  ) : (
+                                      <Sparkles className="mr-2 h-4 w-4 text-accent" />
+                                  )}
+                                  {elementState?.isLoading ? 'Generating...' : 'Generate with AI'}
+                              </Button>
+                          )
+                      })()}
+                  </AccordionContent>
+              </Card>
+          </AccordionItem>
+          <AccordionItem value="example" className="border-b-0">
+              <Card className="bg-muted/50">
+                  <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
+                      Real-World Example
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
+                      {statute.example}
+                  </AccordionContent>
+              </Card>
+          </AccordionItem>
+      </Accordion>
+      <div className="mt-6 flex items-center gap-2">
+          <Summarizer
+          documentText={
+              statute.fullText ||
+              `${statute.practicalSummary} ${statute.example}`
+          }
+          documentTitle={statute.title}
+          />
+          <Button asChild variant="secondary">
+          <Link href={statute.url} target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="mr-2 h-4 w-4" />
+              View Full Statute
+          </Link>
+          </Button>
+      </div>
+    </div>
+  );
+});
+
 export const StatuteClient = memo(function StatuteClient({
   initialStatuteIndex,
   statutesFullData,
@@ -80,8 +175,8 @@ export const StatuteClient = memo(function StatuteClient({
       'Property Crimes',
       'Drug Offenses',
       'Weapons Offenses',
-      'Traffic Offenses',
       'Public Order & Obstruction',
+      'Traffic Offenses',
     ];
     const uniqueCategories = [...new Set(initialStatuteIndex.map((s) => s.category))];
     return uniqueCategories.sort((a, b) => {
@@ -123,20 +218,16 @@ export const StatuteClient = memo(function StatuteClient({
             if (result && result.code) {
               const newStatute: Statute = {
                 id: result.code.toLowerCase().replace(/[^a-z0-9]/g, "-"),
-                code: result.code,
+                code: result.code || "N/A",
                 title: result.title || "N/A",
-                description:
-                  result.description || "No description provided by AI.",
-                fullText:
-                  result.description ||
-                  "No full text available for AI-generated result.",
+                description: result.description || "No description provided by AI.",
+                fullText: "No full text available for AI-generated result.",
                 degreeOfCharge: result.degreeOfCharge || "N/A",
-                practicalSummary:
-                  result.description || "No summary provided by AI.",
-                elementsOfTheCrime: result.elementsOfTheCrime || null,
+                practicalSummary: result.description || "No summary provided by AI.",
+                elementsOfTheCrime: result.elementsOfTheCrime || "Information not available.",
                 example: result.example || "No example provided by AI.",
                 url: `https://www.flsenate.gov/Laws/Statutes/search?search=${encodeURIComponent(
-                  result.title || result.code
+                  result.title || result.code || ''
                 )}&context=statutes`,
                 category: 'AI Result'
               };
@@ -181,8 +272,7 @@ export const StatuteClient = memo(function StatuteClient({
     setLoadingId(null);
   }
 
-  const handleGenerateElements = async (statute: Statute) => {
-    // Keep the accordion item open while generating
+  const handleGenerateElements = useCallback(async (statute: Statute) => {
     setActiveAccordionItem(statute.id);
     setGeneratedElements(prev => ({ ...prev, [statute.id]: { content: '', isLoading: true } }));
     try {
@@ -196,7 +286,7 @@ export const StatuteClient = memo(function StatuteClient({
         console.error("Failed to generate elements:", error);
         setGeneratedElements(prev => ({ ...prev, [statute.id]: { content: 'Error generating elements.', isLoading: false } }));
     }
-  };
+  }, []);
 
   const getFilteredStatutesForCategory = (category: string) => {
     const filteredByCategory = initialStatuteIndex.filter((s) => s.category === category);
@@ -213,90 +303,58 @@ export const StatuteClient = memo(function StatuteClient({
 
   const showNotFound = !isAiSearching && !aiResult && searchTerm.length > 0 && totalFilteredResults === 0;
   
-  const FullStatuteContent = ({ statute }: { statute: Statute }) => (
-    <div className="border-t pt-4">
-      <Accordion type="multiple" collapsible className="w-full space-y-2" defaultValue={['description']}>
-          <AccordionItem value="description" className="border-b-0">
-          <Card className="bg-muted/50">
-              <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-                  Official Description
-              </AccordionTrigger>
-              <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
-                  {statute.description}
-              </AccordionContent>
-          </Card>
-          </AccordionItem>
-          <AccordionItem value="summary" className="border-b-0">
-          <Card className="bg-muted/50">
-              <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-                  What it Means for Officers
-              </AccordionTrigger>
-              <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
-                  {statute.practicalSummary}
-              </AccordionContent>
-          </Card>
-          </AccordionItem>
-          <AccordionItem value="elements" className="border-b-0">
-              <Card className="bg-muted/50">
-                  <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-                      Elements of the Crime
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
-                      {(() => {
-                          const elementState = generatedElements[statute.id];
-                          if (elementState?.content) {
-                              return <div className="whitespace-pre-wrap">{elementState.content}</div>
-                          }
-                          return (
-                              <Button 
-                                  variant="secondary" 
-                                  size="sm" 
-                                  onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleGenerateElements(statute);
-                                  }}
-                                  disabled={elementState?.isLoading}
-                              >
-                                  {elementState?.isLoading ? (
-                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  ) : (
-                                      <Sparkles className="mr-2 h-4 w-4 text-accent" />
-                                  )}
-                                  {elementState?.isLoading ? 'Generating...' : 'Generate with AI'}
-                              </Button>
-                          )
-                      })()}
-                  </AccordionContent>
-              </Card>
-          </AccordionItem>
-          <AccordionItem value="example" className="border-b-0">
-              <Card className="bg-muted/50">
-                  <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
-                      Real-World Example
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-4 text-muted-foreground leading-relaxed">
-                      {statute.example}
-                  </AccordionContent>
-              </Card>
-          </AccordionItem>
-      </Accordion>
-      <div className="mt-6 flex items-center gap-2">
-          <Summarizer
-          documentText={
-              statute.fullText ||
-              `${statute.practicalSummary} ${statute.example}`
-          }
-          documentTitle={statute.title}
+  const renderStatute = (statute: Statute, isAiResult = false) => {
+    const content = isAiResult ? (
+      <FullStatuteContent
+        statute={statute}
+        onGenerateElements={handleGenerateElements}
+        generatedElements={generatedElements}
+      />
+    ) : (
+      <>
+        {loadingId === statute.id && (
+          <div className="pt-4 space-y-4 border-t">
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </div>
+        )}
+        {cachedData[statute.id] && (
+          <FullStatuteContent
+            statute={cachedData[statute.id]}
+            onGenerateElements={handleGenerateElements}
+            generatedElements={generatedElements}
           />
-          <Button asChild variant="secondary">
-          <Link href={statute.url} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="mr-2 h-4 w-4" />
-              View Full Statute
-          </Link>
-          </Button>
-      </div>
-    </div>
-  );
+        )}
+      </>
+    );
+
+    return (
+      <AccordionItem
+        value={statute.id}
+        key={statute.id}
+        className={`border rounded-md bg-card ${isAiResult ? 'border-accent/50 shadow-lg shadow-accent/10' : ''}`}
+      >
+        <AccordionTrigger className="p-4 hover:no-underline w-full text-left">
+          <div className="flex items-center gap-4 flex-1">
+            <div className={`p-2 rounded-lg ${isAiResult ? 'bg-accent/10' : 'bg-primary/10'}`}>
+              {isAiResult ? (
+                <Sparkles className="h-6 w-6 text-accent" />
+              ) : (
+                <Scale className="w-6 h-6 text-primary" />
+              )}
+            </div>
+            <div className="flex-1 text-left">
+              <p className="font-semibold text-base text-card-foreground text-wrap">{statute.title}</p>
+              <p className="text-xs text-muted-foreground">{statute.code} &bull; {statute.degreeOfCharge}</p>
+            </div>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="p-4 pt-0">
+          {content}
+        </AccordionContent>
+      </AccordionItem>
+    );
+  };
 
   return (
     <div className="flex flex-col h-full animate-fade-in-up">
@@ -326,84 +384,48 @@ export const StatuteClient = memo(function StatuteClient({
           </div>
         )}
 
-        {!isAiSearching && aiResult && (
-          <div>
-            <h2 className="text-lg font-bold tracking-tight my-4 px-1 flex items-center gap-3">
-              <Sparkles className="h-5 w-5 text-accent" />
-              AI Search Result
-            </h2>
-            <Accordion type="single" collapsible className="w-full space-y-2" value={activeAccordionItem} onValueChange={handleAccordionChange}>
-              <AccordionItem value={aiResult.id} className="border rounded-md bg-card border-accent/50 shadow-lg shadow-accent/10">
-                <AccordionTrigger className="p-4 hover:no-underline w-full text-left">
-                  <div className="flex items-center gap-4 flex-1">
-                      <div className="p-2 bg-accent/10 rounded-lg">
-                          <Sparkles className="h-6 w-6 text-accent" />
-                      </div>
-                      <div className="flex-1 text-left">
-                          <p className="font-semibold text-base text-card-foreground text-wrap">{aiResult.title}</p>
-                          <p className="text-xs text-muted-foreground">{aiResult.code} &bull; {aiResult.degreeOfCharge}</p>
-                      </div>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="p-4 pt-0">
-                    <FullStatuteContent statute={aiResult} />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
-        )}
+        <Accordion type="single" collapsible className="w-full" value={activeAccordionItem} onValueChange={handleAccordionChange}>
+          {!isAiSearching && aiResult && (
+            <div>
+              <h2 className="text-lg font-bold tracking-tight my-4 px-1 flex items-center gap-3">
+                <Sparkles className="h-5 w-5 text-accent" />
+                AI Search Result
+              </h2>
+              <div className="space-y-2">
+                {renderStatute(aiResult, true)}
+              </div>
+            </div>
+          )}
 
-        {showNotFound && (
-          <div className="text-center py-16">
-              <BookOpen className="mx-auto h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-4 text-lg font-medium">No Statutes Found</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-              Your search for "{searchTerm}" did not match any local or
-              AI-found statutes.
-              </p>
-          </div>
-        )}
+          {showNotFound && (
+            <div className="text-center py-16">
+                <BookOpen className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 text-lg font-medium">No Statutes Found</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                Your search for "{searchTerm}" did not match any local or
+                AI-found statutes.
+                </p>
+            </div>
+          )}
 
-        {!isAiSearching && !aiResult && (searchTerm === "" || totalFilteredResults > 0) && (
-          <Accordion type="single" collapsible className="w-full" value={activeAccordionItem} onValueChange={handleAccordionChange}>
-            {categories.map((category) => {
-              const filteredStatutes = getFilteredStatutesForCategory(category);
-              if (filteredStatutes.length === 0) return null;
+          {!isAiSearching && !aiResult && (searchTerm === "" || totalFilteredResults > 0) && (
+            <>
+              {categories.map((category) => {
+                const filteredStatutes = getFilteredStatutesForCategory(category);
+                if (filteredStatutes.length === 0) return null;
 
-              return (
-                <React.Fragment key={category}>
-                  <h2 className="text-lg font-bold tracking-tight mt-6 mb-2 px-1">{category}</h2>
-                  <div className="space-y-2">
-                    {filteredStatutes.map((statute, index) => (
-                        <AccordionItem value={statute.id} key={statute.id} className="border rounded-md bg-card">
-                          <AccordionTrigger className="p-4 hover:no-underline w-full text-left">
-                            <div className="flex items-center gap-4 flex-1">
-                              <div className="p-2 bg-primary/10 rounded-lg">
-                                <Scale className="w-6 h-6 text-primary" />
-                              </div>
-                              <div className="flex-1 text-left">
-                                <p className="font-semibold text-base text-card-foreground text-wrap">{statute.title}</p>
-                                <p className="text-xs text-muted-foreground">{statute.code} &bull; {statute.degreeOfCharge}</p>
-                              </div>
-                            </div>
-                          </AccordionTrigger>
-                          <AccordionContent className="p-4 pt-0">
-                            {loadingId === statute.id && (
-                              <div className="pt-4 space-y-4 border-t">
-                                <Skeleton className="h-24 w-full" />
-                                <Skeleton className="h-24 w-full" />
-                              </div>
-                            )}
-                            {cachedData[statute.id] && <FullStatuteContent statute={cachedData[statute.id]} />}
-                          </AccordionContent>
-                        </AccordionItem>
-                    ))}
-                  </div>
-                </React.Fragment>
-              )
-            })}
-          </Accordion>
-        )}
+                return (
+                  <React.Fragment key={category}>
+                    <h2 className="text-lg font-bold tracking-tight mt-6 mb-2 px-1">{category}</h2>
+                    <div className="space-y-2">
+                      {filteredStatutes.map((statute) => renderStatute(statute as Statute))}
+                    </div>
+                  </React.Fragment>
+                )
+              })}
+            </>
+          )}
+        </Accordion>
       </ScrollArea>
     </div>
   )
