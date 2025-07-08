@@ -1,14 +1,15 @@
 import { PageHeader } from "@/components/PageHeader";
 import { HazmatClient } from "./Client";
+import { hazmatClasses } from "@/data/emergency-response/hazmat-classes";
 
 export default function HazmatGuidePage() {
   return (
     <div className="animate-fade-in-up">
       <PageHeader
         title="HAZMAT Placard Guide"
-        description="Search common HAZMAT placards by number or name for ERG info. Powered by AI."
+        description="Visually identify a hazard class or search by UN/NA number for detailed, AI-powered response information."
       />
-      <HazmatClient />
+      <HazmatClient hazmatClasses={hazmatClasses} />
     </div>
   );
 }

@@ -1,6 +1,8 @@
+
 "use client"
 
 import * as React from "react"
+import * as LucideIcons from "lucide-react"
 import {
   Card,
   CardContent,
@@ -9,104 +11,181 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, Search, Flame, ShieldAlert, Biohazard } from "lucide-react"
-import { lookupHazmatPlacards, type LookupHazmatPlacardsOutput } from "@/ai/flows/lookup-hazmat-placard"
+import { Loader2, Search, Flame, ShieldAlert, Biohazard, Activity, Radiation, Skull, Wind, Bot, CircleDot, AlertTriangle } from "lucide-react"
+import { analyzeHazmatPlacard, type AnalyzeHazmatPlacardOutput } from "@/ai/flows/analyze-hazmat-placard"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import type { HazmatClass } from "@/data/emergency-response/hazmat-classes"
 
-export const HazmatClient = React.memo(function HazmatClient() {
-  const [placards, setPlacards] = React.useState<LookupHazmatPlacardsOutput | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
+const classIcons: Record<string, React.ElementType> = {
+    '1': Flame,
+    '2': Bot,
+    '3': Flame,
+    '4': Activity,
+    '5': Wind,
+    '6': Skull,
+    '7': Radiation,
+    '8': Biohazard,
+    '9': CircleDot
+};
+
+const DetailView = React.memo(({ detail }: { detail: AnalyzeHazmatPlacardOutput }) => {
+    const Icon = classIcons[detail.placardInfo.className.charAt(6)] || ShieldAlert;
+    return (
+        <div className="space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex justify-between items-start">
+                        <span>UN {detail.unID}: {detail.materialName}</span>
+                        <span className="text-sm font-medium text-muted-foreground">ERG #{detail.ergGuideNumber}</span>
+                    </CardTitle>
+                    <CardDescription className="flex items-center gap-2 pt-2">
+                        <Icon className="h-4 w-4 text-primary" />
+                        {detail.placardInfo.className}
+                    </CardDescription>
+                </CardHeader>
+            </Card>
+
+            <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>{detail.immediateSafetyActions.title}</AlertTitle>
+                <AlertDescription>
+                    <ul className="list-disc pl-5 space-y-1 mt-2">
+                        {detail.immediateSafetyActions.checklist.map((item, i) => <li key={i}>{item}</li>)}
+                    </ul>
+                </AlertDescription>
+            </Alert>
+            
+            <Card>
+                <CardHeader><CardTitle className="text-lg">{detail.publicSafetyDistances.title}</CardTitle></CardHeader>
+                <CardContent className="space-y-3 text-muted-foreground">
+                    <p><strong className="text-foreground/90">Initial Isolation:</strong> {detail.publicSafetyDistances.initialIsolation}</p>
+                    <p><strong className="text-foreground/90">Evacuation (Spill):</strong> {detail.publicSafetyDistances.evacuation_Spill}</p>
+                    <p><strong className="text-foreground/90">Evacuation (Fire):</strong> {detail.publicSafetyDistances.evacuation_Fire}</p>
+                </CardContent>
+            </Card>
+            
+            <Card>
+                <CardHeader><CardTitle className="text-lg">{detail.potentialHazards.title}</CardTitle></CardHeader>
+                <CardContent className="space-y-4">
+                     <div>
+                        <h4 className="font-semibold text-foreground/90 mb-1">Health Hazards</h4>
+                        <p className="text-muted-foreground">{detail.potentialHazards.health}</p>
+                     </div>
+                     <div>
+                        <h4 className="font-semibold text-destructive mb-1">Fire or Explosion Hazards</h4>
+                        <p className="text-muted-foreground">{detail.potentialHazards.fireOrExplosion}</p>
+                     </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader><CardTitle className="text-lg">{detail.emergencyResponse.title}</CardTitle></CardHeader>
+                <CardContent className="space-y-4">
+                     <div>
+                        <h4 className="font-semibold text-foreground/90 mb-1">First Aid</h4>
+                        <p className="text-muted-foreground">{detail.emergencyResponse.firstAid}</p>
+                     </div>
+                     <div>
+                        <h4 className="font-semibold text-foreground/90 mb-1">Fire Fighting</h4>
+                        <p className="text-muted-foreground">{detail.emergencyResponse.fireFighting}</p>
+                     </div>
+                </CardContent>
+            </Card>
+        </div>
+    )
+})
+
+export const HazmatClient = React.memo(function HazmatClient({
+    hazmatClasses
+} : {
+    hazmatClasses: HazmatClass[]
+}) {
+  const [searchTerm, setSearchTerm] = React.useState("")
+  const [searchResult, setSearchResult] = React.useState<AnalyzeHazmatPlacardOutput | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = React.useState("");
 
-  React.useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const result = await lookupHazmatPlacards();
-        setPlacards(result);
-      } catch (e) {
+  const handleSearch = async (query?: string) => {
+    const term = query || searchTerm;
+    if (!term) return;
+
+    setIsLoading(true);
+    setError(null);
+    setSearchResult(null);
+    try {
+        const result = await analyzeHazmatPlacard({ unID: term });
+        setSearchResult(result);
+    } catch (e) {
         console.error(e);
-        setError("Failed to load HAZMAT data. The AI model may be unavailable.");
-      } finally {
+        setError(`Failed to retrieve data for '${term}'. Please check the ID or material name and try again. The AI model may be unavailable.`);
+    } finally {
         setIsLoading(false);
-      }
     }
-    fetchData();
-  }, []);
-
-  const filteredPlacards = React.useMemo(() => {
-    if (!placards) return [];
-    if (!searchTerm) return placards;
-    const lowercasedTerm = searchTerm.toLowerCase();
-    return placards.filter(p => 
-      p.placardID.includes(lowercasedTerm) || 
-      p.materialName.toLowerCase().includes(lowercasedTerm)
-    );
-  }, [placards, searchTerm]);
-
-  if (isLoading) {
-    return <Skeleton className="h-64 w-full" />;
   }
 
-  if (error) {
-     return (
-        <Alert variant="destructive">
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-        </Alert>
-     )
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSearch();
+  }
+
+  const handleClassClick = (exampleID: string) => {
+    setSearchTerm(exampleID);
+    handleSearch(exampleID);
   }
 
   return (
     <div className="space-y-6">
-        <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-            placeholder="Search by placard number or material name..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-            />
-        </div>
+        <form onSubmit={handleFormSubmit}>
+            <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                placeholder="Search by UN/NA number (e.g., 1203) or material name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+                />
+            </div>
+        </form>
 
-        <div className="grid md:grid-cols-2 gap-6">
-            {filteredPlacards.map((placard) => (
-                <Card key={placard.placardID}>
-                    <CardHeader>
-                        <div className="flex justify-between items-start">
-                           <div>
-                            <CardTitle className="flex items-center gap-2"><Biohazard className="h-5 w-5"/>UN/NA {placard.placardID}</CardTitle>
-                            <CardDescription>{placard.materialName}</CardDescription>
-                           </div>
-                           <Badge variant="outline">ERG #{placard.ergGuideNumber}</Badge>
-                        </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                         <Alert variant={placard.hazardClass.includes("Flammable") || placard.hazardClass.includes("Explosive") ? "destructive" : "default"}>
-                            <Flame className="h-4 w-4" />
-                            <AlertTitle>Primary Hazard</AlertTitle>
-                            <AlertDescription>{placard.hazardClass}</AlertDescription>
-                        </Alert>
-                        <Alert>
-                            <ShieldAlert className="h-4 w-4" />
-                            <AlertTitle>Public Safety Guidance</AlertTitle>
-                            <AlertDescription>{placard.publicSafetyInfo}</AlertDescription>
-                        </Alert>
-                    </CardContent>
-                </Card>
-            ))}
-        </div>
-        {filteredPlacards.length === 0 && searchTerm && (
+        {isLoading && (
             <div className="text-center py-16">
-                <Search className="mx-auto h-12 w-12 text-muted-foreground" />
-                <h3 className="mt-4 text-lg font-medium">No Placards Found</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                    Your search did not match any HAZMAT placards.
-                </p>
+              <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
+              <h3 className="mt-4 text-lg font-medium">AI is Analyzing Placard...</h3>
+              <p className="mt-1 text-sm text-muted-foreground">This may take a moment.</p>
+            </div>
+        )}
+
+        {error && (
+             <Alert variant="destructive" className="my-6">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Analysis Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+            </Alert>
+        )}
+
+        {searchResult && (
+            <DetailView detail={searchResult} />
+        )}
+        
+        {!isLoading && !searchResult && (
+            <div className="grid md:grid-cols-3 gap-4">
+                {hazmatClasses.map((item) => {
+                    const Icon = classIcons[item.classNumber] || ShieldAlert;
+                    return (
+                        <Card key={item.classNumber} className="hover:border-primary transition-colors group cursor-pointer" onClick={() => handleClassClick(item.exampleID)}>
+                            <CardHeader>
+                                <Icon className="w-8 h-8 text-primary mb-2" />
+                                <CardTitle>Class {item.classNumber}: {item.name}</CardTitle>
+                                <CardDescription>{item.description}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-xs text-muted-foreground p-2 bg-muted/50 rounded-md">Example: Click to look up <span className="font-semibold">{item.exampleName} ({item.exampleID})</span></p>
+                            </CardContent>
+                        </Card>
+                    )
+                })}
             </div>
         )}
     </div>

@@ -25,5 +25,5 @@ import '@/ai/flows/analyze-legal-update.ts';
 import '@/ai/flows/analyze-substance.ts';
 import '@/ai/flows/analyze-k9-topic.ts';
 import '@/ai/flows/generate-first-aid-protocol.ts';
-import '@/ai/flows/lookup-hazmat-placard.ts';
 import '@/ai/flows/analyze-alert-guide.ts';
+import '@/ai/flows/analyze-hazmat-placard.ts';
