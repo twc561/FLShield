@@ -107,7 +107,7 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
 
   // State for on-demand AI search
   const [customJurisdiction, setCustomJurisdiction] = React.useState("");
-  const [customOrdinanceNumber, setCustomOrdinanceNumber] = React.useState("");
+  const [customQuery, setCustomQuery] = React.useState("");
   const [isCustomSearching, setIsCustomSearching] = React.useState(false);
   const [customSearchResult, setCustomSearchResult] = React.useState<OrdinanceDetail | null>(null);
   const [customSearchError, setCustomSearchError] = React.useState<string | null>(null);
@@ -151,7 +151,7 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
     try {
       const result = await analyzeOrdinance({
         jurisdiction: placeholder.jurisdiction,
-        ordinance_number: placeholder.ordinanceNumber,
+        query: placeholder.ordinanceNumber,
       });
 
       // Add the new result to the cache
@@ -168,8 +168,8 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
 
   const handleCustomSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customJurisdiction || !customOrdinanceNumber) {
-        setCustomSearchError("Please enter both a jurisdiction and an ordinance number.");
+    if (!customJurisdiction || !customQuery) {
+        setCustomSearchError("Please enter both a jurisdiction and a query (ordinance # or keyword).");
         return;
     }
     setIsCustomSearching(true);
@@ -178,7 +178,7 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
     try {
       const result = await analyzeOrdinance({
         jurisdiction: customJurisdiction,
-        ordinance_number: customOrdinanceNumber,
+        query: customQuery,
       });
       setCustomSearchResult(result);
     } catch (err) {
@@ -202,7 +202,7 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
       <Card className="mb-6 animate-fade-in-up">
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><Sparkles className="h-5 w-5 text-accent" /> AI Ordinance Analyst</CardTitle>
-          <CardDescription>Look up any ordinance from any city or county in Florida.</CardDescription>
+          <CardDescription>Look up any ordinance from any city or county in Florida by number or keyword.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleCustomSearch} className="space-y-4">
@@ -213,12 +213,12 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
                 onChange={(e) => setCustomJurisdiction(e.target.value)}
               />
               <Input 
-                placeholder="Ordinance # (e.g., Sec. 37-28)" 
-                value={customOrdinanceNumber}
-                onChange={(e) => setCustomOrdinanceNumber(e.target.value)}
+                placeholder="Ordinance # or keyword (e.g., 'loud music')" 
+                value={customQuery}
+                onChange={(e) => setCustomQuery(e.target.value)}
               />
             </div>
-            <Button type="submit" disabled={isCustomSearching || !customJurisdiction || !customOrdinanceNumber}>
+            <Button type="submit" disabled={isCustomSearching || !customJurisdiction || !customQuery}>
               {isCustomSearching ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
               {isCustomSearching ? 'Analyzing...' : 'Analyze Ordinance'}
             </Button>

@@ -1,6 +1,6 @@
 'use server';
 /**
- * @fileOverview Analyzes a local ordinance using AI.
+ * @fileOverview Analyzes a local ordinance using AI based on a jurisdiction and a keyword or ordinance number.
  *
  * - analyzeOrdinance - A function that fetches and parses a local ordinance.
  * - AnalyzeOrdinanceInput - The input type for the function.
@@ -11,7 +11,7 @@ import { z } from 'zod';
 
 const AnalyzeOrdinanceInputSchema = z.object({
   jurisdiction: z.string().describe('The jurisdiction of the ordinance, e.g., "City of Miami" or "Orange County".'),
-  ordinance_number: z.string().describe('The specific ordinance number, e.g., "Sec. 37-28".'),
+  query: z.string().describe('The specific ordinance number (e.g., "Sec. 37-28") or a keyword description of the ordinance (e.g., "loud music" or "open container").'),
 });
 export type AnalyzeOrdinanceInput = z.infer<typeof AnalyzeOrdinanceInputSchema>;
 
@@ -36,10 +36,12 @@ const prompt = ai.definePrompt({
   name: 'analyzeOrdinancePrompt',
   input: { schema: AnalyzeOrdinanceInputSchema },
   output: { schema: AnalyzeOrdinanceOutputSchema },
-  prompt: `You are an expert local government legal analyst AI specializing in Florida municipal and county codes. Your task is to provide a detailed, structured analysis of a specific local ordinance from any city or county in Florida for a law enforcement officer. For the given ordinance number and jurisdiction, retrieve the most current and complete text of the law. Then, parse this information and return it ONLY as a single, well-formed JSON object adhering strictly to the following schema.
+  prompt: `You are an expert local government legal analyst AI specializing in Florida municipal and county codes. Your task is to find the single most relevant local ordinance based on a user's query and provide a detailed, structured analysis for a law enforcement officer.
+
+For the given jurisdiction and query (which could be a specific ordinance number OR a keyword description), retrieve the most current and complete text of the most relevant law. Then, parse this information and return it ONLY as a single, well-formed JSON object adhering strictly to the following schema. If no single relevant ordinance can be found, you must return an error or an appropriate 'not found' message within the JSON structure.
 
 Jurisdiction: {{{jurisdiction}}}
-Ordinance Number: {{{ordinance_number}}}`,
+Query: {{{query}}}`,
 });
 
 const analyzeOrdinanceFlow = ai.defineFlow(
