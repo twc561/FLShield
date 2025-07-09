@@ -60,15 +60,23 @@ export default function SecurityPage() {
             
             <Card className="border-destructive/50 bg-destructive/5">
               <CardHeader>
-                <CardTitle className="text-destructive">Critical CJIS Compliance Notice</CardTitle>
+                <CardTitle className="text-destructive flex items-center gap-3">
+                  <ShieldAlert/>
+                  CJIS Compliance Status: NON-COMPLIANT
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-destructive-foreground/90">
-                  Florida Shield is designed as a <strong className="font-semibold">training and informational aid only</strong>. It is <strong className="font-semibold">NOT</strong> a CJIS-compliant system.
+                  Shield FL is a <strong>training and informational aid only</strong>. It is hosted in a standard environment and does not meet the strict security requirements for handling Criminal Justice Information (CJI).
                 </p>
                 <p className="mt-2 text-destructive-foreground/80">
-                  Users are strictly prohibited from entering, storing, or transmitting any Criminal Justice Information (CJI), Personally Identifiable Information (PII), or any other sensitive or case-specific details into the application. All user input fields must be treated as unsecure for the purposes of real-world case data.
+                    Users are strictly prohibited from entering any real PII, CJI, or case-specific details. For more information, please review our full CJIS statement.
                 </p>
+                <Button asChild variant="link" className="p-0 h-auto mt-2 text-destructive-foreground font-bold">
+                    <Link href="/cjis-compliance">
+                        View CJIS Compliance Statement
+                    </Link>
+                </Button>
               </CardContent>
             </Card>
             

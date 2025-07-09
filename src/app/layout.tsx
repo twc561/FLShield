@@ -48,6 +48,7 @@ export default function RootLayout({
     "/terms-of-use",
     "/privacy-policy",
     "/agency-intelligence",
+    "/cjis-compliance",
   ];
   const isPublicPage = publicPages.includes(pathname);
 
