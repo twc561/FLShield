@@ -3,7 +3,7 @@
 
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Apple, Smartphone, Monitor, Share, MoreVertical, PlusSquare } from "lucide-react"
+import { Apple, Smartphone, Monitor, Share, MoreVertical, AppWindow } from "lucide-react"
 
 const InstructionStep = ({ step, children }: { step: number, children: React.ReactNode }) => (
     <li className="flex items-start gap-4">
@@ -69,7 +69,7 @@ export default function InstallPage() {
                        <ol className="space-y-4">
                             <InstructionStep step={1}>Open shieldfl.app in <strong>Chrome</strong> or <strong>Microsoft Edge</strong>.</InstructionStep>
                             <InstructionStep step={2}>
-                                In the address bar at the top, look for the <strong>Install icon</strong> (it looks like a small screen with a down arrow <PlusSquare className="inline-block h-4 w-4 align-middle" />).
+                                In the address bar at the top, look for the <strong>Install icon</strong> (it looks like a small screen with a down arrow <AppWindow className="inline-block h-4 w-4 align-middle" />).
                             </InstructionStep>
                             <InstructionStep step={3}>Click the icon and then click the <strong>'Install'</strong> button.</InstructionStep>
                             <InstructionStep step={4}>The app will now be available in your computer's applications folder.</InstructionStep>
