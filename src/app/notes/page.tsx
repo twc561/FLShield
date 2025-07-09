@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
@@ -5,6 +6,8 @@ import { debounce } from "@/lib/utils"
 import { Textarea } from "@/components/ui/textarea"
 import { PageHeader } from "@/components/PageHeader"
 import { Badge } from "@/components/ui/badge"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertTriangle } from "lucide-react"
 
 export default function FieldNotesPage() {
   const [content, setContent] = useState<string>("")
@@ -48,11 +51,18 @@ export default function FieldNotesPage() {
           {saveState}
         </Badge>
       </div>
+      <Alert variant="destructive" className="mb-4">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertTitle>Warning: Not for Sensitive Information</AlertTitle>
+        <AlertDescription>
+          Do not include any names, case numbers, PII, or other sensitive case information in these notes. This feature is for general reference only.
+        </AlertDescription>
+      </Alert>
       <Textarea
         value={content}
         onChange={handleChange}
         className="flex-1 w-full text-base resize-none"
-        placeholder="Start typing your notes here..."
+        placeholder="Start typing your general reference notes here..."
       />
     </div>
   )

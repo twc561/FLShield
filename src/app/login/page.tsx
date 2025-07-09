@@ -179,6 +179,14 @@ export default function LoginPage() {
                     <CardDescription>Sign in to access your Florida Shield dashboard.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
+                    <Alert variant="destructive">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>For Informational Use Only</AlertTitle>
+                        <AlertDescription>
+                        This is not a CJIS-compliant system. Do not enter any real PII, CJI, or sensitive case data.
+                        </AlertDescription>
+                    </Alert>
+
                     <div className="grid grid-cols-2 gap-2">
                          <Button onClick={handleGoogleSignIn} disabled={!!isLoading} variant="outline">
                             {isLoading === 'google' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}

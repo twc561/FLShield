@@ -1,3 +1,4 @@
+
 import { PageHeader } from "@/components/PageHeader"
 import { Star } from "lucide-react"
 
@@ -14,7 +15,7 @@ export default function FavoritesPage() {
         </div>
         <h3 className="text-lg font-semibold">Feature Coming Soon</h3>
         <p className="text-muted-foreground">
-          Functionality to save and manage your favorite items will be available here.
+          Use this feature to save links to public statutes and policies for quick access. Do not save queries containing sensitive information.
         </p>
       </div>
     </div>

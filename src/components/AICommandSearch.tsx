@@ -61,7 +61,7 @@ const AICommandSearch = () => {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Ask a question or enter a keyword (e.g., 'criteria for Baker Act')"
+            placeholder="Search statutes or case law (e.g., 'Graham v. Connor')"
             className="w-full h-14 pl-6 pr-16 text-lg bg-card/50 border-2 border-border focus:border-primary focus:ring-0 rounded-full outline-none transition-colors"
           />
           <button
@@ -73,6 +73,9 @@ const AICommandSearch = () => {
           </button>
         </div>
       </form>
+       <p className="text-xs text-muted-foreground mt-2 text-center max-w-lg mx-auto">
+        For Public Records Only. Do not enter names, license plates, or case numbers.
+      </p>
 
       <div className="mt-6">
         <AnimatePresence>
