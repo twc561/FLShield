@@ -51,8 +51,8 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
     category: "Alcohol & Public Behavior",
   },
   {
-    ordinanceNumber: "Sec. 1-11-20",
-    ordinanceTitle: "Public consumption of alcohol prohibited",
+    ordinanceNumber: "Sec. 2-5-24",
+    ordinanceTitle: "Alcoholic Beverages in County Parks",
     jurisdiction: "St. Lucie County",
     category: "Alcohol & Public Behavior",
   },
