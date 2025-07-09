@@ -8,6 +8,7 @@ import {
   Newspaper,
   ChevronDown,
   Flame,
+  Download,
 } from "lucide-react"
 import Link from "next/link"
 import React, { useState, useEffect } from "react"
@@ -20,6 +21,8 @@ import { onAuthStateChanged, type User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { PageHeader } from "@/components/PageHeader"
 import AICommandSearch from "@/components/AICommandSearch"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -116,6 +119,23 @@ export default function DashboardPage() {
       
       <motion.div variants={itemVariants}>
         <AICommandSearch />
+      </motion.div>
+
+      <motion.div variants={itemVariants}>
+        <Card className="bg-primary/10 border-primary/20">
+            <CardHeader className="flex flex-row items-center gap-4">
+                <Download className="w-6 h-6 text-primary"/>
+                <div>
+                    <CardTitle>Get the Full App Experience</CardTitle>
+                    <CardDescription>Install Shield FL to your device's home screen for faster access.</CardDescription>
+                </div>
+            </CardHeader>
+            <CardContent>
+                <Button asChild>
+                    <Link href="/install">View Install Instructions</Link>
+                </Button>
+            </CardContent>
+        </Card>
       </motion.div>
 
       {dashboardFeatureGroups.map((group, groupIndex) => (
