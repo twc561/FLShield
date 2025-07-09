@@ -6,7 +6,6 @@ import {
   History,
   Lightbulb,
   Newspaper,
-  Search,
   ChevronDown,
 } from "lucide-react"
 import Link from "next/link"
@@ -18,7 +17,7 @@ import { dailyBriefingData } from "@/data/daily-briefing"
 import { FeatureCard } from "@/components/FeatureCard"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import AICommandSearch from '@/components/AICommandSearch';
 import {
   Collapsible,
   CollapsibleContent,
@@ -145,17 +144,13 @@ export default function DashboardPage() {
       animate="show"
     >
       {/* Header */}
-      <motion.div variants={itemVariants}>
+      <motion.div variants={itemVariants} className="text-center">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           {greeting}, {userName || "Officer"}.
         </h1>
         <p className="text-muted-foreground">{today}</p>
-        <div className="relative mt-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input
-            placeholder="Search all guides & statutes..."
-            className="pl-10 h-12"
-          />
+        <div className="mt-4">
+          <AICommandSearch />
         </div>
       </motion.div>
 
