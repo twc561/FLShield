@@ -25,6 +25,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { useToast } from "@/hooks/use-toast"
+import { onAuthStateChanged, type User } from "firebase/auth"
+import { auth } from "@/lib/firebase"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -68,6 +70,7 @@ const linkItemVariants = {
 
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("")
+  const [userName, setUserName] = useState<string | null>(null);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
 
@@ -89,7 +92,26 @@ export default function DashboardPage() {
         return "Good evening"
       }
     }
-    setGreeting(`${getGreeting()}, Officer.`)
+    setGreeting(getGreeting());
+
+    const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
+        if (user) {
+            // Use displayName if available, otherwise parse email for a name, or fallback.
+            if (user.displayName) {
+                setUserName(user.displayName.split(' ')[0]); // Just get the first name
+            } else if (user.email) {
+                const emailName = user.email.split('@')[0];
+                setUserName(emailName.charAt(0).toUpperCase() + emailName.slice(1));
+            } else if (user.isAnonymous) {
+                setUserName("Guest");
+            } else {
+                setUserName("Officer");
+            }
+        }
+    });
+    
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, [])
   
   useEffect(() => {
@@ -125,7 +147,7 @@ export default function DashboardPage() {
       {/* Header */}
       <motion.div variants={itemVariants}>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          {greeting}
+          {greeting}, {userName || "Officer"}.
         </h1>
         <p className="text-muted-foreground">{today}</p>
         <div className="relative mt-4">
