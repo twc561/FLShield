@@ -94,6 +94,7 @@ export default function RootLayout({
            <head>
             <title>Florida Shield</title>
             <meta name="description" content="The essential digital partner for the modern Florida officer." />
+            <link rel="icon" href="/logo.svg" type="image/svg+xml" sizes="any" />
             <link rel="manifest" href="/manifest.json" />
             <meta name="theme-color" content="#1F2937" />
             <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -115,6 +116,7 @@ export default function RootLayout({
       <head>
         <title>Florida Shield</title>
         <meta name="description" content="The essential digital partner for the modern Florida officer." />
+        <link rel="icon" href="/logo.svg" type="image/svg+xml" sizes="any" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#1F2937" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
