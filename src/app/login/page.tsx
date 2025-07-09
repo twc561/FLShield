@@ -254,7 +254,7 @@ export default function LoginPage() {
                 </CardContent>
                  <CardFooter className="flex flex-col items-center justify-center text-xs">
                      <p className="text-muted-foreground text-center">
-                        By signing in, you agree to the terms of use.
+                        By signing in, you agree to our <Link href="/terms-of-use" className="underline hover:text-primary">Terms of Use</Link>.
                      </p>
                      <Link href="/" className="underline hover:text-primary mt-2">
                         Return to Landing Page
