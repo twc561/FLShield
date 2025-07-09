@@ -73,7 +73,7 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
   {
     ordinanceNumber: "Sec. 76.01",
     ordinanceTitle: "Parking on residential lawns prohibited",
-    jurisdiction: "St. Lucie County", // Note: PSL enforces this heavily
+    jurisdiction: "City of Port St. Lucie",
     category: "Traffic & Parking",
   },
   {
@@ -202,9 +202,10 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
  * A pre-filled cache of common ordinance details.
  * This simulates a local database and ensures the most frequently accessed
  * ordinances load instantly without an AI call.
+ * The key is a unique combination of jurisdiction and ordinance number.
  */
 export const ordinanceDetailsData: Record<string, OrdinanceDetail> = {
-  "Sec. 42-61": {
+  "City of Fort Pierce__Sec. 42-61": {
     ordinanceNumber: "Sec. 42-61",
     ordinanceTitle: "Possession and consumption of alcoholic beverages in open containers",
     jurisdiction: "City of Fort Pierce",
@@ -214,13 +215,13 @@ export const ordinanceDetailsData: Record<string, OrdinanceDetail> = {
     penalty: "Non-criminal infraction, fine up to $500.",
     relatedStateStatute: "F.S. § 562.453",
   },
-  "Sec. 76.01": {
+  "City of Port St. Lucie__Sec. 76.01": {
     ordinanceNumber: "Sec. 76.01",
     ordinanceTitle: "Parking on residential lawns prohibited",
-    jurisdiction: "St. Lucie County",
+    jurisdiction: "City of Port St. Lucie",
     fullOrdinanceText: "No person shall park a vehicle on any residential lawn or on any portion of a residential lot or parcel which has not been paved or otherwise improved for parking... All tires must be off the grass.",
     summary: "This ordinance prohibits parking any vehicle on the grass of a residential property. All tires must be on a paved or improved surface like a driveway.",
-    enforcementNotes: "This is a very common code violation enforced by both law enforcement and code enforcement officers, particularly within the City of Port St. Lucie, which adopts the county ordinance. This is a primary stop justification for suspicious vehicles in residential areas at night.",
+    enforcementNotes: "This is a very common code violation enforced by both law enforcement and code enforcement officers. This is a primary stop justification for suspicious vehicles in residential areas at night.",
     penalty: "Non-criminal infraction.",
     relatedStateStatute: "F.S. § 316.1951",
   },
