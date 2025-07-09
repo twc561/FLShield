@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import {
-  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, MicOff,
+  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, MicOff, Heart, Mic,
 } from "lucide-react"
 
 type SubMenuItem = {
@@ -89,23 +89,25 @@ export const menuItems: MenuItem[] = [
       ],
   },
   {
-      label: "Reporting Tools",
-      icon: Briefcase,
-      items: [
-          { href: "/reporting-development/ai-charge-assistant", label: "AI Charge Assistant", icon: Gavel },
-          { href: "/reporting-development/use-of-force-wizard", label: "Use of Force Wizard", icon: ShieldQuestion },
-          { href: "/reporting-development/ai-report-writer", label: "AI Report Writer", icon: ClipboardEdit },
-      ],
-  },
-  {
-    label: "Training & Wellness",
+    label: "Training & Development",
     icon: GraduationCap,
     items: [
+        { href: "/reporting-development/ai-charge-assistant", label: "AI Charge Assistant", icon: Gavel },
+        { href: "/reporting-development/use-of-force-wizard", label: "Use of Force Wizard", icon: ShieldQuestion },
+        { href: "/reporting-development/ai-report-writer", label: "AI Report Writer", icon: ClipboardEdit },
         { href: "/training-development/role-play-simulator", label: "AI Role-Play Simulator", icon: MessageSquare },
         { href: "/training-development/report-proofreader", label: "Report Proofreader", icon: FileCheck },
         { href: "/reporting-development/knowledge-check", label: "Knowledge Check", icon: GraduationCap },
         { href: "/training-development/common-misperceptions", label: "Common Misperceptions", icon: ShieldAlert },
+    ],
+  },
+   {
+    label: "Officer Wellness & Rights",
+    icon: Heart,
+    items: [
         { href: "/wellness", label: "Wellness Hub", icon: ShieldQuestion },
+        { href: "/officer-wellness-rights/police-officers-bill-of-rights", label: "Police Officer's Bill...", icon: ShieldCheck },
+        { href: "/officer-wellness-rights/court-testimony-guide", label: "Court Testimony Guide", icon: Mic },
     ],
   },
   { href: "/notes", label: "Field Notes", icon: FileText },

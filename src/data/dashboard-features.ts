@@ -10,6 +10,16 @@ import {
   Briefcase,
   GraduationCap,
   Heart,
+  Scale,
+  Gavel,
+  Fish,
+  Biohazard,
+  MessageSquare,
+  FileCheck,
+  ShieldAlert,
+  ShieldQuestion,
+  ShieldCheck,
+  Mic,
 } from "lucide-react"
 
 export type FeatureGroup = {
@@ -20,43 +30,13 @@ export type FeatureGroup = {
 
 export const dashboardFeatureGroups: FeatureGroup[] = [
   {
-    category: "Investigation Guides",
-    icon: ListChecks,
-    features: [
-      {
-        id: "scenario-checklists",
-        title: "Scenario Checklists",
-        summary: "Interactive guides for common field scenarios like DUI and DV.",
-        icon: "ListChecks",
-        targetPage: "/field-procedures/scenario-checklists",
-        category: "Field Procedures",
-      },
-      {
-        id: "dui-investigation-guide",
-        title: "DUI Investigation Guide",
-        summary: "End-to-end procedural guide for DUI stops.",
-        icon: "Footprints",
-        targetPage: "/traffic-enforcement/dui-investigation",
-        category: "Traffic Enforcement",
-      },
-      {
-        id: "animal-cruelty-guide",
-        title: "Animal Cruelty Guide",
-        summary: "Comprehensive guide to investigating animal cruelty cases.",
-        icon: "Stethoscope",
-        targetPage: "/specialized-enforcement/animal-cruelty-investigation",
-        category: "Specialized Enforcement",
-      },
-    ],
-  },
-  {
-    category: "Reference Libraries",
+    category: "Legal Reference",
     icon: Book,
     features: [
       {
         id: "statute-navigator",
         title: "Statute Navigator",
-        summary: "Searchable Florida Statutes, with AI-powered search.",
+        summary: "AI-powered search of all Florida Statutes.",
         icon: "Scale",
         targetPage: "/legal-reference/statutes",
         category: "Legal Reference",
@@ -64,7 +44,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
       {
         id: "case-law-vault",
         title: "Case Law Vault",
-        summary: "Review key case law holdings relevant to patrol.",
+        summary: "Plain-language summaries of landmark case law.",
         icon: "Gavel",
         targetPage: "/legal-reference/case-law",
         category: "Legal Reference",
@@ -80,9 +60,25 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
     ],
   },
   {
-    category: "Field Tools",
-    icon: Wrench,
+    category: "Field Tools & Guides",
+    icon: ListChecks,
     features: [
+      {
+        id: "scenario-checklists",
+        title: "Scenario Checklists",
+        summary: "Interactive guides for common field scenarios like DUI and DV.",
+        icon: "ListChecks",
+        targetPage: "/field-procedures/scenario-checklists",
+        category: "Field Procedures",
+      },
+       {
+        id: "hazmat-placard-guide",
+        title: "HAZMAT Placard Guide",
+        summary: "Instantly look up HAZMAT placard numbers for ERG info.",
+        icon: "Biohazard",
+        targetPage: "/emergency-response/hazmat-guide",
+        category: "Emergency Response",
+      },
       {
         id: "field-translation-guide",
         title: "Field Translation Guide",
@@ -91,26 +87,10 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         targetPage: "/field-translation-guide",
         category: "Communication Tools",
       },
-      {
-        id: "commercial-vehicle-info",
-        title: "Commercial Vehicle Info",
-        summary: "Quick reference for CMV driver and vehicle violations.",
-        icon: "Truck",
-        targetPage: "/traffic-enforcement/commercial-vehicle-info",
-        category: "Traffic Enforcement",
-      },
-      {
-        id: "hazmat-placard-guide",
-        title: "HAZMAT Placard Guide",
-        summary: "Instantly look up HAZMAT placard numbers for ERG info.",
-        icon: "Biohazard",
-        targetPage: "/emergency-response/hazmat-guide",
-        category: "Emergency Response",
-      },
     ],
   },
   {
-    category: "Training & Development",
+    category: "Reporting & Development",
     icon: GraduationCap,
     features: [
       {
