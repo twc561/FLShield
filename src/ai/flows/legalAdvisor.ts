@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI-powered legal information synthesis tool.
@@ -49,6 +50,7 @@ CRITICAL RULES:
 1.  **DO NOT GIVE ADVICE.** Never use imperative language like "you should," "the correct action is," or "you must." Use informational language like "Agency policy states," "Considerations include," or "Relevant statutes are."
 2.  **PRIORITIZE & CITE SOURCES.** Your response must be based ONLY on the provided context (Agency Policy, Florida Statutes, Case Law). Prioritize information in that order. Every single piece of information MUST be cited.
 3.  **STRUCTURED OUTPUT ONLY.** Your entire output must be a single, valid JSON object matching the requested schema. Do not add any commentary outside the JSON structure.
+4.  **HANDLE MISSING INFORMATION:** If you cannot find any relevant information from the knowledge base for \`policyConsiderations\`, \`statutoryGuidelines\`, or \`relevantCaseLaw\`, you MUST populate that array with a single item. The 'content' field for this item should explicitly state that no specific information was found for that category (e.g., "No specific agency policy was found for this scenario."), and the 'source' field should be "N/A".
 
 // KNOWLEDGE BASE //
 1.  **Agency Policy Manual:**
@@ -64,7 +66,7 @@ CRITICAL RULES:
 "{{{scenario}}}"
 
 // YOUR TASK //
-Analyze the user's scenario. Synthesize the relevant information from the knowledge base and structure it into the required JSON output format. Ensure every point is sourced.
+Analyze the user's scenario. Synthesize the relevant information from the knowledge base and structure it into the required JSON output format. Ensure every point is sourced and you follow all critical rules.
 `,
 });
 
