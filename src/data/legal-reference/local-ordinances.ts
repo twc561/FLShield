@@ -38,8 +38,8 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
     category: "Alcohol & Public Behavior",
   },
   {
-    ordinanceNumber: "Sec. 16-31",
-    ordinanceTitle: "Public Nudity Prohibited",
+    ordinanceNumber: "Sec. 16-32",
+    ordinanceTitle: "Nudity and Sexual Conduct Prohibited",
     jurisdiction: "St. Lucie County",
     category: "Alcohol & Public Behavior",
   },
@@ -62,8 +62,8 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
     category: "Alcohol & Public Behavior",
   },
   {
-    ordinanceNumber: "Sec. 16-30",
-    ordinanceTitle: "Loitering and Prowling",
+    ordinanceNumber: "Sec. 16-31",
+    ordinanceTitle: "Loitering or Prowling Prohibited",
     jurisdiction: "St. Lucie County",
     category: "Alcohol & Public Behavior",
   },
