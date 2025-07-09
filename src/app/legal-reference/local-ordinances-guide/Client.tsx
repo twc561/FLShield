@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -42,6 +43,8 @@ const categoryIcons: { [key: string]: React.ElementType } = {
   "Traffic & Parking": Car,
   "Business & Licensing": Building,
 };
+
+const createUniqueId = (jurisdiction: string, ordinanceNumber: string) => `${jurisdiction}__${ordinanceNumber}`;
 
 const OrdinanceDetailView = React.memo(function OrdinanceDetailView({
   detail,
@@ -95,15 +98,20 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
   initialDetails: Record<string, OrdinanceDetail>;
 }) {
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [activeOrdinance, setActiveOrdinance] = React.useState<
-    string | undefined
-  >();
-  const [cachedDetails, setCachedDetails] =
-    React.useState<Record<string, OrdinanceDetail>>(initialDetails);
-  const [loadingOrdinance, setLoadingOrdinance] = React.useState<
-    string | null
-  >(null);
-  const [error, setError] = React.useState<string | null>(null);
+  
+  const uniqueInitialDetails = React.useMemo(() => {
+    const newCache: Record<string, OrdinanceDetail> = {};
+    for (const ordNum in initialDetails) {
+        const detail = initialDetails[ordNum];
+        newCache[createUniqueId(detail.jurisdiction, detail.ordinanceNumber)] = detail;
+    }
+    return newCache;
+  }, [initialDetails]);
+  
+  const [activeOrdinanceId, setActiveOrdinanceId] = React.useState<string | undefined>();
+  const [cachedDetails, setCachedDetails] = React.useState<Record<string, OrdinanceDetail>>(uniqueInitialDetails);
+  const [loadingOrdinanceId, setLoadingOrdinanceId] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<Record<string, string | null>>({});
 
   // State for on-demand AI search
   const [customJurisdiction, setCustomJurisdiction] = React.useState("");
@@ -136,33 +144,34 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
     }, {} as Record<string, OrdinancePlaceholder[]>);
   }, [filteredIndex]);
 
-  const handleAccordionChange = async (value: string | undefined) => {
-    setActiveOrdinance(value);
-    setError(null);
+  const handleAccordionChange = async (uniqueId: string | undefined) => {
+    setActiveOrdinanceId(uniqueId);
+    
+    if (!uniqueId) return;
+    
+    setError(prev => ({ ...prev, [uniqueId]: null }));
 
-    if (!value || cachedDetails[value] || loadingOrdinance === value) {
+    if (cachedDetails[uniqueId] || loadingOrdinanceId === uniqueId) {
       return;
     }
 
-    const placeholder = initialIndex.find((p) => p.ordinanceNumber === value);
-    if (!placeholder) return;
+    const [jurisdiction, ordinanceNumber] = uniqueId.split('__');
+    if (!jurisdiction || !ordinanceNumber) return;
 
-    setLoadingOrdinance(value);
+    setLoadingOrdinanceId(uniqueId);
     try {
       const result = await analyzeOrdinance({
-        jurisdiction: placeholder.jurisdiction,
-        query: placeholder.ordinanceNumber,
+        jurisdiction: jurisdiction,
+        query: ordinanceNumber,
       });
 
       // Add the new result to the cache
-      setCachedDetails((prev) => ({ ...prev, [value]: result }));
+      setCachedDetails((prev) => ({ ...prev, [uniqueId]: result }));
     } catch (e) {
       console.error("AI backfall failed:", e);
-      setError(
-        "The AI model failed to retrieve this ordinance. Please try again later."
-      );
+      setError(prev => ({ ...prev, [uniqueId]: "The AI model failed to retrieve this ordinance. Please try again later." }));
     } finally {
-      setLoadingOrdinance(null);
+      setLoadingOrdinanceId(null);
     }
   };
 
@@ -287,49 +296,52 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
                   type="single"
                   collapsible
                   className="w-full space-y-2"
-                  value={activeOrdinance}
+                  value={activeOrdinanceId}
                   onValueChange={handleAccordionChange}
                 >
-                  {ordinancesInCategory.map((ord) => (
-                    <AccordionItem
-                      value={ord.ordinanceNumber}
-                      key={`${ord.jurisdiction}-${ord.ordinanceNumber}`}
-                      className="border rounded-md bg-card"
-                    >
-                      <AccordionTrigger className="p-4 hover:no-underline font-semibold text-base text-card-foreground">
-                        <div className="flex-1 text-left">
-                          <p>{ord.ordinanceTitle}</p>
-                          <p className="text-xs text-muted-foreground font-mono font-normal">
-                            {ord.ordinanceNumber} ({ord.jurisdiction})
-                          </p>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="p-4 pt-0">
-                        <div className="border-t pt-4">
-                          {loadingOrdinance === ord.ordinanceNumber && (
-                            <div className="flex items-center justify-center space-x-2 text-muted-foreground">
-                              <Loader2 className="h-5 w-5 animate-spin" />
-                              <Sparkles className="h-5 w-5 text-accent" />
-                              <span>
-                                AI is analyzing ordinance...
-                              </span>
+                  {ordinancesInCategory.map((ord) => {
+                    const uniqueId = createUniqueId(ord.jurisdiction, ord.ordinanceNumber);
+                    return (
+                        <AccordionItem
+                            value={uniqueId}
+                            key={uniqueId}
+                            className="border rounded-md bg-card"
+                        >
+                        <AccordionTrigger className="p-4 hover:no-underline font-semibold text-base text-card-foreground">
+                            <div className="flex-1 text-left">
+                            <p>{ord.ordinanceTitle}</p>
+                            <p className="text-xs text-muted-foreground font-mono font-normal">
+                                {ord.ordinanceNumber} ({ord.jurisdiction})
+                            </p>
                             </div>
-                          )}
-                          {error && activeOrdinance === ord.ordinanceNumber && (
-                            <Alert variant="destructive">
-                                <AlertTitle>Error</AlertTitle>
-                                <AlertDescription>{error}</AlertDescription>
-                            </Alert>
-                          )}
-                          {cachedDetails[ord.ordinanceNumber] && (
-                            <OrdinanceDetailView
-                              detail={cachedDetails[ord.ordinanceNumber]}
-                            />
-                          )}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
+                        </AccordionTrigger>
+                        <AccordionContent className="p-4 pt-0">
+                            <div className="border-t pt-4">
+                            {loadingOrdinanceId === uniqueId && (
+                                <div className="flex items-center justify-center space-x-2 text-muted-foreground">
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                                <Sparkles className="h-5 w-5 text-accent" />
+                                <span>
+                                    AI is analyzing ordinance...
+                                </span>
+                                </div>
+                            )}
+                            {error[uniqueId] && (
+                                <Alert variant="destructive">
+                                    <AlertTitle>Error</AlertTitle>
+                                    <AlertDescription>{error[uniqueId]}</AlertDescription>
+                                </Alert>
+                            )}
+                            {cachedDetails[uniqueId] && (
+                                <OrdinanceDetailView
+                                detail={cachedDetails[uniqueId]}
+                                />
+                            )}
+                            </div>
+                        </AccordionContent>
+                        </AccordionItem>
+                    )
+                })}
                 </Accordion>
               </div>
             );
