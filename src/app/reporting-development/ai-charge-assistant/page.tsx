@@ -114,6 +114,15 @@ export default function AiChargeAssistantPage() {
           </div>
         </div>
       )}
+       {results && results.suggestions.length === 0 && (
+         <div className="text-center py-16">
+            <Gavel className="mx-auto h-12 w-12 text-muted-foreground" />
+            <h3 className="mt-4 text-lg font-medium">No Specific Charges Identified</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+                The AI could not identify a specific chargeable offense from the provided narrative.
+            </p>
+         </div>
+      )}
     </div>
   )
 }

@@ -1,3 +1,4 @@
+
 import { PageHeader } from "@/components/PageHeader"
 import { animalCrueltyGuideData } from "@/data/specialized-enforcement/animal-cruelty"
 import { Summarizer } from "@/components/Summarizer"
