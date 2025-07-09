@@ -4,18 +4,18 @@
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Flame, ShieldCheck, ListChecks, Scale, MessageSquare, Video, ArrowRight } from 'lucide-react'
+import { Flame, ShieldCheck, ListChecks, Scale, MessageSquare, Video, ArrowRight, Gavel, Fish, Biohazard } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
 const Feature = ({ icon: Icon, title, description, href }: { icon: React.ElementType, title: string, description: string, href: string }) => (
-    <div className="text-center p-6 border rounded-lg bg-card shadow-sm hover:shadow-primary/20 hover:border-primary/50 transition-all">
+    <div className="text-center p-6 border rounded-lg bg-card shadow-sm hover:shadow-primary/20 hover:border-primary/50 transition-all flex flex-col">
       <div className="flex justify-center mb-4">
         <div className="p-4 bg-primary/10 rounded-full">
           <Icon className="w-8 h-8 text-primary" />
         </div>
       </div>
       <h3 className="text-xl font-bold">{title}</h3>
-      <p className="mt-2 text-muted-foreground h-24">{description}</p>
+      <p className="mt-2 text-muted-foreground flex-grow">{description}</p>
       <Button variant="link" asChild className="mt-4">
         <Link href={href}>Learn More <ArrowRight className="ml-2 h-4 w-4"/></Link>
       </Button>
@@ -73,10 +73,13 @@ export default function LandingPage() {
                     <h3 className="text-3xl font-bold">A Tool for Modern Policing</h3>
                     <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">From traffic stops to complex investigations, get the right information, right now.</p>
                 </div>
-                <div className="grid md:grid-cols-3 gap-8">
-                    <Feature icon={Scale} title="AI Statute Search" description="Can't find a statute? Just ask. Our AI searches all of Florida's laws to find what you need based on simple keywords." href="/features"/>
-                    <Feature icon={ListChecks} title="Interactive Checklists" description="Navigate complex procedures like DUI stops and crash investigations with step-by-step interactive guidance." href="/features"/>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <Feature icon={Scale} title="AI Statute Search" description="Instantly search the entire Florida Statutes using natural language. No more thumbing through a worn-out book in your patrol car." href="/features"/>
+                    <Feature icon={ListChecks} title="Interactive Checklists" description="Navigate complex procedures like DUI stops and crash investigations with step-by-step interactive guidance to ensure accuracy." href="/features"/>
                     <Feature icon={MessageSquare} title="AI Role-Play Simulator" description="Practice de-escalation and interview techniques against a variety of AI-driven characters before you hit the street." href="/features"/>
+                    <Feature icon={Gavel} title="Case Law Vault" description="Understand the 'why' behind procedure. Get plain-language summaries of landmark case law like Graham v. Connor and Terry v. Ohio." href="/features"/>
+                    <Feature icon={Fish} title="FWC Regulations Guide" description="Quickly check fishing seasons, bag limits, and hunting rules with a searchable guide to FWC regulations." href="/features"/>
+                    <Feature icon={Biohazard} title="HAZMAT Placard Guide" description="Instantly identify hazardous materials from a placard number and get critical ERG information on scene safety and response." href="/features"/>
                 </div>
             </div>
         </section>
