@@ -2,7 +2,7 @@
 'use client'
 
 import { usePathname } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 import { SidebarProvider } from "@/components/ui/sidebar"
@@ -10,6 +10,9 @@ import { AppSidebar } from "@/components/AppSidebar"
 import { ContextualPanel } from "@/components/ContextualPanel"
 import { Toaster } from "@/components/ui/toaster"
 import { MobileBottomNav } from "@/components/MobileBottomNav"
+import { onAuthStateChanged } from "firebase/auth"
+import { auth } from "@/lib/firebase"
+import { useRouter } from "next/navigation"
 
 export default function RootLayout({
   children,
@@ -17,23 +20,60 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   const pathname = usePathname()
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsAuthenticated(!!user);
+    });
+
+    return () => unsubscribe();
+  }, []);
   
   const isLandingPage = pathname === "/"
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function () {
-        navigator.serviceWorker.register("/service-worker.js").then(
-          function (registration) {
-            console.log("Service Worker registration successful with scope: ", registration.scope);
-          },
-          function (err) {
-            console.log("Service Worker registration failed: ", err);
-          }
-        );
+    if (isAuthenticated === false && pathname !== '/') {
+      router.push('/');
+    }
+  }, [isAuthenticated, pathname, router]);
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => {
+            console.log('Service Worker registered with scope:', registration.scope);
+          })
+          .catch(error => {
+            console.log('Service Worker registration failed:', error);
+          });
       });
     }
-  }, []);
+  }, [])
+
+  if (isAuthenticated === null) {
+      return (
+         <html lang="en" className="dark">
+           <head>
+            <title>Florida Shield</title>
+            <meta name="description" content="The essential digital partner for the modern Florida officer." />
+            <link rel="manifest" href="/manifest.json" />
+            <meta name="theme-color" content="#1F2937" />
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+            <link
+              href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+              rel="stylesheet"
+            />
+          </head>
+            <body className="flex items-center justify-center min-h-screen bg-background">
+                {/* Optional: Add a loading spinner here */}
+            </body>
+         </html>
+      )
+  }
 
   return (
     <html lang="en" className="dark">
