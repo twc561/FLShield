@@ -7,20 +7,68 @@ import {
   Lightbulb,
   Newspaper,
   Search,
+  ChevronDown,
 } from "lucide-react"
 import Link from "next/link"
 import React, { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 
 import { dashboardFeatureGroups } from "@/data/dashboard-features"
 import { dailyBriefingData } from "@/data/daily-briefing"
 import { FeatureCard } from "@/components/FeatureCard"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  show: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 15,
+    },
+  },
+}
+
+const linkGridVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const linkItemVariants = {
+  hidden: { y: 10, opacity: 0 },
+  show: { y: 0, opacity: 1 },
+};
 
 
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("")
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -30,23 +78,27 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const getGreeting = () => {
-      const hour = new Date().getHours();
+      const hour = new Date().getHours()
       if (hour < 12) {
-        return "Good morning";
+        return "Good morning"
       } else if (hour < 18) {
-        return "Good afternoon";
+        return "Good afternoon"
       } else {
-        return "Good evening";
+        return "Good evening"
       }
-    };
-    setGreeting(`${getGreeting()}, Officer.`);
+    }
+    setGreeting(`${getGreeting()}, Officer.`)
   }, [])
 
-
   return (
-    <div className="animate-fade-in-up space-y-8">
+    <motion.div 
+      className="space-y-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+    >
       {/* Header */}
-      <div>
+      <motion.div variants={itemVariants}>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
           {greeting}
         </h1>
@@ -58,10 +110,10 @@ export default function DashboardPage() {
             className="pl-10 h-12"
           />
         </div>
-      </div>
+      </motion.div>
 
       {/* Core Content Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <motion.div className="grid grid-cols-1 lg:grid-cols-3 gap-6" variants={itemVariants}>
         <div className="lg:col-span-2 space-y-6">
             <Card>
             <CardHeader>
@@ -97,32 +149,76 @@ export default function DashboardPage() {
             </Button>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
       
       {/* Main Navigator */}
-      <div className="space-y-6">
-        {dashboardFeatureGroups.map((group) => (
-          <div key={group.category}>
-            <h2 className="text-lg font-bold tracking-tight my-4 px-1 flex items-center gap-3">
-              <group.icon className="h-5 w-5 text-primary" />
-              {group.category}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {group.features.map((feature, index) => (
-                <FeatureCard
-                  key={feature.id}
-                  module={feature}
-                  style={{ animationDelay: `${index * 50}ms` }}
-                  className="animate-fade-in-up"
-                />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+      <motion.div className="space-y-4" variants={itemVariants}>
+        {dashboardFeatureGroups.map((group) => {
+          const Icon = group.icon;
+          const isOpen = openSections[group.category] ?? false;
+
+          return (
+            <Collapsible key={group.category} open={isOpen} onOpenChange={(val) => setOpenSections(prev => ({...prev, [group.category]: val}))}>
+              <CollapsibleTrigger asChild>
+                <motion.div
+                  whileHover={{ y: -2, scale: 1.01, boxShadow: "0 8px 30px hsla(var(--primary), 0.12)"}}
+                  whileTap={{ scale: 0.99 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="w-full cursor-pointer"
+                >
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-primary/10 rounded-lg">
+                          <Icon className="w-6 h-6 text-primary" />
+                        </div>
+                        <CardTitle>{group.category}</CardTitle>
+                      </div>
+                      <motion.div
+                        animate={{ rotate: isOpen ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                      </motion.div>
+                    </CardHeader>
+                  </Card>
+                </motion.div>
+              </CollapsibleTrigger>
+              <AnimatePresence>
+                {isOpen && (
+                  <CollapsibleContent forceMount asChild>
+                    <motion.div
+                      initial="hidden"
+                      animate="show"
+                      exit="hidden"
+                      variants={{
+                        hidden: { opacity: 0, height: 0 },
+                        show: { opacity: 1, height: 'auto' }
+                      }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <motion.div 
+                        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 pt-4"
+                        variants={linkGridVariants}
+                      >
+                        {group.features.map((feature) => (
+                          <motion.div key={feature.id} variants={linkItemVariants}>
+                            <FeatureCard module={feature} />
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    </motion.div>
+                  </CollapsibleContent>
+                )}
+              </AnimatePresence>
+            </Collapsible>
+          );
+        })}
+      </motion.div>
 
       {/* Personalized Widgets */}
-      <div>
+      <motion.div variants={itemVariants}>
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -147,14 +243,14 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
 
       {/* Footer Disclaimer */}
-      <footer className="mt-8 pt-6 border-t border-border/50 text-center">
+      <motion.footer variants={itemVariants} className="mt-8 pt-6 border-t border-border/50 text-center">
         <p className="text-xs text-muted-foreground max-w-4xl mx-auto">
           <strong className="font-semibold text-foreground/80">Disclaimer & CJIS Warning:</strong> The Florida Shield application is for informational and training purposes only and is not a substitute for legal advice, agency policy, or certified training. All information should be independently verified. <strong className="text-destructive">This is NOT a CJIS-compliant environment.</strong> Users are strictly prohibited from entering, storing, or transmitting any real Personally Identifiable Information (PII), Criminal Justice Information (CJI), or any other sensitive case-specific details. All user-input fields must be treated as unsecure and for training or note-taking purposes only. Violation of this policy may result in disciplinary action.
         </p>
-      </footer>
-    </div>
+      </motion.footer>
+    </motion.div>
   )
 }

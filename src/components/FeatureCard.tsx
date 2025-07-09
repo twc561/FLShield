@@ -4,6 +4,7 @@
 import React, { memo } from "react"
 import Link from "next/link"
 import * as LucideIcons from "lucide-react"
+import { motion } from "framer-motion"
 import {
   Card,
   CardContent,
@@ -17,29 +18,17 @@ import { ArrowRight } from "lucide-react"
 
 type FeatureCardProps = {
   module: FeatureModule
-  style?: React.CSSProperties
-  className?: string
 }
 
-export const FeatureCard = memo(function FeatureCard({
-  module,
-  style,
-  className,
-}: FeatureCardProps) {
-  // Dynamically select the icon component from lucide-react based on the string name
-  const Icon =
-    (LucideIcons as any)[module.icon as keyof typeof LucideIcons] ||
-    LucideIcons.HelpCircle
+export const FeatureCard = memo(function FeatureCard({ module }: FeatureCardProps) {
+  const Icon = (LucideIcons as any)[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle
 
   return (
     <Link
       href={module.targetPage}
-      className="block group"
-      style={style}
+      className="block group h-full"
     >
-      <Card
-        className={`h-full flex flex-col hover:border-primary transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/20 ${className}`}
-      >
+      <Card className="h-full flex flex-col hover:border-primary transition-colors duration-200">
         <CardHeader>
           <div className="flex items-center gap-4">
             <div className="p-3 bg-primary/10 rounded-lg">
