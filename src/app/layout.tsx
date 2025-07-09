@@ -47,6 +47,7 @@ export default function RootLayout({
     "/request-demo",
     "/terms-of-use",
     "/privacy-policy",
+    "/agency-intelligence",
   ];
   const isPublicPage = publicPages.includes(pathname);
 
@@ -145,3 +146,5 @@ export default function RootLayout({
     </html>
   )
 }
+
+    

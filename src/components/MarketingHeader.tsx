@@ -1,3 +1,4 @@
+
 'use client'
 
 import Link from 'next/link'
@@ -16,6 +17,7 @@ export function MarketingHeader() {
       </Link>
       <nav className="hidden md:flex gap-6 items-center">
         <Link href="/features" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Features</Link>
+        <Link href="/agency-intelligence" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Platform</Link>
         <Link href="/for-agencies" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">For Agencies</Link>
         <Link href="/security" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Security</Link>
         <Link href="/support" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Support</Link>
@@ -27,3 +29,5 @@ export function MarketingHeader() {
     </header>
   )
 }
+
+    
