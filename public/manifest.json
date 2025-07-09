@@ -3,10 +3,6 @@
   "name": "Florida Shield",
   "short_name": "ShieldFL",
   "description": "The essential digital partner for the modern Florida officer.",
-  "start_url": "/dashboard",
-  "display": "standalone",
-  "background_color": "#1F2937",
-  "theme_color": "#1F2937",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
@@ -18,5 +14,10 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "theme_color": "#1F2937",
+  "background_color": "#1F2937",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "orientation": "portrait"
 }
