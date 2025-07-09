@@ -24,6 +24,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+import { useToast } from "@/hooks/use-toast"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -68,6 +69,7 @@ const linkItemVariants = {
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("")
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+  const { toast } = useToast();
 
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -89,6 +91,29 @@ export default function DashboardPage() {
     }
     setGreeting(`${getGreeting()}, Officer.`)
   }, [])
+  
+  useEffect(() => {
+    // Check if running on the client to safely access window and localStorage
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const MOBILE_BREAKPOINT = 768; // md breakpoint in Tailwind is 768px
+    const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
+    const hintKey = 'mobileNavHintShown';
+
+    const hasSeenHint = localStorage.getItem(hintKey);
+
+    if (isMobile && !hasSeenHint) {
+      setTimeout(() => {
+        toast({
+          title: "Navigation Tip",
+          description: "Tap the 'More' button in the bottom right to access all guides and tools.",
+        });
+        localStorage.setItem(hintKey, 'true');
+      }, 1500); // Delay to allow the page to settle
+    }
+  }, [toast]);
 
   return (
     <motion.div 
