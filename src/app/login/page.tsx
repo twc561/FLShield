@@ -2,14 +2,21 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { GoogleAuthProvider, signInWithPopup, signInAnonymously, createUserWithEmailAndPassword, signInWithEmailAndPassword, FirebaseError } from 'firebase/auth'
+
 import { auth } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Input } from '@/components/ui/input'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useToast } from '@/hooks/use-toast'
-import { Loader2 } from 'lucide-react'
-import Link from 'next/link'
+import { Loader2, User } from 'lucide-react'
 
 const GoogleIcon = () => (
     <svg className="mr-2 h-4 w-4" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" xmlnsXlink="http://www.w3.org/1999/xlink">
@@ -21,29 +28,105 @@ const GoogleIcon = () => (
     </svg>
 );
 
+const authSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email." }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+})
+
 export default function LoginPage() {
-    const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState<"google" | "guest" | "email" | null>(null)
     const router = useRouter()
     const { toast } = useToast()
 
+    const signInForm = useForm<z.infer<typeof authSchema>>({
+        resolver: zodResolver(authSchema),
+        defaultValues: { email: "", password: "" },
+    });
+
+    const signUpForm = useForm<z.infer<typeof authSchema>>({
+        resolver: zodResolver(authSchema),
+        defaultValues: { email: "", password: "" },
+    });
+
+    const handleAuthError = (error: any) => {
+        let title = "Authentication Failed";
+        let description = "An unknown error occurred. Please try again.";
+
+        if (error instanceof FirebaseError) {
+            switch (error.code) {
+                case 'auth/invalid-credential':
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                    title = 'Invalid Credentials';
+                    description = 'The email or password you entered is incorrect.';
+                    break;
+                case 'auth/email-already-in-use':
+                    title = 'Email Already in Use';
+                    description = 'An account with this email address already exists.';
+                    break;
+                case 'auth/weak-password':
+                    title = 'Weak Password';
+                    description = 'The password must be at least 6 characters long.';
+                    break;
+                case 'auth/network-request-failed':
+                    title = 'Network Error';
+                    description = 'Could not connect to the authentication service. Please check your internet connection and try again.';
+                    break;
+                default:
+                    description = "An unexpected error occurred. Please check the console for more details.";
+                    console.error("Firebase Auth Error:", error.message);
+            }
+        }
+        toast({ variant: "destructive", title, description });
+    }
+
     const handleGoogleSignIn = async () => {
-        setIsGoogleLoading(true)
-        const provider = new GoogleAuthProvider()
+        setIsLoading("google");
+        const provider = new GoogleAuthProvider();
         try {
-            await signInWithPopup(auth, provider)
-            toast({
-                title: "Login Successful",
-                description: "Welcome to Florida Shield.",
-            })
-            router.push('/dashboard')
+            await signInWithPopup(auth, provider);
+            router.push('/dashboard');
         } catch (error) {
-            console.error("Google sign-in failed", error)
-            toast({
-                variant: "destructive",
-                title: "Login Failed",
-                description: "Could not connect to the authentication service. Please try again.",
-            })
-            setIsGoogleLoading(false)
+            handleAuthError(error);
+        } finally {
+            setIsLoading(null);
+        }
+    }
+
+    const handleGuestSignIn = async () => {
+        setIsLoading("guest");
+        try {
+            await signInAnonymously(auth);
+            router.push('/dashboard');
+        } catch (error) {
+            handleAuthError(error);
+        } finally {
+            setIsLoading(null);
+        }
+    }
+
+    const onSignInSubmit = async (values: z.infer<typeof authSchema>) => {
+        setIsLoading("email");
+        try {
+            await signInWithEmailAndPassword(auth, values.email, values.password);
+            router.push('/dashboard');
+        } catch (error) {
+            handleAuthError(error);
+        } finally {
+            setIsLoading(null);
+        }
+    }
+
+    const onSignUpSubmit = async (values: z.infer<typeof authSchema>) => {
+        setIsLoading("email");
+        try {
+            await createUserWithEmailAndPassword(auth, values.email, values.password);
+            toast({ title: "Account Created", description: "You have been successfully signed in." });
+            router.push('/dashboard');
+        } catch (error) {
+            handleAuthError(error);
+        } finally {
+            setIsLoading(null);
         }
     }
 
@@ -51,17 +134,85 @@ export default function LoginPage() {
         <div className="flex min-h-screen items-center justify-center bg-muted/50 p-4">
             <Card className="w-full max-w-sm">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">Sign In</CardTitle>
-                    <CardDescription>to continue to Florida Shield</CardDescription>
+                    <CardTitle className="text-2xl">Welcome Back</CardTitle>
+                    <CardDescription>Sign in to access your Florida Shield dashboard.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
-                    <Button onClick={handleGoogleSignIn} disabled={isGoogleLoading} variant="outline">
-                        {isGoogleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
-                        Sign In with Google
-                    </Button>
+                    <div className="grid grid-cols-2 gap-2">
+                         <Button onClick={handleGoogleSignIn} disabled={!!isLoading} variant="outline">
+                            {isLoading === 'google' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
+                            Google
+                        </Button>
+                        <Button onClick={handleGuestSignIn} disabled={!!isLoading} variant="secondary">
+                            {isLoading === 'guest' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <User className="mr-2 h-4 w-4" />}
+                            Guest
+                        </Button>
+                    </div>
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                        </div>
+                    </div>
+                    <Tabs defaultValue="sign-in" className="w-full">
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="sign-in">Sign In</TabsTrigger>
+                            <TabsTrigger value="sign-up">Sign Up</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="sign-in">
+                            <Form {...signInForm}>
+                                <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-4 mt-4">
+                                    <FormField control={signInForm.control} name="email" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="sr-only">Email</FormLabel>
+                                            <FormControl><Input placeholder="email@example.com" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                    <FormField control={signInForm.control} name="password" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="sr-only">Password</FormLabel>
+                                            <FormControl><Input type="password" placeholder="Password" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                    <Button type="submit" className="w-full" disabled={!!isLoading}>
+                                        {isLoading === 'email' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        Sign In
+                                    </Button>
+                                </form>
+                            </Form>
+                        </TabsContent>
+                        <TabsContent value="sign-up">
+                             <Form {...signUpForm}>
+                                <form onSubmit={signUpForm.handleSubmit(onSignUpSubmit)} className="space-y-4 mt-4">
+                                    <FormField control={signUpForm.control} name="email" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="sr-only">Email</FormLabel>
+                                            <FormControl><Input placeholder="email@example.com" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                    <FormField control={signUpForm.control} name="password" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="sr-only">Password</FormLabel>
+                                            <FormControl><Input type="password" placeholder="Password" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                    <Button type="submit" className="w-full" disabled={!!isLoading}>
+                                         {isLoading === 'email' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        Create Account
+                                    </Button>
+                                </form>
+                            </Form>
+                        </TabsContent>
+                    </Tabs>
                 </CardContent>
-                <CardFooter className="flex flex-col items-center justify-center text-xs">
-                     <p className="text-muted-foreground">
+                 <CardFooter className="flex flex-col items-center justify-center text-xs">
+                     <p className="text-muted-foreground text-center">
                         By signing in, you agree to the terms of use.
                      </p>
                      <Link href="/" className="underline hover:text-primary mt-2">
