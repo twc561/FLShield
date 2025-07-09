@@ -11,8 +11,6 @@ export type ScenarioPack = {
     secretKnowledge: string[];
     ttsParameters: {
       voiceName: string;
-      speakingRate: number;
-      pitch: number;
     };
   };
   dynamicBehaviorTree: {
@@ -43,8 +41,6 @@ export const trainingScenarios: ScenarioPack[] = [
       ],
       ttsParameters: {
         voiceName: "Achernar",
-        speakingRate: 1.15,
-        pitch: 2.0
       }
     },
     dynamicBehaviorTree: [
@@ -89,8 +85,6 @@ export const trainingScenarios: ScenarioPack[] = [
       ],
       ttsParameters: {
         voiceName: "Algenib",
-        speakingRate: 1.05,
-        pitch: -2.0
       }
     },
     dynamicBehaviorTree: [
@@ -135,8 +129,6 @@ export const trainingScenarios: ScenarioPack[] = [
       ],
       ttsParameters: {
         voiceName: "Algenib",
-        speakingRate: 0.9,
-        pitch: 0.0
       }
     },
     dynamicBehaviorTree: [
@@ -181,8 +173,6 @@ export const trainingScenarios: ScenarioPack[] = [
       ],
       ttsParameters: {
         voiceName: "Algenib",
-        speakingRate: 1.1,
-        pitch: -3.0
       }
     },
     dynamicBehaviorTree: [
@@ -227,8 +217,6 @@ export const trainingScenarios: ScenarioPack[] = [
       ],
       ttsParameters: {
         voiceName: "Achernar",
-        speakingRate: 0.85,
-        pitch: -1.0
       }
     },
     dynamicBehaviorTree: [
@@ -273,8 +261,6 @@ export const trainingScenarios: ScenarioPack[] = [
       ],
       ttsParameters: {
         voiceName: "Achernar",
-        speakingRate: 0.95,
-        pitch: 1.0
       }
     },
     dynamicBehaviorTree: [
@@ -319,8 +305,6 @@ export const trainingScenarios: ScenarioPack[] = [
       ],
       ttsParameters: {
         voiceName: "Algenib",
-        speakingRate: 1.0,
-        pitch: -4.0
       }
     },
     dynamicBehaviorTree: [

@@ -16,9 +16,7 @@ import wav from 'wav';
 
 const TextToSpeechInputSchema = z.object({
   text: z.string().describe("The text to synthesize."),
-  voiceName: z.string().optional().describe("The voice model name, e.g., 'en-US-Wavenet-F'"),
-  speakingRate: z.number().min(0.25).max(4.0).optional().describe("Speaking rate, where 1.0 is normal."),
-  pitch: z.number().min(-20.0).max(20.0).optional().describe("Speaking pitch in semitones."),
+  voiceName: z.string().optional().describe("The voice model name, e.g., 'Algenib'"),
 });
 export type TextToSpeechInput = z.infer<typeof TextToSpeechInputSchema>;
 
@@ -36,8 +34,6 @@ export async function textToSpeech(input: TextToSpeechInput): Promise<TextToSpee
         voiceConfig: {
           prebuiltVoiceConfig: { voiceName: input.voiceName || 'Algenib' },
         },
-        speakingRate: input.speakingRate,
-        pitch: input.pitch,
       },
     },
     prompt: input.text,

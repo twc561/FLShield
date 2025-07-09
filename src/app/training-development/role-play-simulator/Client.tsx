@@ -152,8 +152,6 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
       textToSpeech({
         text: response.characterResponse,
         voiceName: ttsParams.voiceName,
-        speakingRate: ttsParams.speakingRate,
-        pitch: ttsParams.pitch,
       }).then(audioResult => {
         setMessages(prev =>
           prev.map(msg =>
