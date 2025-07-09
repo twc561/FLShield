@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import {
-  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, MicOff, Heart, Mic,
+  LayoutGrid, Bot, Star, Book, Scale, Gavel, Landmark, FileText, ListChecks, Building, Newspaper, Home, Car, Route, Footprints, Truck, Wrench, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, MicOff, Heart, Mic, Settings, Download
 } from "lucide-react"
 
 type SubMenuItem = {
@@ -110,5 +110,12 @@ export const menuItems: MenuItem[] = [
         { href: "/officer-wellness-rights/court-testimony-guide", label: "Court Testimony Guide", icon: Mic },
     ],
   },
-  { href: "/notes", label: "Field Notes", icon: FileText }
+  {
+    label: "System",
+    icon: Settings,
+    items: [
+        { href: "/notes", label: "Field Notes", icon: FileText },
+        { href: "/install", label: "Install Guide", icon: Download },
+    ]
+  }
 ]
