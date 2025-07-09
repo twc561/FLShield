@@ -1,7 +1,9 @@
 
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Lock, DatabaseZap, ShieldAlert, BrainCircuit, Users } from "lucide-react"
+import { Lock, DatabaseZap, ShieldAlert, BrainCircuit, Users, ArrowRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 const SecurityFeature = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
   <div className="flex items-start gap-4">
@@ -65,6 +67,17 @@ export default function SecurityPage() {
             </p>
           </CardContent>
         </Card>
+        
+        <div className="mt-12 text-center bg-card p-8 rounded-lg border">
+            <h2 className="text-2xl font-bold">Have More Questions?</h2>
+            <p className="mt-2 text-muted-foreground max-w-xl mx-auto">
+                We are committed to transparency and are happy to provide detailed security documentation to prospective agency partners.
+            </p>
+            <Button asChild className="mt-6" size="lg">
+                <Link href="/request-demo">Discuss Your Agency's Needs <ArrowRight className="ml-2 h-5 w-5"/></Link>
+            </Button>
+        </div>
+
       </div>
     </div>
   )

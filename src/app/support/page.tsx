@@ -6,6 +6,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 export default function SupportPage() {
   return (
@@ -41,6 +45,17 @@ export default function SupportPage() {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+        
+        <div className="mt-12 text-center bg-card p-8 rounded-lg border">
+          <h2 className="text-2xl font-bold">Need Agency-Specific Support?</h2>
+          <p className="mt-2 text-muted-foreground max-w-xl mx-auto">
+              If your question wasn't answered here or you represent an agency, we encourage you to request a personalized demo to discuss your specific requirements.
+          </p>
+          <Button asChild className="mt-6" size="lg">
+              <Link href="/request-demo">Request a Demo <ArrowRight className="ml-2 h-5 w-5"/></Link>
+          </Button>
+        </div>
+
       </div>
     </div>
   )

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
+import Link from "next/link"
 
 export default function RequestDemoPage() {
     const { toast } = useToast()
@@ -62,6 +63,11 @@ export default function RequestDemoPage() {
                 </CardFooter>
             </form>
         </Card>
+        <div className="text-center mt-8">
+            <Link href="/" className="text-sm text-muted-foreground hover:text-primary underline">
+                Return to Homepage
+            </Link>
+        </div>
       </div>
     </div>
   )

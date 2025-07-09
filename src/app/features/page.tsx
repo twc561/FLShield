@@ -1,7 +1,9 @@
 
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Scale, ListChecks, MessageSquare, Gavel, Fish, Biohazard, BrainCircuit, ShieldCheck, Languages, Truck } from "lucide-react"
+import { Scale, ListChecks, MessageSquare, Gavel, Fish, Biohazard, BrainCircuit, ShieldCheck, Languages, Truck, ArrowRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 const FeatureSection = ({ title, description, children }: { title: string, description: string, children: React.ReactNode }) => (
   <section className="py-12 border-b">
@@ -111,7 +113,7 @@ export default function FeaturesPage() {
         <FeatureDetail
           icon={Fish}
           title="FWC Regulations Guide"
-          description="A searchable database for FWC rules, covering fishing seasons, bag limits, hunting regulations, and boating safety requirements."
+          description="A searchable database for FWC rules, covering fishing seasons, bag limits, and hunting regulations."
         />
         <FeatureDetail
           icon={Biohazard}
@@ -124,6 +126,16 @@ export default function FeaturesPage() {
           description="A practical field guide for patrol officers covering common driver, vehicle, and cargo violations for CMVs."
         />
       </FeatureSection>
+
+       <div className="mt-16 text-center bg-card p-8 rounded-lg border">
+        <h2 className="text-2xl font-bold">See These Features in Action</h2>
+        <p className="mt-2 text-muted-foreground max-w-xl mx-auto">
+            Reading about features is one thing. Seeing how they perform in the field is another. Schedule a personalized demo to see how Florida Shield can empower your officers.
+        </p>
+        <Button asChild className="mt-6" size="lg">
+            <Link href="/request-demo">Request a Demo <ArrowRight className="ml-2 h-5 w-5"/></Link>
+        </Button>
+      </div>
     </div>
   )
 }
