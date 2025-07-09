@@ -142,14 +142,38 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="mt-12">
-            <div className="relative aspect-video max-w-4xl mx-auto rounded-lg border-4 border-muted/50 shadow-2xl overflow-hidden">
-                <Image 
-                    src="https://placehold.co/1280x720.png"
-                    alt="App Preview Animation"
-                    fill
-                    className="object-cover"
-                    data-ai-hint="app animation video"
-                />
+            <div className="relative aspect-video max-w-4xl mx-auto rounded-lg border-4 border-muted/50 shadow-2xl overflow-hidden bg-card p-6 sm:p-8 flex flex-col">
+              <div className="mb-4 sm:mb-6">
+                <p className="text-sm sm:text-base font-medium text-primary">DUI Investigation Checklist</p>
+                <h3 className="text-xl sm:text-2xl font-bold tracking-tight">Phase 1: Vehicle in Motion</h3>
+              </div>
+              <div className="flex-grow space-y-4 sm:space-y-6">
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  You are now behind the suspect vehicle and observing its movement. What specific driving cues are you looking for to corroborate the BOLO and establish your own reasonable suspicion?
+                </p>
+                <div className="p-3 sm:p-4 bg-accent/10 border-l-4 border-accent rounded-r-lg">
+                  <div className="flex items-start gap-3">
+                    <Bot className="h-5 w-5 sm:h-6 sm:w-6 text-accent mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-accent-foreground/90">AI Tactical Tip</h4>
+                      <p className="text-xs sm:text-sm text-accent-foreground/80">
+                        Document any observed traffic infractions. This independent observation is crucial and will be the legal foundation for your traffic stop, separate from the initial BOLO.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 sm:mt-6">
+                <h4 className="text-xs sm:text-sm font-semibold text-muted-foreground mb-2">Select your next action:</h4>
+                <div className="flex flex-wrap gap-2">
+                  <div className="bg-primary text-primary-foreground text-xs sm:text-sm font-medium rounded-md px-3 py-1.5 sm:px-4 sm:py-2 shadow-md">
+                    I have observed a violation and initiated a stop.
+                  </div>
+                  <div className="bg-secondary text-secondary-foreground text-xs sm:text-sm font-medium rounded-md px-3 py-1.5 sm:px-4 sm:py-2">
+                    Continue observation
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
