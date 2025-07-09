@@ -1,3 +1,4 @@
+
 import { PageHeader } from "@/components/PageHeader"
 import { knowledgeDrillQuestions } from "@/data/training/knowledge-drill";
 import { KnowledgeCheckClient } from "./Client";

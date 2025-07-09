@@ -1,3 +1,4 @@
+
 import { PageHeader } from "@/components/PageHeader"
 import {
   Accordion,
@@ -12,7 +13,7 @@ export default function SupportPage() {
     <>
       <MarketingHeader />
       <main>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 animate-fade-in-up">
           <PageHeader
             title="Frequently Asked Questions"
             description="Here are answers to some common questions about the Shield FL platform. We believe in transparency and want to provide you with all the information you need to see how Shield FL can become an invaluable asset for your agency."

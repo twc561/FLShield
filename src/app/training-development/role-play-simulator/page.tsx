@@ -1,3 +1,4 @@
+
 import { PageHeader } from "@/components/PageHeader";
 import { trainingScenarios } from "@/data/training/scenarios";
 import { RoleplayClient } from "./Client";

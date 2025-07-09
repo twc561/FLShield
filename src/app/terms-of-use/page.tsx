@@ -1,3 +1,4 @@
+
 import { MarketingHeader } from "@/components/MarketingHeader";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,7 +35,7 @@ export default function TermsOfUsePage() {
                             <div className="space-y-2">
                                 <h2 id="eligibility" className="text-xl font-semibold border-b pb-2">3. User Eligibility and Account Responsibilities</h2>
                                 <p><strong>Eligibility:</strong> Use of the Service is strictly limited to verified, active law enforcement personnel. We reserve the right to verify your credentials at any time and may deny, suspend, or terminate access if eligibility cannot be confirmed or is lost.</p>
-                                <p><strong>Account Security:</strong> You are solely responsible for maintaining the confidentiality of your account login credentials and for all activities that occur under your account. You agree to notify us immediately of any unauthorized use of your account. Account sharing is strictly prohibited.</p>
+                                <p><strong>Account Security:</strong> You are solely responsible for maintaining the confidentiality of your account login credentials and for all activities that occur under your account. Account sharing is strictly prohibited.</p>
                             </div>
 
                             <Alert variant="destructive" className="my-6">

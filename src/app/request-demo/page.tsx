@@ -26,7 +26,7 @@ export default function RequestDemoPage() {
     <>
       <MarketingHeader />
       <main>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 animate-fade-in-up">
           <PageHeader
             title="Request a Personalized Demo"
             description="See firsthand how Florida Shield can be a force multiplier for your agency."
