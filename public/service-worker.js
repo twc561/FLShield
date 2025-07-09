@@ -1,20 +1,20 @@
+// A robust "Network falling back to Cache" strategy for PWA stability.
 
-// A "Network falling back to Cache" strategy for PWA stability.
-
-const CACHE_NAME = 'shieldfl-cache-v1';
+const CACHE_NAME = 'shieldfl-cache-v2';
 const OFFLINE_URL = 'offline.html';
+const APP_SHELL_URLS = [
+  OFFLINE_URL,
+  '/manifest.json',
+  'https://placehold.co/192x192.png',
+  'https://placehold.co/512x512.png'
+];
 
-// 1. On install, pre-cache the offline fallback page and manifest.
+// 1. On install, pre-cache the offline fallback page and core app shell assets.
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // Pre-cache the offline page, manifest, and essential icons.
-      return cache.addAll([
-        OFFLINE_URL,
-        '/manifest.json',
-        'https://placehold.co/192x192.png',
-        'https://placehold.co/512x512.png'
-      ]);
+      console.log('[Service Worker] Pre-caching App Shell');
+      return cache.addAll(APP_SHELL_URLS);
     })
   );
   self.skipWaiting();
@@ -23,47 +23,46 @@ self.addEventListener('install', (event) => {
 // 2. On activation, clean up old caches.
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    (async () => {
-      const cacheNames = await caches.keys();
-      await Promise.all(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
+            console.log('[Service Worker] Clearing old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
-      await self.clients.claim();
-    })()
+    })
   );
+  return self.clients.claim();
 });
 
-// 3. On fetch, try the network first. If it fails, serve the offline page for navigation requests.
+// 3. On fetch, implement network-first strategy.
 self.addEventListener('fetch', (event) => {
-  // We only want to intercept navigation requests (i.e., for HTML pages).
-  if (event.request.mode === 'navigate') {
-    event.respondWith(
-      (async () => {
-        try {
-          // First, try to use the network.
-          const networkResponse = await fetch(event.request);
-          return networkResponse;
-        } catch (error) {
-          // If the network fails, serve the offline page from the cache.
-          console.log('Fetch failed; returning offline page instead.', error);
-          const cache = await caches.open(CACHE_NAME);
-          const cachedResponse = await cache.match(OFFLINE_URL);
+  event.respondWith(
+    caches.open(CACHE_NAME).then(async (cache) => {
+      try {
+        // Try the network first.
+        const networkResponse = await fetch(event.request);
+        // If the fetch is successful, cache the response for future offline use.
+        if (event.request.method === 'GET') {
+          cache.put(event.request, networkResponse.clone());
+        }
+        return networkResponse;
+      } catch (error) {
+        // If the network fails, try to serve from the cache.
+        const cachedResponse = await cache.match(event.request);
+        if (cachedResponse) {
           return cachedResponse;
         }
-      })()
-    );
-  }
-  
-  // For other requests (images, CSS, etc.), try cache first then network.
-  // This is a simple "cache-first" strategy for non-navigation assets.
-  // A more robust app might have more complex logic here.
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      return cachedResponse || fetch(event.request);
+        // If it's a navigation request and it's not in the cache, serve the offline page.
+        if (event.request.mode === 'navigate') {
+          const offlinePage = await cache.match(OFFLINE_URL);
+          return offlinePage;
+        }
+        // For other failed requests (like API calls or assets not in cache), just let the browser handle the error.
+        return new Response(null, { status: 404 });
+      }
     })
   );
 });

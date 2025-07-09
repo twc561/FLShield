@@ -1,14 +1,13 @@
-
 {
   "name": "Shield FL: The Florida Officer's Field Guide",
   "short_name": "Shield FL",
-  "description": "The essential digital partner for the modern Florida officer, providing instant access to statutes, guides, and AI-powered tools.",
+  "description": "The essential digital partner for the modern Florida officer.",
   "start_url": "/",
+  "scope": "/",
+  "id": "/?source=pwa",
   "display": "standalone",
   "background_color": "#111827",
   "theme_color": "#1F2937",
-  "scope": "/",
-  "id": "/?source=pwa",
   "icons": [
     {
       "src": "https://placehold.co/192x192.png",
