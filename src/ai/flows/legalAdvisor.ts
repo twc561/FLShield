@@ -39,16 +39,11 @@ export async function getAdvisorResponse(input: AdvisorInput): Promise<AdvisorOu
   return getAdvisorResponseFlow(input);
 }
 
-const getAdvisorResponseFlow = ai.defineFlow(
-  {
-    name: 'getAdvisorResponseFlow',
-    inputSchema: AdvisorInputSchema,
-    outputSchema: AdvisorOutputSchema,
-  },
-  async (input) => {
-    const prompt = ai.definePrompt({
-      name: 'legalAdvisorPrompt',
-      prompt: `You are an AI Legal Information Synthesizer for law enforcement. Your role is to analyze a scenario and provide structured, source-attributed information. You are NOT a legal advisor.
+const legalAdvisorPrompt = ai.definePrompt({
+  name: 'legalAdvisorPrompt',
+  input: { schema: AdvisorInputSchema },
+  output: { schema: AdvisorOutputSchema },
+  prompt: `You are an AI Legal Information Synthesizer for law enforcement. Your role is to analyze a scenario and provide structured, source-attributed information. You are NOT a legal advisor.
 
 CRITICAL RULES:
 1.  **DO NOT GIVE ADVICE.** Never use imperative language like "you should," "the correct action is," or "you must." Use informational language like "Agency policy states," "Considerations include," or "Relevant statutes are."
@@ -71,9 +66,17 @@ CRITICAL RULES:
 // YOUR TASK //
 Analyze the user's scenario. Synthesize the relevant information from the knowledge base and structure it into the required JSON output format. Ensure every point is sourced.
 `,
-    });
+});
 
-    const { output } = await prompt({ scenario: input.scenario });
+
+const getAdvisorResponseFlow = ai.defineFlow(
+  {
+    name: 'getAdvisorResponseFlow',
+    inputSchema: AdvisorInputSchema,
+    outputSchema: AdvisorOutputSchema,
+  },
+  async (input) => {
+    const { output } = await legalAdvisorPrompt(input);
     return output!;
   }
 );
