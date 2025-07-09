@@ -45,6 +45,8 @@ export default function RootLayout({
     "/security",
     "/support",
     "/request-demo",
+    "/terms-of-use",
+    "/privacy-policy",
   ];
   const isPublicPage = publicPages.includes(pathname);
 
