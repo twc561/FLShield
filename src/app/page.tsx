@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useRouter } from 'next/navigation'
@@ -6,6 +7,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Flame, ShieldCheck, ListChecks, Scale, MessageSquare, Video, ArrowRight, Gavel, Fish, Biohazard, PlayCircle } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 
 const Feature = ({ icon: Icon, title, description, href }: { icon: React.ElementType, title: string, description: string, href: string }) => (
     <div className="text-center p-6 border rounded-lg bg-card shadow-sm hover:shadow-primary/20 hover:border-primary/50 transition-all flex flex-col">
@@ -65,20 +67,35 @@ export default function LandingPage() {
             </div>
             
             <div className="mt-16 max-w-4xl mx-auto px-4">
-              <div className="relative aspect-video rounded-lg border bg-background shadow-2xl shadow-primary/10 overflow-hidden cursor-pointer group">
-                <Image
-                  src="https://placehold.co/1280x720.png"
-                  alt="Florida Shield App Demo"
-                  width={1280}
-                  height={720}
-                  className="w-full h-full object-cover"
-                  data-ai-hint="app interface"
-                  priority
-                />
-                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                  <PlayCircle className="w-20 h-20 text-white/70 group-hover:text-white group-hover:scale-110 transition-all duration-300" />
-                </div>
-              </div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div className="relative aspect-video rounded-lg border bg-background shadow-2xl shadow-primary/10 overflow-hidden cursor-pointer group">
+                    <Image
+                      src="https://placehold.co/1280x720.png"
+                      alt="Florida Shield App Demo"
+                      width={1280}
+                      height={720}
+                      className="w-full h-full object-cover"
+                      data-ai-hint="app interface"
+                      priority
+                    />
+                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                      <PlayCircle className="w-20 h-20 text-white/70 group-hover:text-white group-hover:scale-110 transition-all duration-300" />
+                    </div>
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl p-0">
+                  <div className="aspect-video">
+                    <iframe
+                      className="w-full h-full"
+                      src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+                      title="YouTube video player"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
           </div>
