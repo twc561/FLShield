@@ -7,6 +7,7 @@ import {
   Lightbulb,
   Newspaper,
   ChevronDown,
+  Flame,
 } from "lucide-react"
 import Link from "next/link"
 import React, { useState, useEffect } from "react"
@@ -145,10 +146,13 @@ export default function DashboardPage() {
     >
       {/* Header */}
       <motion.div variants={itemVariants} className="text-center">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          {greeting}, {userName || "Officer"}.
-        </h1>
-        <p className="text-muted-foreground">{today}</p>
+        <div className="flex justify-center items-center gap-3">
+          <Flame className="w-8 h-8 text-primary" />
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            {greeting}, {userName || "Officer"}.
+          </h1>
+        </div>
+        <p className="text-muted-foreground mt-1">{today}</p>
         <div className="mt-4">
           <AICommandSearch />
         </div>
