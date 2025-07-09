@@ -32,7 +32,20 @@ export default function RootLayout({
     return () => unsubscribe();
   }, []);
   
-  const isPublicPage = pathname === "/" || pathname === "/login";
+  // Define public pages that don't require authentication
+  const publicPages = [
+    "/",
+    "/login",
+    "/features",
+    "/for-agencies",
+    "/security",
+    "/support",
+    "/request-demo",
+  ];
+  const isPublicPage = publicPages.includes(pathname);
+
+  // Define pages that an authenticated user should be redirected away from
+  const authPages = ["/", "/login"];
 
   useEffect(() => {
     if (isAuthenticated === null) {
@@ -44,14 +57,14 @@ export default function RootLayout({
       router.push('/login');
     }
 
-    // If user is authenticated and on a public page (landing/login), redirect to dashboard
-    if (isAuthenticated && isPublicPage) {
+    // If user is authenticated and on a landing/login page, redirect to dashboard
+    if (isAuthenticated && authPages.includes(pathname)) {
         router.push('/dashboard');
     }
 
   }, [isAuthenticated, pathname, router, isPublicPage]);
 
-  const showAppShell = isAuthenticated && !isPublicPage;
+  const showAppShell = isAuthenticated && !publicPages.includes(pathname);
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -67,7 +80,7 @@ export default function RootLayout({
     }
   }, [])
 
-  if (isAuthenticated === null) {
+  if (isAuthenticated === null && !isPublicPage) {
       return (
          <html lang="en" className="dark">
            <head>
