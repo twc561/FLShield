@@ -1,4 +1,6 @@
 
+'use client'
+
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Apple, Smartphone, Monitor, ArrowUpFromSquare, MoreVertical, PlusSquare } from "lucide-react"
