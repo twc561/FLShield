@@ -110,5 +110,5 @@ export const menuItems: MenuItem[] = [
         { href: "/officer-wellness-rights/court-testimony-guide", label: "Court Testimony Guide", icon: Mic },
     ],
   },
-  { href: "/notes", label: "Field Notes", icon: FileText },
+  { href: "/notes", label: "Field Notes", icon: FileText }
 ]
