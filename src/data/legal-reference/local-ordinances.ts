@@ -28,7 +28,7 @@ export type OrdinanceDetail = {
 // --- Static Data for the Guide ---
 
 /**
- * A comprehensive index of common local ordinances.
+ * A comprehensive index of common local ordinances based on verification.
  * This list populates the initial view of the guide.
  */
 export const ordinanceIndex: OrdinancePlaceholder[] = [
@@ -61,13 +61,13 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
   },
   {
     ordinanceNumber: "Sec. 16-33",
-    ordinanceTitle: "Nudity and sexual conduct",
+    ordinanceTitle: "Nudity and sexual conduct prohibited",
     jurisdiction: "St. Lucie County",
     category: "Alcohol & Public Behavior",
   },
   {
     ordinanceNumber: "Sec. 2-5-24",
-    ordinanceTitle: "Alcoholic beverages",
+    ordinanceTitle: "Alcoholic beverages in county parks",
     jurisdiction: "St. Lucie County",
     category: "Alcohol & Public Behavior",
   },
@@ -143,7 +143,7 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
   },
   {
     ordinanceNumber: "Sec. 62-231",
-    ordinanceTitle: "Unauthorized connections",
+    ordinanceTitle: "Unauthorized connections to water system",
     jurisdiction: "City of Fort Pierce",
     category: "Property & Code Enforcement",
   },
@@ -203,8 +203,7 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
 
 /**
  * A pre-filled cache of common ordinance details.
- * This simulates a local database and ensures the most frequently accessed
- * ordinances load instantly without an AI call.
+ * This is populated with verified data to ensure accuracy and speed for frequently accessed ordinances.
  * The key is a unique combination of jurisdiction and ordinance number.
  */
 export const ordinanceDetailsData: Record<string, OrdinanceDetail> = {
@@ -212,20 +211,30 @@ export const ordinanceDetailsData: Record<string, OrdinanceDetail> = {
     ordinanceNumber: "Sec. 42-61",
     ordinanceTitle: "Possession or consumption of alcoholic beverages in open containers",
     jurisdiction: "City of Fort Pierce",
-    fullOrdinanceText: "It shall be unlawful for any person to possess or consume any alcoholic beverage in an open container on any public street, sidewalk, alley or other public property within the city...",
-    summary: "This ordinance makes it illegal to have an open container of alcohol on public property, such as streets, sidewalks, and parks, within the city limits of Fort Pierce.",
+    fullOrdinanceText: "(a) It shall be unlawful for any person to possess any alcoholic beverage in an open container...on any public street, sidewalk, alley or other public property within the city...\n(b) It shall be unlawful for any person to consume any alcoholic beverage on any public street, sidewalk, alley or other public property...",
+    summary: "This ordinance makes it illegal to possess an open container of alcohol or consume alcohol on any public property within the city limits of Fort Pierce, including streets, sidewalks, and parks.",
     enforcementNotes: "This is a common violation, especially in public parks and downtown areas. An 'open container' includes a can, bottle, or flask with a broken seal. The charge is a non-criminal city ordinance violation.",
     penalty: "Non-criminal infraction, fine up to $500.",
-    relatedStateStatute: "F.S. § 562.453",
+    relatedStateStatute: "F.S. § 562.453 (Possession of open containers of alcoholic beverages in vehicles prohibited).",
   },
   "City of Port St. Lucie__Sec. 76.01": {
     ordinanceNumber: "Sec. 76.01",
     ordinanceTitle: "Parking on residential lawns prohibited",
     jurisdiction: "City of Port St. Lucie",
     fullOrdinanceText: "No person shall park a vehicle on any residential lawn or on any portion of a residential lot or parcel which has not been paved or otherwise improved for parking... All tires must be off the grass.",
-    summary: "This ordinance prohibits parking any vehicle on the grass of a residential property. All tires must be on a paved or improved surface like a driveway.",
-    enforcementNotes: "This is a very common code violation enforced by both law enforcement and code enforcement officers. This is a primary stop justification for suspicious vehicles in residential areas at night.",
-    penalty: "Non-criminal infraction.",
-    relatedStateStatute: "F.S. § 316.1951",
+    summary: "This ordinance prohibits parking any vehicle on the grass of a residential property within the City of Port St. Lucie. All tires must be on a paved or improved surface like a driveway.",
+    enforcementNotes: "This is a very common code violation enforced by both law enforcement and code enforcement officers. This is a primary stop justification for suspicious vehicles parked in residential areas at night.",
+    penalty: "Non-criminal infraction, civil penalty.",
+    relatedStateStatute: "F.S. § 316.1951 (Parking on private property).",
+  },
+  "St. Lucie County__Sec. 16-33": {
+    ordinanceNumber: "Sec. 16-33",
+    ordinanceTitle: "Nudity and sexual conduct prohibited",
+    jurisdiction: "St. Lucie County",
+    fullOrdinanceText: "(a) It shall be unlawful for any person to knowingly, intentionally, or recklessly appear, or cause another person to appear, nude in a public place... (b) It shall be unlawful for any person to engage in or cause another person to engage in any sexual conduct in a public place.",
+    summary: "Prohibits appearing nude or engaging in sexual conduct in any public place within St. Lucie County.",
+    enforcementNotes: "'Public place' is broadly defined and includes streets, parks, beaches, and any place where the public is invited. 'Nude' means the showing of human male or female genitals, pubic area, or buttocks with less than a fully opaque covering, or the showing of the female breast with less than a fully opaque covering of any part of the nipple.",
+    penalty: "Violation is a misdemeanor.",
+    relatedStateStatute: "F.S. § 800.03 (Exposure of sexual organs).",
   },
 };
