@@ -61,6 +61,7 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
 
   const handleGoBack = () => {
     setSelectedScenario(null);
+    stopAudio();
   };
 
   const stopAudio = useCallback(() => {
@@ -71,7 +72,7 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
     setActiveAudioId(null);
   }, []);
 
-  const playAudio = async (messageId: string, audioUrl: string | undefined) => {
+  const playAudio = useCallback(async (messageId: string, audioUrl: string | undefined) => {
     if (!audioUrl || !audioPlayerRef.current) return;
   
     if (activeAudioId === messageId) {
@@ -88,25 +89,23 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
       console.error("Audio playback failed:", error);
       stopAudio();
     }
-  };
+  }, [activeAudioId, stopAudio]);
 
   const handleSendMessage = async () => {
     if (!userInput.trim() || !selectedScenario) return;
 
-    const userMessageId = `user-${Date.now()}`;
-    const newUserMessage: Message = { id: userMessageId, role: "user", content: userInput };
-    const newMessages: Message[] = [...messages, newUserMessage];
-    setMessages(newMessages);
+    const userMessage: Message = { id: `user-${Date.now()}`, role: "user", content: userInput };
+    setMessages(prev => [...prev, userMessage]);
     
     const currentInput = userInput;
     setUserInput("");
     setIsLoading(true);
 
     try {
-      const historyForAI = newMessages
+      const historyForAI = [...messages, userMessage]
         .filter(msg => msg.role !== 'system')
         .map(msg => ({
-          role: msg.role,
+          role: msg.role as 'user' | 'model',
           parts: [{ text: msg.content }],
       }));
       
@@ -123,21 +122,25 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
 
       if (response && response.characterResponse) {
         const modelMessageId = `model-${Date.now()}`;
-        const newModelMessage: Message = {
+        
+        const messagesToAdd: Message[] = [];
+        messagesToAdd.push({
           id: modelMessageId,
           role: "model",
           content: response.characterResponse,
           audioLoading: true,
-        };
-        
-        setMessages(prev => [...prev, newModelMessage]);
+        });
 
         if (response.feedback) {
-            const feedbackId = `system-${Date.now()}`;
-            const feedbackMessage: Message = { id: feedbackId, role: 'system', content: response.feedback };
-            setMessages(prev => [...prev, feedbackMessage]);
+          messagesToAdd.push({
+            id: `system-${Date.now()}`,
+            role: 'system',
+            content: response.feedback,
+          });
         }
         
+        setMessages(prev => [...prev, ...messagesToAdd]);
+
         try {
             const ttsParams = selectedScenario.characterProfile.ttsParameters;
             const audioResult = await textToSpeech({
@@ -163,11 +166,9 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
                 )
             );
         }
-
       } else {
          throw new Error("Received an empty response from the AI.");
       }
-
     } catch (error) {
       console.error("Failed to get AI response:", error);
       const errorId = `model-error-${Date.now()}`;
@@ -178,11 +179,21 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
   };
 
   useEffect(() => {
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage?.role === 'model' && lastMessage.audioUrl && !lastMessage.audioLoading) {
-        playAudio(lastMessage.id, lastMessage.audioUrl);
+    // Find the most recent model message that has a loaded audioUrl and is not currently playing.
+    const messageToPlay = [...messages]
+      .reverse()
+      .find(
+        (msg) =>
+          msg.role === "model" &&
+          msg.audioUrl &&
+          !msg.audioLoading &&
+          activeAudioId !== msg.id
+      );
+
+    if (messageToPlay?.audioUrl) {
+      playAudio(messageToPlay.id, messageToPlay.audioUrl);
     }
-  }, [messages]);
+  }, [messages, activeAudioId, playAudio]);
   
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
