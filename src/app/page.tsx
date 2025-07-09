@@ -1,15 +1,10 @@
 
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { signInAnonymously } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
-import { Flame, ShieldCheck, Loader2, ListChecks, Scale, MessageSquare, AlertTriangle, Check, BookOpen } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
+import { Flame, ShieldCheck, ListChecks, Scale, MessageSquare, AlertTriangle, Check } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import Link from 'next/link'
 
 const Feature = ({ icon: Icon, title, children }: { icon: React.ElementType, title: string, children: React.ReactNode }) => (
   <div className="text-center">
@@ -51,28 +46,10 @@ const ChecklistMockup = () => (
 )
 
 export default function LandingPage() {
-  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const { toast } = useToast()
 
-  const handleAccessApp = async () => {
-    setIsLoading(true)
-    try {
-      await signInAnonymously(auth)
-      toast({
-        title: "Login Successful",
-        description: "Welcome to Florida Shield.",
-      })
-      router.push('/dashboard')
-    } catch (error) {
-      console.error("Anonymous sign-in failed", error)
-      toast({
-        variant: "destructive",
-        title: "Login Failed",
-        description: "Could not connect to the authentication service. Please try again.",
-      })
-      setIsLoading(false)
-    }
+  const handleAccessApp = () => {
+    router.push('/login')
   }
 
   return (
@@ -82,10 +59,7 @@ export default function LandingPage() {
           <Flame className="w-8 h-8 text-primary" />
           <h1 className="text-2xl font-bold">Florida Shield</h1>
         </div>
-        <Button onClick={handleAccessApp} disabled={isLoading}>
-           {isLoading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : null}
+        <Button onClick={handleAccessApp}>
           Access App
         </Button>
       </header>
@@ -101,16 +75,12 @@ export default function LandingPage() {
               Instant legal references, AI-powered reporting tools, and interactive field guides, designed for the modern Florida officer.
             </p>
             <div className="mt-8">
-              <Button onClick={handleAccessApp} disabled={isLoading} size="lg">
-                {isLoading ? (
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                ) : (
-                  <ShieldCheck className="mr-2 h-5 w-5" />
-                )}
-                {isLoading ? 'Authenticating...' : 'Acknowledge & Access App'}
+              <Button onClick={handleAccessApp} size="lg">
+                <ShieldCheck className="mr-2 h-5 w-5" />
+                Acknowledge & Access App
               </Button>
-               <p className="text-xs text-muted-foreground mt-4">
-                By proceeding, you acknowledge this is a training tool and not CJIS-compliant.
+               <p className="text-xs text-muted-foreground mt-2 max-w-md mx-auto">
+                By proceeding, you acknowledge this is a training tool and NOT for operational, evidentiary, or CJIS-related use.
               </p>
             </div>
           </div>

@@ -13,6 +13,7 @@ import { MobileBottomNav } from "@/components/MobileBottomNav"
 import { onAuthStateChanged } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
+import { Loader2 } from "lucide-react"
 
 export default function RootLayout({
   children,
@@ -31,13 +32,26 @@ export default function RootLayout({
     return () => unsubscribe();
   }, []);
   
-  const isLandingPage = pathname === "/"
+  const isPublicPage = pathname === "/" || pathname === "/login";
 
   useEffect(() => {
-    if (isAuthenticated === false && pathname !== '/') {
-      router.push('/');
+    if (isAuthenticated === null) {
+      return; // Wait for auth state to be determined
     }
-  }, [isAuthenticated, pathname, router]);
+    
+    // If user is not authenticated and not on a public page, redirect to login
+    if (!isAuthenticated && !isPublicPage) {
+      router.push('/login');
+    }
+
+    // If user is authenticated and on a public page (landing/login), redirect to dashboard
+    if (isAuthenticated && isPublicPage) {
+        router.push('/dashboard');
+    }
+
+  }, [isAuthenticated, pathname, router, isPublicPage]);
+
+  const showAppShell = isAuthenticated && !isPublicPage;
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -69,7 +83,7 @@ export default function RootLayout({
             />
           </head>
             <body className="flex items-center justify-center min-h-screen bg-background">
-                {/* Optional: Add a loading spinner here */}
+                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </body>
          </html>
       )
@@ -90,12 +104,7 @@ export default function RootLayout({
         />
       </head>
       <body className={cn("antialiased min-h-screen")} suppressHydrationWarning>
-          {isLandingPage ? (
-            <>
-              {children}
-              <Toaster />
-            </>
-          ) : (
+          {showAppShell ? (
             <SidebarProvider>
               <div className="flex min-h-screen">
                 <AppSidebar />
@@ -107,6 +116,11 @@ export default function RootLayout({
               <MobileBottomNav />
               <Toaster />
             </SidebarProvider>
+          ) : (
+            <>
+              {children}
+              <Toaster />
+            </>
           )}
       </body>
     </html>
