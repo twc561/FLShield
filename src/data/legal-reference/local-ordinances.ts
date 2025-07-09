@@ -10,7 +10,8 @@ export type OrdinancePlaceholder = {
     | "Traffic & Parking"
     | "Property & Code Enforcement"
     | "Business & Licensing"
-    | "Animal Ordinances";
+    | "Animal Ordinances"
+    | "Public Order & Safety";
 };
 
 export type OrdinanceDetail = {
@@ -31,40 +32,42 @@ export type OrdinanceDetail = {
  * This list populates the initial view of the guide.
  */
 export const ordinanceIndex: OrdinancePlaceholder[] = [
+  // --- Public Order & Safety ---
+  {
+    ordinanceNumber: "Sec. 32-101",
+    ordinanceTitle: "Noise generally",
+    jurisdiction: "City of Fort Pierce",
+    category: "Public Order & Safety",
+  },
+  {
+    ordinanceNumber: "Sec. 50-1",
+    ordinanceTitle: "Curfew for minors",
+    jurisdiction: "City of Fort Pierce",
+    category: "Public Order & Safety",
+  },
+  {
+    ordinanceNumber: "Sec. 16-31",
+    ordinanceTitle: "Loitering or prowling prohibited",
+    jurisdiction: "St. Lucie County",
+    category: "Public Order & Safety",
+  },
+
   // --- Alcohol & Public Behavior ---
   {
     ordinanceNumber: "Sec. 42-61",
-    ordinanceTitle: "Possession/consumption of alcoholic beverages in open containers",
+    ordinanceTitle: "Possession or consumption of alcoholic beverages in open containers",
     jurisdiction: "City of Fort Pierce",
     category: "Alcohol & Public Behavior",
   },
   {
     ordinanceNumber: "Sec. 16-33",
-    ordinanceTitle: "Nudity and Sexual Conduct Prohibited",
+    ordinanceTitle: "Nudity and sexual conduct",
     jurisdiction: "St. Lucie County",
-    category: "Alcohol & Public Behavior",
-  },
-  {
-    ordinanceNumber: "Sec. 32-101",
-    ordinanceTitle: "Noise - General Prohibition; classification",
-    jurisdiction: "City of Fort Pierce",
     category: "Alcohol & Public Behavior",
   },
   {
     ordinanceNumber: "Sec. 2-5-24",
-    ordinanceTitle: "Alcoholic Beverages in County Parks",
-    jurisdiction: "St. Lucie County",
-    category: "Alcohol & Public Behavior",
-  },
-  {
-    ordinanceNumber: "Sec. 50-1",
-    ordinanceTitle: "Curfew for Minors",
-    jurisdiction: "City of Fort Pierce",
-    category: "Alcohol & Public Behavior",
-  },
-  {
-    ordinanceNumber: "Sec. 16-31",
-    ordinanceTitle: "Loitering or Prowling Prohibited",
+    ordinanceTitle: "Alcoholic beverages",
     jurisdiction: "St. Lucie County",
     category: "Alcohol & Public Behavior",
   },
@@ -96,7 +99,7 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
   },
   {
     ordinanceNumber: "Sec. 70-46",
-    ordinanceTitle: "Skateboards, roller skates, etc., in roadway",
+    ordinanceTitle: "Skateboards, roller skates, roller blades and toy vehicles",
     jurisdiction: "City of Fort Pierce",
     category: "Traffic & Parking",
   },
@@ -110,7 +113,7 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
   // --- Property & Code Enforcement ---
   {
     ordinanceNumber: "Sec. 22-51",
-    ordinanceTitle: "Nuisances prohibited - Overgrowth",
+    ordinanceTitle: "Nuisances prohibited generally",
     jurisdiction: "City of Fort Pierce",
     category: "Property & Code Enforcement",
   },
@@ -140,7 +143,7 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
   },
   {
     ordinanceNumber: "Sec. 62-231",
-    ordinanceTitle: "Unauthorized connections to water system",
+    ordinanceTitle: "Unauthorized connections",
     jurisdiction: "City of Fort Pierce",
     category: "Property & Code Enforcement",
   },
@@ -154,19 +157,19 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
   },
   {
     ordinanceNumber: "Sec. 90.04",
-    ordinanceTitle: "Control of dogs and cats (Leash Law)",
+    ordinanceTitle: "Control of dogs and cats",
     jurisdiction: "St. Lucie County",
     category: "Animal Ordinances",
   },
   {
     ordinanceNumber: "Sec. 10-5",
-    ordinanceTitle: "Public nuisance animals (Barking Dogs)",
+    ordinanceTitle: "Public nuisance animals",
     jurisdiction: "City of Fort Pierce",
     category: "Animal Ordinances",
   },
   {
     ordinanceNumber: "Sec. 90.06",
-    ordinanceTitle: "Animal cruelty and neglect",
+    ordinanceTitle: "Cruelty to animals",
     jurisdiction: "St. Lucie County",
     category: "Animal Ordinances",
   },
@@ -207,7 +210,7 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
 export const ordinanceDetailsData: Record<string, OrdinanceDetail> = {
   "City of Fort Pierce__Sec. 42-61": {
     ordinanceNumber: "Sec. 42-61",
-    ordinanceTitle: "Possession and consumption of alcoholic beverages in open containers",
+    ordinanceTitle: "Possession or consumption of alcoholic beverages in open containers",
     jurisdiction: "City of Fort Pierce",
     fullOrdinanceText: "It shall be unlawful for any person to possess or consume any alcoholic beverage in an open container on any public street, sidewalk, alley or other public property within the city...",
     summary: "This ordinance makes it illegal to have an open container of alcohol on public property, such as streets, sidewalks, and parks, within the city limits of Fort Pierce.",
