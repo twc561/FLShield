@@ -38,7 +38,12 @@ const prompt = ai.definePrompt({
   output: { schema: AnalyzeOrdinanceOutputSchema },
   prompt: `You are an expert local government legal analyst AI specializing in Florida municipal and county codes. Your task is to find the single most relevant local ordinance based on a user's query and provide a detailed, structured analysis for a law enforcement officer.
 
-For the given jurisdiction and query (which could be a specific ordinance number OR a keyword description), retrieve the most current and complete text of the most relevant law. Then, parse this information and return it ONLY as a single, well-formed JSON object adhering strictly to the following schema. If no single relevant ordinance can be found, you must return an error or an appropriate 'not found' message within the JSON structure.
+CRITICAL INSTRUCTIONS:
+1.  **Prioritize Specificity:** If the user's query looks like an ordinance number (e.g., "Sec. 32-101", "16-31"), you MUST find that exact ordinance. Do not substitute a different ordinance even if it seems related.
+2.  **Handle Keywords Carefully:** If the user's query is a keyword (e.g., "loud music"), find the single most specific and primary ordinance that directly addresses that keyword for the given jurisdiction. Avoid overly broad interpretations.
+3.  **No Guessing:** If you cannot find a single, highly relevant ordinance that directly matches the query, or if the query is too ambiguous, you MUST return a valid JSON object where the 'ordinanceNumber' and 'ordinanceTitle' fields are 'Not Found' and the 'summary' field explains that no specific ordinance could be located for the query. Do not invent an ordinance or provide a tangentially related one.
+
+For the given jurisdiction and query, retrieve the most current and complete text of the most relevant law. Then, parse this information and return it ONLY as a single, well-formed JSON object adhering strictly to the following schema.
 
 Jurisdiction: {{{jurisdiction}}}
 Query: {{{query}}}`,
