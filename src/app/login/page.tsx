@@ -74,8 +74,12 @@ export default function LoginPage() {
                     title = 'Network Error';
                     description = 'Could not connect to the authentication service. Please check your internet connection and try again.';
                     break;
+                case 'auth/unauthorized-domain':
+                     title = 'Domain Not Authorized';
+                     description = 'This domain is not authorized for authentication. Please check your Firebase console settings.';
+                     break;
                 default:
-                    description = "An unexpected error occurred. Please check the console for more details.";
+                    description = "An unexpected error occurred. Please check the browser console for more details.";
                     console.error("Firebase Auth Error:", error.message);
             }
         }
@@ -88,7 +92,10 @@ export default function LoginPage() {
         try {
             await signInWithPopup(auth!, provider);
             router.push('/dashboard');
-        } catch (error) {
+        } catch (error: any) {
+            console.error("Google Auth Failed:", error);
+            console.error("Error Code:", error.code);
+            console.error("Error Message:", error.message);
             handleAuthError(error);
         } finally {
             setIsLoading(null);
