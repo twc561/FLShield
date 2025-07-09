@@ -14,8 +14,8 @@ export const hazmatClasses: HazmatClass[] = [
         name: "Explosives",
         description: "Materials that have a mass explosion hazard.",
         graphicDescription: "Orange placard with an exploding bomb symbol and the number '1' at the bottom.",
-        exampleID: "1.4G",
-        exampleName: "Consumer Fireworks",
+        exampleID: "0336",
+        exampleName: "Fireworks",
     },
     {
         classNumber: "2",
