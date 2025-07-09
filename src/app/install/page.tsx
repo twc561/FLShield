@@ -30,7 +30,9 @@ export default function InstallPage() {
                     <CardContent>
                         <ol className="space-y-4">
                             <InstructionStep step={1}>Open shieldfl.app in the <strong>Safari</strong> browser.</InstructionStep>
-                            <InstructionStep step={2}>Tap the <strong>Share</strong> button (the icon with a square and an arrow pointing up <ArrowUpFromSquare className="inline-block h-4 w-4" />).</InstructionStep>
+                            <InstructionStep step={2}>
+                                Tap the <strong>Share</strong> button (the icon with a square and an arrow pointing up <ArrowUpFromSquare className="inline-block h-4 w-4 align-middle" />).
+                            </InstructionStep>
                             <InstructionStep step={3}>Scroll down in the share menu and tap <strong>'Add to Home Screen'</strong>.</InstructionStep>
                             <InstructionStep step={4}>Confirm the name and tap <strong>'Add'</strong> in the top-right corner.</InstructionStep>
                         </ol>
@@ -47,7 +49,9 @@ export default function InstallPage() {
                     <CardContent>
                          <ol className="space-y-4">
                             <InstructionStep step={1}>Open shieldfl.app in the <strong>Chrome</strong> browser.</InstructionStep>
-                            <InstructionStep step={2}>Tap the <strong>Menu</strong> button (the three vertical dots <MoreVertical className="inline-block h-4 w-4" /> in the top corner).</InstructionStep>
+                            <InstructionStep step={2}>
+                                Tap the <strong>Menu</strong> button (the three vertical dots <MoreVertical className="inline-block h-4 w-4 align-middle" /> in the top corner).
+                            </InstructionStep>
                             <InstructionStep step={3}>Tap <strong>'Install app'</strong> or <strong>'Add to Home screen'</strong> from the menu.</InstructionStep>
                             <InstructionStep step={4}>Follow the on-screen prompts to confirm the installation.</InstructionStep>
                         </ol>
@@ -64,7 +68,9 @@ export default function InstallPage() {
                     <CardContent>
                        <ol className="space-y-4">
                             <InstructionStep step={1}>Open shieldfl.app in <strong>Chrome</strong> or <strong>Microsoft Edge</strong>.</InstructionStep>
-                            <InstructionStep step={2}>In the address bar at the top, look for the <strong>Install icon</strong> (it looks like a small screen with a down arrow <PlusSquare className="inline-block h-4 w-4" />).</InstructionStep>
+                            <InstructionStep step={2}>
+                                In the address bar at the top, look for the <strong>Install icon</strong> (it looks like a small screen with a down arrow <PlusSquare className="inline-block h-4 w-4 align-middle" />).
+                            </InstructionStep>
                             <InstructionStep step={3}>Click the icon and then click the <strong>'Install'</strong> button.</InstructionStep>
                             <InstructionStep step={4}>The app will now be available in your computer's applications folder.</InstructionStep>
                         </ol>
