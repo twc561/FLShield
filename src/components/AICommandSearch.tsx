@@ -74,14 +74,14 @@ const AICommandSearch = () => {
         </div>
       </form>
 
-      <div className="mt-6 min-h-[100px]">
+      <div className="mt-6">
         <AnimatePresence>
           {isLoading && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="flex flex-col items-center justify-center text-center text-muted-foreground"
+              className="flex flex-col items-center justify-center text-center text-muted-foreground py-8"
             >
               <Loader className="w-8 h-8 animate-spin text-primary" />
               <p className="mt-2 text-sm">AI is processing your query...</p>
