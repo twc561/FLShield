@@ -82,4 +82,3 @@ export const hazmatClasses: HazmatClass[] = [
         exampleName: "Environmentally hazardous substance",
     }
 ];
-

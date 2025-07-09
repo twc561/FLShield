@@ -181,7 +181,13 @@ export const HazmatClient = React.memo(function HazmatClient({
                                 <CardDescription>{item.description}</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-xs text-muted-foreground p-2 bg-muted/50 rounded-md">Example: Click to look up <span className="font-semibold">{item.exampleName} ({item.exampleID})</span></p>
+                                <div className="space-y-4">
+                                    <div>
+                                        <h4 className="text-xs font-semibold uppercase text-muted-foreground">Placard Appearance</h4>
+                                        <p className="text-sm text-foreground/90">{item.graphicDescription}</p>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground p-2 bg-muted/50 rounded-md">Example: Click to look up <span className="font-semibold">{item.exampleName} ({item.exampleID})</span></p>
+                                </div>
                             </CardContent>
                         </Card>
                     )
