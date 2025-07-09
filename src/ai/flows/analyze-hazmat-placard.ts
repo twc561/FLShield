@@ -55,7 +55,12 @@ const prompt = ai.definePrompt({
   name: 'analyzeHazmatPlacardPrompt',
   input: { schema: AnalyzeHazmatPlacardInputSchema },
   output: { schema: AnalyzeHazmatPlacardOutputSchema },
-  prompt: `You are a HAZMAT Response Analyst AI. Your task is to provide a detailed, structured analysis of a specific hazardous material based on its UN/NA ID. Retrieve all relevant information from the latest Emergency Response Guidebook (ERG) and parse it into a practical format for a first responder. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema.
+  prompt: `You are a HAZMAT Response Analyst AI for first responders. Your task is to provide a detailed, structured analysis of a specific hazardous material based on its UN/NA ID from the latest Emergency Response Guidebook (ERG).
+
+CRITICAL INSTRUCTIONS:
+1.  **Validate the ID:** You MUST validate that the provided UN/NA ID is a valid, existing 4-digit number found within the ERG.
+2.  **No Guessing:** If the provided ID is not a valid ERG entry (e.g., '123', '9999', or any other non-existent code), you MUST return a valid JSON object where the 'materialName' field is 'Invalid or Unknown ID' and the 'ergGuideNumber' is 'N/A'. All other fields should contain appropriate 'Not found' messages. Do not attempt to find a 'close match' or guess the material.
+3.  **Strict JSON Output:** Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema.
 
 UN/NA ID: {{{unID}}}`,
 });
