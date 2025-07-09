@@ -9,14 +9,15 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { GoogleAuthProvider, signInWithPopup, signInAnonymously, createUserWithEmailAndPassword, signInWithEmailAndPassword, FirebaseError } from 'firebase/auth'
 
-import { auth } from '@/lib/firebase'
+import { auth, isFirebaseConfigured } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, User } from 'lucide-react'
+import { Loader2, User, AlertTriangle } from 'lucide-react'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 const GoogleIcon = () => (
     <svg className="mr-2 h-4 w-4" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" xmlnsXlink="http://www.w3.org/1999/xlink">
@@ -84,7 +85,7 @@ export default function LoginPage() {
         setIsLoading("google");
         const provider = new GoogleAuthProvider();
         try {
-            await signInWithPopup(auth, provider);
+            await signInWithPopup(auth!, provider);
             router.push('/dashboard');
         } catch (error) {
             handleAuthError(error);
@@ -96,7 +97,7 @@ export default function LoginPage() {
     const handleGuestSignIn = async () => {
         setIsLoading("guest");
         try {
-            await signInAnonymously(auth);
+            await signInAnonymously(auth!);
             router.push('/dashboard');
         } catch (error) {
             handleAuthError(error);
@@ -108,7 +109,7 @@ export default function LoginPage() {
     const onSignInSubmit = async (values: z.infer<typeof authSchema>) => {
         setIsLoading("email");
         try {
-            await signInWithEmailAndPassword(auth, values.email, values.password);
+            await signInWithEmailAndPassword(auth!, values.email, values.password);
             router.push('/dashboard');
         } catch (error) {
             handleAuthError(error);
@@ -120,7 +121,7 @@ export default function LoginPage() {
     const onSignUpSubmit = async (values: z.infer<typeof authSchema>) => {
         setIsLoading("email");
         try {
-            await createUserWithEmailAndPassword(auth, values.email, values.password);
+            await createUserWithEmailAndPassword(auth!, values.email, values.password);
             toast({ title: "Account Created", description: "You have been successfully signed in." });
             router.push('/dashboard');
         } catch (error) {
@@ -128,6 +129,34 @@ export default function LoginPage() {
         } finally {
             setIsLoading(null);
         }
+    }
+    
+    if (!isFirebaseConfigured) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-muted/50 p-4">
+                <Card className="w-full max-w-lg">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><AlertTriangle className="text-destructive"/> Firebase Configuration Missing</CardTitle>
+                        <CardDescription>Authentication is currently disabled.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Alert variant="destructive">
+                            <AlertTriangle className="h-4 w-4" />
+                            <AlertTitle>Action Required</AlertTitle>
+                            <AlertDescription>
+                                <p>Your Firebase environment variables are not set. Please add your project's credentials to the <code>.env</code> file to enable authentication.</p>
+                                <p className="mt-2">The app will not function correctly until this is resolved.</p>
+                            </AlertDescription>
+                        </Alert>
+                    </CardContent>
+                    <CardFooter>
+                         <Link href="/" className="underline hover:text-primary text-sm">
+                            Return to Landing Page
+                         </Link>
+                    </CardFooter>
+                </Card>
+            </div>
+        )
     }
 
     return (

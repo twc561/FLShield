@@ -11,7 +11,7 @@ import { ContextualPanel } from "@/components/ContextualPanel"
 import { Toaster } from "@/components/ui/toaster"
 import { MobileBottomNav } from "@/components/MobileBottomNav"
 import { onAuthStateChanged } from "firebase/auth"
-import { auth } from "@/lib/firebase"
+import { auth, isFirebaseConfigured } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
 
@@ -25,7 +25,11 @@ export default function RootLayout({
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (!isFirebaseConfigured) {
+      setIsAuthenticated(false);
+      return;
+    }
+    const unsubscribe = onAuthStateChanged(auth!, (user) => {
       setIsAuthenticated(!!user);
     });
 
