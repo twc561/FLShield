@@ -29,6 +29,15 @@ const nextConfig: NextConfig = {
     if (isServer) {
       config.externals.push('handlebars');
     }
+    // Prevent watching of files that might be changed by Genkit, causing a restart loop
+    config.watchOptions = {
+      ignored: [
+        '**/.git/**',
+        '**/.next/**',
+        '**/node_modules/**',
+        '**/.genkit/**',
+      ],
+    };
     return config;
   }
 };
