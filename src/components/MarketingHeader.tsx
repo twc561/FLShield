@@ -1,10 +1,11 @@
+
 'use client'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Flame, Menu } from 'lucide-react'
 
 const navLinks = [
@@ -47,6 +48,14 @@ export function MarketingHeader() {
             </Button>
           </SheetTrigger>
           <SheetContent side="right">
+            <SheetHeader>
+                <SheetTitle className="text-left">
+                    <Link href="/" className="flex items-center gap-2">
+                        <Flame className="w-6 h-6 text-primary" />
+                        <span className="text-xl font-bold">Florida Shield</span>
+                    </Link>
+                </SheetTitle>
+            </SheetHeader>
             <nav className="flex flex-col gap-6 pt-10">
               {navLinks.map(link => (
                 <SheetClose asChild key={link.href}>
