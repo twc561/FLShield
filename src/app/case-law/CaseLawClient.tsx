@@ -1,8 +1,7 @@
 "use client"
 
-// This is a placeholder for a deprecated component to prevent build errors.
-// The correct component is located at /src/app/legal-reference/case-law/CaseLawClient.tsx
-
+// This component is deprecated and has been superseded by /src/app/legal-reference/case-law/CaseLawClient.tsx
+// This file is kept to prevent potential build errors from any lingering imports.
 export function CaseLawClient() {
   return null;
 }

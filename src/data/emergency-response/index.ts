@@ -9,10 +9,16 @@ export type AlertPlaceholder = GuidePlaceholder; // They share the same structur
 
 export const emergencyResponseIndex: GuidePlaceholder[] = [
   {
-    id: "ER_BAKER_MARCHMAN",
-    title: "Baker Act & Marchman Act",
-    subtitle: "Involuntary commitment for mental health & substance abuse.",
+    id: "ER_BAKER_ACT",
+    title: "Baker Act Guide",
+    subtitle: "Procedure for involuntary mental health examinations.",
     icon: "BrainCircuit"
+  },
+  {
+    id: "ER_MARCHMAN_ACT",
+    title: "Marchman Act Guide",
+    subtitle: "Procedure for involuntary substance abuse assessments.",
+    icon: "FlaskConical"
   },
   {
     id: "ER_FIRST_AID",
