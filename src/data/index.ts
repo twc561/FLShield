@@ -1,4 +1,5 @@
 
+
 export * from './case-law';
 export * from './statutes';
 export * from './report-templates';
@@ -31,6 +32,7 @@ export * from './officer-wellness-rights/pobr';
 export * from './officer-wellness-rights/court-testimony';
 export * from './officer-wellness-rights/decompression-sessions';
 export * from './officer-wellness-rights/wellness-resources';
+export * from './officer-wellness-rights/common-misperceptions';
 export * from './predictive-cache-map';
 export * from './training/scenarios';
 export * from './training/knowledge-drill';

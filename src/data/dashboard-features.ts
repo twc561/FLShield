@@ -1,3 +1,4 @@
+
 import type { FeatureModule } from "@/types"
 import {
   Book,
@@ -103,7 +104,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         title: "HAZMAT Placard Guide",
         summary: "Instantly look up HAZMAT placard numbers for ERG info.",
         icon: "Biohazard",
-        targetPage: "/emergency-response/hazmat-placard-guide",
+        targetPage: "/emergency-response/hazmat-guide",
         category: "Emergency Response",
       },
     ],
@@ -129,11 +130,11 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         category: "Training & Development",
       },
       {
-        id: "knowledge-check",
-        title: "Knowledge Check",
-        summary: "Test your knowledge with quizzes on law and procedure.",
-        icon: "GraduationCap",
-        targetPage: "/reporting-development/knowledge-check",
+        id: "common-misperceptions",
+        title: "Common Misperceptions",
+        summary: "Debunk legal myths and procedural pitfalls with this risk management guide.",
+        icon: "ShieldAlert",
+        targetPage: "/training-development/common-misperceptions",
         category: "Training & Development",
       },
     ],

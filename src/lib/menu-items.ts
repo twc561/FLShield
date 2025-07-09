@@ -104,6 +104,7 @@ export const menuItems: MenuItem[] = [
         { href: "/training-development/role-play-simulator", label: "AI Role-Play Simulator", icon: MessageSquare },
         { href: "/training-development/report-proofreader", label: "Report Proofreader", icon: FileCheck },
         { href: "/reporting-development/knowledge-check", label: "Knowledge Check", icon: GraduationCap },
+        { href: "/training-development/common-misperceptions", label: "Common Misperceptions", icon: ShieldAlert },
         { href: "/wellness", label: "Wellness Hub", icon: ShieldQuestion },
     ],
   },
