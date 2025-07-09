@@ -4,11 +4,13 @@
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Flame, ShieldCheck, ListChecks, Scale, MessageSquare, Video, ArrowRight, Gavel, Fish, Biohazard, PlayCircle } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { MarketingHeader } from '@/components/MarketingHeader'
+import { useToast } from '@/hooks/use-toast'
 
 const Feature = ({ icon: Icon, title, description, href }: { icon: React.ElementType, title: string, description: string, href: string }) => (
     <div className="text-center p-6 border rounded-lg bg-card shadow-sm hover:shadow-primary/20 hover:border-primary/50 transition-all flex flex-col">
@@ -27,6 +29,29 @@ const Feature = ({ icon: Icon, title, description, href }: { icon: React.Element
 
 export default function LandingPage() {
   const router = useRouter()
+  const { toast } = useToast()
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const MOBILE_BREAKPOINT = 768;
+    const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
+    const hintKey = 'mobileMarketingNavHintShown';
+
+    const hasSeenHint = localStorage.getItem(hintKey);
+
+    if (isMobile && !hasSeenHint) {
+      setTimeout(() => {
+        toast({
+          title: "Navigation Tip",
+          description: "Tap the menu icon in the top right to explore all features.",
+        });
+        localStorage.setItem(hintKey, 'true');
+      }, 1500);
+    }
+  }, [toast]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -132,3 +157,5 @@ export default function LandingPage() {
     </div>
   )
 }
+
+    
