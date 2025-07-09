@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Card,
   CardHeader,
@@ -63,28 +63,32 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
     setSelectedScenario(null);
   };
 
+  const stopAudio = useCallback(() => {
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current.src = '';
+    }
+    setActiveAudioId(null);
+  }, []);
+
   const playAudio = async (messageId: string, audioUrl: string | undefined) => {
     if (!audioUrl || !audioPlayerRef.current) return;
   
-    if (activeAudioId === messageId && !audioPlayerRef.current.paused) {
-      audioPlayerRef.current.pause();
-      setActiveAudioId(null);
+    if (activeAudioId === messageId) {
+      stopAudio();
       return;
     }
     
+    stopAudio();
     setActiveAudioId(messageId);
     audioPlayerRef.current.src = audioUrl;
     try {
       await audioPlayerRef.current.play();
     } catch (error) {
       console.error("Audio playback failed:", error);
-      setActiveAudioId(null);
+      stopAudio();
     }
   };
-
-  const onAudioEnded = () => {
-    setActiveAudioId(null);
-  }
 
   const handleSendMessage = async () => {
     if (!userInput.trim() || !selectedScenario) return;
@@ -214,7 +218,7 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
 
   return (
     <Card className="flex flex-col flex-1">
-      <audio ref={audioPlayerRef} onEnded={onAudioEnded} onError={onAudioEnded} />
+      <audio ref={audioPlayerRef} onEnded={stopAudio} onError={stopAudio} />
       <CardHeader className="border-b">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={handleGoBack}>

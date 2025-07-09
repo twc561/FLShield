@@ -42,7 +42,7 @@ export const trainingScenarios: ScenarioPack[] = [
         "The suspect specifically stole two 'Bang' energy drinks and a box of 'Swisher Sweets' cigars."
       ],
       ttsParameters: {
-        voiceName: "en-US-Wavenet-F",
+        voiceName: "Achernar",
         speakingRate: 1.15,
         pitch: 2.0
       }
@@ -88,7 +88,7 @@ export const trainingScenarios: ScenarioPack[] = [
         "He is willing to turn it down but doesn't want to be 'ordered around' like a child."
       ],
       ttsParameters: {
-        voiceName: "en-US-Standard-D",
+        voiceName: "Algenib",
         speakingRate: 1.05,
         pitch: -2.0
       }
@@ -134,7 +134,7 @@ export const trainingScenarios: ScenarioPack[] = [
         "He does not have his ID on him because he just walked from his nearby apartment."
       ],
       ttsParameters: {
-        voiceName: "en-US-Wavenet-A",
+        voiceName: "Algenib",
         speakingRate: 0.9,
         pitch: 0.0
       }
@@ -180,7 +180,7 @@ export const trainingScenarios: ScenarioPack[] = [
         "He will not physically touch his partner in front of the police, but his body language is intimidating."
       ],
       ttsParameters: {
-        voiceName: "en-US-Standard-D",
+        voiceName: "Algenib",
         speakingRate: 1.1,
         pitch: -3.0
       }
@@ -226,7 +226,7 @@ export const trainingScenarios: ScenarioPack[] = [
         "You are nervous because you have a prior arrest for possession from years ago."
       ],
       ttsParameters: {
-        voiceName: "en-US-Standard-C",
+        voiceName: "Achernar",
         speakingRate: 0.85,
         pitch: -1.0
       }
@@ -272,7 +272,7 @@ export const trainingScenarios: ScenarioPack[] = [
         "A new landscaping crew you don't recognize was working across the street yesterday."
       ],
       ttsParameters: {
-        voiceName: "en-US-Wavenet-E",
+        voiceName: "Achernar",
         speakingRate: 0.95,
         pitch: 1.0
       }
@@ -318,7 +318,7 @@ export const trainingScenarios: ScenarioPack[] = [
         "Your car's registration is expired."
       ],
       ttsParameters: {
-        voiceName: "en-US-Wavenet-B",
+        voiceName: "Algenib",
         speakingRate: 1.0,
         pitch: -4.0
       }
