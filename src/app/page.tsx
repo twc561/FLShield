@@ -45,20 +45,12 @@ export default function LoginPage() {
           <CardTitle className="text-3xl">Florida Shield</CardTitle>
           <CardDescription>The essential digital partner for the modern Florida officer.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-           <div className="p-4 bg-destructive/10 border-l-4 border-destructive rounded-r-lg">
-             <div className="flex items-start gap-3">
-                <AlertTriangle className="w-8 h-8 text-destructive flex-shrink-0" />
-                <div>
-                  <h3 className="font-bold text-destructive-foreground">Training & Reference Platform Only</h3>
-                  <p className="text-sm text-destructive-foreground/80">
-                    This is **NOT** a CJIS-compliant environment. Do not enter any real PII, CJI, or sensitive case data.
-                  </p>
-                </div>
-             </div>
-           </div>
-           <p className="text-xs text-muted-foreground text-center">
-              By proceeding, you acknowledge the non-compliant nature of this training platform.
+        <CardContent className="space-y-4 text-center">
+           <p className="text-xs text-muted-foreground px-4">
+              <strong className="text-foreground/80">For Training & Reference Only.</strong>
+              <br />
+              This is NOT a CJIS-compliant environment. Do not enter any real case data.
+              By proceeding, you acknowledge the non-compliant nature of this platform.
             </p>
         </CardContent>
         <CardFooter>
