@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   Accordion,
   AccordionContent,
@@ -127,26 +128,28 @@ export const CommercialVehicleClient = React.memo(
             <TabsContent value="hazmat" className="mt-4">
                <div className="space-y-2">
                 {guideData.specializedCargoReference.hazmatPlacards.map((placard) => (
-                  <Card key={placard.UN_ID} className="bg-muted/50">
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle>UN {placard.UN_ID}: {placard.ProperShippingName}</CardTitle>
-                          <CardDescription>ERG Guide #{placard.ERG_GuideNumber}</CardDescription>
+                  <Link href={`/emergency-response/hazmat-guide?search=${placard.UN_ID}`} key={placard.UN_ID}>
+                    <Card className="bg-muted/50 hover:border-primary transition-colors cursor-pointer">
+                      <CardHeader>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle>UN {placard.UN_ID}: {placard.ProperShippingName}</CardTitle>
+                            <CardDescription>ERG Guide #{placard.ERG_GuideNumber}</CardDescription>
+                          </div>
+                          <Badge variant={placard.HazardClass.startsWith("2") ? "secondary" : "destructive"}>
+                            Class {placard.HazardClass}
+                          </Badge>
                         </div>
-                         <Badge variant={placard.HazardClass.startsWith("2") ? "secondary" : "destructive"}>
-                           Class {placard.HazardClass}
-                         </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <Alert variant="destructive">
-                        <ShieldAlert className="h-4 w-4" />
-                        <AlertTitle>Key Emergency Actions</AlertTitle>
-                        <AlertDescription>{placard.KeyEmergencyActions}</AlertDescription>
-                      </Alert>
-                    </CardContent>
-                  </Card>
+                      </CardHeader>
+                      <CardContent>
+                        <Alert variant="destructive">
+                          <ShieldAlert className="h-4 w-4" />
+                          <AlertTitle>Key Emergency Actions</AlertTitle>
+                          <AlertDescription>{placard.KeyEmergencyActions}</AlertDescription>
+                        </Alert>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 ))}
                </div>
             </TabsContent>

@@ -2,6 +2,7 @@
 "use client"
 
 import * as React from "react"
+import { useSearchParams } from "next/navigation"
 import {
   Accordion,
   AccordionContent,
@@ -30,6 +31,15 @@ export const TrafficStatutesClient = React.memo(function TrafficStatutesClient({
   const [searchTerm, setSearchTerm] = React.useState("")
   const [isAiSearching, setIsAiSearching] = React.useState(false)
   const [aiResult, setAiResult] = React.useState<Statute | null>(null)
+  
+  const searchParams = useSearchParams()
+  const initialSearch = searchParams.get('search')
+
+  React.useEffect(() => {
+    if (initialSearch) {
+      setSearchTerm(initialSearch)
+    }
+  }, [initialSearch])
 
   const lowercasedFilter = searchTerm.toLowerCase()
 
@@ -58,10 +68,10 @@ export const TrafficStatutesClient = React.memo(function TrafficStatutesClient({
 
 
   React.useEffect(() => {
-    if (searchTerm === "") {
+    if (searchTerm === "" || (initialSearch && searchTerm === initialSearch)) {
       setAiResult(null)
       setIsAiSearching(false)
-      return
+      if (searchTerm === "") return
     }
     if (filteredViolations.length > 0) {
       setAiResult(null)
@@ -112,7 +122,7 @@ export const TrafficStatutesClient = React.memo(function TrafficStatutesClient({
     return () => {
       clearTimeout(handler)
     }
-  }, [searchTerm, filteredViolations.length])
+  }, [searchTerm, filteredViolations.length, initialSearch])
 
 
   const categoryOrder = [

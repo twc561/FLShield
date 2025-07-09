@@ -2,6 +2,7 @@
 "use client"
 
 import * as React from "react"
+import { useSearchParams } from "next/navigation"
 import * as LucideIcons from "lucide-react"
 import {
   Card,
@@ -112,8 +113,11 @@ export const HazmatClient = React.memo(function HazmatClient({
   const [searchResult, setSearchResult] = React.useState<AnalyzeHazmatPlacardOutput | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  
+  const searchParams = useSearchParams()
+  const initialSearch = searchParams.get('search')
 
-  const handleSearch = async (query?: string) => {
+  const handleSearch = React.useCallback(async (query?: string) => {
     const term = query || searchTerm;
     if (!term) return;
 
@@ -129,7 +133,15 @@ export const HazmatClient = React.memo(function HazmatClient({
     } finally {
         setIsLoading(false);
     }
-  }
+  }, [searchTerm])
+
+  React.useEffect(() => {
+    if (initialSearch) {
+      setSearchTerm(initialSearch)
+      handleSearch(initialSearch)
+    }
+  }, [initialSearch, handleSearch])
+
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
