@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, Search, Flame, ShieldAlert, Biohazard, Activity, Radiation, Skull, Wind, Bot, CircleDot, AlertTriangle } from "lucide-react"
+import { Loader2, Search, Flame, ShieldAlert, Biohazard, Activity, Radiation, Skull, Wind, Bot, CircleDot, AlertTriangle, Info } from "lucide-react"
 import { analyzeHazmatPlacard, type AnalyzeHazmatPlacardOutput } from "@/ai/flows/analyze-hazmat-placard"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Input } from "@/components/ui/input"
@@ -40,9 +40,15 @@ const DetailView = React.memo(({ detail }: { detail: AnalyzeHazmatPlacardOutput 
                         <span>UN {detail.unID}: {detail.materialName}</span>
                         <span className="text-sm font-medium text-muted-foreground">ERG #{detail.ergGuideNumber}</span>
                     </CardTitle>
-                    <CardDescription className="flex items-center gap-2 pt-2">
-                        <Icon className="h-4 w-4 text-primary" />
-                        {detail.placardInfo.className}
+                    <CardDescription className="pt-2 space-y-2">
+                        <div className="flex items-center gap-2">
+                            <Icon className="h-4 w-4 text-primary flex-shrink-0" />
+                            <span>{detail.placardInfo.className}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                             <Info className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                             <span className="text-muted-foreground">{detail.placardInfo.graphicDescription}</span>
+                        </div>
                     </CardDescription>
                 </CardHeader>
             </Card>
