@@ -26,7 +26,7 @@ export * from './specialized-enforcement/controlled-substances-index';
 export * from './specialized-enforcement/k9-guide-index';
 export * from './specialized-enforcement/fwc-regulations';
 export * from './specialized-enforcement/animal-cruelty';
-export * from './emergency-response/alert-guides';
+export * from './emergency-response';
 export * from './officer-wellness-rights/pobr';
 export * from './officer-wellness-rights/court-testimony';
 export * from './officer-wellness-rights/decompression-sessions';
