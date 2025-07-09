@@ -90,7 +90,11 @@ export default function LoginPage() {
         setIsLoading("google");
         const provider = new GoogleAuthProvider();
         try {
-            await signInWithPopup(auth!, provider);
+            const result = await signInWithPopup(auth!, provider);
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential?.accessToken;
+            const user = result.user;
+            console.log("Success! User:", user);
             router.push('/dashboard');
         } catch (error: any) {
             console.error("Google Auth Failed:", error);
@@ -152,7 +156,7 @@ export default function LoginPage() {
                             <AlertTriangle className="h-4 w-4" />
                             <AlertTitle>Action Required</AlertTitle>
                             <AlertDescription>
-                                <p>Your Firebase environment variables are not set. Please add your project's credentials to the <code>.env</code> file to enable authentication.</p>
+                                <p>Your Firebase credentials are not set up correctly in `src/lib/firebase.ts`. Please ensure the configuration object is present and accurate.</p>
                                 <p className="mt-2">The app will not function correctly until this is resolved.</p>
                             </AlertDescription>
                         </Alert>
