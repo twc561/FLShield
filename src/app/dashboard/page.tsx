@@ -65,16 +65,6 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 space-y-6">
             <Card>
             <CardHeader>
-                <CardTitle>Florida Shield Mission</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-lg text-muted-foreground">
-                Florida Shield is dedicated to providing every officer with immediate, reliable, and actionable information. Our mission is to enhance officer safety, ensure procedural accuracy, and reduce reporting time, allowing you to focus on what matters most: protecting the community.
-                </p>
-            </CardContent>
-            </Card>
-            <Card>
-            <CardHeader>
                 <div className="flex items-center gap-3">
                 <Lightbulb className="w-6 h-6 text-primary" />
                 <CardTitle>What's New</CardTitle>
