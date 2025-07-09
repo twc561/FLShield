@@ -70,7 +70,7 @@ const DetailView = React.memo(({ detail }: { detail: AnalyzeSubstanceOutput }) =
           </ul>
         </div>
         <div>
-          <h4 className="font-semibold text-sm text-red-500 mb-2">Overdose Signs (Medical Emergency)</h4>
+          <h4 className="font-semibold text-sm text-destructive mb-2">Overdose Signs (Medical Emergency)</h4>
           <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
             {detail.userIndicators.overdoseSigns.map((sign, i) => <li key={i}>{sign}</li>)}
           </ul>

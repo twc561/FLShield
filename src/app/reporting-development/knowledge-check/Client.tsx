@@ -142,7 +142,7 @@ export function KnowledgeCheckClient({ questions }: { questions: DrillQuestion[]
                 className={cn(
                   "flex items-center gap-4 rounded-md border p-4 transition-colors hover:bg-muted/50 cursor-pointer",
                   isAnswered && isCorrect && "border-green-500 bg-green-500/10",
-                  isAnswered && isSelected && !isCorrect && "border-red-500 bg-red-500/10"
+                  isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10"
                 )}
               >
                 <RadioGroupItem value={answer} id={`q${index}`} />
