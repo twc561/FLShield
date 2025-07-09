@@ -60,7 +60,7 @@ export default function AgencyIntelligencePage() {
                 <section className="text-center py-20 sm:py-24 bg-muted/30">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in-up">
                          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
-                            Your Policy. Your Statutes. Your AI Partner.
+                            Your Policy. Florida Statutes. Your AI Partner.
                         </h1>
                          <h2 className="mt-4 max-w-3xl mx-auto text-2xl font-semibold tracking-tight">
                             Instant, Vetted Answers for Every Officer.
@@ -233,5 +233,3 @@ export default function AgencyIntelligencePage() {
         </>
     );
 }
-
-    

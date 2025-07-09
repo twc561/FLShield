@@ -1,4 +1,3 @@
-
 'use client'
 
 import Link from 'next/link'
@@ -15,7 +14,7 @@ export function MarketingHeader() {
         <Flame className="w-8 h-8 text-primary" />
         <h1 className="text-2xl font-bold">Florida Shield</h1>
       </Link>
-      <nav className="hidden md:flex gap-6 items-center">
+      <nav className="hidden md:flex gap-4 items-center">
         <Link href="/features" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Features</Link>
         <Link href="/agency-intelligence" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Platform</Link>
         <Link href="/for-agencies" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">For Agencies</Link>
@@ -29,5 +28,3 @@ export function MarketingHeader() {
     </header>
   )
 }
-
-    
