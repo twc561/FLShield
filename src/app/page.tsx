@@ -46,36 +46,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Trust & Transparency Section */}
-      <section className="py-20 sm:py-24 px-4 bg-muted/50">
-        <div className="container mx-auto text-center max-w-4xl">
-            <div className="flex justify-center mb-4">
-                <ShieldCheck className="w-16 h-16 text-primary" />
-            </div>
-            <h2 className="text-3xl font-bold tracking-tight">
-              A Training Tool You Can Trust
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Florida Shield is an informational and training aid, built on a foundation of transparency.
-            </p>
-            <div className="mt-6 text-left p-6 border-2 border-destructive/50 rounded-lg bg-card">
-                 <div className="flex items-center gap-3 mb-3">
-                    <AlertTriangle className="w-6 h-6 text-destructive flex-shrink-0" />
-                    <h3 className="text-xl font-bold text-destructive-foreground">Not a CJIS-Compliant Platform</h3>
-                 </div>
-                 <p className="text-muted-foreground">
-                    This application is **NOT** connected to any official law enforcement database (FCIC/NCIC, DAVID). It is designed for training, reference, and note-taking only.
-                 </p>
-                 <ul className="mt-4 space-y-2 list-disc pl-5 text-muted-foreground">
-                    <li><span className="font-semibold">Local-First Data:</span> Features like Field Notes store data only on your local device's browser storage. This data is never sent to our servers.</li>
-                    <li><span className="font-semibold">Temporary AI Processing:</span> AI features process your input temporarily to generate a response and do not store or log your queries.</li>
-                    <li><span className="font-semibold">Strict Prohibition:</span> Users are strictly prohibited from entering any real Personally Identifiable Information (PII), Criminal Justice Information (CJI), or other sensitive case data.</li>
-                 </ul>
-            </div>
-        </div>
-      </section>
-
-
       {/* Feature-Benefit Section */}
       <section className="py-20 sm:py-24 px-4">
         <div className="container mx-auto">
@@ -228,6 +198,35 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Trust & Transparency Section */}
+      <section className="py-20 sm:py-24 px-4 bg-muted/50">
+        <div className="container mx-auto text-center max-w-4xl">
+            <div className="flex justify-center mb-4">
+                <ShieldCheck className="w-16 h-16 text-primary" />
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight">
+              A Training Tool You Can Trust
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Florida Shield is an informational and training aid, built on a foundation of transparency.
+            </p>
+            <div className="mt-6 text-left p-6 border-2 border-destructive/50 rounded-lg bg-card">
+                 <div className="flex items-center gap-3 mb-3">
+                    <AlertTriangle className="w-6 h-6 text-destructive flex-shrink-0" />
+                    <h3 className="text-xl font-bold text-destructive-foreground">Not a CJIS-Compliant Platform</h3>
+                 </div>
+                 <p className="text-muted-foreground">
+                    This application is **NOT** connected to any official law enforcement database (FCIC/NCIC, DAVID). It is designed for training, reference, and note-taking only.
+                 </p>
+                 <ul className="mt-4 space-y-2 list-disc pl-5 text-muted-foreground">
+                    <li><span className="font-semibold">Local-First Data:</span> Features like Field Notes store data only on your local device's browser storage. This data is never sent to our servers.</li>
+                    <li><span className="font-semibold">Temporary AI Processing:</span> AI features process your input temporarily to generate a response and do not store or log your queries.</li>
+                    <li><span className="font-semibold">Strict Prohibition:</span> Users are strictly prohibited from entering any real Personally Identifiable Information (PII), Criminal Justice Information (CJI), or other sensitive case data.</li>
+                 </ul>
+            </div>
+        </div>
+      </section>
+      
       {/* Final CTA Section */}
       <section className="py-20 sm:py-24 px-4">
         <div className="container mx-auto text-center">
