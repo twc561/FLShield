@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation'
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { GoogleAuthProvider, signInWithPopup, signInAnonymously, createUserWithEmailAndPassword, signInWithEmailAndPassword, FirebaseError } from 'firebase/auth'
+import { GoogleAuthProvider, signInWithPopup, signInAnonymously, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { FirebaseError } from 'firebase/app'
 
 import { auth, isFirebaseConfigured } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
