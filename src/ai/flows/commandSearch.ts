@@ -29,9 +29,6 @@ const prompt = ai.definePrompt({
   input: { schema: CommandSearchInputSchema },
   output: { schema: CommandSearchOutputSchema },
   prompt: `You are 'Shield FL,' an AI partner for Florida law enforcement. Your purpose is to provide immediate, clear, and practical answers to questions from front-line patrol officers. The answer should be concise, easy to understand during a high-stakes situation, and grounded in Florida statutes and common police procedures. Do not provide legal advice, but rather operational guidance and factual information. Prioritize officer safety and legal accuracy. Now, answer the following question for an officer on patrol: {{{query}}}`,
-  config: {
-    model: ai.model('googleai/gemini-2.0-flash'),
-  }
 });
 
 const commandSearchFlow = ai.defineFlow(
