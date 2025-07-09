@@ -1,9 +1,8 @@
-
 'use client'
 
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Apple, Smartphone, Monitor, ArrowUpFromSquare, MoreVertical, PlusSquare } from "lucide-react"
+import { Apple, Smartphone, Monitor, Share, MoreVertical, PlusSquare } from "lucide-react"
 
 const InstructionStep = ({ step, children }: { step: number, children: React.ReactNode }) => (
     <li className="flex items-start gap-4">
@@ -31,7 +30,7 @@ export default function InstallPage() {
                         <ol className="space-y-4">
                             <InstructionStep step={1}>Open shieldfl.app in the <strong>Safari</strong> browser.</InstructionStep>
                             <InstructionStep step={2}>
-                                Tap the <strong>Share</strong> button (the icon with a square and an arrow pointing up <ArrowUpFromSquare className="inline-block h-4 w-4 align-middle" />).
+                                Tap the <strong>Share</strong> button (the icon with a square and an arrow pointing up <Share className="inline-block h-4 w-4 align-middle" />).
                             </InstructionStep>
                             <InstructionStep step={3}>Scroll down in the share menu and tap <strong>'Add to Home Screen'</strong>.</InstructionStep>
                             <InstructionStep step={4}>Confirm the name and tap <strong>'Add'</strong> in the top-right corner.</InstructionStep>
