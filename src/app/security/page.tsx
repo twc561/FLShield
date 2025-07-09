@@ -1,7 +1,7 @@
 
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Lock, DatabaseZap, ShieldAlert } from "lucide-react"
+import { Lock, DatabaseZap, ShieldAlert, BrainCircuit, Users } from "lucide-react"
 
 const SecurityFeature = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
   <div className="flex items-start gap-4">
@@ -17,7 +17,7 @@ const SecurityFeature = ({ icon: Icon, title, description }: { icon: React.Eleme
 
 export default function SecurityPage() {
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 animate-fade-in-up">
       <PageHeader
         title="Security & Compliance"
         description="Built with the trust and security of your agency as our highest priority."
@@ -31,18 +31,23 @@ export default function SecurityPage() {
           <CardContent className="space-y-6">
             <SecurityFeature
               icon={Lock}
-              title="Data Encryption"
-              description="All data transmitted between your device and our servers is encrypted in transit using industry-standard TLS protocols. Any sensitive data at rest is protected with AES-256 encryption."
+              title="End-to-End Encryption"
+              description="All data transmitted between your device and our servers is encrypted in transit using industry-standard TLS 1.3 protocols. Any sensitive configuration data at rest is protected with AES-256 encryption."
             />
             <SecurityFeature
               icon={DatabaseZap}
-              title="No Persistent User Data"
-              description="Features like the Active Listener Chatbot are designed to be ephemeral. Conversations are processed in memory and are not logged, stored, or monitored, ensuring absolute user privacy."
+              title="Zero-Retention Policy on Sensitive Interactions"
+              description="Features like the Active Listener Chatbot and Report Proofreader are designed to be ephemeral. User inputs are processed in memory for the AI model and are never logged, stored, or monitored, ensuring absolute user privacy and confidentiality."
             />
              <SecurityFeature
-              icon={ShieldAlert}
-              title="AI Reliability and Citation"
-              description="Our AI models are trained to provide information based on verifiable sources. Where possible, AI-generated answers cite the specific Florida Statute or case law they are referencing, allowing for independent verification."
+              icon={BrainCircuit}
+              title="AI Reliability and Grounding"
+              description="Our AI models are specifically 'grounded' on a curated database of Florida Statutes, case law summaries, and law enforcement best practices. This minimizes hallucinations and ensures that AI-generated answers for legal queries cite specific sources for verification."
+            />
+            <SecurityFeature
+              icon={Users}
+              title="Role-Based Access Control"
+              description="Agency-level deployments will feature robust, role-based access control, ensuring that officers, supervisors, and administrators only have access to the features and data appropriate for their roles."
             />
           </CardContent>
         </Card>
