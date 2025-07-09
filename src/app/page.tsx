@@ -70,6 +70,13 @@ export default function LandingPage() {
               <Dialog>
                 <DialogTrigger asChild>
                   <div className="relative aspect-video rounded-lg border bg-background shadow-2xl shadow-primary/10 overflow-hidden cursor-pointer group">
+                    <Image
+                      src="https://img.youtube.com/vi/TqO3Y9wL5yQ/maxresdefault.jpg"
+                      alt="Florida Shield App Demo Video Thumbnail"
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      priority
+                    />
                     <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
                       <PlayCircle className="w-20 h-20 text-white/70 group-hover:text-white group-hover:scale-110 transition-all duration-300" />
                     </div>
