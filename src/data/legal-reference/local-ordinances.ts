@@ -1,3 +1,4 @@
+
 // --- Data Types ---
 
 export type OrdinancePlaceholder = {
@@ -38,7 +39,7 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
     category: "Alcohol & Public Behavior",
   },
   {
-    ordinanceNumber: "Sec. 16-32",
+    ordinanceNumber: "Sec. 16-33",
     ordinanceTitle: "Nudity and Sexual Conduct Prohibited",
     jurisdiction: "St. Lucie County",
     category: "Alcohol & Public Behavior",
