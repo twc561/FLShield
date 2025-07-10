@@ -8,7 +8,6 @@ import {
   LayoutGrid,
   Scale,
   ListChecks,
-  FileText,
   Menu,
   Flame,
   LogOut,
@@ -21,10 +20,9 @@ import {
   SheetHeader,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { menuItems } from "@/lib/menu-items"
 import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
-import { Tape } from "lucide-react"
+import { AppMenuContent } from "./AppMenuContent"
 
 const mainNavItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
@@ -60,8 +58,8 @@ export function MobileBottomNav() {
     if (!isClient) return false
     if (href === "/dashboard") return pathname === href
     // For parent routes, we want an exact match, otherwise they are always active.
-    const isParent = menuItems.some(item => item.href === href);
-    if (isParent) return pathname === href;
+    const isParentRoute = mainNavItems.some(item => item.href === href);
+    if (isParentRoute) return pathname === href;
     
     return pathname.startsWith(href)
   }
@@ -109,49 +107,8 @@ export function MobileBottomNav() {
               </span>
             </Link>
           </SheetHeader>
-          <div className="overflow-y-auto flex-1">
-             <nav className="p-2">
-              {menuItems.map((item) => (
-                <div key={item.label} className="py-2">
-                  {item.items ? (
-                    <>
-                      <h4 className="px-3 py-2 text-sm font-semibold text-muted-foreground flex items-center gap-3">
-                        <item.icon className="h-5 w-5" />
-                        {item.label}
-                      </h4>
-                      <div className="pl-4">
-                        {item.items.map((subItem) => (
-                          <Link
-                            key={subItem.href}
-                            href={subItem.href}
-                            onClick={handleLinkClick}
-                            className={cn(
-                              "flex items-center gap-3 p-3 rounded-md text-foreground hover:bg-muted",
-                              isActive(subItem.href) && "bg-muted font-semibold text-primary"
-                            )}
-                          >
-                            <subItem.icon className="h-5 w-5 text-muted-foreground" />
-                            <span>{subItem.label}</span>
-                          </Link>
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    <Link
-                      href={item.href!}
-                      onClick={handleLinkClick}
-                      className={cn(
-                        "flex items-center gap-3 p-3 rounded-md text-foreground hover:bg-muted",
-                        isActive(item.href!) && "bg-muted font-semibold text-primary"
-                      )}
-                    >
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.label}</span>
-                    </Link>
-                  )}
-                </div>
-              ))}
-            </nav>
+          <div className="overflow-y-auto flex-1 p-2">
+            <AppMenuContent onLinkClick={handleLinkClick} />
           </div>
           <div className="p-2 border-t">
             <button

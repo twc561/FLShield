@@ -1,4 +1,3 @@
-
 "use client"
 
 import Link from "next/link"
@@ -18,13 +17,12 @@ import {
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import { menuItems } from "@/lib/menu-items"
-import { Button } from "./ui/button"
 
 export function AppMenuContent({ onLinkClick }: { onLinkClick?: () => void }) {
   const pathname = usePathname()
 
   const isActive = (href: string) => {
-    return pathname === href || (href !== "/" && pathname.startsWith(href))
+    return pathname === href || (href !== "/dashboard" && href !== "/" && pathname.startsWith(href))
   }
 
   return (

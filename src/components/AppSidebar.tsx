@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation"
 import * as React from "react"
 import {
   Flame,
-  ChevronDown,
   LogOut,
   Download,
 } from "lucide-react"
@@ -14,28 +13,16 @@ import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
   SidebarFooter,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
-import { menuItems } from "@/lib/menu-items"
+import { AppMenuContent } from "./AppMenuContent"
 
 export function AppSidebar() {
-  const pathname = usePathname()
   const router = useRouter()
-  const [openStates, setOpenStates] = React.useState<Record<string, boolean>>({})
   const [isClient, setIsClient] = React.useState(false)
   const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null)
 
@@ -76,23 +63,6 @@ export function AppSidebar() {
     }
   }
 
-  const isActive = (href: string) => {
-    if (!isClient) return false
-    if (href === "/dashboard") return pathname === href
-    return pathname.startsWith(href)
-  }
-
-  React.useEffect(() => {
-    if (!isClient) return;
-    const newOpenStates: Record<string, boolean> = {}
-    menuItems.forEach((item) => {
-      if (item.items) {
-        newOpenStates[item.label] = item.items.some((subItem) => isActive(subItem.href))
-      }
-    })
-    setOpenStates(newOpenStates)
-  }, [pathname, isClient])
-
   return (
     <Sidebar>
       <SidebarHeader>
@@ -104,83 +74,19 @@ export function AppSidebar() {
         </Link>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu>
-          {menuItems.map((item) =>
-            item.items ? (
-              <Collapsible
-                key={item.label}
-                open={isClient ? (openStates[item.label] || false) : false}
-                onOpenChange={(isOpen) =>
-                  setOpenStates((prev) => ({ ...prev, [item.label]: isOpen }))
-                }
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton
-                      className="w-full justify-between"
-                      variant="ghost"
-                      isActive={isClient && item.items.some(subItem => isActive(subItem.href))}
-                    >
-                      <div className="flex items-center gap-2">
-                        <item.icon className="size-5" />
-                        <span className="group-data-[collapsible=icon]:hidden">
-                          {item.label}
-                        </span>
-                      </div>
-                      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200 group-data-[collapsible=icon]:hidden data-[state=open]:rotate-180" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                </SidebarMenuItem>
-                <CollapsibleContent>
-                  <SidebarMenuSub>
-                    {item.items.map((subItem) => (
-                      <SidebarMenuSubItem key={subItem.label}>
-                        <Link
-                          href={subItem.href}
-                          className={cn(
-                            "flex h-full w-full items-center gap-2 rounded-md px-2 text-sm text-sidebar-foreground/80 outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2",
-                            isClient && isActive(subItem.href) && "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                          )}
-                        >
-                          <subItem.icon className="size-4 shrink-0" />
-                          <span className="truncate">{subItem.label}</span>
-                        </Link>
-                      </SidebarMenuSubItem>
-                    ))}
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              </Collapsible>
-            ) : (
-              <SidebarMenuItem key={item.label}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isClient && pathname === item.href}
-                  tooltip={{ children: item.label, side: "right" }}
-                  className={cn(isClient && pathname === item.href && "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary")}
-                >
-                  <Link href={item.href!}>
-                    <item.icon className="size-5" />
-                    <span className="group-data-[collapsible=icon]:hidden">
-                      {item.label}
-                    </span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            )
-          )}
-        </SidebarMenu>
+        <AppMenuContent />
       </SidebarContent>
       <SidebarFooter className="flex flex-col gap-2 p-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:items-center">
         {deferredPrompt && (
-          <SidebarMenuButton onClick={handleInstallClick} className="w-full" tooltip={{ children: "Install App", side: "right" }}>
+          <button onClick={handleInstallClick} className={cn("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-95", "hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full")}>
             <Download className="size-5" />
             <span className="group-data-[collapsible=icon]:hidden">Install App</span>
-          </SidebarMenuButton>
+          </button>
         )}
-        <SidebarMenuButton onClick={handleSignOut} className="w-full" tooltip={{ children: "Sign Out", side: "right" }}>
+        <button onClick={handleSignOut} className={cn("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-95", "hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full")}>
           <LogOut className="size-5" />
           <span className="group-data-[collapsible=icon]:hidden">Sign Out</span>
-        </SidebarMenuButton>
+        </button>
       </SidebarFooter>
     </Sidebar>
   )
