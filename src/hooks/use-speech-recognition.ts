@@ -1,10 +1,12 @@
+
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 type SpeechRecognitionHook = {
   isListening: boolean;
-  transcript: string;
+  interimTranscript: string;
+  finalTranscript: string;
   startListening: () => void;
   stopListening: () => void;
   error: string | null;
@@ -13,7 +15,8 @@ type SpeechRecognitionHook = {
 
 export function useSpeechRecognition(): SpeechRecognitionHook {
   const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState('');
+  const [interimTranscript, setInterimTranscript] = useState('');
+  const [finalTranscript, setFinalTranscript] = useState('');
   const [error, setError] = useState<string | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const [isSupported, setIsSupported] = useState(false);
@@ -29,14 +32,18 @@ export function useSpeechRecognition(): SpeechRecognitionHook {
       recognition.lang = 'en-US';
 
       recognition.onresult = (event) => {
-        let finalTranscript = '';
+        let interim = '';
+        let final = '';
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
+            final += event.results[i][0].transcript;
+          } else {
+            interim += event.results[i][0].transcript;
           }
         }
-        if (finalTranscript) {
-          setTranscript(prev => prev ? `${prev} ${finalTranscript}` : finalTranscript);
+        setInterimTranscript(interim);
+        if (final) {
+          setFinalTranscript(final);
         }
       };
       
@@ -47,11 +54,7 @@ export function useSpeechRecognition(): SpeechRecognitionHook {
       };
 
       recognition.onend = () => {
-        if (isListening) {
-           // If it ends but we are supposed to be listening, restart it
-           // This handles auto-timeout on some browsers
-          recognition.start();
-        }
+        setIsListening(false);
       };
 
     } else {
@@ -64,23 +67,24 @@ export function useSpeechRecognition(): SpeechRecognitionHook {
         recognitionRef.current.stop();
       }
     };
-  }, [isListening]);
+  }, []);
 
   const startListening = useCallback(() => {
     if (recognitionRef.current && !isListening) {
-      setTranscript('');
+      setInterimTranscript('');
+      setFinalTranscript('');
       setError(null);
-      setIsListening(true);
       recognitionRef.current.start();
+      setIsListening(true);
     }
   }, [isListening]);
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current && isListening) {
-      setIsListening(false);
       recognitionRef.current.stop();
+      setIsListening(false);
     }
   }, [isListening]);
 
-  return { isListening, transcript, startListening, stopListening, error, isSupported };
+  return { isListening, interimTranscript, finalTranscript, startListening, stopListening, error, isSupported };
 }

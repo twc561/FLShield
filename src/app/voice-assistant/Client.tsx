@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -22,9 +23,17 @@ type Status = 'idle' | 'listening' | 'processing' | 'speaking';
 export function VoiceAssistantClient() {
   const [status, setStatus] = useState<Status>('idle');
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
-  const { isListening, transcript, startListening, stopListening, error: sttError, isSupported } = useSpeechRecognition();
+  const { 
+    isListening, 
+    interimTranscript,
+    finalTranscript, 
+    startListening, 
+    stopListening, 
+    error: sttError, 
+    isSupported 
+  } = useSpeechRecognition();
+  
   const { isPlaying, playAudio, stopAudio } = useAudioPlayer();
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMicClick = () => {
     if (isListening) {
@@ -37,7 +46,7 @@ export function VoiceAssistantClient() {
   
   useEffect(() => {
     if (isListening) setStatus('listening');
-    else if(status === 'listening') setStatus('processing');
+    else if(status === 'listening') setStatus('idle'); // Back to idle if stopped manually
   }, [isListening, status]);
 
   useEffect(() => {
@@ -45,13 +54,13 @@ export function VoiceAssistantClient() {
     else if(status === 'speaking') setStatus('idle');
   }, [isPlaying, status]);
 
-  const processTranscript = useCallback(async (finalTranscript: string) => {
-    if (!finalTranscript.trim()) {
+  const processTranscript = useCallback(async (transcript: string) => {
+    if (!transcript.trim()) {
       setStatus('idle');
       return;
     }
 
-    const userMessage: ConversationMessage = { role: 'user', text: finalTranscript };
+    const userMessage: ConversationMessage = { role: 'user', text: transcript };
     setConversation(prev => [...prev, userMessage]);
     setStatus('processing');
 
@@ -62,7 +71,7 @@ export function VoiceAssistantClient() {
       }));
 
       const aiResponse = await getConversationalResponse({ 
-          query: finalTranscript,
+          query: transcript,
           conversationHistory: historyForAI,
       });
 
@@ -83,19 +92,10 @@ export function VoiceAssistantClient() {
   }, [conversation, playAudio]);
 
   useEffect(() => {
-    if (transcript) {
-        if(timeoutRef.current) clearTimeout(timeoutRef.current);
-        timeoutRef.current = setTimeout(() => {
-            if(isListening) {
-                stopListening();
-                processTranscript(transcript);
-            }
-        }, 1500); // 1.5 second pause before processing
+    if (finalTranscript) {
+      processTranscript(finalTranscript);
     }
-    return () => {
-        if(timeoutRef.current) clearTimeout(timeoutRef.current);
-    }
-  }, [transcript, isListening, stopListening, processTranscript]);
+  }, [finalTranscript, processTranscript]);
 
 
   if (!isSupported) {
@@ -132,10 +132,10 @@ export function VoiceAssistantClient() {
                      {msg.role === 'user' && <div className="p-2 bg-muted rounded-full flex-shrink-0"><User className="w-5 h-5" /></div>}
                 </div>
             ))}
-             {isListening && transcript && (
+             {isListening && interimTranscript && (
                 <div className="flex items-start gap-3 justify-end opacity-60">
                     <div className="max-w-xs md:max-w-md p-3 rounded-lg bg-primary/80 text-primary-foreground">
-                        <p>{transcript}</p>
+                        <p>{interimTranscript}</p>
                     </div>
                     <div className="p-2 bg-muted rounded-full flex-shrink-0"><User className="w-5 h-5" /></div>
                 </div>
