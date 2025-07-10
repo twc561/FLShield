@@ -2,6 +2,7 @@
 "use client"
 
 import * as React from "react"
+import * as LucideIcons from "lucide-react"
 import {
   Card,
   CardContent,
@@ -10,17 +11,15 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, Search, Sparkles, Gavel, FileText, AlertTriangle, CheckCircle } from "lucide-react"
+import { Loader2, Sparkles, Gavel, FileText, AlertTriangle } from "lucide-react"
 import type { AnalyzeInstructionOutput as InstructionDetail } from "@/ai/flows/analyze-jury-instruction"
-import { analyzeInstruction, type AnalyzeInstructionInput } from "@/ai/flows/analyze-jury-instruction"
-import { findJuryInstruction, type FindJuryInstructionInput, type FindJuryInstructionOutput } from "@/ai/flows/find-jury-instruction"
-import { commonCrimesMap } from "@/data/legal-reference/common-crimes-map"
+import { analyzeInstruction } from "@/ai/flows/analyze-jury-instruction"
+import type { JuryInstructionIndexItem } from "@/data"
 
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
-
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 const InstructionDetailView = React.memo(({ detail }: { detail: InstructionDetail }) => {
     if (!detail.id) {
@@ -29,7 +28,7 @@ const InstructionDetailView = React.memo(({ detail }: { detail: InstructionDetai
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>Instruction Not Found</AlertTitle>
                 <AlertDescription>
-                    The AI could not locate a specific jury instruction for your query. This may be because it's a non-criminal statute or a complex crime without a standard instruction.
+                    The AI could not locate a specific jury instruction. This may be because it's a non-criminal statute or a complex crime without a standard instruction.
                 </AlertDescription>
             </Alert>
         )
@@ -71,193 +70,124 @@ const InstructionDetailView = React.memo(({ detail }: { detail: InstructionDetai
   )
 })
 
-export const JuryInstructionsClient = React.memo(function JuryInstructionsClient() {
-  const [searchTerm, setSearchTerm] = React.useState("")
-  const [analysisResult, setAnalysisResult] = React.useState<InstructionDetail | null>(null);
-  const [disambiguationOptions, setDisambiguationOptions] = React.useState<FindJuryInstructionOutput['disambiguationOptions']>([]);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [loadingStep, setLoadingStep] = React.useState("");
-  const [error, setError] = React.useState<string | null>(null);
-  
-  const resetSearchState = () => {
-    setIsLoading(true);
-    setError(null);
-    setAnalysisResult(null);
-    setDisambiguationOptions([]);
-    setLoadingStep("");
-  }
-  
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchTerm) return;
-    resetSearchState();
+export const JuryInstructionsClient = React.memo(function JuryInstructionsClient({
+  initialInstructions,
+}: {
+  initialInstructions: JuryInstructionIndexItem[];
+}) {
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [activeItem, setActiveItem] = React.useState<string | undefined>();
+  const [cachedDetails, setCachedDetails] = React.useState<Record<string, InstructionDetail>>({});
+  const [loadingId, setLoadingId] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<Record<string, string | null>>({});
 
-    const lowercasedQuery = searchTerm.toLowerCase();
+  const filteredInstructions = React.useMemo(() => {
+    if (!searchTerm) {
+      return initialInstructions;
+    }
+    const lowercasedTerm = searchTerm.toLowerCase();
+    return initialInstructions.filter(
+      (item) =>
+        item.instructionTitle.toLowerCase().includes(lowercasedTerm) ||
+        item.instructionNumber.toLowerCase().includes(lowercasedTerm)
+    );
+  }, [searchTerm, initialInstructions]);
 
-    // --- Phase 1: Local Search ---
-    setLoadingStep("Searching local index...");
-
-    // Priority 1: Check for exact match of crime name
-    const exactMatch = commonCrimesMap.find(crime => crime.crimeName.toLowerCase() === lowercasedQuery);
-    if (exactMatch) {
-      if (exactMatch.instructionID === "AI_FALLBACK") {
-        await performAISearch({ query: searchTerm });
-      } else {
-        await analyzeAndDisplayInstruction({ instructionId: exactMatch.instructionID });
+  const groupedInstructions = React.useMemo(() => {
+    const categoryOrder = ["Crimes Against Persons", "Property Crimes", "Drug Offenses", "Inchoate Crimes", "Public Order & Obstruction", "Defenses"];
+    const grouped = filteredInstructions.reduce((acc, item) => {
+      const { category } = item;
+      if (!acc[category]) {
+        acc[category] = [];
       }
-      return;
-    }
+      acc[category].push(item);
+      return acc;
+    }, {} as Record<string, JuryInstructionIndexItem[]>);
 
-    // Priority 2: Check for keyword matches
-    const keywordMatches = commonCrimesMap
-      .map(crime => {
-        const keywords = crime.keywords.map(k => k.toLowerCase());
-        let score = 0;
-        if (keywords.includes(lowercasedQuery)) {
-          score = 50; // High score for exact keyword match
-        } else if (crime.crimeName.toLowerCase().includes(lowercasedQuery) || keywords.some(k => lowercasedQuery.includes(k))) {
-          score = 20; // Lower score for partial match
-        }
-        return { ...crime, score };
-      })
-      .filter(crime => crime.score > 0)
-      .sort((a, b) => b.score - a.score);
+    return categoryOrder
+      .map(category => ({ category, items: grouped[category] || [] }))
+      .filter(g => g.items.length > 0);
 
-    if (keywordMatches.length > 0) {
-        if (keywordMatches[0].instructionID === "AI_FALLBACK") {
-            await performAISearch({ query: searchTerm });
-        } else {
-            await analyzeAndDisplayInstruction({ instructionId: keywordMatches[0].instructionID });
-        }
-        return;
-    }
+  }, [filteredInstructions]);
 
+  const handleAccordionChange = async (value: string | undefined) => {
+    setActiveItem(value);
+    if (!value || cachedDetails[value] || loadingId === value) return;
 
-    // --- Phase 2: AI Fallback Search ---
-    setLoadingStep("No local match found. Consulting AI analyst...");
-    await performAISearch({ query: searchTerm });
-  }
-
-  const performAISearch = async (input: FindJuryInstructionInput) => {
-    try {
-        const findResponse = await findJuryInstruction(input);
-        
-        if (findResponse.disambiguationOptions && findResponse.disambiguationOptions.length > 0) {
-          setLoadingStep("Please clarify your search.");
-          setDisambiguationOptions(findResponse.disambiguationOptions);
-          setIsLoading(false);
-        } else if (findResponse.instructionID) {
-          await analyzeAndDisplayInstruction({ instructionId: findResponse.instructionID });
-        } else {
-          throw new Error("The AI analyst could not definitively identify an instruction or provide clarifying options.");
-        }
-    } catch (e: any) {
-        console.error(e);
-        setError(e.message || "An unknown error occurred. Please try again.");
-        setIsLoading(false);
-        setLoadingStep("");
-    }
-  }
-
-  const analyzeAndDisplayInstruction = async (input: AnalyzeInstructionInput) => {
-    setIsLoading(true); // Ensure loading state is active
-    setError(null);
-    setAnalysisResult(null);
-    setDisambiguationOptions([]);
-    setLoadingStep("AI is analyzing instruction details...");
+    setLoadingId(value);
+    setError(prev => ({ ...prev, [value]: null }));
 
     try {
-        const analysis = await analyzeInstruction({ instructionId: input.instructionId });
-        setAnalysisResult(analysis);
-    } catch(e: any) {
-        console.error(e);
-        setError(e.message || "An unknown error occurred analyzing the instruction.");
+      const result = await analyzeInstruction({ instructionId: value });
+      setCachedDetails(prev => ({ ...prev, [value]: result }));
+    } catch (e) {
+      console.error(e);
+      setError(prev => ({ ...prev, [value]: "Failed to load instruction analysis. Please try again." }));
     } finally {
-        setIsLoading(false);
-        setLoadingStep("");
+      setLoadingId(null);
     }
-  }
+  };
 
   return (
-    <div className="space-y-6">
-        <Card>
-            <CardHeader>
-                <CardTitle>Crime Description</CardTitle>
-                <CardDescription>Enter a crime in plain language (e.g., "Burglary of a home" or "Resisting with violence"). The system will find the correct jury instruction and analyze its elements.</CardDescription>
-            </CardHeader>
-             <form onSubmit={handleSearch}>
-                <CardContent>
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input
-                        placeholder="e.g., Grand Theft Auto, Robbery with a firearm..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
-                        />
-                    </div>
-                </CardContent>
-                <CardContent>
-                    <Button type="submit" disabled={isLoading || !searchTerm}>
-                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4 text-accent" />}
-                        {isLoading ? (loadingStep || "Analyzing...") : "Analyze Jury Instruction"}
-                    </Button>
-                </CardContent>
-            </form>
-        </Card>
-
-        {(isLoading || error || disambiguationOptions.length > 0 || analysisResult) && (
-            <div className="mt-6">
-                {isLoading && (
-                    <div className="text-center py-16">
-                    <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
-                    <h3 className="mt-4 text-lg font-medium">Analyzing...</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">{loadingStep}</p>
-                    </div>
-                )}
-
-                {error && (
-                    <Alert variant="destructive" className="my-6">
-                        <AlertTriangle className="h-4 w-4" />
-                        <AlertTitle>Analysis Error</AlertTitle>
-                        <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                )}
-
-                {disambiguationOptions.length > 0 && !isLoading && (
-                    <Card className="animate-fade-in-up">
-                        <CardHeader>
-                            <CardTitle>Clarification Needed</CardTitle>
-                            <CardDescription>Your search matched multiple results. Please select the most relevant option.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                           {disambiguationOptions.map(option => (
-                               <Button key={option.instructionID} variant="outline" className="w-full justify-start" onClick={() => analyzeAndDisplayInstruction({ instructionId: option.instructionID })}>
-                                   {option.instructionTitle}
-                               </Button>
-                           ))}
-                        </CardContent>
-                    </Card>
-                )}
-
-                {analysisResult && !isLoading && (
-                    <Card className="animate-fade-in-up">
-                        <CardHeader>
-                            <div className="flex items-center gap-3">
-                                <CheckCircle className="h-6 w-6 text-green-500" />
-                                <div>
-                                    <CardTitle>Analysis for: {analysisResult.instructionTitle}</CardTitle>
-                                    <CardDescription>Florida Standard Jury Instruction {analysisResult.instructionNumber}</CardDescription>
-                                </div>
+    <div className="space-y-6 h-full flex flex-col">
+       <div className="relative">
+        <LucideIcons.Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+        <Input
+          placeholder="Search instructions..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+      
+      <ScrollArea className="flex-1 -mr-4 pr-4">
+        <Accordion type="single" collapsible className="w-full space-y-2" value={activeItem} onValueChange={handleAccordionChange}>
+          {groupedInstructions.map(({ category, items }) => (
+            <div key={category}>
+              <h2 className="text-lg font-bold tracking-tight my-4 px-1">{category}</h2>
+              {items.map(item => {
+                const Icon = (LucideIcons as any)[item.icon] || LucideIcons.Gavel;
+                return (
+                    <AccordionItem value={item.id} key={item.id} className="border rounded-md bg-card">
+                      <AccordionTrigger className="p-4 hover:no-underline">
+                        <div className="flex items-center gap-4 flex-1">
+                          <div className="p-2 bg-primary/10 rounded-lg">
+                            <Icon className="w-6 h-6 text-primary" />
+                          </div>
+                          <div className="flex-1 text-left">
+                            <p className="font-semibold text-base text-card-foreground">{item.instructionTitle}</p>
+                            <p className="text-xs text-muted-foreground">Instruction {item.instructionNumber}</p>
+                          </div>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="p-4 pt-0">
+                        <div className="border-t pt-4">
+                          {loadingId === item.id && (
+                            <div className="flex items-center justify-center space-x-2 text-muted-foreground">
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                              <Sparkles className="h-5 w-5 text-accent" />
+                              <span>AI is analyzing instruction...</span>
                             </div>
-                        </CardHeader>
-                        <CardContent>
-                            <InstructionDetailView detail={analysisResult} />
-                        </CardContent>
-                    </Card>
-                )}
+                          )}
+                          {error[item.id] && (
+                            <Alert variant="destructive">
+                                <AlertTitle>Error</AlertTitle>
+                                <AlertDescription>{error[item.id]}</AlertDescription>
+                            </Alert>
+                          )}
+                          {cachedDetails[item.id] && (
+                            <InstructionDetailView detail={cachedDetails[item.id]} />
+                          )}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                )
+              })}
             </div>
-        )}
+          ))}
+        </Accordion>
+        {filteredInstructions.length === 0 && <p className="text-center text-muted-foreground py-8">No instructions found.</p>}
+      </ScrollArea>
     </div>
   );
 });
