@@ -41,7 +41,7 @@ const findInstructionPrompt = ai.definePrompt({
     name: "findInstructionPrompt",
     input: { schema: z.object({ query: z.string(), instructionDatabase: z.array(z.string()) }) },
     output: { schema: FindJuryInstructionOutputSchema },
-    prompt: `You are an expert AI paralegal specializing in Florida criminal law. Your primary task is to act as a disambiguation engine for a jury instruction search tool. Prioritize user choice over making a definitive selection yourself.
+    prompt: `You are an expert AI paralegal specializing in Florida criminal law. Your primary task is to act as a highly constrained and accurate search and disambiguation engine.
 
 User's Raw Query: "{{query}}"
 
@@ -50,12 +50,17 @@ I have the following full database of available jury instructions:
 - {{this}}
 {{/each}}
 
-Analyze the user's query and the full database. Follow these rules strictly:
+Follow these rules with absolute precision:
 
-1.  **Search the full database** to find all semantically relevant instructions for the user's query.
-2.  **DEFAULT BEHAVIOR: PROVIDE OPTIONS.** For almost all queries (like "theft", "battery", "burglary"), your default behavior should be to return a 'disambiguationOptions' array. Present the top 2-4 most relevant matches as options for the user to choose from. This empowers the user to make the final, correct selection.
-3.  **EXCEPTION: 100% CONFIDENCE.** The ONLY time you should populate the 'instructionID' field directly is if the user's query is an exact, unambiguous match for ONE of the instructions and could not possibly refer to anything else. An example would be a query for a specific instruction number or a very specific crime name that has no other variations (e.g., 'Justifiable Use of Deadly Force').
-4.  If no matches seem relevant, return an empty response.
+1.  **Initial Strict Filtering:** First, create a mental shortlist of instructions from the database where the title or keywords are a DIRECT match to the user's query. If the user searches for "burglary", you may ONLY consider instructions related to burglary. You MUST IGNORE all other instructions, no matter how semantically similar they might seem.
+
+2.  **Analyze and Select from Shortlist:** From your strictly filtered shortlist, analyze the user's query and select the most appropriate instruction(s).
+
+3.  **DEFAULT BEHAVIOR: PROVIDE OPTIONS.** For almost all queries (like "theft", "battery", "burglary"), your default behavior should be to return a 'disambiguationOptions' array containing ALL relevant items from your shortlist. This empowers the user to make the final, correct selection. For "battery", this should include "Battery", "Felony Battery", and "Aggravated Battery".
+
+4.  **EXCEPTION: 100% CONFIDENCE.** The ONLY time you should populate the 'instructionID' field directly is if the user's query is an exact, unambiguous match for ONE of the instructions and could not possibly refer to anything else. An example would be a query for a specific instruction number.
+
+5.  **Final Verification:** Before producing the output, verify that your selected instruction(s) are directly related to the user's initial query. A search for "robbery" must never result in an instruction for "battery". If no direct matches are found on your shortlist, return an empty response.
 
 Your entire response must be a single, valid JSON object.`,
 });
@@ -70,7 +75,7 @@ export async function findJuryInstruction(input: FindJuryInstructionInput): Prom
   });
 
   if (!output?.instructionID && (!output?.disambiguationOptions || output.disambiguationOptions.length === 0)) {
-      throw new Error("The AI analyst could not definitively identify an instruction or provide clarifying options.");
+      throw new Error(`The AI analyst could not identify an instruction for "${input.query}". Please try a different search term.`);
   }
 
   return output!;
