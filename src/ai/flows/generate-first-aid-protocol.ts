@@ -18,22 +18,11 @@ const GenerateFirstAidProtocolOutputSchema = z.array(InjuryProtocolSchema);
 export type GenerateFirstAidProtocolOutput = z.infer<typeof GenerateFirstAidProtocolOutputSchema>;
 
 export async function generateFirstAidProtocol(): Promise<GenerateFirstAidProtocolOutput> {
-  return generateFirstAidProtocolFlow();
+  const { output } = await ai.generate({
+    prompt: `You are a Tactical Medical Specialist AI. Generate a quick-reference first aid guide for a law enforcement officer covering at least 6 common traumatic injuries based on TECC/TCCC principles. The output must be an array of 'Injury Protocol' objects. Include protocols for Severe Bleeding (Extremity), Sucking Chest Wound, Burns, Seizure, Opioid Overdose (Naloxone Admin), and Cardiac Arrest (CPR/AED).`,
+    output: {
+      schema: GenerateFirstAidProtocolOutputSchema,
+    },
+  });
+  return output;
 }
-
-const prompt = ai.definePrompt({
-  name: 'generateFirstAidProtocolPrompt',
-  output: { schema: GenerateFirstAidProtocolOutputSchema },
-  prompt: `You are a Tactical Medical Specialist AI. Generate a quick-reference first aid guide for a law enforcement officer covering at least 6 common traumatic injuries based on TECC/TCCC principles. The output must be an array of 'Injury Protocol' objects. Include protocols for Severe Bleeding (Extremity), Sucking Chest Wound, Burns, Seizure, Opioid Overdose (Naloxone Admin), and Cardiac Arrest (CPR/AED).`,
-});
-
-const generateFirstAidProtocolFlow = ai.defineFlow(
-  {
-    name: 'generateFirstAidProtocolFlow',
-    outputSchema: GenerateFirstAidProtocolOutputSchema,
-  },
-  async () => {
-    const { output } = await prompt();
-    return output!;
-  }
-);

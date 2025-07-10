@@ -25,31 +25,18 @@ const ProofreadReportOutputSchema = z.object({
 export type ProofreadReportOutput = z.infer<typeof ProofreadReportOutputSchema>;
 
 export async function proofreadReport(input: ProofreadReportInput): Promise<ProofreadReportOutput> {
-  return proofreadReportFlow(input);
-}
+  const { output } = await ai.generate({
+    prompt: `You are an AI Police Report Writing Instructor, specializing in Florida law. Your task is to review the following anonymized narrative and provide concise, constructive feedback to help the officer improve their report. Do not comment on the facts of the case. Your analysis must focus exclusively on the quality of the writing and its legal sufficiency based on the specified offense.
 
-const prompt = ai.definePrompt({
-  name: 'proofreadReportPrompt',
-  input: { schema: ProofreadReportInputSchema },
-  output: { schema: ProofreadReportOutputSchema },
-  prompt: `You are an AI Police Report Writing Instructor, specializing in Florida law. Your task is to review the following anonymized narrative and provide concise, constructive feedback to help the officer improve their report. Do not comment on the facts of the case. Your analysis must focus exclusively on the quality of the writing and its legal sufficiency based on the specified offense.
-
-Primary Offense: {{{primaryOffense}}}
+Primary Offense: ${input.primaryOffense}
 Anonymized Narrative:
-{{{anonymizedNarrative}}}
+${input.anonymizedNarrative}
 
 Provide your feedback ONLY as a structured JSON object.
 `,
-});
-
-const proofreadReportFlow = ai.defineFlow(
-  {
-    name: 'proofreadReportFlow',
-    inputSchema: ProofreadReportInputSchema,
-    outputSchema: ProofreadReportOutputSchema,
-  },
-  async (input) => {
-    const { output } = await prompt(input);
-    return output!;
-  }
-);
+    output: {
+      schema: ProofreadReportOutputSchema,
+    },
+  });
+  return output!;
+}

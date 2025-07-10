@@ -44,26 +44,13 @@ export type AnalyzeK9TopicOutput = z.infer<typeof AnalyzeK9TopicOutputSchema>;
 
 
 export async function analyzeK9Topic(input: AnalyzeK9TopicInput): Promise<AnalyzeK9TopicOutput> {
-  return analyzeK9TopicFlow(input);
+  const { output } = await ai.generate({
+    prompt: `You are a K-9 Operations & Legal Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific K-9 topic. For the given ID, retrieve the relevant procedures and case law, then parse this information into a practical format for an officer. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the following schema.
+
+Topic ID: ${input.topicId}`,
+    output: {
+      schema: AnalyzeK9TopicOutputSchema,
+    },
+  });
+  return output;
 }
-
-const prompt = ai.definePrompt({
-  name: 'analyzeK9TopicPrompt',
-  input: { schema: AnalyzeK9TopicInputSchema },
-  output: { schema: AnalyzeK9TopicOutputSchema },
-  prompt: `You are a K-9 Operations & Legal Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific K-9 topic. For the given ID, retrieve the relevant procedures and case law, then parse this information into a practical format for an officer. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the following schema.
-
-Topic ID: {{{topicId}}}`,
-});
-
-const analyzeK9TopicFlow = ai.defineFlow(
-  {
-    name: 'analyzeK9TopicFlow',
-    inputSchema: AnalyzeK9TopicInputSchema,
-    outputSchema: AnalyzeK9TopicOutputSchema,
-  },
-  async (input) => {
-    const { output } = await prompt(input);
-    return output!;
-  }
-);

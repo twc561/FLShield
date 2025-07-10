@@ -22,26 +22,13 @@ const SummarizeDocumentOutputSchema = z.object({
 export type SummarizeDocumentOutput = z.infer<typeof SummarizeDocumentOutputSchema>;
 
 export async function summarizeDocument(input: SummarizeDocumentInput): Promise<SummarizeDocumentOutput> {
-  return summarizeDocumentFlow(input);
+  const { output } = await ai.generate({
+    prompt: `Summarize the following document, extracting the key information and insights:
+
+${input.documentText}`,
+    output: {
+      schema: SummarizeDocumentOutputSchema,
+    },
+  });
+  return output;
 }
-
-const prompt = ai.definePrompt({
-  name: 'summarizeDocumentPrompt',
-  input: {schema: SummarizeDocumentInputSchema},
-  output: {schema: SummarizeDocumentOutputSchema},
-  prompt: `Summarize the following document, extracting the key information and insights:
-
-{{{documentText}}}`,
-});
-
-const summarizeDocumentFlow = ai.defineFlow(
-  {
-    name: 'summarizeDocumentFlow',
-    inputSchema: SummarizeDocumentInputSchema,
-    outputSchema: SummarizeDocumentOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);

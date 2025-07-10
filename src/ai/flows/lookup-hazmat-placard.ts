@@ -21,22 +21,11 @@ const LookupHazmatPlacardsOutputSchema = z.array(PlacardSchema);
 export type LookupHazmatPlacardsOutput = z.infer<typeof LookupHazmatPlacardsOutputSchema>;
 
 export async function lookupHazmatPlacards(): Promise<LookupHazmatPlacardsOutput> {
-  return lookupHazmatPlacardsFlow();
+  const { output } = await ai.generate({
+    prompt: `You are a Hazardous Materials Specialist AI. Generate a database of at least 10-15 common HAZMAT placards found on North American roadways based on the DOT ERG. The output must be an array of 'Placard' objects. Include common materials like Gasoline (1203), Diesel Fuel (1993), Propane (1075), Chlorine (1017), Anhydrous Ammonia (1005), and Sulfuric Acid (1830).`,
+    output: {
+      schema: LookupHazmatPlacardsOutputSchema,
+    },
+  });
+  return output!;
 }
-
-const prompt = ai.definePrompt({
-  name: 'lookupHazmatPlacardsPrompt',
-  output: { schema: LookupHazmatPlacardsOutputSchema },
-  prompt: `You are a Hazardous Materials Specialist AI. Generate a database of at least 10-15 common HAZMAT placards found on North American roadways based on the DOT ERG. The output must be an array of 'Placard' objects. Include common materials like Gasoline (1203), Diesel Fuel (1993), Propane (1075), Chlorine (1017), Anhydrous Ammonia (1005), and Sulfuric Acid (1830).`,
-});
-
-const lookupHazmatPlacardsFlow = ai.defineFlow(
-  {
-    name: 'lookupHazmatPlacardsFlow',
-    outputSchema: LookupHazmatPlacardsOutputSchema,
-  },
-  async () => {
-    const { output } = await prompt();
-    return output!;
-  }
-);

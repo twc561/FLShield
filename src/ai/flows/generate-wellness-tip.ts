@@ -25,34 +25,17 @@ export type GenerateWellnessTipOutput = z.infer<typeof GenerateWellnessTipOutput
 export async function generateWellnessTip(
   input: GenerateWellnessTipInput
 ): Promise<GenerateWellnessTipOutput> {
-  return generateWellnessTipFlow(input);
-}
-
-const prompt = ai.definePrompt({
-  name: 'generateWellnessTipPrompt',
-  input: { schema: GenerateWellnessTipInputSchema },
-  output: { schema: GenerateWellnessTipOutputSchema },
-  prompt: `You are an expert on occupational health and wellness for law enforcement officers, with specific knowledge of the unique challenges faced by officers in Florida. These challenges include high heat and humidity, hurricane season preparedness and response, interactions with a large tourist population, and specific regional crime trends.
+  const { output } = await ai.generate({
+    prompt: `You are an expert on occupational health and wellness for law enforcement officers, with specific knowledge of the unique challenges faced by officers in Florida. These challenges include high heat and humidity, hurricane season preparedness and response, interactions with a large tourist population, and specific regional crime trends.
 
 Generate a single, actionable, and concise wellness tip for a Florida law enforcement officer.
 The tip should be practical and easy to implement during or after a shift.
-{{#if topic}}
-The tip should be related to the topic of: {{{topic}}}.
-{{else}}
-The tip can be about any of the following topics: stress management, physical fitness, nutrition, sleep hygiene, mental resilience, or peer support.
-{{/if}}
+${input.topic ? `The tip should be related to the topic of: ${input.topic}.` : 'The tip can be about any of the following topics: stress management, physical fitness, nutrition, sleep hygiene, mental resilience, or peer support.'}
 
 Return the tip and the general topic it falls under (e.g., Stress Management, Nutrition, Sleep).`,
-});
-
-const generateWellnessTipFlow = ai.defineFlow(
-  {
-    name: 'generateWellnessTipFlow',
-    inputSchema: GenerateWellnessTipInputSchema,
-    outputSchema: GenerateWellnessTipOutputSchema,
-  },
-  async (input) => {
-    const { output } = await prompt(input);
-    return output!;
-  }
-);
+    output: {
+      schema: GenerateWellnessTipOutputSchema,
+    },
+  });
+  return output!;
+}

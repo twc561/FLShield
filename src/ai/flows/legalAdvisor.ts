@@ -37,14 +37,8 @@ Policy 502.3: Vehicle Pursuits - A pursuit may only be initiated when the office
 `;
 
 export async function getAdvisorResponse(input: AdvisorInput): Promise<AdvisorOutput> {
-  return getAdvisorResponseFlow(input);
-}
-
-const legalAdvisorPrompt = ai.definePrompt({
-  name: 'legalAdvisorPrompt',
-  input: { schema: AdvisorInputSchema },
-  output: { schema: AdvisorOutputSchema },
-  prompt: `You are an AI Legal Information Synthesizer for law enforcement. Your role is to analyze a scenario and provide structured, source-attributed information. You are NOT a legal advisor.
+  const { output } = await ai.generate({
+    prompt: `You are an AI Legal Information Synthesizer for law enforcement. Your role is to analyze a scenario and provide structured, source-attributed information. You are NOT a legal advisor.
 
 CRITICAL RULES:
 1.  **DO NOT GIVE ADVICE.** Never use imperative language like "you should," "the correct action is," or "you must." Use informational language like "Agency policy states," "Considerations include," or "Relevant statutes are."
@@ -63,22 +57,14 @@ CRITICAL RULES:
     -   **Graham v. Connor:** Use of force is judged by an 'objective reasonableness' standard, considering severity of crime, immediate threat, and active resistance.
 
 // USER SCENARIO //
-"{{{scenario}}}"
+"${input.scenario}"
 
 // YOUR TASK //
-Analyze the user's scenario. Synthesize the relevant information from the knowledge base and structure it into the required JSON output format. Ensure every point is sourced and you follow all critical rules.
+Analyze the user's scenario. Synthesize the relevant information from the knowledge base and structure it into the required JSON output. Ensure every point is sourced and you follow all critical rules.
 `,
-});
-
-
-const getAdvisorResponseFlow = ai.defineFlow(
-  {
-    name: 'getAdvisorResponseFlow',
-    inputSchema: AdvisorInputSchema,
-    outputSchema: AdvisorOutputSchema,
-  },
-  async (input) => {
-    const { output } = await legalAdvisorPrompt(input);
-    return output!;
-  }
-);
+    output: {
+      schema: AdvisorOutputSchema,
+    },
+  });
+  return output!;
+}

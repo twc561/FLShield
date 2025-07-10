@@ -21,24 +21,11 @@ const CommandSearchOutputSchema = z.object({
 export type CommandSearchOutput = z.infer<typeof CommandSearchOutputSchema>;
 
 export async function commandSearch(input: CommandSearchInput): Promise<CommandSearchOutput> {
-  return commandSearchFlow(input);
+  const { output } = await ai.generate({
+    prompt: `You are 'Shield FL,' an AI partner for Florida law enforcement. Your purpose is to provide immediate, clear, and practical answers to questions from front-line patrol officers. The answer should be concise, easy to understand during a high-stakes situation, and grounded in Florida statutes and common police procedures. Do not provide legal advice, but rather operational guidance and factual information. Prioritize officer safety and legal accuracy. Now, answer the following question for an officer on patrol: ${input.query}`,
+    output: {
+        schema: CommandSearchOutputSchema,
+    }
+  });
+  return output!;
 }
-
-const prompt = ai.definePrompt({
-  name: 'commandSearchPrompt',
-  input: { schema: CommandSearchInputSchema },
-  output: { schema: CommandSearchOutputSchema },
-  prompt: `You are 'Shield FL,' an AI partner for Florida law enforcement. Your purpose is to provide immediate, clear, and practical answers to questions from front-line patrol officers. The answer should be concise, easy to understand during a high-stakes situation, and grounded in Florida statutes and common police procedures. Do not provide legal advice, but rather operational guidance and factual information. Prioritize officer safety and legal accuracy. Now, answer the following question for an officer on patrol: {{{query}}}`,
-});
-
-const commandSearchFlow = ai.defineFlow(
-  {
-    name: 'commandSearchFlow',
-    inputSchema: CommandSearchInputSchema,
-    outputSchema: CommandSearchOutputSchema,
-  },
-  async (input) => {
-    const { output } = await prompt(input);
-    return output!;
-  }
-);

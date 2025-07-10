@@ -41,10 +41,10 @@ Use the following response patterns based on the user's input:
 -   **Open-Ended Clarification:** Gently prompt for more detail without being intrusive. (e.g., "What was that experience like for you?", "How did that impact you?")
 
 // CONVERSATION HISTORY //
-${input.conversationHistory.map(h => `${h.role === 'user' ? 'Officer' : 'Listener'}: ${h.parts[0].text}`).join('\n')}
+{{{conversationHistory.map(h => `${h.role === 'user' ? 'Officer' : 'Listener'}: ${h.parts[0].text}`).join('\n')}}}
 
 // OFFICER'S LATEST INPUT //
-Officer: "${input.userUtterance}"
+Officer: "{{{userUtterance}}}"
 
 // YOUR TASK //
 Generate a brief, supportive, and reflective response that adheres to all the rules above.

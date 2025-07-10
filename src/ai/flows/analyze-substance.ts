@@ -51,34 +51,21 @@ export type AnalyzeSubstanceOutput = z.infer<typeof AnalyzeSubstanceOutputSchema
 
 
 export async function analyzeSubstance(input: AnalyzeSubstanceInput): Promise<AnalyzeSubstanceOutput> {
-  return analyzeSubstanceFlow(input);
+  const { output } = await ai.generate({
+    prompt: `You are a Narcotics Identification and Legal Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific controlled substance according to Florida law. For the given ID, retrieve all relevant data and parse it into a practical format for a patrol officer. Your descriptions must be detailed and textual. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema.
+
+Substance ID: ${input.substanceId}`,
+    output: {
+      schema: AnalyzeSubstanceOutputSchema,
+    },
+    config: {
+      safetySettings: [
+          {
+              category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+              threshold: 'BLOCK_NONE',
+          },
+      ],
+    },
+  });
+  return output;
 }
-
-const prompt = ai.definePrompt({
-  name: 'analyzeSubstancePrompt',
-  input: { schema: AnalyzeSubstanceInputSchema },
-  output: { schema: AnalyzeSubstanceOutputSchema },
-  prompt: `You are a Narcotics Identification and Legal Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific controlled substance according to Florida law. For the given ID, retrieve all relevant data and parse it into a practical format for a patrol officer. Your descriptions must be detailed and textual. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema.
-
-Substance ID: {{{substanceId}}}`,
-  config: {
-    safetySettings: [
-        {
-            category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-            threshold: 'BLOCK_NONE',
-        },
-    ],
-  },
-});
-
-const analyzeSubstanceFlow = ai.defineFlow(
-  {
-    name: 'analyzeSubstanceFlow',
-    inputSchema: AnalyzeSubstanceInputSchema,
-    outputSchema: AnalyzeSubstanceOutputSchema,
-  },
-  async (input) => {
-    const { output } = await prompt(input);
-    return output!;
-  }
-);

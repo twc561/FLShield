@@ -29,14 +29,8 @@ export type AnalyzeOrdinanceOutput = z.infer<typeof AnalyzeOrdinanceOutputSchema
 
 
 export async function analyzeOrdinance(input: AnalyzeOrdinanceInput): Promise<AnalyzeOrdinanceOutput> {
-  return analyzeOrdinanceFlow(input);
-}
-
-const prompt = ai.definePrompt({
-  name: 'analyzeOrdinancePrompt',
-  input: { schema: AnalyzeOrdinanceInputSchema },
-  output: { schema: AnalyzeOrdinanceOutputSchema },
-  prompt: `You are an expert local government legal analyst AI specializing in Florida municipal and county codes. Your primary user is a law enforcement officer who needs to understand and enforce local laws. Your task is to find the single most relevant, chargeable ordinance based on a user's query and provide a detailed, structured analysis for that officer.
+  const { output } = await ai.generate({
+    prompt: `You are an expert local government legal analyst AI specializing in Florida municipal and county codes. Your primary user is a law enforcement officer who needs to understand and enforce local laws. Your task is to find the single most relevant, chargeable ordinance based on a user's query and provide a detailed, structured analysis for that officer.
 
 CRITICAL INSTRUCTIONS:
 1.  **Focus on Enforceable Violations:** Prioritize ordinances that define a specific, chargeable violation that a patrol officer would cite or make an arrest for. Avoid purely administrative or zoning ordinances unless they are directly relevant to a common enforcement action.
@@ -46,18 +40,11 @@ CRITICAL INSTRUCTIONS:
 
 For the given jurisdiction and query, retrieve the most current and complete text of the most relevant law. Then, parse this information and return it ONLY as a single, well-formed JSON object adhering strictly to the required schema.
 
-Jurisdiction: {{{jurisdiction}}}
-Query: {{{query}}}`,
-});
-
-const analyzeOrdinanceFlow = ai.defineFlow(
-  {
-    name: 'analyzeOrdinanceFlow',
-    inputSchema: AnalyzeOrdinanceInputSchema,
-    outputSchema: AnalyzeOrdinanceOutputSchema,
-  },
-  async (input) => {
-    const { output } = await prompt(input);
-    return output!;
-  }
-);
+Jurisdiction: ${input.jurisdiction}
+Query: ${input.query}`,
+    output: {
+      schema: AnalyzeOrdinanceOutputSchema,
+    },
+  });
+  return output;
+}

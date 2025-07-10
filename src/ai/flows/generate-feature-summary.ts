@@ -30,24 +30,11 @@ export type GenerateFeatureSummaryOutput = z.infer<
 export async function generateFeatureSummary(
   input: GenerateFeatureSummaryInput
 ): Promise<GenerateFeatureSummaryOutput> {
-  return generateFeatureSummaryFlow(input);
+  const { output } = await ai.generate({
+    prompt: `You are an expert in law enforcement tools. Generate a single, concise sentence to summarize a feature named '${input.title}' for the 'Florida Shield' application.`,
+    output: {
+      schema: GenerateFeatureSummaryOutputSchema,
+    },
+  });
+  return output!;
 }
-
-const prompt = ai.definePrompt({
-  name: 'generateFeatureSummaryPrompt',
-  input: { schema: GenerateFeatureSummaryInputSchema },
-  output: { schema: GenerateFeatureSummaryOutputSchema },
-  prompt: `You are an expert in law enforcement tools. Generate a single, concise sentence to summarize a feature named '{{{title}}}' for the 'Florida Shield' application.`,
-});
-
-const generateFeatureSummaryFlow = ai.defineFlow(
-  {
-    name: 'generateFeatureSummaryFlow',
-    inputSchema: GenerateFeatureSummaryInputSchema,
-    outputSchema: GenerateFeatureSummaryOutputSchema,
-  },
-  async (input) => {
-    const { output } = await prompt(input);
-    return output!;
-  }
-);

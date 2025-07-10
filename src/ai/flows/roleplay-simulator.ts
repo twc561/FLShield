@@ -38,10 +38,7 @@ const RoleplaySimulatorOutputSchema = z.object({
 export type RoleplaySimulatorOutput = z.infer<typeof RoleplaySimulatorOutputSchema>;
 
 export async function getRoleplayResponse(input: RoleplaySimulatorInput): Promise<RoleplaySimulatorOutput> {
-  const prompt = ai.definePrompt({
-    name: 'roleplaySimulatorPrompt',
-    input: { schema: RoleplaySimulatorInputSchema },
-    output: { schema: RoleplaySimulatorOutputSchema },
+  const { output } = await ai.generate({
     prompt: `You are an AI role-playing actor and training assistant for a law enforcement officer. Your primary task is to realistically portray a character. Your secondary task is to provide helpful feedback if the officer makes a clear misstep.
 
 // SCENARIO & PERSONA //
@@ -68,8 +65,9 @@ Officer: "${input.userUtterance}"
 
 CRITICAL: Your entire output must be a single, valid JSON object matching the requested schema.
 `,
+    output: {
+      schema: RoleplaySimulatorOutputSchema,
+    },
   });
-
-  const { output } = await prompt(input);
   return output!;
 }

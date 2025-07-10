@@ -36,26 +36,13 @@ export type AnalyzeInstructionOutput = z.infer<typeof AnalyzeInstructionOutputSc
 
 
 export async function analyzeInstruction(input: AnalyzeInstructionInput): Promise<AnalyzeInstructionOutput> {
-  return analyzeInstructionFlow(input);
+  const { output } = await ai.generate({
+    prompt: `You are a Trial Procedure Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific Florida Standard Jury Instruction. For the given ID, retrieve the full text and then parse it into a practical format for a patrol officer focused on case building. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the following schema.
+
+Instruction ID: ${input.instructionId}`,
+    output: {
+      schema: AnalyzeInstructionOutputSchema,
+    },
+  });
+  return output;
 }
-
-const prompt = ai.definePrompt({
-  name: 'analyzeInstructionPrompt',
-  input: { schema: AnalyzeInstructionInputSchema },
-  output: { schema: AnalyzeInstructionOutputSchema },
-  prompt: `You are a Trial Procedure Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific Florida Standard Jury Instruction. For the given ID, retrieve the full text and then parse it into a practical format for a patrol officer focused on case building. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the following schema.
-
-Instruction ID: {{{instructionId}}}`,
-});
-
-const analyzeInstructionFlow = ai.defineFlow(
-  {
-    name: 'analyzeInstructionFlow',
-    inputSchema: AnalyzeInstructionInputSchema,
-    outputSchema: AnalyzeInstructionOutputSchema,
-  },
-  async (input) => {
-    const { output } = await prompt(input);
-    return output!;
-  }
-);
