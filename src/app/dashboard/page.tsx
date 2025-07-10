@@ -1,28 +1,21 @@
 
 'use client'
 
-import {
-  BookOpen,
-  History,
-  Lightbulb,
-  Newspaper,
-  ChevronDown,
-  Flame,
-  Download,
-} from "lucide-react"
-import Link from "next/link"
 import React, { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-
-import { dashboardFeatureGroups } from "@/data/dashboard-features"
-import { FeatureCard } from "@/components/FeatureCard"
-import { useToast } from "@/hooks/use-toast"
+import { motion } from "framer-motion"
 import { onAuthStateChanged, type User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
+
 import { PageHeader } from "@/components/PageHeader"
 import AICommandSearch from "@/components/AICommandSearch"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import Link from 'next/link'
+import * as LucideIcons from "lucide-react"
+
+import { dashboardFeatureGroups } from "@/data/dashboard-features"
+import type { FeatureModule, FeatureGroup } from "@/data/dashboard-features"
+
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -47,12 +40,83 @@ const itemVariants = {
   },
 }
 
+const ToolCard = ({ module }: { module: FeatureModule }) => {
+  const Icon = (LucideIcons as any)[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle;
+  return (
+    <Link href={module.targetPage} className="group">
+      <Card className="h-full hover:border-primary/80 hover:bg-card/60 transition-colors flex items-center p-3 gap-3">
+        <div className="p-2 bg-primary/10 rounded-lg">
+          <Icon className="w-5 h-5 text-primary" />
+        </div>
+        <div>
+          <p className="font-semibold text-sm text-foreground">{module.title}</p>
+          <p className="text-xs text-muted-foreground">{module.summary}</p>
+        </div>
+      </Card>
+    </Link>
+  )
+}
+
+
+const FeaturedTools = () => {
+    // In a real AI-driven app, this logic would be powered by a model
+    // analyzing context (time, location, user history).
+    // Here, we simulate it by selecting a few key tools.
+    const featured: FeatureModule[] = [
+        dashboardFeatureGroups.find(g => g.category === 'Field Encounters & Checklists')?.features[0],
+        dashboardFeatureGroups.find(g => g.category === 'Reference & Investigation')?.features[0],
+        dashboardFeatureGroups.find(g => g.category === 'Reporting & Documentation')?.features[2],
+    ].filter(Boolean) as FeatureModule[];
+
+    return (
+        <motion.div variants={itemVariants}>
+            <h2 className="text-lg font-bold tracking-tight mb-3 px-1">Smart Suggestions</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {featured.map(tool => (
+                     <Link href={tool.targetPage} key={tool.id} className="group">
+                        <Card className="h-full hover:border-primary transition-colors">
+                            <CardHeader>
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-primary/10 rounded-lg">
+                                        <LucideIcons.Star className="w-5 h-5 text-primary"/>
+                                    </div>
+                                    <CardTitle className="text-base">{tool.title}</CardTitle>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-sm text-muted-foreground">{tool.summary}</p>
+                            </CardContent>
+                        </Card>
+                    </Link>
+                ))}
+            </div>
+        </motion.div>
+    )
+}
+
+
+const PinnedTools = () => {
+  return (
+    <motion.div variants={itemVariants}>
+      <h2 className="text-lg font-bold tracking-tight mb-3 px-1">Pinned Tools</h2>
+      <div className="p-8 text-center border-2 border-dashed rounded-lg">
+        <div className="flex justify-center mb-4">
+          <LucideIcons.Star className="w-10 h-10 text-muted-foreground" />
+        </div>
+        <h3 className="text-base font-semibold">Feature Coming Soon</h3>
+        <p className="text-sm text-muted-foreground">
+          Pin your most-used tools here for instant access.
+        </p>
+      </div>
+    </motion.div>
+  )
+}
+
+
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("")
   const [userName, setUserName] = useState<string | null>(null);
-  const [isPwaInstalled, setIsPwaInstalled] = useState(true); // Default to true to avoid rendering the card on the server
-  const { toast } = useToast();
-
+  
   useEffect(() => {
     const getGreeting = () => {
       const hour = new Date().getHours()
@@ -66,13 +130,6 @@ export default function DashboardPage() {
     }
     setGreeting(getGreeting());
 
-    // Check if running as a PWA only after the component has mounted on the client
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsPwaInstalled(true);
-    } else {
-      setIsPwaInstalled(false);
-    }
-
     const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
         if (user) {
             if (user.displayName) {
@@ -85,34 +142,14 @@ export default function DashboardPage() {
             } else {
                 setUserName("Officer");
             }
+        } else {
+            setUserName("Officer"); // Fallback for loading state
         }
     });
     
     return () => unsubscribe();
   }, [])
   
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    const MOBILE_BREAKPOINT = 768;
-    const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
-    const hintKey = 'mobileNavHintShown';
-
-    const hasSeenHint = localStorage.getItem(hintKey);
-
-    if (isMobile && !hasSeenHint) {
-      setTimeout(() => {
-        toast({
-          title: "Navigation Tip",
-          description: "Tap the 'More' button in the bottom right to access all guides and tools.",
-        });
-        localStorage.setItem(hintKey, 'true');
-      }, 1500);
-    }
-  }, [toast]);
-
   return (
     <motion.div 
       className="space-y-8"
@@ -122,48 +159,42 @@ export default function DashboardPage() {
     >
       <PageHeader 
         title={`${greeting}, ${userName || "Officer"}.`}
-        description="Welcome to your dashboard. Access your tools and guides below."
+        description="Welcome to your Mission Hub. How can I help?"
       />
       
       <motion.div variants={itemVariants}>
         <AICommandSearch />
       </motion.div>
 
-      {!isPwaInstalled && (
-        <motion.div variants={itemVariants}>
-          <Card className="bg-primary/10 border-primary/20">
-              <CardHeader className="flex flex-row items-center gap-4">
-                  <Download className="w-6 h-6 text-primary"/>
-                  <div>
-                      <CardTitle>Get the Full App Experience</CardTitle>
-                      <CardDescription>Install Shield FL to your device's home screen for faster access.</CardDescription>
-                  </div>
-              </CardHeader>
-              <CardContent>
-                  <Button asChild>
-                      <Link href="/install">View Install Instructions</Link>
-                  </Button>
-              </CardContent>
-          </Card>
-        </motion.div>
-      )}
+      <FeaturedTools />
 
-      {dashboardFeatureGroups.map((group, groupIndex) => (
-        <motion.div key={group.category} variants={itemVariants}>
-          <h2 className="text-xl font-bold tracking-tight mb-4">{group.category}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {group.features.map((feature, featureIndex) => (
-              <FeatureCard key={feature.id} module={feature} />
-            ))}
-          </div>
-        </motion.div>
-      ))}
+      <PinnedTools />
 
-      <motion.footer variants={itemVariants} className="mt-8 pt-6 border-t border-border/50 text-center">
-        <p className="text-xs text-muted-foreground max-w-4xl mx-auto">
-          <strong className="font-semibold text-foreground/80">Disclaimer & CJIS Warning:</strong> The Florida Shield application is for informational and training purposes only and is not a substitute for legal advice, agency policy, or certified training. All information should be independently verified. <strong className="text-destructive">This is NOT a CJIS-compliant environment.</strong> Users are strictly prohibited from entering, storing, or transmitting any real Personally Identifiable Information (PII), Criminal Justice Information (CJI), or any other sensitive case-specific details. All user-input fields must be treated as unsecure and for training or note-taking purposes only. Violation of this policy may result in disciplinary action.
-        </p>
-      </motion.footer>
+      {/* The "All Tools" Library */}
+      <motion.div variants={itemVariants}>
+        <h2 className="text-lg font-bold tracking-tight mb-3 px-1">All Tools Library</h2>
+        <div className="space-y-6">
+          {dashboardFeatureGroups.map((group) => {
+            const GroupIcon = (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle
+            return (
+              <Card key={group.category} className="bg-card/50">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-3">
+                        <GroupIcon className="w-5 h-5 text-primary"/>
+                        {group.category}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {group.features.map((feature) => (
+                    <ToolCard key={feature.id} module={feature} />
+                  ))}
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
+      </motion.div>
+
     </motion.div>
   )
 }

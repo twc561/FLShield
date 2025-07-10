@@ -21,6 +21,19 @@ import {
   Mic,
   Camera,
   ClipboardEdit,
+  Users,
+  BrainCircuit,
+  Home,
+  Newspaper,
+  FileText as FileTextIcon,
+  Wind,
+  Footprints,
+  Dog,
+  Stethoscope,
+  Truck,
+  HeartPulse,
+  AlertCircle,
+  UserSearch
 } from "lucide-react"
 
 export type FeatureGroup = {
@@ -29,9 +42,10 @@ export type FeatureGroup = {
   features: FeatureModule[]
 }
 
+// Re-categorized based on intuitive, workflow-oriented model
 export const dashboardFeatureGroups: FeatureGroup[] = [
   {
-    category: "Legal Reference",
+    category: "Reference & Investigation",
     icon: Book,
     features: [
       {
@@ -51,6 +65,14 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         category: "Legal Reference",
       },
       {
+        id: "local-ordinances-guide",
+        title: "Local Ordinances Guide",
+        summary: "Look up city and county ordinances by keyword.",
+        icon: "Home",
+        targetPage: "/legal-reference/local-ordinances-guide",
+        category: "Legal Reference",
+      },
+       {
         id: "fwc-regulations-guide",
         title: "FWC Regulations Guide",
         summary: "Searchable FWC rules for fishing, hunting, and boating.",
@@ -58,10 +80,26 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         targetPage: "/specialized-enforcement/fwc-regulations-guide",
         category: "Specialized Enforcement",
       },
+       {
+        id: "hazmat-placard-guide",
+        title: "HAZMAT Placard Guide",
+        summary: "Instantly look up HAZMAT placard numbers for ERG info.",
+        icon: "Biohazard",
+        targetPage: "/emergency-response/hazmat-guide",
+        category: "Emergency Response",
+      },
+      {
+        id: "k9-officer-guide",
+        title: "K-9 Operations Guide",
+        summary: "Role-based guides for K-9 Handlers and Patrol.",
+        icon: "Dog",
+        targetPage: "/specialized-enforcement/k9-officer-guide",
+        category: "Specialized Enforcement",
+      },
     ],
   },
   {
-    category: "Field Tools & Guides",
+    category: "Field Encounters & Checklists",
     icon: ListChecks,
     features: [
       {
@@ -72,18 +110,34 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         targetPage: "/field-procedures/scenario-checklists",
         category: "Field Procedures",
       },
-       {
-        id: "hazmat-placard-guide",
-        title: "HAZMAT Placard Guide",
-        summary: "Instantly look up HAZMAT placard numbers for ERG info.",
-        icon: "Biohazard",
-        targetPage: "/emergency-response/hazmat-guide",
-        category: "Emergency Response",
+      {
+        id: "field-interview-contact",
+        title: "Field Interview Guide",
+        summary: "Legal standards for consensual encounters, detentions, and arrests.",
+        icon: "Users",
+        targetPage: "/field-procedures/field-interview-contact",
+        category: "Field Procedures"
       },
-       {
+      {
+        id: "dui-investigation",
+        title: "DUI Investigation Guide",
+        summary: "End-to-end procedural guide for DUI stops.",
+        icon: "Car",
+        targetPage: "/traffic-enforcement/dui-investigation",
+        category: "Traffic Enforcement",
+      },
+      {
+        id: "dv-protocol",
+        title: "Domestic Violence Protocol",
+        summary: "Guides on evidence gathering, victim resources, and injunctions.",
+        icon: "ShieldAlert",
+        targetPage: "/field-procedures/domestic-violence-protocol",
+        category: "Field Procedures",
+      },
+      {
         id: "visual-evidence-identifier",
         title: "Visual Evidence ID",
-        summary: "Use your camera to identify unknown pills and other items.",
+        summary: "Use your camera to identify unknown pills, weapons, and more.",
         icon: "Camera",
         targetPage: "/field-procedures/visual-evidence-identifier",
         category: "Field Procedures",
@@ -91,16 +145,24 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
     ],
   },
   {
-    category: "Training & Development",
-    icon: GraduationCap,
+    category: "Reporting & Documentation",
+    icon: ClipboardEdit,
     features: [
-       {
-        id: "role-play-simulator",
-        title: "AI De-escalation Coach",
-        summary: "Practice de-escalation skills against AI characters.",
-        icon: "MessageSquare",
-        targetPage: "/training-development/role-play-simulator",
-        category: "Training & Development",
+      {
+        id: "ai-report-writer",
+        title: "AI Report Assistant",
+        summary: "Transform your notes into a formal report narrative.",
+        icon: "ClipboardEdit",
+        targetPage: "/reporting-development/ai-report-writer",
+        category: "Reporting & Development"
+      },
+      {
+        id: "use-of-force-wizard",
+        title: "Use of Force Wizard",
+        summary: "Articulate your UoF based on Graham v. Connor factors.",
+        icon: "ShieldCheck",
+        targetPage: "/reporting-development/use-of-force-wizard",
+        category: "Reporting & Development",
       },
       {
         id: "report-proofreader",
@@ -110,27 +172,51 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         targetPage: "/training-development/report-proofreader",
         category: "Training & Development",
       },
+       {
+        id: "ai-charge-assistant",
+        title: "AI Charge Assistant",
+        summary: "Get AI-suggested charges based on your narrative.",
+        icon: "Gavel",
+        targetPage: "/reporting-development/ai-charge-assistant",
+        category: "Reporting & Development",
+      },
       {
-        id: "ai-report-writer",
-        title: "AI Report Assistant",
-        summary: "Transform your notes into a formal report narrative.",
-        icon: "ClipboardEdit",
-        targetPage: "/reporting-development/ai-report-writer",
-        category: "Reporting & Development"
+        id: "field-notes",
+        title: "Field Notes",
+        summary: "A persistent, auto-saving digital notepad.",
+        icon: "FileTextIcon",
+        targetPage: "/notes",
+        category: "Reporting & Development",
       },
     ],
   },
   {
-    category: "Officer Wellness & Rights",
-    icon: Heart,
+    category: "Officer Support & Development",
+    icon: GraduationCap,
     features: [
-      {
+       {
         id: "wellness-hub",
         title: "Wellness Hub",
         summary: "Access the confidential chatbot and guided decompression sessions.",
-        icon: "ShieldQuestion",
+        icon: "Heart",
         targetPage: "/wellness",
         category: "Wellness",
+      },
+      {
+        id: "role-play-simulator",
+        title: "AI De-escalation Coach",
+        summary: "Practice de-escalation skills against AI characters.",
+        icon: "MessageSquare",
+        targetPage: "/training-development/role-play-simulator",
+        category: "Training & Development",
+      },
+       {
+        id: "knowledge-check",
+        title: "Knowledge Drills",
+        summary: "Test your knowledge with quizzes on law and procedure.",
+        icon: "BrainCircuit",
+        targetPage: "/reporting-development/knowledge-check",
+        category: "Training & Development",
       },
       {
         id: "pobr-guide",
@@ -141,12 +227,12 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         category: "Wellness",
       },
       {
-        id: "court-testimony-guide",
-        title: "Court Testimony Guide",
-        summary: "Preparation and best practices for delivering clear testimony.",
-        icon: "Mic",
-        targetPage: "/officer-wellness-rights/court-testimony-guide",
-        category: "Wellness",
+        id: "field-translation-guide",
+        title: "Field Translator",
+        summary: "Audio translations for common field commands.",
+        icon: "Languages",
+        targetPage: "/field-translation-guide",
+        category: "Field Procedures",
       },
     ],
   },
