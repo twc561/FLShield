@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import * as LucideIcons from "lucide-react";
 import {
   Card,
   CardContent,
@@ -16,12 +17,14 @@ import {
   Loader2,
   Sparkles,
   AlertTriangle,
+  Building,
 } from "lucide-react";
 import { analyzeOrdinance } from "@/ai/flows/analyze-ordinance";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const OrdinanceDetailView = React.memo(function OrdinanceDetailView({
   detail,
@@ -93,6 +96,24 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
   const [customSearchResult, setCustomSearchResult] = React.useState<OrdinanceDetail | null>(null);
   const [customSearchError, setCustomSearchError] = React.useState<string | null>(null);
 
+  // State for pre-loaded data
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [activeAccordionItem, setActiveAccordionItem] = React.useState<string | undefined>();
+  const [cachedDetails, setCachedDetails] = React.useState<Record<string, OrdinanceDetail>>(initialDetails);
+  const [loadingId, setLoadingId] = React.useState<string | null>(null);
+
+  const lowercasedFilter = searchTerm.toLowerCase();
+
+  const filteredIndex = React.useMemo(() => {
+    if (!lowercasedFilter) return initialIndex;
+    return initialIndex.filter(
+      (item) =>
+        item.ordinanceTitle.toLowerCase().includes(lowercasedFilter) ||
+        item.ordinanceNumber.toLowerCase().includes(lowercasedFilter) ||
+        item.jurisdiction.toLowerCase().includes(lowercasedFilter)
+    );
+  }, [lowercasedFilter, initialIndex]);
+
   const handleCustomSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customJurisdiction || !customQuery) {
@@ -114,6 +135,11 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
     } finally {
       setIsCustomSearching(false);
     }
+  };
+
+  const handleAccordionChange = async (value: string | undefined) => {
+    setActiveAccordionItem(value);
+    // Data for pre-loaded ordinances is already in the `cachedDetails` state
   };
 
   return (
@@ -171,6 +197,57 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
           </CardContent>
         </Card>
       )}
+
+      <hr />
+
+      <div className="space-y-4">
+          <CardHeader className="px-1">
+              <CardTitle>Common Ordinance Quick Reference</CardTitle>
+              <CardDescription>A pre-loaded list of common ordinances for major jurisdictions.</CardDescription>
+          </CardHeader>
+         <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input
+              placeholder="Search common ordinances..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Accordion type="single" collapsible className="w-full space-y-2" value={activeAccordionItem} onValueChange={handleAccordionChange}>
+            {filteredIndex.map(item => {
+                const Icon = (LucideIcons as any)[item.icon as keyof typeof LucideIcons] || Building;
+                return (
+                    <AccordionItem value={item.ordinanceNumber} key={item.ordinanceNumber} className="border rounded-md bg-card">
+                        <AccordionTrigger className="p-4 hover:no-underline text-left">
+                            <div className="flex items-center gap-4 flex-1">
+                                <div className="p-2 bg-primary/10 rounded-lg">
+                                    <Building className="w-6 h-6 text-primary" />
+                                </div>
+                                <div className="flex-1 text-left">
+                                    <p className="font-semibold text-base text-card-foreground">{item.ordinanceTitle}</p>
+                                    <p className="text-xs text-muted-foreground">{item.ordinanceNumber} ({item.jurisdiction})</p>
+                                </div>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="p-4 pt-0">
+                            <div className="border-t pt-4">
+                                {loadingId === item.ordinanceNumber ? (
+                                    <Skeleton className="h-24 w-full" />
+                                ) : cachedDetails[item.ordinanceNumber] ? (
+                                    <OrdinanceDetailView detail={cachedDetails[item.ordinanceNumber]} />
+                                ) : (
+                                    <p>Loading...</p> 
+                                )}
+                            </div>
+                        </AccordionContent>
+                    </AccordionItem>
+                )
+            })}
+          </Accordion>
+          {filteredIndex.length === 0 && <p className="text-center text-muted-foreground py-4">No matching common ordinances found.</p>}
+      </div>
     </div>
   );
 });
+
