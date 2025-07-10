@@ -59,19 +59,24 @@ export const fieldInterviewData: EncounterType[] = [
     icon: "Handcuffs",
     legalStandard: "Probable Cause",
     officerActions: [
-      "Establish probable cause based on the totality of the circumstances that a crime has been, is being, or is about to be committed.",
-      "Inform the individual they are under arrest.",
-      "Conduct a full search incident to lawful arrest of the person and the area within their immediate control.",
-      "Read the individual their Miranda rights if you intend to conduct a custodial interrogation."
+      "**Felony Arrest:** A warrantless arrest can be made in a public place if you have probable cause that a felony has been committed, whether in your presence or not.",
+      "**Misdemeanor Arrest:** A warrantless arrest can generally only be made for a misdemeanor committed *in your presence*. **See Key Points for critical exceptions.**",
+      "**Procedure:** Clearly inform the subject they are under arrest. Conduct a full search incident to arrest. Read Miranda rights if you intend to conduct a custodial interrogation.",
     ],
     keyPoints: [
-      "Probable cause exists when the facts and circumstances would lead a reasonable person to believe a crime has occurred.",
-      "A search incident to arrest is automatic and justified for officer safety and to preserve evidence.",
-      "The line between detention and arrest is crossed when the seizure is no longer temporary and brief."
+      "**Florida's Misdemeanor Exceptions (F.S. § 901.15):** You CAN make a warrantless arrest for a misdemeanor NOT committed in your presence for specific offenses, including:",
+      "- Domestic Violence Battery",
+      "- Violation of a Domestic Violence Injunction",
+      "- Carrying a Concealed Weapon",
+      "- DUI (based on a crash investigation)",
+      "- Theft from a retail or wholesale establishment (Shoplifting)",
+      "- Possession of cannabis under 20 grams",
+      "**Probable Cause Standard:** For any arrest, you must have sufficient facts and circumstances to lead a reasonable person to believe a crime has occurred.",
+      "**Search Incident to Arrest:** This is automatic upon a lawful custodial arrest and is justified for officer safety and to preserve evidence.",
     ],
     caseLaw: {
       name: "Atwater v. City of Lago Vista (2001)",
-      summary: "The Fourth Amendment does not forbid a warrantless arrest for a minor criminal offense, even one punishable only by a fine. If you have probable cause for any jailable offense, you can make a full custodial arrest."
+      summary: "The Fourth Amendment does not forbid a warrantless arrest for a minor criminal offense, even one punishable only by a fine. If you have probable cause for any jailable offense (and statutory authority allows), you can make a full custodial arrest."
     }
   },
   {
