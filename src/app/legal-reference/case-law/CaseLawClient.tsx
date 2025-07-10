@@ -10,7 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Summarizer } from "@/components/ui/summarizer"
+import { Summarizer } from "@/components/Summarizer"
 import type { CaseLaw } from "@/data/case-law"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search, Gavel } from "lucide-react"
