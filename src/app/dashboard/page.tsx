@@ -50,6 +50,7 @@ const itemVariants = {
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("")
   const [userName, setUserName] = useState<string | null>(null);
+  const [isPwaInstalled, setIsPwaInstalled] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -64,6 +65,11 @@ export default function DashboardPage() {
       }
     }
     setGreeting(getGreeting());
+
+    // Check if running as a PWA
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsPwaInstalled(true);
+    }
 
     const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
         if (user) {
@@ -121,22 +127,24 @@ export default function DashboardPage() {
         <AICommandSearch />
       </motion.div>
 
-      <motion.div variants={itemVariants}>
-        <Card className="bg-primary/10 border-primary/20">
-            <CardHeader className="flex flex-row items-center gap-4">
-                <Download className="w-6 h-6 text-primary"/>
-                <div>
-                    <CardTitle>Get the Full App Experience</CardTitle>
-                    <CardDescription>Install Shield FL to your device's home screen for faster access.</CardDescription>
-                </div>
-            </CardHeader>
-            <CardContent>
-                <Button asChild>
-                    <Link href="/install">View Install Instructions</Link>
-                </Button>
-            </CardContent>
-        </Card>
-      </motion.div>
+      {!isPwaInstalled && (
+        <motion.div variants={itemVariants}>
+          <Card className="bg-primary/10 border-primary/20">
+              <CardHeader className="flex flex-row items-center gap-4">
+                  <Download className="w-6 h-6 text-primary"/>
+                  <div>
+                      <CardTitle>Get the Full App Experience</CardTitle>
+                      <CardDescription>Install Shield FL to your device's home screen for faster access.</CardDescription>
+                  </div>
+              </CardHeader>
+              <CardContent>
+                  <Button asChild>
+                      <Link href="/install">View Install Instructions</Link>
+                  </Button>
+              </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {dashboardFeatureGroups.map((group, groupIndex) => (
         <motion.div key={group.category} variants={itemVariants}>
