@@ -90,15 +90,17 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
       setLoadingStep("Identifying relevant statute...");
       const statuteResponse = await identifyCrimeStatute({ crimeDescription: searchTerm });
       const statuteNumber = statuteResponse.statuteNumber;
-      if (!statuteNumber) {
-        throw new Error("AI could not identify a statute for the query.");
+      
+      if (!statuteNumber || statuteNumber === "N/A") {
+        throw new Error("AI could not identify a relevant statute for the query.");
       }
       
       // Step 2: Lookup Instruction ID from map
       setLoadingStep("Mapping statute to jury instruction...");
       const mapping = instructionMap.find(m => m.statuteNumber === statuteNumber);
+      
       if (!mapping) {
-        throw new Error(`No standard jury instruction found for statute ${statuteNumber}.`);
+        throw new Error(`No standard jury instruction found for the identified statute: ${statuteNumber} (${statuteResponse.crimeName}).`);
       }
       const instructionID = mapping.instructionID;
 
