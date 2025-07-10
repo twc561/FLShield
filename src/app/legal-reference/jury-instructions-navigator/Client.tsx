@@ -14,6 +14,7 @@ import { Loader2, Search, Sparkles, Gavel, FileText, AlertTriangle, CheckCircle 
 import type { AnalyzeInstructionOutput as InstructionDetail } from "@/ai/flows/analyze-jury-instruction"
 import { analyzeInstruction, type AnalyzeInstructionInput } from "@/ai/flows/analyze-jury-instruction"
 import { findJuryInstruction, type FindJuryInstructionInput, type FindJuryInstructionOutput } from "@/ai/flows/find-jury-instruction"
+import { commonCrimesMap } from "@/data/legal-reference/common-crimes-map"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -78,19 +79,53 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
   const [loadingStep, setLoadingStep] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   
+  const resetSearchState = () => {
+    setIsLoading(false);
+    setError(null);
+    setAnalysisResult(null);
+    setDisambiguationOptions([]);
+    setLoadingStep("");
+  }
+  
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchTerm) return;
-    await performSemanticSearch({ query: searchTerm });
+
+    resetSearchState();
+    setIsLoading(true);
+    setLoadingStep("Analyzing query...");
+
+    // Phase 1: Local Search
+    const lowercasedQuery = searchTerm.toLowerCase();
+    const localMatches = commonCrimesMap
+      .map(crime => {
+        const keywords = crime.keywords.map(k => k.toLowerCase());
+        let score = 0;
+        if (crime.crimeName.toLowerCase() === lowercasedQuery) {
+          score = 100; // Prioritize exact name match
+        } else if (crime.crimeName.toLowerCase().includes(lowercasedQuery) || keywords.includes(lowercasedQuery)) {
+          score = 50; // High score for keyword match
+        } else if (keywords.some(k => lowercasedQuery.includes(k))) {
+            score = 20; // Lower score for partial match
+        }
+
+        return { ...crime, score };
+      })
+      .filter(crime => crime.score > 0)
+      .sort((a, b) => b.score - a.score);
+
+    if (localMatches.length > 0 && localMatches[0].score >= 50) {
+        // If we have a high-confidence local match, use it directly.
+        await analyzeAndDisplayInstruction({ instructionId: localMatches[0].instructionID });
+        return;
+    }
+
+    // Phase 2: AI Fallback Search
+    setLoadingStep("No local match found. Consulting AI analyst...");
+    await performAISearch({ query: searchTerm });
   }
 
-  const performSemanticSearch = async (input: FindJuryInstructionInput) => {
-    setIsLoading(true);
-    setError(null);
-    setAnalysisResult(null); // Explicitly reset previous results
-    setDisambiguationOptions([]);
-    setLoadingStep("AI is analyzing your query and searching the instruction database...");
-
+  const performAISearch = async (input: FindJuryInstructionInput) => {
     try {
         const findResponse = await findJuryInstruction(input);
         
@@ -112,9 +147,9 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
   }
 
   const analyzeAndDisplayInstruction = async (input: AnalyzeInstructionInput) => {
-    setIsLoading(true);
+    setIsLoading(true); // Ensure loading state is active
     setError(null);
-    setAnalysisResult(null); // Explicitly reset previous results
+    setAnalysisResult(null);
     setDisambiguationOptions([]);
     setLoadingStep("AI is analyzing instruction details...");
 
@@ -152,7 +187,7 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
                 <CardContent>
                     <Button type="submit" disabled={isLoading || !searchTerm}>
                         {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4 text-accent" />}
-                        {isLoading ? (loadingStep ? "Please wait..." : "Analyzing...") : "Analyze Jury Instruction"}
+                        {isLoading ? (loadingStep || "Analyzing...") : "Analyze Jury Instruction"}
                     </Button>
                 </CardContent>
             </form>
