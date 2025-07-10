@@ -80,7 +80,7 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
   const [error, setError] = React.useState<string | null>(null);
   
   const resetSearchState = () => {
-    setIsLoading(false);
+    setIsLoading(true);
     setError(null);
     setAnalysisResult(null);
     setDisambiguationOptions([]);
@@ -90,37 +90,50 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchTerm) return;
-
     resetSearchState();
-    setIsLoading(true);
-    setLoadingStep("Analyzing query...");
 
-    // Phase 1: Local Search
     const lowercasedQuery = searchTerm.toLowerCase();
-    const localMatches = commonCrimesMap
+
+    // --- Phase 1: Local Search ---
+    setLoadingStep("Searching local index...");
+
+    // Priority 1: Check for exact match of crime name
+    const exactMatch = commonCrimesMap.find(crime => crime.crimeName.toLowerCase() === lowercasedQuery);
+    if (exactMatch) {
+      if (exactMatch.instructionID === "AI_FALLBACK") {
+        await performAISearch({ query: searchTerm });
+      } else {
+        await analyzeAndDisplayInstruction({ instructionId: exactMatch.instructionID });
+      }
+      return;
+    }
+
+    // Priority 2: Check for keyword matches
+    const keywordMatches = commonCrimesMap
       .map(crime => {
         const keywords = crime.keywords.map(k => k.toLowerCase());
         let score = 0;
-        if (crime.crimeName.toLowerCase() === lowercasedQuery) {
-          score = 100; // Prioritize exact name match
-        } else if (crime.crimeName.toLowerCase().includes(lowercasedQuery) || keywords.includes(lowercasedQuery)) {
-          score = 50; // High score for keyword match
-        } else if (keywords.some(k => lowercasedQuery.includes(k))) {
-            score = 20; // Lower score for partial match
+        if (keywords.includes(lowercasedQuery)) {
+          score = 50;
+        } else if (keywords.some(k => lowercasedQuery.includes(k) || crime.crimeName.toLowerCase().includes(lowercasedQuery))) {
+          score = 20;
         }
-
         return { ...crime, score };
       })
       .filter(crime => crime.score > 0)
       .sort((a, b) => b.score - a.score);
 
-    if (localMatches.length > 0 && localMatches[0].score >= 50) {
-        // If we have a high-confidence local match, use it directly.
-        await analyzeAndDisplayInstruction({ instructionId: localMatches[0].instructionID });
+    if (keywordMatches.length > 0) {
+        if (keywordMatches[0].instructionID === "AI_FALLBACK") {
+            await performAISearch({ query: searchTerm });
+        } else {
+            await analyzeAndDisplayInstruction({ instructionId: keywordMatches[0].instructionID });
+        }
         return;
     }
 
-    // Phase 2: AI Fallback Search
+
+    // --- Phase 2: AI Fallback Search ---
     setLoadingStep("No local match found. Consulting AI analyst...");
     await performAISearch({ query: searchTerm });
   }
