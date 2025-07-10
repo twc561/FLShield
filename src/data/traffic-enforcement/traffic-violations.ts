@@ -1,11 +1,14 @@
 
-export type TrafficViolation = {
-  StatuteNumber: string;
+export type TrafficViolationIndexItem = {
+    StatuteNumber: string;
+    CommonName: string;
+    Category: string;
+};
+
+export type TrafficViolation = TrafficViolationIndexItem & {
   StatuteTitle: string;
-  CommonName: string;
   ViolationType: "Moving" | "Non-Moving" | "Criminal";
   InfractionType: "Civil" | "Criminal";
-  Category: string;
   Elements: string[];
   BaseFine: string;
   Points: string;
@@ -13,7 +16,7 @@ export type TrafficViolation = {
 };
 
 // Note: Fines are estimates and can vary by county.
-export const trafficViolationsData: TrafficViolation[] = [
+const allTrafficViolations: TrafficViolation[] = [
   // --- Core Moving Violations ---
   {
     StatuteNumber: "316.1925",
@@ -239,3 +242,14 @@ export const trafficViolationsData: TrafficViolation[] = [
     OfficerNotes: "'Serious bodily injury' means an injury that creates a substantial risk of death, serious personal disfigurement, or protracted loss or impairment of the function of any bodily member or organ. This is a third-degree felony and requires a mandatory blood draw from the driver.",
   }
 ];
+
+export const trafficViolationsIndex: TrafficViolationIndexItem[] = allTrafficViolations.map(v => ({
+    StatuteNumber: v.StatuteNumber,
+    CommonName: v.CommonName,
+    Category: v.Category
+}));
+
+export const trafficViolationsFullData: Record<string, TrafficViolation> = allTrafficViolations.reduce((acc, v) => {
+    acc[v.StatuteNumber] = v;
+    return acc;
+}, {} as Record<string, TrafficViolation>);

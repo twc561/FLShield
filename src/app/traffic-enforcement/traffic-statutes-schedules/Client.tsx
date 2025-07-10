@@ -11,13 +11,14 @@ import {
 } from "@/components/ui/accordion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import type { TrafficViolation, Statute } from "@/data"
+import type { TrafficViolation, TrafficViolationIndexItem, Statute } from "@/data"
 import { Search, Gavel, FileText, Ban, AlertTriangle, User, Car, Loader2, Sparkles, ExternalLink } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { findStatute } from "@/ai/flows/find-statute"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Summarizer } from "@/components/Summarizer"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const categoryIcons: { [key: string]: React.ElementType } = {
   "Core Moving Violations": Car,
@@ -27,13 +28,53 @@ const categoryIcons: { [key: string]: React.ElementType } = {
   "Commercial Motor Vehicle (CMV) Violations": Ban,
 }
 
-export const TrafficStatutesClient = React.memo(function TrafficStatutesClient({ violations }: { violations: TrafficViolation[] }) {
+const FullViolationContent = React.memo(function FullViolationContent({
+    violation
+}: {
+    violation: TrafficViolation
+}) {
+    return (
+        <div className="border-t pt-4 space-y-4">
+            <p className="text-sm text-muted-foreground italic">{violation.StatuteTitle}</p>
+            <div className="flex flex-wrap gap-2">
+            <Badge variant={violation.InfractionType === 'Criminal' ? 'destructive' : 'secondary'}>
+                {violation.InfractionType}
+            </Badge>
+            <Badge variant="outline">{violation.ViolationType} Violation</Badge>
+            <Badge variant="outline">{violation.Points} Points</Badge>
+            <Badge variant="outline">~${violation.BaseFine} Fine</Badge>
+            </div>
+            <div>
+            <h4 className="font-semibold text-foreground/90 mb-2">Elements of the Offense</h4>
+            <ul className="list-decimal pl-5 space-y-1 text-sm text-muted-foreground">
+                {violation.Elements.map((element, i) => <li key={i}>{element}</li>)}
+            </ul>
+            </div>
+            <div>
+            <h4 className="font-semibold text-foreground/90 mb-2">Officer Field Notes</h4>
+            <p className="text-sm text-accent-foreground/80 bg-accent/10 p-3 rounded-md">{violation.OfficerNotes}</p>
+            </div>
+      </div>
+    )
+})
+
+export const TrafficStatutesClient = React.memo(function TrafficStatutesClient({ 
+    initialViolations,
+    violationsFullData
+}: { 
+    initialViolations: TrafficViolationIndexItem[],
+    violationsFullData: Record<string, TrafficViolation>
+}) {
   const [searchTerm, setSearchTerm] = React.useState("")
   const [isAiSearching, setIsAiSearching] = React.useState(false)
   const [aiResult, setAiResult] = React.useState<Statute | null>(null)
   
   const searchParams = useSearchParams()
   const initialSearch = searchParams.get('search')
+
+  const [activeAccordionItem, setActiveAccordionItem] = React.useState<string | undefined>();
+  const [cachedData, setCachedData] = React.useState<Record<string, TrafficViolation>>({});
+  const [loadingId, setLoadingId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (initialSearch) {
@@ -45,15 +86,14 @@ export const TrafficStatutesClient = React.memo(function TrafficStatutesClient({
 
   const filteredViolations = React.useMemo(() => {
     if (!lowercasedFilter) {
-      return violations
+      return initialViolations
     }
-    return violations.filter(
+    return initialViolations.filter(
       (v) =>
         v.CommonName.toLowerCase().includes(lowercasedFilter) ||
-        v.StatuteNumber.toLowerCase().includes(lowercasedFilter) ||
-        v.StatuteTitle.toLowerCase().includes(lowercasedFilter)
+        v.StatuteNumber.toLowerCase().includes(lowercasedFilter)
     )
-  }, [lowercasedFilter, violations])
+  }, [lowercasedFilter, initialViolations])
 
   const groupedViolations = React.useMemo(() => {
     return filteredViolations.reduce((acc, violation) => {
@@ -63,7 +103,7 @@ export const TrafficStatutesClient = React.memo(function TrafficStatutesClient({
       }
       acc[Category].push(violation)
       return acc
-    }, {} as Record<string, TrafficViolation[]>)
+    }, {} as Record<string, TrafficViolationIndexItem[]>)
   }, [filteredViolations])
 
 
@@ -124,6 +164,20 @@ export const TrafficStatutesClient = React.memo(function TrafficStatutesClient({
     }
   }, [searchTerm, filteredViolations.length, initialSearch])
 
+  const handleAccordionChange = async (value: string | undefined) => {
+    setActiveAccordionItem(value);
+    if (!value) return; 
+    if (cachedData[value] || loadingId === value) return; 
+
+    setLoadingId(value);
+    await new Promise(res => setTimeout(res, 300)); // Simulate network delay
+
+    const fullData = violationsFullData[value];
+    if (fullData) {
+        setCachedData(prev => ({ ...prev, [value]: fullData }));
+    }
+    setLoadingId(null);
+  }
 
   const categoryOrder = [
     "Core Moving Violations",
@@ -229,7 +283,7 @@ export const TrafficStatutesClient = React.memo(function TrafficStatutesClient({
                   <CategoryIcon className="h-5 w-5 text-primary" />
                   {category}
                 </h2>
-                <Accordion type="single" collapsible className="w-full space-y-2">
+                <Accordion type="single" collapsible className="w-full space-y-2" value={activeAccordionItem} onValueChange={handleAccordionChange}>
                   {violationsInCategory.map((v) => (
                     <AccordionItem value={v.StatuteNumber} key={v.StatuteNumber} className="border rounded-md">
                       <AccordionTrigger className="p-4 hover:no-underline font-semibold text-base text-card-foreground">
@@ -239,27 +293,14 @@ export const TrafficStatutesClient = React.memo(function TrafficStatutesClient({
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="p-4 pt-0">
-                        <div className="border-t pt-4 space-y-4">
-                          <p className="text-sm text-muted-foreground italic">{v.StatuteTitle}</p>
-                          <div className="flex flex-wrap gap-2">
-                            <Badge variant={v.InfractionType === 'Criminal' ? 'destructive' : 'secondary'}>
-                              {v.InfractionType}
-                            </Badge>
-                            <Badge variant="outline">{v.ViolationType} Violation</Badge>
-                            <Badge variant="outline">{v.Points} Points</Badge>
-                            <Badge variant="outline">~${v.BaseFine} Fine</Badge>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-foreground/90 mb-2">Elements of the Offense</h4>
-                            <ul className="list-decimal pl-5 space-y-1 text-sm text-muted-foreground">
-                              {v.Elements.map((element, i) => <li key={i}>{element}</li>)}
-                            </ul>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-foreground/90 mb-2">Officer Field Notes</h4>
-                            <p className="text-sm text-accent-foreground/80 bg-accent/10 p-3 rounded-md">{v.OfficerNotes}</p>
-                          </div>
-                        </div>
+                         {loadingId === v.StatuteNumber && (
+                           <div className="border-t pt-4 space-y-4">
+                                <Skeleton className="h-4 w-3/4" />
+                                <Skeleton className="h-4 w-1/2" />
+                                <Skeleton className="h-10 w-full" />
+                           </div>
+                         )}
+                         {cachedData[v.StatuteNumber] && <FullViolationContent violation={cachedData[v.StatuteNumber]} />}
                       </AccordionContent>
                     </AccordionItem>
                   ))}
