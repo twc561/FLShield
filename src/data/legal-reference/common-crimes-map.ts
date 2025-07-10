@@ -32,25 +32,25 @@ export const commonCrimesMap: CommonCrimeMapEntry[] = [
     crimeName: "Robbery",
     statuteNumber: "812.13",
     instructionID: "FL_JI_CRIM_15_1",
-    keywords: ["rob", "robbery with a firearm", "forceful theft", "taking by force"],
+    keywords: ["robbery", "rob", "taking by force"],
   },
   {
     crimeName: "Burglary",
     statuteNumber: "810.02",
     instructionID: "FL_JI_CRIM_13_1",
-    keywords: ["b&e", "breaking and entering", "unlawful entry"],
+    keywords: ["burglary", "b&e", "breaking and entering", "unlawful entry"],
   },
   {
     crimeName: "Aggravated Battery",
     statuteNumber: "784.045",
     instructionID: "FL_JI_CRIM_8_7",
-    keywords: ["agg batt", "battery with a weapon"],
+    keywords: ["aggravated battery", "agg batt", "battery with a weapon"],
   },
   {
     crimeName: "Aggravated Assault",
     statuteNumber: "784.021",
     instructionID: "FL_JI_CRIM_8_4",
-    keywords: ["agg assault", "assault with a weapon"],
+    keywords: ["aggravated assault", "agg assault", "assault with a weapon"],
   },
   {
     crimeName: "Drug Trafficking",
@@ -76,7 +76,7 @@ export const commonCrimesMap: CommonCrimeMapEntry[] = [
     crimeName: "Theft",
     statuteNumber: "812.014",
     instructionID: "FL_JI_CRIM_14_1",
-    keywords: ["petit theft", "grand theft", "stolen", "shoplifting", "retail theft"],
+    keywords: ["theft", "petit theft", "grand theft", "stolen", "shoplifting", "retail theft"],
   },
   {
     crimeName: "Possession of a Controlled Substance",
@@ -88,32 +88,32 @@ export const commonCrimesMap: CommonCrimeMapEntry[] = [
     crimeName: "Resisting Officer With Violence",
     statuteNumber: "843.01",
     instructionID: "FL_JI_CRIM_21_2",
-    keywords: ["rowv", "battery on leo"],
+    keywords: ["rowv", "resisting with violence", "battery on leo"],
   },
    {
     crimeName: "Resisting Officer Without Violence",
     statuteNumber: "843.02",
     // No standard instruction, elements come from case law. AI fallback is appropriate.
     instructionID: "AI_FALLBACK", 
-    keywords: ["rowov", "resisting arrest"],
+    keywords: ["rowov", "resisting without violence", "resisting arrest"],
   },
   {
     crimeName: "Battery",
     statuteNumber: "784.03",
     instructionID: "FL_JI_CRIM_8_5",
-    keywords: ["simple battery"],
+    keywords: ["battery", "simple battery"],
   },
   {
     crimeName: "Assault",
     statuteNumber: "784.011",
     instructionID: "FL_JI_CRIM_8_3",
-    keywords: ["simple assault"],
+    keywords: ["assault", "simple assault"],
   },
   {
     crimeName: "Criminal Mischief",
     statuteNumber: "806.13",
     instructionID: "FL_JI_CRIM_12_3",
-    keywords: ["vandalism"],
+    keywords: ["criminal mischief", "vandalism"],
   },
   {
     crimeName: "Possession of Drug Paraphernalia",
@@ -128,7 +128,7 @@ export const commonCrimesMap: CommonCrimeMapEntry[] = [
     statuteNumber: "877.03",
     // No standard instruction, elements come from case law. AI fallback is appropriate.
     instructionID: "AI_FALLBACK", 
-    keywords: ["breach of peace", "disorderly"],
+    keywords: ["disorderly conduct", "breach of peace", "disorderly"],
   },
   {
     crimeName: "Loitering or Prowling",
@@ -156,21 +156,21 @@ export const commonCrimesMap: CommonCrimeMapEntry[] = [
     statuteNumber: "856.011",
      // No standard instruction, elements come from case law. AI fallback is appropriate.
     instructionID: "AI_FALLBACK",
-    keywords: ["public intoxication", "drunk in public"],
+    keywords: ["disorderly intoxication", "public intoxication", "drunk in public"],
   },
   {
     crimeName: "Driving Under the Influence (DUI)",
     statuteNumber: "316.193",
     // No standard instruction for the crime itself, handled by specific rules of evidence.
     instructionID: "AI_FALLBACK", 
-    keywords: ["dui", "dwi"],
+    keywords: ["dui", "dwi", "driving under the influence"],
   },
   {
     crimeName: "No Valid Driver's License",
     statuteNumber: "322.03",
     // No standard instruction, elements are statutory.
     instructionID: "AI_FALLBACK", 
-    keywords: ["nvdl", "no license"],
+    keywords: ["nvdl", "no license", "no valid driver's license"],
   },
   {
     crimeName: "Driving While License Suspended (DWLS)",
@@ -184,6 +184,6 @@ export const commonCrimesMap: CommonCrimeMapEntry[] = [
     statuteNumber: "790.01",
     // No standard instruction, elements are statutory.
     instructionID: "AI_FALLBACK", 
-    keywords: ["ccw"],
+    keywords: ["ccw", "carrying a concealed weapon"],
   }
 ];

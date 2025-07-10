@@ -114,9 +114,9 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
         const keywords = crime.keywords.map(k => k.toLowerCase());
         let score = 0;
         if (keywords.includes(lowercasedQuery)) {
-          score = 50;
-        } else if (keywords.some(k => lowercasedQuery.includes(k) || crime.crimeName.toLowerCase().includes(lowercasedQuery))) {
-          score = 20;
+          score = 50; // High score for exact keyword match
+        } else if (crime.crimeName.toLowerCase().includes(lowercasedQuery) || keywords.some(k => lowercasedQuery.includes(k))) {
+          score = 20; // Lower score for partial match
         }
         return { ...crime, score };
       })
