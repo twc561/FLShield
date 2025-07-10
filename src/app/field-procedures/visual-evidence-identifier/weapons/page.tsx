@@ -37,6 +37,38 @@ function WeaponResult({ result }: { result: IdentifyWeaponOutput }) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {result.make && (
+            <div className="grid grid-cols-2 gap-4 text-sm">
+                 <div className="p-3 bg-muted/50 rounded-lg">
+                    <p className="font-semibold text-foreground/90">Make</p>
+                    <p className="text-muted-foreground">{result.make}</p>
+                </div>
+                 <div className="p-3 bg-muted/50 rounded-lg">
+                    <p className="font-semibold text-foreground/90">Model</p>
+                    <p className="text-muted-foreground">{result.model}</p>
+                </div>
+                 <div className="p-3 bg-muted/50 rounded-lg">
+                    <p className="font-semibold text-foreground/90">Caliber/Gauge</p>
+                    <p className="text-muted-foreground">{result.caliber}</p>
+                </div>
+                <div className="p-3 bg-muted/50 rounded-lg">
+                    <p className="font-semibold text-foreground/90">Standard Capacity</p>
+                    <p className="text-muted-foreground">{result.standardMagazineCapacity}</p>
+                </div>
+            </div>
+        )}
+         {result.commonVariants && result.commonVariants.length > 0 && (
+            <div>
+                 <h3 className="font-semibold text-foreground/90 text-sm">Common Variants</h3>
+                 <div className="flex flex-wrap gap-2 mt-2">
+                    {result.commonVariants.map(variant => (
+                        <span key={variant} className="px-2 py-1 text-xs rounded-md bg-secondary text-secondary-foreground">
+                            {variant}
+                        </span>
+                    ))}
+                 </div>
+            </div>
+        )}
         <div>
             <h3 className="font-semibold text-foreground/90">Potentially Relevant Florida Statutes</h3>
             {result.relevantStatutes.length > 0 ? (
