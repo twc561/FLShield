@@ -32,6 +32,8 @@ import '@/ai/flows/legalAdvisor.ts';
 import '@/ai/flows/generate-image.ts';
 import '@/ai/flows/lookup-hazmat-placard.ts';
 import '@/ai/flows/generate-first-aid-protocol-image.ts';
+import '@/ai/flows/generate-substance-image.ts';
+
 
 
 

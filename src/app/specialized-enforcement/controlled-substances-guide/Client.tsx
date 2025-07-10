@@ -2,6 +2,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import * as LucideIcons from "lucide-react"
 import {
   Accordion,
@@ -13,14 +14,74 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import type { SubstancePlaceholder } from "@/data/specialized-enforcement/controlled-substances-index"
 import type { AnalyzeSubstanceOutput } from "@/ai/flows/analyze-substance"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { ShieldAlert, FlaskConical, Scale, Eye, User, Loader2, Sparkles } from "lucide-react"
+import { ShieldAlert, FlaskConical, Scale, Eye, User, Loader2, Sparkles, Image as ImageIcon } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { analyzeSubstance } from "@/ai/flows/analyze-substance"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { generateSubstanceImage } from "@/ai/flows/generate-substance-image"
+
+const SubstanceImageGenerator = ({ detail }: { detail: AnalyzeSubstanceOutput }) => {
+    const [imageUrl, setImageUrl] = React.useState<string | null>(null);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState<string | null>(null);
+
+    const handleGenerateImage = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            // Create a simple context for the image prompt based on the substance
+            const quantity = "A small, evidentiary pile, approximately 1-2 grams";
+            const context = "Displayed directly on the neutral surface, next to a metric ruler for scale.";
+
+            const result = await generateSubstanceImage({
+                substanceName: detail.commonName,
+                physicalForm: detail.fieldIdentification.appearance,
+                quantity: quantity,
+                context: context
+            });
+            setImageUrl(result.imageUrl);
+        } catch (e) {
+            console.error(e);
+            setError("Image generation failed. The model may have safety blocks for this substance.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <Card className="bg-muted/50 text-center p-4">
+             <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg"><ImageIcon className="h-5 w-5"/>AI-Generated Evidentiary Image</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center gap-4 pt-0">
+                {isLoading && <Loader2 className="w-12 h-12 text-primary animate-spin" />}
+                {!isLoading && imageUrl && (
+                    <div className="relative aspect-video w-full max-w-sm mx-auto">
+                        <Image src={imageUrl} alt={`Generated image for ${detail.commonName}`} fill className="object-contain rounded-md border bg-background" />
+                    </div>
+                )}
+                 {!isLoading && !imageUrl && (
+                    <>
+                        <p className="text-sm text-muted-foreground">Generate a clinical, non-sensationalized image of this substance for identification training.</p>
+                        {error && <p className="text-xs text-destructive">{error}</p>}
+                        <Button onClick={handleGenerateImage} disabled={isLoading} variant="secondary">
+                            <Sparkles className="mr-2 h-4 w-4 text-accent" />
+                            Generate Image
+                        </Button>
+                    </>
+                 )}
+            </CardContent>
+        </Card>
+    );
+};
+
 
 const DetailView = React.memo(({ detail }: { detail: AnalyzeSubstanceOutput }) => (
   <div className="space-y-6">
+    <SubstanceImageGenerator detail={detail} />
+
     {/* Street Names & Legal Info */}
     <Card>
       <CardHeader>
