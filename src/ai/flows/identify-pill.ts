@@ -1,13 +1,15 @@
+
 'use server';
 /**
  * @fileOverview An AI flow to identify a pill from an image.
  * This uses a multi-step process: first, describe the pill's visual
- * characteristics from an image, then use that description to search
- * for the pill's identity.
+ * characteristics from an image, then use a dedicated tool to search
+ * for the pill's identity based on those characteristics.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
+import { lookupPill } from '@/ai/tools/pill-lookup-tool';
 
 // Input for the entire flow
 const IdentifyPillInputSchema = z.object({
@@ -53,13 +55,18 @@ export async function identifyPillFromImage(input: IdentifyPillInput): Promise<I
 
   const visualDescriptionText = `${visualAnalysis.color}, ${visualAnalysis.shape}, imprint ${visualAnalysis.imprint}`;
 
-  // Step 2: Use the visual description to identify the pill
+  // Step 2: Use the visual description and the lookupPill tool to identify the pill
   const { output: identificationResult } = await ai.generate({
-    prompt: `You are an expert pharmacologist. A police officer has found an unknown pill with the following description: "${visualDescriptionText}".
+    model: 'googleai/gemini-2.5-flash',
+    system: `You are an expert pharmacologist assistant. Your task is to identify a pill based on its visual characteristics.
     
-    Perform a search of your knowledge base (prioritizing reliable sources like Drugs.com, WebMD, NLM) to identify this pill. Provide the drug name, its primary use, and key warnings.
-    
-    CRITICAL: If you cannot confidently identify the pill based on the description, you MUST return 'Unknown' for the drug name and 'Information not available' for the other fields. Do not guess.`,
+CRITICAL INSTRUCTIONS:
+1. You MUST use the 'lookupPill' tool to find information about the pill.
+2. Use the 'imprint', 'color', and 'shape' from the user's prompt as inputs for the tool.
+3. Once the tool returns the pill's data, summarize the 'drugName', 'primaryUse', and 'keyWarnings' fields into the required output format.
+4. If the tool returns 'Unknown' for the drug name, you MUST also return 'Unknown' and 'Information not available' for the other fields. Do not guess or use your general knowledge.`,
+    tools: [lookupPill],
+    prompt: `Identify the pill with the following characteristics: imprint='${visualAnalysis.imprint}', color='${visualAnalysis.color}', shape='${visualAnalysis.shape}'.`,
     output: {
       schema: z.object({
         drugName: IdentifyPillOutputSchema.shape.drugName,
