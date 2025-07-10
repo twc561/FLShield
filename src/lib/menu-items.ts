@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import {
   LayoutGrid, Bot, Star, Book, Scale, Gavel, ListChecks, Home, Car, Route, Footprints, Truck, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, Mic, Settings, Newspaper, Download, Heart
@@ -36,6 +37,7 @@ export const menuItems: MenuItem[] = [
     items: [
       { href: "/legal-reference/statutes", label: "Statute Navigator", icon: Scale },
       { href: "/legal-reference/case-law", label: "Case Law Vault", icon: Gavel },
+      { href: "/legal-reference/miranda-warning-guide", label: "Miranda Warning Guide", icon: Mic },
       { href: "/field-translation-guide", label: "Field Translation Guide", icon: LanguagesIcon },
       { href: "/emergency-response/hazmat-guide", label: "HAZMAT Placard Guide", icon: Biohazard },
       { href: "/specialized-enforcement/k9-officer-guide", label: "K-9 Officer Guide", icon: Dog },
