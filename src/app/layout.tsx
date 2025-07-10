@@ -15,6 +15,12 @@ import { auth, isFirebaseConfigured } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
 
+const LoadingScreen = () => (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+    </div>
+);
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -84,31 +90,8 @@ export default function RootLayout({
     }
   }, [])
 
-  if (showLoadingScreen) {
-      return (
-         <html lang="en" className="dark">
-           <head>
-            <title>Florida Shield</title>
-            <meta name="description" content="The essential digital partner for the modern Florida officer." />
-            <link rel="icon" href="/logo.svg" type="image/svg+xml" sizes="any" />
-            <link rel="manifest" href="/manifest.json" />
-            <meta name="theme-color" content="#1F2937" />
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-            <link
-              href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-              rel="stylesheet"
-            />
-          </head>
-            <body className="flex items-center justify-center min-h-screen bg-background">
-                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </body>
-         </html>
-      )
-  }
-
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <title>Florida Shield</title>
         <meta name="description" content="The essential digital partner for the modern Florida officer." />
@@ -122,7 +105,9 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={cn("antialiased min-h-screen")} suppressHydrationWarning>
+      <body className={cn("antialiased min-h-screen")}>
+          {showLoadingScreen && <LoadingScreen />}
+
           {showAppShell ? (
             <SidebarProvider>
               <div className="flex min-h-screen">
@@ -136,10 +121,10 @@ export default function RootLayout({
               <Toaster />
             </SidebarProvider>
           ) : (
-            <>
+            <div className={cn(showLoadingScreen && 'invisible')}>
               {children}
               <Toaster />
-            </>
+            </div>
           )}
       </body>
     </html>
