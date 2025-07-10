@@ -2,7 +2,7 @@
 'use client'
 
 import { usePathname } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import "@/app/globals.css"
 import { cn } from "@/lib/utils"
 import { SidebarProvider } from "@/components/ui/sidebar"
@@ -11,6 +11,16 @@ import { ContextualPanel } from "@/components/ContextualPanel"
 import { Toaster } from "@/components/ui/toaster"
 import { MobileBottomNav } from "@/components/MobileBottomNav"
 import { AuthWrapper } from "@/components/AuthWrapper"
+import { Loader2 } from "lucide-react"
+import { onAuthStateChanged } from "firebase/auth"
+import { auth } from "@/lib/firebase"
+
+const LoadingScreen = () => (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+    </div>
+);
+
 
 export default function RootLayout({
   children,
@@ -18,6 +28,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   const pathname = usePathname()
+  const [isLoading, setIsLoading] = useState(true);
   
   const publicPages = [
     "/",
@@ -34,6 +45,10 @@ export default function RootLayout({
   const isPublicPage = publicPages.includes(pathname);
 
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+        setIsLoading(false);
+    });
+
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js')
@@ -45,6 +60,8 @@ export default function RootLayout({
           });
       });
     }
+
+    return () => unsubscribe();
   }, [])
 
   return (
@@ -64,24 +81,27 @@ export default function RootLayout({
       </head>
       <body className={cn("antialiased min-h-screen")}>
           <AuthWrapper>
-            {isPublicPage ? (
-                <>
-                    {children}
-                    <Toaster />
-                </>
-            ) : (
-                 <SidebarProvider>
-                    <div className="flex min-h-screen">
-                        <AppSidebar />
-                        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto pb-20 md:pb-6">
-                        {children}
-                        </main>
-                        <ContextualPanel />
-                    </div>
-                    <MobileBottomNav />
-                    <Toaster />
-                </SidebarProvider>
-            )}
+            {isLoading && !isPublicPage && <LoadingScreen />}
+            <div className={cn(isLoading && !isPublicPage && "opacity-0")}>
+              {isPublicPage ? (
+                  <>
+                      {children}
+                      <Toaster />
+                  </>
+              ) : (
+                  <SidebarProvider>
+                      <div className="flex min-h-screen">
+                          <AppSidebar />
+                          <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto pb-20 md:pb-6">
+                          {children}
+                          </main>
+                          <ContextualPanel />
+                      </div>
+                      <MobileBottomNav />
+                      <Toaster />
+                  </SidebarProvider>
+              )}
+            </div>
           </AuthWrapper>
       </body>
     </html>

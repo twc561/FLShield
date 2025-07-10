@@ -14,22 +14,18 @@ const LoadingScreen = () => (
 );
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-    const [isMounted, setIsMounted] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
     const pathname = usePathname();
     const router = useRouter();
 
     useEffect(() => {
-        setIsMounted(true);
-
         if (!isFirebaseConfigured) {
             console.warn("Firebase is not configured. Authentication will be skipped.");
-            setIsAuthenticated(false);
             return;
         }
 
-        const unsubscribe = onAuthStateChanged(auth!, (user: User | null) => {
-            setIsAuthenticated(!!user);
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
         });
 
         return () => unsubscribe();
@@ -40,34 +36,29 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         "/cjis-compliance", "/support", "/request-demo",
         "/terms-of-use", "/privacy-policy", "/security",
     ];
-    const authPages = ["/", "/login"];
+    const authPages = ["/login"]; // Only login page now
 
     const isPublicPage = publicPages.includes(pathname);
+    const isAuthPage = authPages.includes(pathname);
+    const isAuthenticated = !!user;
 
     useEffect(() => {
-        if (isAuthenticated === null) {
-            return; // Wait for authentication check to complete
-        }
+        if (!isFirebaseConfigured) return;
 
+        // If user is not authenticated and trying to access a protected page, redirect to login.
         if (!isAuthenticated && !isPublicPage) {
             router.push('/login');
         }
 
-        if (isAuthenticated && authPages.includes(pathname)) {
+        // If user is authenticated and on the login page, redirect to dashboard.
+        if (isAuthenticated && isAuthPage) {
             router.push('/dashboard');
         }
-    }, [isAuthenticated, isPublicPage, pathname, router]);
+         // If user is authenticated and on the marketing homepage, redirect to dashboard.
+        if (isAuthenticated && pathname === '/') {
+            router.push('/dashboard');
+        }
+    }, [isAuthenticated, isPublicPage, isAuthPage, pathname, router]);
 
-    // This is the key to fixing the hydration error.
-    // We don't render anything that depends on client-side state until after the component has mounted.
-    if (!isMounted) {
-        return <LoadingScreen />;
-    }
-    
-    if (isAuthenticated || isPublicPage) {
-         return <>{children}</>;
-    }
-
-    // This will be shown while redirecting or if auth state is still resolving
-    return <LoadingScreen />;
+    return <>{children}</>;
 }
