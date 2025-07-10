@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import * as React from "react"
@@ -12,10 +13,9 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Loader2, Search, Sparkles, Gavel, FileText, AlertTriangle, CheckCircle } from "lucide-react"
 import type { InstructionDetail } from "@/data/legal-reference/standard-jury-instructions"
-import { analyzeInstruction } from "@/ai/flows/analyze-jury-instruction"
-import { identifyCrimeStatute } from "@/ai/flows/identify-crime-statute"
-import { instructionMap } from "@/data/legal-reference/instruction-map"
-import { commonCrimesMap } from "@/data/legal-reference/common-crimes-map"
+import { analyzeInstruction, type AnalyzeInstructionInput } from "@/ai/flows/analyze-jury-instruction"
+import { findJuryInstruction, type FindJuryInstructionInput, type FindJuryInstructionOutput } from "@/ai/flows/find-jury-instruction"
+
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -73,7 +73,8 @@ const InstructionDetailView = React.memo(({ detail }: { detail: InstructionDetai
 
 export const JuryInstructionsClient = React.memo(function JuryInstructionsClient() {
   const [searchTerm, setSearchTerm] = React.useState("")
-  const [searchResult, setSearchResult] = React.useState<InstructionDetail | null>(null);
+  const [analysisResult, setAnalysisResult] = React.useState<InstructionDetail | null>(null);
+  const [disambiguationOptions, setDisambiguationOptions] = React.useState<FindJuryInstructionOutput['disambiguationOptions']>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [loadingStep, setLoadingStep] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
@@ -81,51 +82,54 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchTerm) return;
+    await performSearch({ query: searchTerm });
+  }
 
+  const performSearch = async (input: FindJuryInstructionInput) => {
     setIsLoading(true);
     setError(null);
-    setSearchResult(null);
-    let statuteNumber: string | null = null;
-    let crimeName: string | null = null;
+    setAnalysisResult(null);
+    setDisambiguationOptions([]);
 
     try {
-      // Step 1 (Local Lookup): Check common crimes map first for a reliable match.
-      setLoadingStep("Checking common crimes list...");
-      const lowerCaseSearchTerm = searchTerm.toLowerCase();
-      const commonCrimeMatch = commonCrimesMap.find(crime => crime.keywords.some(kw => lowerCaseSearchTerm.includes(kw)));
-
-      if (commonCrimeMatch) {
-        statuteNumber = commonCrimeMatch.statuteNumber;
-        crimeName = commonCrimeMatch.crimeName;
+      // Phase 1 & 2: Local search is now implicitly part of the new AI flow.
+      // The AI flow will perform semantic search.
+      setLoadingStep("AI is analyzing your query and searching the instruction database...");
+      const findResponse = await findJuryInstruction(input);
+      
+      if (findResponse.disambiguationOptions && findResponse.disambiguationOptions.length > 0) {
+        // Phase 3: AI-Powered Disambiguation
+        setLoadingStep("Please clarify your search.");
+        setDisambiguationOptions(findResponse.disambiguationOptions);
+      } else if (findResponse.instructionID) {
+        // Direct match found, proceed to final analysis.
+        await analyzeAndDisplayInstruction({ instructionId: findResponse.instructionID });
       } else {
-        // Step 2 (AI Fallback): If no common crime found, use AI to identify the statute.
-        setLoadingStep("AI is identifying relevant statute...");
-        const statuteResponse = await identifyCrimeStatute({ crimeDescription: searchTerm });
-        statuteNumber = statuteResponse.statuteNumber;
-        crimeName = statuteResponse.crimeName;
+        throw new Error("Could not find a relevant jury instruction for your query.");
       }
-      
-      if (!statuteNumber || statuteNumber === "N/A") {
-        throw new Error("AI could not identify a relevant statute for the query.");
-      }
-      
-      // Step 3 (Map Lookup): Map the identified statute to a jury instruction ID.
-      setLoadingStep("Mapping statute to jury instruction...");
-      const mapping = instructionMap.find(m => m.statuteNumber === statuteNumber);
-      
-      if (!mapping) {
-        throw new Error(`No standard jury instruction found for the identified statute: ${statuteNumber} (${crimeName}).`);
-      }
-      const instructionID = mapping.instructionID;
-
-      // Step 4 (AI Analysis): Analyze the verified instruction.
-      setLoadingStep("AI is analyzing instruction details...");
-      const analysisResult = await analyzeInstruction({ instructionId: instructionID });
-      setSearchResult(analysisResult);
 
     } catch (e: any) {
         console.error(e);
         setError(e.message || "An unknown error occurred. Please try again.");
+    } finally {
+        setIsLoading(false);
+        setLoadingStep("");
+    }
+  }
+
+  const analyzeAndDisplayInstruction = async (input: AnalyzeInstructionInput) => {
+    setIsLoading(true);
+    setError(null);
+    setAnalysisResult(null);
+    setDisambiguationOptions([]);
+    setLoadingStep("AI is analyzing instruction details...");
+
+    try {
+        const analysis = await analyzeInstruction({ instructionId: input.instructionId });
+        setAnalysisResult(analysis);
+    } catch(e: any) {
+        console.error(e);
+        setError(e.message || "An unknown error occurred analyzing the instruction.");
     } finally {
         setIsLoading(false);
         setLoadingStep("");
@@ -153,45 +157,66 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
                 </CardContent>
                 <CardContent>
                     <Button type="submit" disabled={isLoading || !searchTerm}>
-                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4 text-accent" />}
-                        {isLoading ? "Analyzing..." : "Analyze Jury Instruction"}
+                        {isLoading && !loadingStep ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4 text-accent" />}
+                        {isLoading ? (loadingStep ? "Please wait..." : "Analyzing...") : "Analyze Jury Instruction"}
                     </Button>
                 </CardContent>
             </form>
         </Card>
 
-        {isLoading && (
-            <div className="text-center py-16">
-              <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
-              <h3 className="mt-4 text-lg font-medium">Analyzing...</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{loadingStep}</p>
-            </div>
-        )}
-
-        {error && (
-             <Alert variant="destructive" className="my-6">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Analysis Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-            </Alert>
-        )}
-
-        {searchResult && (
-            <Card className="animate-fade-in-up">
-                <CardHeader>
-                    <div className="flex items-center gap-3">
-                        <CheckCircle className="h-6 w-6 text-green-500" />
-                        <div>
-                            <CardTitle>Analysis for: {searchResult.instructionTitle}</CardTitle>
-                            <CardDescription>Florida Standard Jury Instruction {searchResult.instructionNumber}</CardDescription>
-                        </div>
+        {(isLoading || error || disambiguationOptions.length > 0 || analysisResult) && (
+            <div className="mt-6">
+                {isLoading && (
+                    <div className="text-center py-16">
+                    <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
+                    <h3 className="mt-4 text-lg font-medium">Analyzing...</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{loadingStep}</p>
                     </div>
-                </CardHeader>
-                <CardContent>
-                    <InstructionDetailView detail={searchResult} />
-                </CardContent>
-            </Card>
+                )}
+
+                {error && (
+                    <Alert variant="destructive" className="my-6">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>Analysis Error</AlertTitle>
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                )}
+
+                {disambiguationOptions.length > 0 && !isLoading && (
+                    <Card className="animate-fade-in-up">
+                        <CardHeader>
+                            <CardTitle>Clarification Needed</CardTitle>
+                            <CardDescription>Your search matched multiple results. Please select the most relevant option.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                           {disambiguationOptions.map(option => (
+                               <Button key={option.instructionID} variant="outline" className="w-full justify-start" onClick={() => analyzeAndDisplayInstruction({ instructionId: option.instructionID })}>
+                                   {option.instructionTitle}
+                               </Button>
+                           ))}
+                        </CardContent>
+                    </Card>
+                )}
+
+                {analysisResult && !isLoading && (
+                    <Card className="animate-fade-in-up">
+                        <CardHeader>
+                            <div className="flex items-center gap-3">
+                                <CheckCircle className="h-6 w-6 text-green-500" />
+                                <div>
+                                    <CardTitle>Analysis for: {analysisResult.instructionTitle}</CardTitle>
+                                    <CardDescription>Florida Standard Jury Instruction {analysisResult.instructionNumber}</CardDescription>
+                                </div>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <InstructionDetailView detail={analysisResult} />
+                        </CardContent>
+                    </Card>
+                )}
+            </div>
         )}
     </div>
   );
 });
+
