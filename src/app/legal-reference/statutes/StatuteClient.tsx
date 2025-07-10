@@ -215,7 +215,7 @@ export const StatuteClient = memo(function StatuteClient({
       findStatute({ query: currentSearchTerm })
         .then((result) => {
           if (searchTerm === currentSearchTerm) {
-            if (result && result.code) {
+            if (result && result.code && result.code !== 'N/A') {
               const newStatute: Statute = {
                 id: result.code.toLowerCase().replace(/[^a-z0-9]/g, "-"),
                 code: result.code || "N/A",
