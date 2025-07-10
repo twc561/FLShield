@@ -20,6 +20,23 @@ const PillLookupOutputSchema = z.object({
   keyWarnings: z.string().describe("A brief summary of the most critical warnings or potential side effects associated with the drug. If unknown, state 'Information not available.'"),
 });
 
+const pillDBPrompt = ai.definePrompt(
+  {
+    name: "pillDBPrompt",
+    input: { schema: PillLookupInputSchema },
+    output: { schema: PillLookupOutputSchema },
+    prompt: `You are a pill identification database API. Your ONLY function is to take an imprint, color, and shape, and return the corresponding drug information from your internal knowledge base which is sourced from FDA data.
+    
+CRITICAL RULES:
+1. You MUST only use the provided characteristics to find an EXACT match.
+2. If the combination of imprint, color, and shape does not match a known drug in your database EXACTLY, you MUST return 'Unknown' for 'drugName' and 'Information not available' for all other fields.
+3. DO NOT GUESS. DO NOT INFER. DO NOT PROVIDE A 'CLOSEST MATCH'. Your only job is to return exact data or state that it is unknown.
+
+Database query for pill with imprint '{{{imprint}}}', color '{{{color}}}', and shape '{{{shape}}}'.`
+  }
+);
+
+
 export const lookupPill = ai.defineTool(
   {
     name: 'lookupPill',
@@ -29,24 +46,10 @@ export const lookupPill = ai.defineTool(
   },
   async (input) => {
     // In a real application, this would make an external API call to a service like the NLM Pillbox API.
-    // For this simulation, we'll use an AI call that is heavily constrained to act like a database.
+    // For this simulation, we use a highly constrained AI prompt to act like a database.
     console.log(`[Pill Lookup Tool] Looking up pill with characteristics: ${JSON.stringify(input)}`);
 
-    const { output } = await ai.generate({
-        system: "You are a pill identification database API. Your only function is to take an imprint, color, and shape, and return the corresponding drug information from the FDA's database. Your knowledge is limited to publicly available drug data. If the provided characteristics do not match a known drug, you MUST return 'Unknown' and 'Information not available'. Do not guess or infer. Provide only factual data.",
-        prompt: `Database query for pill with imprint '${input.imprint}', color '${input.color}', and shape '${input.shape}'.`,
-        output: {
-            schema: PillLookupOutputSchema,
-        },
-        config: {
-            safetySettings: [
-                {
-                    category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-                    threshold: 'BLOCK_NONE',
-                },
-            ],
-        }
-    });
+    const { output } = await pillDBPrompt(input);
 
     return output!;
   }
