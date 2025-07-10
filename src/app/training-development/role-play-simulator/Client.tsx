@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Send, Bot, User, Loader2, Volume2, Lightbulb, PauseCircle, PlayCircle } from "lucide-react";
+import { ArrowLeft, Send, Bot, User, Loader2, Volume2, Lightbulb, PauseCircle, PlayCircle, AlertTriangle, RefreshCw } from "lucide-react";
 import type { ScenarioPack } from "@/data/training/scenarios";
 import {
   getRoleplayResponse,
@@ -25,7 +25,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 type Message = {
   id: string;
-  role: "user" | "model" | "system";
+  role: "user" | "model" | "system" | "failure";
   content: string;
   audioUrl?: string;
   audioLoading?: boolean;
@@ -36,6 +36,7 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isFailed, setIsFailed] = useState(false);
   const [activeAudioId, setActiveAudioId] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
@@ -53,10 +54,16 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
     scrollToBottom();
   }, [messages]);
   
-  const handleSelectScenario = (scenario: ScenarioPack) => {
-    setSelectedScenario(scenario);
+  const resetScenario = () => {
     setMessages([]);
     setUserInput("");
+    setIsFailed(false);
+    stopAudio();
+  };
+
+  const handleSelectScenario = (scenario: ScenarioPack) => {
+    setSelectedScenario(scenario);
+    resetScenario();
   };
 
   const handleGoBack = () => {
@@ -105,7 +112,7 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
     try {
       const historyForAI = messages
         .concat(userMessage)
-        .filter(msg => msg.role !== 'system')
+        .filter(msg => msg.role === 'user' || msg.role === 'model')
         .map(msg => ({
           role: msg.role as 'user' | 'model',
           parts: [{ text: msg.content }],
@@ -118,9 +125,17 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
         conversationHistory: historyForAI,
         dynamicBehaviorTree: selectedScenario.dynamicBehaviorTree,
         feedbackTriggers: selectedScenario.feedbackTriggers,
+        failureConditions: selectedScenario.failureConditions,
       };
       
       const response = await getRoleplayResponse(aiInput);
+
+      if (response?.isFailed && response.failureFeedback) {
+        setMessages(prev => [...prev, { id: `failure-${Date.now()}`, role: 'failure', content: response.failureFeedback }]);
+        setIsFailed(true);
+        setIsLoading(false);
+        return;
+      }
 
       if (!response || !response.characterResponse) {
         throw new Error("Received an empty response from the AI.");
@@ -173,12 +188,12 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
       
     } catch (error) {
       console.error("Failed to get AI response:", error);
-      const errorId = `model-error-${Date.now()}`;
+      const errorId = `system-error-${Date.now()}`;
       setMessages(prev => [...prev, { id: errorId, role: "system", content: "[Error: Could not get a response. The model may be unavailable. Please try again.]" }]);
     } finally {
       setIsLoading(false);
     }
-  }, [messages, selectedScenario, userInput]);
+  }, [messages, selectedScenario, userInput, stopAudio]);
   
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -256,6 +271,17 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
                             </Alert>
                         )
                     }
+                    if (message.role === 'failure') {
+                         return (
+                            <Alert key={message.id} variant="destructive">
+                                <AlertTriangle className="h-4 w-4" />
+                                <AlertTitle>Scenario Failed</AlertTitle>
+                                <AlertDescription>
+                                    {message.content}
+                                </AlertDescription>
+                            </Alert>
+                        )
+                    }
                     return (
                         <div key={message.id} className={cn("flex items-start gap-3", message.role === "user" ? "justify-end" : "justify-start")}>
                             {message.role === 'model' && (
@@ -287,21 +313,28 @@ export function RoleplayClient({ scenarios }: { scenarios: ScenarioPack[] }) {
         </ScrollArea>
       </CardContent>
       <CardFooter className="p-4 border-t">
-        <div className="flex w-full items-center gap-2">
-          <Textarea
-            placeholder={`Ask ${selectedScenario.characterProfile.name} a question...`}
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="flex-1 resize-none"
-            rows={1}
-            disabled={isLoading}
-          />
-          <Button onClick={handleSendMessage} disabled={isLoading || !userInput.trim()}>
-            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            <span className="sr-only">Send</span>
-          </Button>
-        </div>
+        {isFailed ? (
+            <Button onClick={resetScenario} className="w-full">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Start Over
+            </Button>
+        ) : (
+             <div className="flex w-full items-center gap-2">
+                <Textarea
+                    placeholder={`Ask ${selectedScenario.characterProfile.name} a question...`}
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    className="flex-1 resize-none"
+                    rows={1}
+                    disabled={isLoading}
+                />
+                <Button onClick={handleSendMessage} disabled={isLoading || !userInput.trim()}>
+                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                    <span className="sr-only">Send</span>
+                </Button>
+            </div>
+        )}
       </CardFooter>
     </Card>
   );

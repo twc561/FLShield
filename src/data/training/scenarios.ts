@@ -20,6 +20,10 @@ export type ScenarioPack = {
     condition: string;
     feedback: string;
   }[];
+   failureConditions: {
+    condition: string;
+    feedback: string;
+  }[];
   debriefingCriteria: string[];
 };
 
@@ -49,7 +53,7 @@ export const trainingScenarios: ScenarioPack[] = [
       },
       {
         if: "Officer gives direct commands like 'Calm down!' or 'Stop yelling!'.",
-        then: "Shift persona to 'More Agitated'. Begin yelling 'Leave me alone! You can\'t help me!'.",
+        then: "Shift persona to 'More Agitated'. Begin yelling 'Leave me alone! You can\\'t help me!'.",
       },
       {
         if: "Officer asks about his background or family in an empathetic way.",
@@ -63,12 +67,18 @@ export const trainingScenarios: ScenarioPack[] = [
       },
       {
         condition: "the officer stands too close or uses an aggressive 'command' stance.",
-        feedback: 'Creating distance and using open, non-threatening body language can significantly lower the subject\'s anxiety and increase compliance.',
+        feedback: 'Creating distance and using open, non-threatening body language can significantly lower the subject\\'s anxiety and increase compliance.',
       },
       {
         condition: "the officer rushes the conversation or interrupts the subject.",
         feedback: 'Patience is a key de-escalation tactic. Giving the person time and space to talk can provide valuable information and build trust.',
       },
+    ],
+    failureConditions: [
+        {
+            condition: "the officer immediately threatens arrest or uses aggressive, accusatory language like 'What's your problem?' or 'You're coming with me'.",
+            feedback: 'This approach has escalated the situation unnecessarily. In a mental health crisis call with no crime committed, the primary goal is de-escalation, not enforcement. Threatening arrest at this stage is counterproductive. The scenario has failed.'
+        }
     ],
     debriefingCriteria: [
       'Did you successfully build rapport without escalating the situation?',
@@ -114,6 +124,12 @@ export const trainingScenarios: ScenarioPack[] = [
             feedback: "This witness is a nervous civilian, not a suspect. Building rapport first might yield more information."
         }
     ],
+    failureConditions: [
+      {
+        condition: "the officer repeatedly asks leading questions or suggests details to the witness, contaminating their memory.",
+        feedback: "You have contaminated the witness's memory by suggesting details. An effective interview extracts information, it doesn't implant it. The scenario has failed."
+      }
+    ],
     debriefingCriteria: [
       "Did you effectively build rapport to calm the nervous witness?",
       "Did you use open-ended questions to elicit a detailed narrative?",
@@ -156,6 +172,12 @@ export const trainingScenarios: ScenarioPack[] = [
         {
             condition: "the officer threatens arrest or a citation for a simple noise complaint immediately.",
             feedback: "Escalating to enforcement too quickly can backfire. Focus on gaining voluntary compliance first. It's often more effective."
+        }
+    ],
+    failureConditions: [
+        {
+            condition: "the officer attempts to force entry into the apartment for a simple noise complaint without any exigent circumstances.",
+            feedback: "A noise complaint does not provide grounds to force entry into a private residence. This is a significant constitutional violation. The scenario has failed."
         }
     ],
     debriefingCriteria: [
@@ -202,6 +224,12 @@ export const trainingScenarios: ScenarioPack[] = [
             feedback: "Remember, this is a consensual encounter. You need probable cause or consent to search. Articulate your reasonable suspicion for the stop, but don't overstep."
         }
     ],
+    failureConditions: [
+        {
+            condition: "the officer detains the subject for an extended period or transports them to the station without establishing probable cause for a crime.",
+            feedback: "You have escalated a consensual encounter into an unlawful detention. Without probable cause, you cannot detain someone indefinitely or transport them. The scenario has failed."
+        }
+    ],
     debriefingCriteria: [
       "Could you articulate sufficient reasonable suspicion for the initial stop based on the scenario?",
       "Did you use effective communication to turn an investigatory stop into a consensual encounter?",
@@ -246,6 +274,12 @@ export const trainingScenarios: ScenarioPack[] = [
             feedback: "Don't get into a debate. State your lawful purpose clearly and maintain control of the scene. Your priority is to check for a crime and ensure safety."
         }
     ],
+    failureConditions: [
+      {
+        condition: "the officer enters the home and immediately resorts to physical force without attempting any verbal commands to gain control.",
+        feedback: "You failed to attempt verbal de-escalation and immediately used physical force, escalating the situation without justification. The scenario has failed."
+      }
+    ],
     debriefingCriteria: [
       "Did you maintain tactical advantage and officer safety upon entry?",
       "Did you use effective verbal commands to gain control of the scene and separate the parties?",
@@ -288,6 +322,12 @@ export const trainingScenarios: ScenarioPack[] = [
         {
             condition: "the officer continues to detain the driver after the traffic stop's mission is complete without new reasonable suspicion.",
             feedback: "Remember Rodriguez v. U.S. Once you've written the ticket/warning, the stop is over. You need fresh reasonable suspicion to prolong the detention."
+        }
+    ],
+    failureConditions: [
+        {
+            condition: "the officer searches the vehicle without consent and without articulating any additional probable cause beyond the odor of marijuana.",
+            feedback: "A search based solely on the odor of marijuana is legally insufficient in Florida. This would be an unconstitutional search. The scenario has failed."
         }
     ],
     debriefingCriteria: [
@@ -334,6 +374,12 @@ export const trainingScenarios: ScenarioPack[] = [
         feedback: "Remember to explore potential leads. Ask about recent unusual activity or people in the area to develop potential suspect information."
       }
     ],
+     failureConditions: [
+        {
+            condition: "the officer displays a complete lack of empathy, rushes the victim, and leaves without gathering sufficient information for a report.",
+            feedback: "Your approach has failed to properly serve the victim or gather necessary information for the investigation. Building rapport is a core competency. The scenario has failed."
+        }
+    ],
     debriefingCriteria: [
       "Did you effectively use empathy to build rapport with the victim?",
       "Did your questioning structure help the victim provide a detailed list of stolen property?",
@@ -377,6 +423,12 @@ export const trainingScenarios: ScenarioPack[] = [
         condition: "the officer immediately threatens to break the window or use force without first establishing a clear pattern of non-compliance.",
         feedback: "Maintain the professional high ground. Use patience as a tactic. Your calm, repeated commands build a stronger case for any necessary physical escalation later."
       }
+    ],
+     failureConditions: [
+        {
+            condition: "the officer loses their temper, uses profanity, or engages in a prolonged, unprofessional argument, completely losing control of the interaction.",
+            feedback: "You have lost your professional composure and control of the encounter, which is a critical failure. The scenario has failed."
+        }
     ],
     debriefingCriteria: [
       "Did you maintain your composure and professionalism throughout the encounter?",
