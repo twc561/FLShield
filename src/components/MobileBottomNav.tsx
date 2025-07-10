@@ -56,11 +56,8 @@ export function MobileBottomNav() {
 
   const isActive = (href: string) => {
     if (!isClient) return false
+    // Exact match for dashboard, startsWith for others to handle nested pages.
     if (href === "/dashboard") return pathname === href
-    // For parent routes, we want an exact match, otherwise they are always active.
-    const isParentRoute = mainNavItems.some(item => item.href === href);
-    if (isParentRoute) return pathname === href;
-    
     return pathname.startsWith(href)
   }
 
