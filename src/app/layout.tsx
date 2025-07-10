@@ -3,7 +3,7 @@
 
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
-import "./globals.css"
+import "@/app/globals.css"
 import { cn } from "@/lib/utils"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
