@@ -15,13 +15,16 @@ const LoadingScreen = () => (
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+    const [isMounted, setIsMounted] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
 
     useEffect(() => {
+        setIsMounted(true);
+
         if (!isFirebaseConfigured) {
             console.warn("Firebase is not configured. Authentication will be skipped.");
-            setIsAuthenticated(false); 
+            setIsAuthenticated(false);
             return;
         }
 
@@ -55,19 +58,16 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         }
     }, [isAuthenticated, isPublicPage, pathname, router]);
 
-
-    // Show loading screen while auth state is being determined,
-    // unless it's a public page which can be shown immediately.
-    if (isAuthenticated === null && !isPublicPage) {
+    // This is the key to fixing the hydration error.
+    // We don't render anything that depends on client-side state until after the component has mounted.
+    if (!isMounted) {
         return <LoadingScreen />;
     }
     
-    // If the user is authenticated, or it's a public page, show the content.
-    // If unauthenticated and on a private page, the effect above will redirect,
-    // but we can show a loader in the meantime to avoid flashes of content.
     if (isAuthenticated || isPublicPage) {
          return <>{children}</>;
     }
 
+    // This will be shown while redirecting or if auth state is still resolving
     return <LoadingScreen />;
 }
