@@ -36,7 +36,6 @@ export default function RootLayout({
     return () => unsubscribe();
   }, []);
   
-  // Define public pages that don't require authentication
   const publicPages = [
     "/",
     "/login",
@@ -47,24 +46,21 @@ export default function RootLayout({
     "/request-demo",
     "/terms-of-use",
     "/privacy-policy",
-    
+    "/security",
   ];
   const isPublicPage = publicPages.includes(pathname);
 
-  // Define pages that an authenticated user should be redirected away from
   const authPages = ["/", "/login"];
 
   useEffect(() => {
     if (isAuthenticated === null) {
-      return; // Wait for auth state to be determined
+      return; 
     }
     
-    // If user is not authenticated and not on a public page, redirect to login
     if (!isAuthenticated && !isPublicPage) {
       router.push('/login');
     }
 
-    // If user is authenticated and on a landing/login page, redirect to dashboard
     if (isAuthenticated && authPages.includes(pathname)) {
         router.push('/dashboard');
     }

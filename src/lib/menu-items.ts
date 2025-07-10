@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import {
-  LayoutGrid, Bot, Star, Book, Scale, Gavel, ListChecks, Home, Car, Route, Footprints, Truck, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, Mic, Settings, Newspaper, Download, Heart
+  LayoutGrid, Bot, Star, Book, Scale, Gavel, ListChecks, Home, Car, Route, Footprints, Truck, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, Mic, Settings, Newspaper, Download, Heart, Users as UsersIcon, FileText as FileTextIcon
 } from "lucide-react"
 
 type SubMenuItem = {
@@ -21,6 +21,7 @@ export const menuItems: MenuItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
   { href: "/ai-legal-advisor", label: "AI Legal Advisor", icon: Bot },
   { href: "/voice-assistant", label: "AI Partner (Voice)", icon: Mic },
+  { href: "/live-debrief", label: "Live AI Debrief", icon: LanguagesIcon },
   {
     label: "Training & Briefing",
     icon: GraduationCap,
