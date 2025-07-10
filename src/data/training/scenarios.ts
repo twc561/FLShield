@@ -1,3 +1,4 @@
+
 export type ScenarioPack = {
   scenarioID: string;
   scenarioTitle: string;
@@ -275,10 +276,10 @@ export const trainingScenarios: ScenarioPack[] = [
         }
     ],
     failureConditions: [
-      {
-        condition: "the officer enters the home and immediately resorts to physical force without attempting any verbal commands to gain control.",
-        feedback: "You failed to attempt verbal de-escalation and immediately used physical force, escalating the situation without justification. The scenario has failed."
-      }
+        {
+            condition: "the officer enters the home and immediately resorts to physical force without attempting any verbal commands to gain control.",
+            feedback: "You failed to attempt verbal de-escalation and immediately used physical force, escalating the situation without justification. The scenario has failed."
+        }
     ],
     debriefingCriteria: [
       "Did you maintain tactical advantage and officer safety upon entry?",
@@ -426,7 +427,7 @@ export const trainingScenarios: ScenarioPack[] = [
     ],
      failureConditions: [
         {
-            condition: "the officer loses their temper, uses profanity, or engages in a prolonged, unprofessional argument, completely losing control of the interaction.",
+            condition: "the officer loses their temper, uses profanity, or engages in a prolonged, unprofessional argument, completely losing control of the encounter.",
             feedback: "You have lost your professional composure and control of the encounter, which is a critical failure. The scenario has failed."
         }
     ],

@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/tabs";
 import type { MirandaWarningGuideData, LanguageContent } from "@/data/legal-reference/miranda-warning-guide";
 import { Gavel, AlertTriangle, Languages, CheckCircle, Mic, Milestone, Volume2, Loader2, PauseCircle } from "lucide-react";
-import { trilingualTextToSpeech } from "@/ai/flows/trilingual-tts";
 import { Button } from "@/components/ui/button";
 
 const LanguageContentWithAudio = ({ 
@@ -111,21 +110,14 @@ export function MirandaWarningClient({
     setActiveAudioId(id);
 
     try {
-      const response = await trilingualTextToSpeech({ text, language });
-      const audioDataUri = response.media;
-
-      if (!audioRef.current) {
-        audioRef.current = new Audio();
-        audioRef.current.onended = stopAudio;
-        audioRef.current.onerror = stopAudio;
-      }
-      
-      if (audioRef.current && audioDataUri) {
-        audioRef.current.src = audioDataUri;
-        await audioRef.current.play();
-      } else {
-        throw new Error("Audio generation failed or audio element not available.");
-      }
+      // Since trilingual-tts is removed, we'll simulate the behavior.
+      // In a real scenario, we might call different TTS flows or have a placeholder.
+      console.log(`Simulating TTS for [${language}]: "${text}"`);
+      // Simulate network delay
+      await new Promise(res => setTimeout(res, 1000));
+      // In a real app with audio, you'd set the audioRef.current.src here
+      // For now, we'll just stop the loading indicator.
+      stopAudio();
     } catch (error) {
       console.error("Audio playback failed:", error);
       stopAudio();
