@@ -50,7 +50,7 @@ const itemVariants = {
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("")
   const [userName, setUserName] = useState<string | null>(null);
-  const [isPwaInstalled, setIsPwaInstalled] = useState(false);
+  const [isPwaInstalled, setIsPwaInstalled] = useState(true); // Default to true to avoid rendering the card on the server
   const { toast } = useToast();
 
   useEffect(() => {
@@ -66,9 +66,11 @@ export default function DashboardPage() {
     }
     setGreeting(getGreeting());
 
-    // Check if running as a PWA
+    // Check if running as a PWA only after the component has mounted on the client
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsPwaInstalled(true);
+    } else {
+      setIsPwaInstalled(false);
     }
 
     const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
