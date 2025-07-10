@@ -1,5 +1,4 @@
 
-
 import { config } from 'dotenv';
 config();
 
@@ -36,6 +35,7 @@ import '@/ai/flows/generate-first-aid-protocol-image.ts';
 import '@/ai/flows/generate-substance-image.ts';
 import '@/ai/flows/identify-crime-statute.ts';
 import '@/ai/flows/find-jury-instruction.ts';
+import '@/ai/flows/live-debrief-flow.ts';
 
 
 

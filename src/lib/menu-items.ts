@@ -106,6 +106,7 @@ export const menuItems: MenuItem[] = [
     icon: Heart,
     items: [
         { href: "/wellness", label: "Wellness Hub", icon: ShieldQuestion },
+        { href: "/wellness/live-debrief", label: "Live AI Debrief", icon: BrainCircuit },
         { href: "/officer-wellness-rights/police-officers-bill-of-rights", label: "Police Officer's Bill...", icon: ShieldCheck },
         { href: "/officer-wellness-rights/court-testimony-guide", label: "Court Testimony Guide", icon: Mic },
     ],
