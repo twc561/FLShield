@@ -1,11 +1,12 @@
+
 'use client'
 
 import { PageHeader } from "@/components/PageHeader";
 import { dailyBriefingData } from "@/data/daily-briefing";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Scale, MessageCircle, AlertTriangle, ShieldCheck } from "lucide-react";
-import { motion } from "framer-motion"
+import { AlertTriangle, ShieldCheck } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function DailyBriefingPage() {
   const briefing = dailyBriefingData;
@@ -19,15 +20,16 @@ export default function DailyBriefingPage() {
         ease: "easeOut"
       },
     },
-  }
+  };
   
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0 },
-  }
+  };
 
   return (
     <motion.div 
+      key="daily-briefing-page"
       initial="hidden"
       animate="show"
       variants={containerVariants}
