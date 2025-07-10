@@ -9,6 +9,7 @@
  */
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
+import { juryInstructionDetails } from '@/data/legal-reference/standard-jury-instructions';
 
 const AnalyzeInstructionInputSchema = z.object({
   instructionId: z.string().describe('The unique ID of the jury instruction to analyze, e.g., "FL_JI_CRIM_8_1".'),
@@ -36,10 +37,27 @@ export type AnalyzeInstructionOutput = z.infer<typeof AnalyzeInstructionOutputSc
 
 
 export async function analyzeInstruction(input: AnalyzeInstructionInput): Promise<AnalyzeInstructionOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are a Trial Procedure Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific Florida Standard Jury Instruction. For the given ID, retrieve the full text and then parse it into a practical format for a patrol officer focused on case building. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the following schema.
+  const instructionData = juryInstructionDetails[input.instructionId];
 
-Instruction ID: ${input.instructionId}`,
+  if (!instructionData) {
+    throw new Error(`Instruction with ID ${input.instructionId} not found.`);
+  }
+
+  const { output } = await ai.generate({
+    prompt: `You are a Trial Procedure Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of the specific Florida Standard Jury Instruction provided below. Do NOT use any outside knowledge. Your entire analysis MUST be based *only* on the text provided.
+
+Parse the provided text into a practical format for a patrol officer focused on case building. The most important part is the 'elementsToProve' section; for each legal element, you must derive a list of practical, actionable steps an officer should take to gather evidence for that specific element.
+
+Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema.
+
+--- START OF JURY INSTRUCTION TO ANALYZE ---
+Instruction ID: ${instructionData.id}
+Instruction Number: ${instructionData.instructionNumber}
+Instruction Title: ${instructionData.instructionTitle}
+Related Statute: ${instructionData.relatedStatute}
+Full Text:
+${instructionData.fullText}
+--- END OF JURY INSTRUCTION TO ANALYZE ---`,
     output: {
       schema: AnalyzeInstructionOutputSchema,
     },

@@ -52,8 +52,8 @@ export const standardJuryInstructionsPlaceholders: InstructionPlaceholder[] = [
   { id: "FL_JI_CRIM_25_17", instructionNumber: "25.17", instructionTitle: "Possession of Drug Paraphernalia", category: "Drug Offenses", icon: "Pipette" },
 
   // Anticipatory Crimes
-  { id: "FL_JI_CRIM_5_1", instructionNumber: "5.1", instructionTitle: "Attempt", category: "Anticipatory Crimes", icon: "IterationCw" },
-  { id: "FL_JI_CRIM_10_1", instructionNumber: "10.1", instructionTitle: "Conspiracy", category: "Anticipatory Crimes", icon: "Users" },
+  { id: "FL_JI_CRIM_5_1", instructionNumber: "5.1", instructionTitle: "Attempt", category: "Inchoate Crimes", icon: "IterationCw" },
+  { id: "FL_JI_CRIM_10_1", instructionNumber: "10.1", instructionTitle: "Conspiracy", category: "Inchoate Crimes", icon: "Users" },
   
   // Defenses
   { id: "FL_JI_CRIM_3_6_F", instructionNumber: "3.6(f)", instructionTitle: "Justifiable Use of Deadly Force", category: "Defenses", icon: "ShieldCheck" },
@@ -63,3 +63,31 @@ export const standardJuryInstructionsPlaceholders: InstructionPlaceholder[] = [
   // Resisting Officer
   { id: "FL_JI_CRIM_21_2", instructionNumber: "21.2", instructionTitle: "Resisting Officer With Violence", category: "Public Order & Obstruction", icon: "UserX" }
 ];
+
+
+// This is the new data source containing the full text for analysis.
+export const juryInstructionDetails: Record<string, Omit<InstructionDetail, 'plainLanguageSummary' | 'elementsToProve'>> = {
+  'FL_JI_CRIM_13_1': {
+    id: 'FL_JI_CRIM_13_1',
+    instructionNumber: '13.1',
+    instructionTitle: 'Burglary',
+    relatedStatute: 'F.S. § 810.02',
+    fullText: `To prove the crime of Burglary, the State must prove the following two elements beyond a reasonable doubt:
+    1. (Defendant) entered a [structure] [conveyance] owned by or in the possession of (person alleged).
+    2. At the time of entering the [structure] [conveyance], (defendant) had the intent to commit an offense other than burglary or trespass in that [structure] [conveyance].
+    The offense intended cannot be trespass or burglary. It is not necessary for the State to prove that the offense intended was actually committed.
+    A person "enters" a structure or conveyance when they cross the plane of the threshold of the structure or conveyance.`
+  },
+  'FL_JI_CRIM_15_1': {
+    id: 'FL_JI_CRIM_15_1',
+    instructionNumber: '15.1',
+    instructionTitle: 'Robbery',
+    relatedStatute: 'F.S. § 812.13',
+    fullText: `To prove the crime of Robbery, the State must prove the following three elements beyond a reasonable doubt:
+    1. (Defendant) took [money or property] from the person or custody of (person alleged).
+    2. (Defendant) used force, violence, assault, or putting in fear in the course of the taking.
+    3. The property taken was of some value.
+    "In the course of the taking" means that the act occurred prior to, at the same time as, or subsequent to the taking of the property and that the act and the taking of the property constitute a continuous series of acts or events.`
+  }
+  // Add other instruction details here as needed.
+};
