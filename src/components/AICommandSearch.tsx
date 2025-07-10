@@ -2,20 +2,18 @@
 "use client";
 
 import React, { useState } from 'react';
-import { ArrowRight, Loader, Sparkles, AlertTriangle } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowRight, Loader, Sparkles, AlertTriangle, FileText, Search as SearchIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { commandSearch } from '@/ai/flows/commandSearch';
-
-const predefinedAnswers: Record<string, string> = {
-  "baker act criteria": "To initiate a Baker Act, you need reason to believe the person is mentally ill AND because of that illness they are a danger to self/others OR are self-neglectful. They must also have refused voluntary examination. See Baker Act Guide for full details.",
-  "marchman act criteria": "To initiate a Marchman Act, you need evidence the person has lost self-control regarding substance abuse AND as a result, they pose a danger to self/others. See Marchman Act Guide for full details.",
-  "dwls with knowledge": "To charge Driving While License Suspended With Knowledge (a criminal offense), you must establish the driver knew their license was suspended. This can be proven by prior citations for DWLS or official DMV mail notifications to their registered address.",
-  "graham factors": "The three Graham Factors to judge use of force are: 1. The severity of the crime at issue. 2. Whether the suspect poses an immediate threat to the safety of the officers or others. 3. Whether the suspect is actively resisting arrest or attempting to evade arrest by flight."
-};
+import { localSearch, type SearchResult } from '@/lib/local-search';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 
 const AICommandSearch = () => {
   const [query, setQuery] = useState('');
-  const [result, setResult] = useState<string | null>(null);
+  const [aiResult, setAiResult] = useState<string | null>(null);
+  const [localResults, setLocalResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchedQuery, setSearchedQuery] = useState('');
@@ -25,35 +23,43 @@ const AICommandSearch = () => {
     if (!query.trim()) return;
 
     setSearchedQuery(query);
-    setResult(null);
+    setLocalResults([]);
+    setAiResult(null);
     setError(null);
     setIsLoading(true);
 
-    const lowerCaseQuery = query.toLowerCase();
-    const predefinedAnswerKey = Object.keys(predefinedAnswers).find(key => lowerCaseQuery.includes(key));
+    // Step 1: Perform local search first
+    const localMatches = localSearch(query);
 
-    if (predefinedAnswerKey && predefinedAnswers[predefinedAnswerKey]) {
-        setTimeout(() => {
-            setResult(predefinedAnswers[predefinedAnswerKey]);
-            setIsLoading(false);
-        }, 500); // Simulate a quick search
-        return;
+    if (localMatches.length > 0) {
+      setLocalResults(localMatches.slice(0, 5)); // Show top 5 local results
+      setIsLoading(false);
+      return;
     }
 
+    // Step 2: If no local results, fall back to AI search
     try {
-      const aiResult = await commandSearch({ query });
-      if (aiResult?.answer) {
-        setResult(aiResult.answer);
+      const result = await commandSearch({ query });
+      if (result?.answer) {
+        setAiResult(result.answer);
       } else {
         throw new Error("AI returned an empty response.");
       }
     } catch (err) {
       console.error(err);
-      setError("Unable to connect to the AI network. Please check your connection and try again.");
+      setError("The local search found no matches, and the AI network appears to be unavailable. Please check your connection and try again.");
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handleReset = () => {
+    setQuery('');
+    setLocalResults([]);
+    setAiResult(null);
+    setError(null);
+    setSearchedQuery('');
+  }
 
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -63,7 +69,7 @@ const AICommandSearch = () => {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search statutes or case law (e.g., 'Graham v. Connor')"
+            placeholder="Search statutes, case law, procedures, or ask the AI..."
             className="w-full h-14 pl-6 pr-16 text-lg bg-card/50 border-2 border-border focus:border-primary focus:ring-0 rounded-full outline-none transition-colors"
           />
           <button
@@ -71,12 +77,12 @@ const AICommandSearch = () => {
             className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground hover:bg-primary/80 transition-transform active:scale-90 disabled:opacity-50"
             disabled={isLoading || !query.trim()}
           >
-            {isLoading ? <Loader className="w-5 h-5 animate-spin" /> : <ArrowRight className="w-5 h-5" />}
+            {isLoading ? <Loader className="w-5 h-5 animate-spin" /> : <SearchIcon className="w-5 h-5" />}
           </button>
         </div>
       </form>
        <p className="text-xs text-muted-foreground mt-2 text-center max-w-lg mx-auto">
-        For Public Records Only. Do not enter names, license plates, or case numbers.
+        This is a hybrid search. It checks local guides first, then asks the AI. For Public Records Only.
       </p>
 
       <div className="mt-6">
@@ -89,7 +95,7 @@ const AICommandSearch = () => {
               className="flex flex-col items-center justify-center text-center text-muted-foreground py-8"
             >
               <Loader className="w-8 h-8 animate-spin text-primary" />
-              <p className="mt-2 text-sm">AI is processing your query...</p>
+              <p className="mt-2 text-sm">Searching all sources...</p>
             </motion.div>
           )}
 
@@ -98,14 +104,42 @@ const AICommandSearch = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="p-4 bg-destructive/10 border border-destructive/50 rounded-lg text-destructive flex items-center gap-3"
+              className="p-4 bg-destructive/10 border border-destructive/50 rounded-lg text-destructive flex flex-col items-center gap-3"
             >
-              <AlertTriangle className="w-5 h-5" />
-              <p>{error}</p>
+                <div className="flex items-center gap-3"><AlertTriangle className="w-5 h-5" /> <p className="font-semibold">Search Error</p></div>
+                <p className='text-center'>{error}</p>
+                <Button variant="destructive" onClick={handleReset}>Clear Search</Button>
             </motion.div>
           )}
 
-          {result && !isLoading && (
+          {localResults.length > 0 && !isLoading && (
+             <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+               <div className="p-4 bg-card/80 border border-border rounded-lg shadow-lg">
+                <h3 className="font-semibold text-lg text-foreground mb-4">Top Local Results for: <span className="italic">"{searchedQuery}"</span></h3>
+                <div className='space-y-3'>
+                    {localResults.map(item => (
+                        <Link href={item.href} key={item.id}>
+                             <div className="p-3 border rounded-md hover:bg-muted/50 hover:border-primary/50 transition-colors cursor-pointer flex items-center justify-between">
+                                <div>
+                                    <p className="font-medium text-foreground/90">{item.title}</p>
+                                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                                </div>
+                                <Badge variant="secondary">{item.category}</Badge>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+                 <div className='text-center mt-4'>
+                    <Button variant="ghost" onClick={handleReset}>Clear Search</Button>
+                 </div>
+              </div>
+            </motion.div>
+          )}
+
+          {aiResult && !isLoading && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -113,12 +147,32 @@ const AICommandSearch = () => {
               <div className="p-6 bg-card/80 border border-border rounded-lg shadow-lg">
                 <div className="flex items-start gap-3 mb-3">
                   <Sparkles className="w-5 h-5 text-accent flex-shrink-0 mt-1" />
-                  <h3 className="font-semibold text-lg text-foreground">AI Briefing for: <span className="italic">"{searchedQuery}"</span></h3>
+                  <div>
+                    <h3 className="font-semibold text-lg text-foreground">AI Briefing for: <span className="italic">"{searchedQuery}"</span></h3>
+                    <p className='text-xs text-muted-foreground'>No local results found. This answer was generated by AI.</p>
+                  </div>
                 </div>
-                <p className="text-foreground/90 leading-relaxed whitespace-pre-wrap">{result}</p>
+                <p className="text-foreground/90 leading-relaxed whitespace-pre-wrap">{aiResult}</p>
+                <div className='text-center mt-4'>
+                    <Button variant="ghost" onClick={handleReset}>Clear Search</Button>
+                 </div>
               </div>
             </motion.div>
           )}
+
+          {!isLoading && localResults.length === 0 && !aiResult && searchedQuery && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-4 bg-muted/50 border rounded-lg text-muted-foreground flex flex-col items-center gap-3 text-center"
+              >
+                  <FileText className="w-8 h-8" />
+                  <p className="font-semibold">No results found for "{searchedQuery}"</p>
+                  <p className="text-sm">Please try a different search term.</p>
+                  <Button variant="ghost" onClick={handleReset}>Clear Search</Button>
+              </motion.div>
+          )}
+
         </AnimatePresence>
       </div>
     </div>
