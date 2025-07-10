@@ -30,7 +30,13 @@ const prompt = ai.definePrompt({
   name: 'identifyCrimeStatutePrompt',
   input: { schema: IdentifyCrimeStatuteInputSchema },
   output: { schema: IdentifyCrimeStatuteOutputSchema },
-  prompt: `You are an AI paralegal for Florida law. Your task is to identify the single most probable Florida Statute number for the described crime. You must return the statute number, the common crime name, and a brief justification.
+  prompt: `You are an AI paralegal for Florida law. Your task is to identify the single most probable Florida Statute number for the described crime.
+
+Follow these steps:
+1.  Analyze the user's crime description to understand its key components.
+2.  Think about what specific actions define that crime under Florida law.
+3.  Based on your analysis, select the single most appropriate statute number.
+4.  Provide the statute number, the common crime name, and a brief justification for your choice in the required JSON format.
 
 Crime Description: {{{crimeDescription}}}`,
 });
