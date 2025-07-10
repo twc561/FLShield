@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import {
-  LayoutGrid, Bot, Star, Book, Scale, Gavel, ListChecks, Home, Car, Route, Footprints, Truck, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, Mic, Settings, Newspaper, Download, Heart, Users as UsersIcon, FileText as FileTextIcon
+  LayoutGrid, Bot, Star, Book, Scale, Gavel, ListChecks, Home, Car, Route, Footprints, Truck, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, Mic, Settings, Newspaper, Download, Users as UsersIcon, FileText as FileTextIcon, Heart
 } from "lucide-react"
 
 type SubMenuItem = {
@@ -18,18 +18,14 @@ type MenuItem = {
 }
 
 export const menuItems: MenuItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
-  { href: "/ai-legal-advisor", label: "AI Legal Advisor", icon: Bot },
-  { href: "/voice-assistant", label: "AI Partner (Voice)", icon: Mic },
-  { href: "/live-debrief", label: "Live AI Debrief", icon: LanguagesIcon },
   {
     label: "Training & Briefing",
     icon: GraduationCap,
     items: [
-        { href: "/daily-briefing", label: "Daily Briefing", icon: Newspaper },
-        { href: "/training-development/role-play-simulator", label: "AI Role-Play Simulator", icon: MessageSquare },
-        { href: "/reporting-development/knowledge-check", label: "Knowledge Check", icon: GraduationCap },
-        { href: "/training-development/common-misperceptions", label: "Common Misperceptions", icon: ShieldAlert },
+      { href: "/daily-briefing", label: "Daily Briefing", icon: Newspaper },
+      { href: "/training-development/role-play-simulator", label: "AI Role-Play Simulator", icon: MessageSquare },
+      { href: "/reporting-development/knowledge-check", label: "Knowledge Check", icon: GraduationCap },
+      { href: "/training-development/common-misperceptions", label: "Common Misperceptions", icon: ShieldAlert },
     ],
   },
   {
@@ -66,24 +62,4 @@ export const menuItems: MenuItem[] = [
         { href: "/officer-wellness-rights/court-testimony-guide", label: "Court Testimony Guide", icon: Mic },
     ],
   },
-  {
-    label: "Guides",
-    icon: Book,
-    items: [
-      { href: "/emergency-response/alert-guides", label: "Amber/Silver Alerts", icon: AlertCircle },
-      { href: "/emergency-response/baker-act-guide", label: "Baker Act Guide", icon: BrainCircuit },
-      { href: "/emergency-response/marchman-act-guide", label: "Marchman Act Guide", icon: FlaskConical },
-      { href: "/emergency-response/first-aid-guide", label: "First Aid Field Guide", icon: HeartPulse },
-      { href: "/specialized-enforcement/animal-cruelty-investigation", label: "Animal Cruelty Guide", icon: Stethoscope },
-      { href: "/traffic-enforcement/commercial-vehicle-info", label: "Commercial Vehicle Info", icon: Truck },
-    ]
-  },
-  {
-    label: "Settings",
-    icon: Settings,
-    items: [
-        { href: "/favorites", label: "Favorites", icon: Star },
-        { href: "/install", label: "Install App", icon: Download },
-    ]
-  }
-]
+];
