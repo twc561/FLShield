@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Loader2, Search, Sparkles, Gavel, FileText, AlertTriangle, CheckCircle } from "lucide-react"
-import type { InstructionDetail } from "@/data/legal-reference/standard-jury-instructions"
+import type { AnalyzeInstructionOutput as InstructionDetail } from "@/ai/flows/analyze-jury-instruction"
 import { analyzeInstruction, type AnalyzeInstructionInput } from "@/ai/flows/analyze-jury-instruction"
 import { findJuryInstruction, type FindJuryInstructionInput, type FindJuryInstructionOutput } from "@/ai/flows/find-jury-instruction"
 
@@ -87,7 +87,7 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
   const performSemanticSearch = async (input: FindJuryInstructionInput) => {
     setIsLoading(true);
     setError(null);
-    setAnalysisResult(null);
+    setAnalysisResult(null); // Explicitly reset previous results
     setDisambiguationOptions([]);
     setLoadingStep("AI is analyzing your query and searching the instruction database...");
 
@@ -114,7 +114,7 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
   const analyzeAndDisplayInstruction = async (input: AnalyzeInstructionInput) => {
     setIsLoading(true);
     setError(null);
-    setAnalysisResult(null);
+    setAnalysisResult(null); // Explicitly reset previous results
     setDisambiguationOptions([]);
     setLoadingStep("AI is analyzing instruction details...");
 
@@ -151,7 +151,7 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
                 </CardContent>
                 <CardContent>
                     <Button type="submit" disabled={isLoading || !searchTerm}>
-                        {isLoading && !loadingStep ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4 text-accent" />}
+                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4 text-accent" />}
                         {isLoading ? (loadingStep ? "Please wait..." : "Analyzing...") : "Analyze Jury Instruction"}
                     </Button>
                 </CardContent>
