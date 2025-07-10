@@ -1,5 +1,4 @@
 
-
 "use client"
 
 import * as React from "react"
@@ -14,7 +13,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Loader2, Search, Sparkles, Gavel, FileText, AlertTriangle, CheckCircle } from "lucide-react"
 import type { InstructionDetail } from "@/data/legal-reference/standard-jury-instructions"
 import { analyzeInstruction, type AnalyzeInstructionInput } from "@/ai/flows/analyze-jury-instruction"
+import { identifyCrimeStatute } from "@/ai/flows/identify-crime-statute"
 import { findJuryInstruction, type FindJuryInstructionInput, type FindJuryInstructionOutput } from "@/ai/flows/find-jury-instruction"
+import { instructionMap } from "@/data/legal-reference/instruction-map"
+import { commonCrimesMap } from "@/data/legal-reference/common-crimes-map"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -82,39 +84,95 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchTerm) return;
-    await performSearch({ query: searchTerm });
+    await performSearch(searchTerm);
   }
 
-  const performSearch = async (input: FindJuryInstructionInput) => {
+  const performSearch = async (query: string) => {
     setIsLoading(true);
     setError(null);
     setAnalysisResult(null);
     setDisambiguationOptions([]);
 
     try {
-      // Phase 1 & 2: Local search is now implicitly part of the new AI flow.
-      // The AI flow will perform semantic search.
-      setLoadingStep("AI is analyzing your query and searching the instruction database...");
-      const findResponse = await findJuryInstruction(input);
-      
-      if (findResponse.disambiguationOptions && findResponse.disambiguationOptions.length > 0) {
-        // Phase 3: AI-Powered Disambiguation
-        setLoadingStep("Please clarify your search.");
-        setDisambiguationOptions(findResponse.disambiguationOptions);
-      } else if (findResponse.instructionID) {
-        // Direct match found, proceed to final analysis.
-        await analyzeAndDisplayInstruction({ instructionId: findResponse.instructionID });
-      } else {
-        throw new Error("Could not find a relevant jury instruction for your query.");
-      }
+        setLoadingStep("Analyzing query and searching local index...");
+        
+        // --- Phase 1: Intelligent Local Lookup ---
+        const lowerCaseTerm = query.toLowerCase();
+        let bestLocalMatch: { crimeName: string; statuteNumber: string; score: number } | null = null;
+
+        for (const crime of commonCrimesMap) {
+            const crimeNameLower = crime.crimeName.toLowerCase();
+            let score = 0;
+
+            // Highest score for exact match of crime name
+            if (crimeNameLower === lowerCaseTerm) {
+                score = 100;
+            } 
+            // High score for partial match of crime name
+            else if (crimeNameLower.includes(lowerCaseTerm)) {
+                score = 90;
+            } 
+            // Lower score for keyword matches
+            else {
+                const keywordMatch = crime.keywords.find(kw => lowerCaseTerm.includes(kw));
+                if (keywordMatch) {
+                    score = 20;
+                }
+            }
+
+            if (score > (bestLocalMatch?.score || 0)) {
+                bestLocalMatch = { ...crime, score };
+            }
+        }
+        
+        let identifiedStatute: string | null = bestLocalMatch?.statuteNumber || null;
+        
+        // --- Phase 2: AI Fallback ---
+        if (!identifiedStatute) {
+            setLoadingStep("No local match found. Consulting AI statute identifier...");
+            const aiIdentified = await identifyCrimeStatute({ crimeDescription: query });
+            if (aiIdentified && aiIdentified.statuteNumber) {
+                identifiedStatute = aiIdentified.statuteNumber;
+            }
+        }
+
+        if (!identifiedStatute) {
+            throw new Error("Could not identify a relevant statute for your query.");
+        }
+
+        // --- Phase 3: Instruction ID Mapping ---
+        setLoadingStep("Mapping statute to jury instruction...");
+        const instructionEntry = instructionMap.find(instr => instr.statuteNumber === identifiedStatute);
+        
+        if (!instructionEntry?.instructionID) {
+            // If mapping fails, use the advanced semantic search as a final fallback
+            return performSemanticSearch({ query });
+        }
+        
+        // --- Phase 4: Final Analysis ---
+        await analyzeAndDisplayInstruction({ instructionId: instructionEntry.instructionID });
 
     } catch (e: any) {
         console.error(e);
         setError(e.message || "An unknown error occurred. Please try again.");
-    } finally {
         setIsLoading(false);
         setLoadingStep("");
     }
+  }
+
+  const performSemanticSearch = async (input: FindJuryInstructionInput) => {
+      setLoadingStep("AI is analyzing your query and searching the instruction database...");
+      const findResponse = await findJuryInstruction(input);
+      
+      if (findResponse.disambiguationOptions && findResponse.disambiguationOptions.length > 0) {
+        setLoadingStep("Please clarify your search.");
+        setDisambiguationOptions(findResponse.disambiguationOptions);
+        setIsLoading(false);
+      } else if (findResponse.instructionID) {
+        await analyzeAndDisplayInstruction({ instructionId: findResponse.instructionID });
+      } else {
+        throw new Error("Could not find a relevant jury instruction for your query.");
+      }
   }
 
   const analyzeAndDisplayInstruction = async (input: AnalyzeInstructionInput) => {
@@ -219,4 +277,3 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
     </div>
   );
 });
-
