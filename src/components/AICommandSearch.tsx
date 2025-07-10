@@ -18,11 +18,13 @@ const AICommandSearch = () => {
   const [result, setResult] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchedQuery, setSearchedQuery] = useState('');
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
 
+    setSearchedQuery(query);
     setResult(null);
     setError(null);
     setIsLoading(true);
@@ -109,9 +111,9 @@ const AICommandSearch = () => {
               animate={{ opacity: 1, y: 0 }}
             >
               <div className="p-6 bg-card/80 border border-border rounded-lg shadow-lg">
-                <div className="flex items-center gap-3 mb-3">
-                  <Sparkles className="w-5 h-5 text-accent" />
-                  <h3 className="font-semibold text-lg text-foreground">Shield FL Intelligence Briefing</h3>
+                <div className="flex items-start gap-3 mb-3">
+                  <Sparkles className="w-5 h-5 text-accent flex-shrink-0 mt-1" />
+                  <h3 className="font-semibold text-lg text-foreground">AI Briefing for: <span className="italic">"{searchedQuery}"</span></h3>
                 </div>
                 <p className="text-foreground/90 leading-relaxed whitespace-pre-wrap">{result}</p>
               </div>
