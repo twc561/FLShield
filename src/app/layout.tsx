@@ -41,14 +41,13 @@ export default function RootLayout({
     "/",
     "/login",
     "/features",
-    "/for-agencies",
-    "/security",
+    "/agency-intelligence",
+    "/cjis-compliance",
     "/support",
     "/request-demo",
     "/terms-of-use",
     "/privacy-policy",
-    "/agency-intelligence",
-    "/cjis-compliance",
+    
   ];
   const isPublicPage = publicPages.includes(pathname);
 

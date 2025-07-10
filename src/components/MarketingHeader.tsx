@@ -10,9 +10,8 @@ import { Flame, Menu } from 'lucide-react'
 
 const navLinks = [
   { href: "/features", label: "Features" },
-  { href: "/agency-intelligence", label: "Platform" },
-  { href: "/for-agencies", label: "For Agencies" },
-  { href: "/security", label: "Security" },
+  { href: "/agency-intelligence", label: "For Agencies" },
+  { href: "/cjis-compliance", label: "Security" },
   { href: "/support", label: "Support" },
 ];
 

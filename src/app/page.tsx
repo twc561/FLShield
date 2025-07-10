@@ -68,7 +68,7 @@ export default function LandingPage() {
               Florida Shield is the secure, AI-powered mobile application designed to enhance officer safety, improve in-field decision-making, and ensure legal and procedural accuracy.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-              <Button onClick={() => router.push('/for-agencies')} size="lg">
+              <Button onClick={() => router.push('/agency-intelligence')} size="lg">
                 For Agency Decision-Makers
               </Button>
                <Button onClick={() => router.push('/request-demo')} size="lg" variant="outline">
@@ -140,7 +140,7 @@ export default function LandingPage() {
                        We understand that adopting new technology in law enforcement requires absolute confidence in its security and reliability. Our platform is designed with a "security-first" architecture, ensuring data integrity and user privacy are paramount.
                     </p>
                     <Button variant="secondary" asChild className="mt-6">
-                        <Link href="/security">View Security & Compliance Details</Link>
+                        <Link href="/cjis-compliance">View Security & Compliance Details</Link>
                     </Button>
                 </div>
             </div>
@@ -157,5 +157,3 @@ export default function LandingPage() {
     </div>
   )
 }
-
-    
