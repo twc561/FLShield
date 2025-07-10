@@ -41,3 +41,4 @@ export * from './emergency-response/marchman-act-guide';
 export * from './emergency-response/baker-act-guide';
 export * from './emergency-response/hazmat-classes';
 export * from './legal-reference/instruction-map';
+export * from './legal-reference/common-crimes-map';

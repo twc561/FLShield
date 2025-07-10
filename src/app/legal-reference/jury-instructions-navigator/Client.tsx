@@ -15,6 +15,7 @@ import type { InstructionDetail } from "@/data/legal-reference/standard-jury-ins
 import { analyzeInstruction } from "@/ai/flows/analyze-jury-instruction"
 import { identifyCrimeStatute } from "@/ai/flows/identify-crime-statute"
 import { instructionMap } from "@/data/legal-reference/instruction-map"
+import { commonCrimesMap } from "@/data/legal-reference/common-crimes-map"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -84,28 +85,41 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
     setIsLoading(true);
     setError(null);
     setSearchResult(null);
+    let statuteNumber: string | null = null;
+    let crimeName: string | null = null;
 
     try {
-      // Step 1: Identify Statute Number
-      setLoadingStep("Identifying relevant statute...");
-      const statuteResponse = await identifyCrimeStatute({ crimeDescription: searchTerm });
-      const statuteNumber = statuteResponse.statuteNumber;
+      // Step 1 (Local Lookup): Check common crimes map first for a reliable match.
+      setLoadingStep("Checking common crimes list...");
+      const lowerCaseSearchTerm = searchTerm.toLowerCase();
+      const commonCrimeMatch = commonCrimesMap.find(crime => crime.keywords.some(kw => lowerCaseSearchTerm.includes(kw)));
+
+      if (commonCrimeMatch) {
+        statuteNumber = commonCrimeMatch.statuteNumber;
+        crimeName = commonCrimeMatch.crimeName;
+      } else {
+        // Step 2 (AI Fallback): If no common crime found, use AI to identify the statute.
+        setLoadingStep("AI is identifying relevant statute...");
+        const statuteResponse = await identifyCrimeStatute({ crimeDescription: searchTerm });
+        statuteNumber = statuteResponse.statuteNumber;
+        crimeName = statuteResponse.crimeName;
+      }
       
       if (!statuteNumber || statuteNumber === "N/A") {
         throw new Error("AI could not identify a relevant statute for the query.");
       }
       
-      // Step 2: Lookup Instruction ID from map
+      // Step 3 (Map Lookup): Map the identified statute to a jury instruction ID.
       setLoadingStep("Mapping statute to jury instruction...");
       const mapping = instructionMap.find(m => m.statuteNumber === statuteNumber);
       
       if (!mapping) {
-        throw new Error(`No standard jury instruction found for the identified statute: ${statuteNumber} (${statuteResponse.crimeName}).`);
+        throw new Error(`No standard jury instruction found for the identified statute: ${statuteNumber} (${crimeName}).`);
       }
       const instructionID = mapping.instructionID;
 
-      // Step 3: Analyze Instruction
-      setLoadingStep("Analyzing instruction details...");
+      // Step 4 (AI Analysis): Analyze the verified instruction.
+      setLoadingStep("AI is analyzing instruction details...");
       const analysisResult = await analyzeInstruction({ instructionId: instructionID });
       setSearchResult(analysisResult);
 
