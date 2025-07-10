@@ -12,6 +12,7 @@ export type OrdinancePlaceholder = {
     | "Business & Licensing"
     | "Animal Ordinances"
     | "Public Order & Safety";
+  icon: string;
 };
 
 export type OrdinanceDetail = {
@@ -36,19 +37,22 @@ export const ordinanceIndex: OrdinancePlaceholder[] = [
         ordinanceNumber: "Sec. 21-28",
         ordinanceTitle: "Open Container of Alcoholic Beverage",
         jurisdiction: "Miami-Dade County",
-        category: "Alcohol & Public Behavior"
+        category: "Alcohol & Public Behavior",
+        icon: "Beer"
     },
     {
         ordinanceNumber: "Sec. 39-16.1",
         ordinanceTitle: "Excessive and Unreasonable Noise",
         jurisdiction: "Orange County",
-        category: "Public Order & Safety"
+        category: "Public Order & Safety",
+        icon: "Volume2"
     },
      {
         ordinanceNumber: "Sec. 8A-177",
         ordinanceTitle: "Trespassing on Property (After Warning)",
         jurisdiction: "Miami-Dade County",
-        category: "Property & Code Enforcement"
+        category: "Property & Code Enforcement",
+        icon: "Ban"
     }
 ];
 

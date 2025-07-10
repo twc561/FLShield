@@ -100,41 +100,44 @@ export const ConstitutionalLawClient = React.memo(function ConstitutionalLawClie
           <div key={category}>
             <h2 className="text-lg font-bold tracking-tight my-4 px-1">{category}</h2>
             <Accordion type="single" collapsible className="w-full space-y-2" value={activeItem} onValueChange={handleAccordionChange}>
-              {groupedPlaceholders[category].map(placeholder => (
-                <AccordionItem value={placeholder.id} key={placeholder.id} className="border rounded-md bg-card">
-                  <AccordionTrigger className="p-4 hover:no-underline">
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <Landmark className="w-6 h-6 text-primary" />
-                      </div>
-                      <div className="flex-1 text-left">
-                        <p className="font-semibold text-base text-card-foreground">{placeholder.title}</p>
-                        <p className="text-xs text-muted-foreground">{placeholder.subtitle}</p>
-                      </div>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="p-4 pt-0">
-                    <div className="border-t pt-4">
-                      {loadingId === placeholder.id && (
-                        <div className="flex items-center justify-center space-x-2 text-muted-foreground">
-                          <Loader2 className="h-5 w-5 animate-spin" />
-                          <Sparkles className="h-5 w-5 text-accent" />
-                          <span>AI is analyzing provision...</span>
+              {groupedPlaceholders[category].map(placeholder => {
+                const Icon = (LucideIcons as any)[placeholder.icon] || Landmark;
+                return (
+                    <AccordionItem value={placeholder.id} key={placeholder.id} className="border rounded-md bg-card">
+                    <AccordionTrigger className="p-4 hover:no-underline">
+                        <div className="flex items-center gap-4 flex-1">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                            <Icon className="w-6 h-6 text-primary" />
                         </div>
-                      )}
-                      {error[placeholder.id] && (
-                        <Alert variant="destructive">
-                            <AlertTitle>Error</AlertTitle>
-                            <AlertDescription>{error[placeholder.id]}</AlertDescription>
-                        </Alert>
-                      )}
-                      {cachedDetails[placeholder.id] && (
-                        <DetailView detail={cachedDetails[placeholder.id]} />
-                      )}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
+                        <div className="flex-1 text-left">
+                            <p className="font-semibold text-base text-card-foreground">{placeholder.title}</p>
+                            <p className="text-xs text-muted-foreground">{placeholder.subtitle}</p>
+                        </div>
+                        </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="p-4 pt-0">
+                        <div className="border-t pt-4">
+                        {loadingId === placeholder.id && (
+                            <div className="flex items-center justify-center space-x-2 text-muted-foreground">
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            <Sparkles className="h-5 w-5 text-accent" />
+                            <span>AI is analyzing provision...</span>
+                            </div>
+                        )}
+                        {error[placeholder.id] && (
+                            <Alert variant="destructive">
+                                <AlertTitle>Error</AlertTitle>
+                                <AlertDescription>{error[placeholder.id]}</AlertDescription>
+                            </Alert>
+                        )}
+                        {cachedDetails[placeholder.id] && (
+                            <DetailView detail={cachedDetails[placeholder.id]} />
+                        )}
+                        </div>
+                    </AccordionContent>
+                    </AccordionItem>
+                )
+              })}
             </Accordion>
           </div>
         ))}

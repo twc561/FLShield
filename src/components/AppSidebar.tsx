@@ -78,23 +78,19 @@ export function AppSidebar() {
 
   const isActive = (href: string) => {
     if (!isClient) return false
-    if (href === "/") return pathname === "/"
-    
-    const isParent = menuItems.some(item => item.href === href);
-    if (isParent) return pathname === href;
-
+    if (href === "/dashboard") return pathname === href
     return pathname.startsWith(href)
   }
 
   React.useEffect(() => {
     if (!isClient) return;
-    const initialStates: Record<string, boolean> = {}
+    const newOpenStates: Record<string, boolean> = {}
     menuItems.forEach((item) => {
       if (item.items) {
-        initialStates[item.label] = item.items.some((subItem) => isActive(subItem.href))
+        newOpenStates[item.label] = item.items.some((subItem) => isActive(subItem.href))
       }
     })
-    setOpenStates(initialStates)
+    setOpenStates(newOpenStates)
   }, [pathname, isClient])
 
   return (

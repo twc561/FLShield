@@ -250,4 +250,3 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
     </div>
   );
 });
-
