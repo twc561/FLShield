@@ -1,7 +1,7 @@
 
 import * as React from "react"
 import {
-  LayoutGrid, Bot, Star, Book, Scale, Gavel, ListChecks, Home, Car, Route, Footprints, Truck, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, Mic, Settings, Newspaper, Download, Users as UsersIcon, FileText as FileTextIcon, Heart, Camera, Tape
+  LayoutGrid, Bot, Star, Book, Scale, Gavel, ListChecks, Home, Car, Route, Footprints, Truck, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, Mic, Settings, Newspaper, Download, Users as UsersIcon, FileText as FileTextIcon, Heart, Camera, Wind
 } from "lucide-react"
 
 type SubMenuItem = {
@@ -52,7 +52,7 @@ export const menuItems: MenuItem[] = [
       { href: "/field-procedures/field-interview-contact", label: "Field Interview Guide", icon: Users },
       { href: "/field-procedures/domestic-violence-protocol", label: "DV Protocol", icon: ShieldAlert },
       { href: "/field-procedures/risk-protection-orders", label: "Risk Protection Orders", icon: FileCheck },
-      { href: "/field-procedures/crime-scene-management", label: "Crime Scene Management", icon: Tape },
+      { href: "/field-procedures/crime-scene-management", label: "Crime Scene Management", icon: Wind },
       { href: "/field-procedures/digital-evidence-field-guide", label: "Digital Evidence", icon: Smartphone },
     ],
   },
