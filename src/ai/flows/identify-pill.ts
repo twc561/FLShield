@@ -55,38 +55,8 @@ export async function identifyPillFromImage(input: IdentifyPillInput): Promise<I
 
   const visualDescriptionText = `${visualAnalysis.color}, ${visualAnalysis.shape}, imprint ${visualAnalysis.imprint}`;
 
-  // Step 2: Use the visual description and the lookupPill tool to identify the pill
-  const { output: identificationResult } = await ai.generate({
-    model: 'googleai/gemini-2.5-flash',
-    system: `You are an expert pharmacologist assistant. Your task is to identify a pill based on its visual characteristics.
-    
-CRITICAL INSTRUCTIONS:
-1. You MUST use the 'lookupPill' tool to find information about the pill.
-2. Use the 'imprint', 'color', and 'shape' from the user's prompt as inputs for the tool.
-3. Once the tool returns the pill's data, summarize the 'drugName', 'primaryUse', and 'keyWarnings' fields into the required output format.
-4. If the tool returns 'Unknown' for the drug name, you MUST also return 'Unknown' and 'Information not available' for the other fields. Do not guess or use your general knowledge.`,
-    tools: [lookupPill],
-    prompt: `Identify the pill with the following characteristics: imprint='${visualAnalysis.imprint}', color='${visualAnalysis.color}', shape='${visualAnalysis.shape}'.`,
-    output: {
-      schema: z.object({
-        drugName: IdentifyPillOutputSchema.shape.drugName,
-        primaryUse: IdentifyPillOutputSchema.shape.primaryUse,
-        keyWarnings: IdentifyPillOutputSchema.shape.keyWarnings,
-      }),
-    },
-     config: {
-      safetySettings: [
-          {
-              category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-              threshold: 'BLOCK_NONE',
-          },
-      ],
-    },
-  });
-
-   if (!identificationResult) {
-    throw new Error("AI failed to identify the pill from its description.");
-  }
+  // Step 2: Use the local database lookup tool to get a definitive answer.
+  const identificationResult = await lookupPill(visualAnalysis);
   
   return {
     ...identificationResult,

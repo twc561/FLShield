@@ -41,3 +41,4 @@ export * from './emergency-response/baker-act-guide';
 export * from './emergency-response/hazmat-classes';
 export * from './legal-reference/jury-instructions-index';
 export * from './search-index';
+export * from './specialized-enforcement/pill-database';
