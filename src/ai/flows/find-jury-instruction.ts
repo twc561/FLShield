@@ -16,7 +16,7 @@ import { instructionMap } from '@/data/legal-reference/instruction-map';
 // For this simulation, we'll just use the crime names as searchable text.
 const instructionDatabase = instructionMap.map(item => ({
     id: item.instructionID,
-    text: `The jury instruction for the crime of ${item.crimeName}, related to Florida Statute ${item.statuteNumber}.`,
+    text: `The jury instruction for the crime of ${item.crimeName}, related to Florida Statute ${item.statuteNumber}. Additional keywords: ${item.keywords.join(', ')}`,
     title: item.crimeName,
 }));
 
