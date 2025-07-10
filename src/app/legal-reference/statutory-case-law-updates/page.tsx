@@ -1,3 +1,4 @@
+
 import { PageHeader } from "@/components/PageHeader"
 import { statutoryCaseLawUpdatesIndex } from "@/data/legal-reference/statutory-case-law-updates"
 import { StatutoryCaseLawUpdatesClient } from "./Client"

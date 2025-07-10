@@ -1,3 +1,4 @@
+
 import { PageHeader } from "@/components/PageHeader";
 import { dailyBriefingData } from "@/data/daily-briefing";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";

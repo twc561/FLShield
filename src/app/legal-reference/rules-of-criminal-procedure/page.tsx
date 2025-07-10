@@ -1,3 +1,4 @@
+
 import { PageHeader } from "@/components/PageHeader"
 import { rulesOfCriminalProcedurePlaceholders } from "@/data/legal-reference/rules-of-criminal-procedure"
 import { RulesOfCriminalProcedureClient } from "./Client"
