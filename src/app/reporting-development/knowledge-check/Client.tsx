@@ -80,15 +80,24 @@ export function KnowledgeCheckClient({ questions }: { questions: DrillQuestion[]
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Knowledge Drill</CardTitle>
-          <CardDescription>Loading questions...</CardDescription>
+          <Skeleton className="h-8 w-1/3" />
+          <Skeleton className="h-4 w-1/2" />
         </CardHeader>
         <CardContent className="space-y-4">
           <Skeleton className="h-8 w-3/4" />
           <div className="space-y-2">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
+            <div className="flex items-center gap-4 rounded-md border p-4">
+              <Skeleton className="h-6 w-6 rounded-full"/>
+              <Skeleton className="h-6 w-full"/>
+            </div>
+            <div className="flex items-center gap-4 rounded-md border p-4">
+              <Skeleton className="h-6 w-6 rounded-full"/>
+              <Skeleton className="h-6 w-full"/>
+            </div>
+             <div className="flex items-center gap-4 rounded-md border p-4">
+              <Skeleton className="h-6 w-6 rounded-full"/>
+              <Skeleton className="h-6 w-full"/>
+            </div>
           </div>
         </CardContent>
       </Card>
