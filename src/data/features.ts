@@ -1,40 +1,153 @@
-export * from './case-law';
-export * from './statutes';
-export * from './report-templates';
-export * from './dashboard-features';
-export * from './field-procedures/crime-scene-management';
-export * from './field-procedures/digital-evidence';
-export * from './field-procedures/field-interview-contact';
-export * from './field-procedures/interview-techniques';
-export * from './field-procedures/risk-protection-orders';
-export * from './field-procedures/scenario-checklists';
-export * from './field-procedures/domestic-violence';
-export * from './flowcharts';
-export * from './legal-reference/constitutional-law';
-export * from './legal-reference/rules-of-criminal-procedure';
-export * from './legal-reference/standard-jury-instructions';
-export * from './legal-reference/florida-administrative-code';
-export * from './legal-reference/statutory-case-law-updates';
-export * from './legal-reference/local-ordinances';
-export * from './legal-reference/rights-reference';
-export * from './legal-reference/miranda-warning-guide';
-export * from './traffic-enforcement/dui-investigation';
-export * from './traffic-enforcement/traffic-violations';
-export * from './traffic-enforcement/commercial-vehicle';
-export * from './emergency-response/crisis-intervention';
-export * from './specialized-enforcement/controlled-substances';
-export * from './specialized-enforcement/k9-guide';
-export * from './specialized-enforcement/fwc-regulations';
-export * from './specialized-enforcement/animal-cruelty';
-export * from './emergency-response/alert-guides';
-export * from './emergency-response/first-aid';
-export * from './emergency-response/hazmat';
-export * from './officer-wellness-rights/pobr';
-export * from './officer-wellness-rights/court-testimony';
-export * from './officer-wellness-rights/decompression-sessions';
-export * from './officer-wellness-rights/wellness-resources';
-export * from './predictive-cache-map';
-export * from './training/scenarios';
-export * from './training/knowledge-drill';
-export * from './field-translation-guide';
-export * from './daily-briefing';
+import type { FeatureModule } from "@/types"
+import {
+  Book,
+  ListChecks,
+  Languages,
+  Car,
+  Wrench,
+  Siren,
+  Briefcase,
+  GraduationCap,
+  Heart,
+  Scale,
+  Gavel,
+  Fish,
+  Biohazard,
+  MessageSquare,
+  FileCheck,
+  ShieldAlert,
+  ShieldQuestion,
+  ShieldCheck,
+  Mic,
+  Camera,
+  ClipboardEdit,
+} from "lucide-react"
+
+export type FeatureGroup = {
+  category: string
+  icon: React.ElementType
+  features: FeatureModule[]
+}
+
+export const dashboardFeatureGroups: FeatureGroup[] = [
+  {
+    category: "Legal Reference",
+    icon: Book,
+    features: [
+      {
+        id: "statute-navigator",
+        title: "Statute Navigator",
+        summary: "AI-powered search of all Florida Statutes.",
+        icon: "Scale",
+        targetPage: "/legal-reference/statutes",
+        category: "Legal Reference",
+      },
+      {
+        id: "case-law-vault",
+        title: "Case Law Vault",
+        summary: "Plain-language summaries of landmark case law.",
+        icon: "Gavel",
+        targetPage: "/legal-reference/case-law",
+        category: "Legal Reference",
+      },
+      {
+        id: "fwc-regulations-guide",
+        title: "FWC Regulations Guide",
+        summary: "Searchable FWC rules for fishing, hunting, and boating.",
+        icon: "Fish",
+        targetPage: "/specialized-enforcement/fwc-regulations-guide",
+        category: "Specialized Enforcement",
+      },
+    ],
+  },
+  {
+    category: "Field Tools & Guides",
+    icon: ListChecks,
+    features: [
+      {
+        id: "scenario-checklists",
+        title: "Scenario Checklists",
+        summary: "Interactive guides for common field scenarios like DUI and DV.",
+        icon: "ListChecks",
+        targetPage: "/field-procedures/scenario-checklists",
+        category: "Field Procedures",
+      },
+       {
+        id: "hazmat-placard-guide",
+        title: "HAZMAT Placard Guide",
+        summary: "Instantly look up HAZMAT placard numbers for ERG info.",
+        icon: "Biohazard",
+        targetPage: "/emergency-response/hazmat-guide",
+        category: "Emergency Response",
+      },
+       {
+        id: "visual-evidence-identifier",
+        title: "Visual Evidence ID",
+        summary: "Use your camera to identify unknown pills and other items.",
+        icon: "Camera",
+        targetPage: "/field-procedures/visual-evidence-identifier",
+        category: "Field Procedures",
+      },
+    ],
+  },
+  {
+    category: "Training & Development",
+    icon: GraduationCap,
+    features: [
+       {
+        id: "role-play-simulator",
+        title: "AI De-escalation Coach",
+        summary: "Practice de-escalation skills against AI characters.",
+        icon: "MessageSquare",
+        targetPage: "/training-development/role-play-simulator",
+        category: "Training & Development",
+      },
+      {
+        id: "report-proofreader",
+        title: "AI Report Proofreader",
+        summary: "Get instant feedback on anonymized report narratives.",
+        icon: "FileCheck",
+        targetPage: "/training-development/report-proofreader",
+        category: "Training & Development",
+      },
+      {
+        id: "ai-report-writer",
+        title: "AI Report Assistant",
+        summary: "Transform your notes into a formal report narrative.",
+        icon: "ClipboardEdit",
+        targetPage: "/reporting-development/ai-report-writer",
+        category: "Reporting & Development"
+      },
+    ],
+  },
+  {
+    category: "Officer Wellness & Rights",
+    icon: Heart,
+    features: [
+      {
+        id: "wellness-hub",
+        title: "Wellness Hub",
+        summary: "Access the confidential chatbot and guided decompression sessions.",
+        icon: "ShieldQuestion",
+        targetPage: "/wellness",
+        category: "Wellness",
+      },
+      {
+        id: "pobr-guide",
+        title: "Police Officer's Bill of Rights",
+        summary: "Your rights under F.S. §§ 112.531-112.535 during IA investigations.",
+        icon: "ShieldCheck",
+        targetPage: "/officer-wellness-rights/police-officers-bill-of-rights",
+        category: "Wellness",
+      },
+      {
+        id: "court-testimony-guide",
+        title: "Court Testimony Guide",
+        summary: "Preparation and best practices for delivering clear testimony.",
+        icon: "Mic",
+        targetPage: "/officer-wellness-rights/court-testimony-guide",
+        category: "Wellness",
+      },
+    ],
+  },
+]
