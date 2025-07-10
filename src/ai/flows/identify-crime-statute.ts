@@ -17,6 +17,8 @@ export type IdentifyCrimeStatuteInput = z.infer<typeof IdentifyCrimeStatuteInput
 
 const IdentifyCrimeStatuteOutputSchema = z.object({
   statuteNumber: z.string().describe('The most probable Florida Statute number, formatted as XXX.XX (e.g., "810.02").'),
+  crimeName: z.string().describe('The common name of the crime associated with the statute number.'),
+  justification: z.string().describe('A brief justification for why this statute number was chosen based on the crime description.'),
 });
 export type IdentifyCrimeStatuteOutput = z.infer<typeof IdentifyCrimeStatuteOutputSchema>;
 
@@ -28,7 +30,8 @@ const prompt = ai.definePrompt({
   name: 'identifyCrimeStatutePrompt',
   input: { schema: IdentifyCrimeStatuteInputSchema },
   output: { schema: IdentifyCrimeStatuteOutputSchema },
-  prompt: `You are an AI paralegal for Florida law. Your only task is to identify the most probable Florida Statute number based on the following description of a crime. Return only the statute number as a string (e.g., "810.02"). Do not add any other text.
+  prompt: `You are an AI paralegal for Florida law. Your task is to identify the single most probable Florida Statute number for the described crime. You must return the statute number, the common crime name, and a brief justification.
+
 Crime Description: {{{crimeDescription}}}`,
 });
 
