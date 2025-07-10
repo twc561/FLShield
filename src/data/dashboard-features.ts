@@ -20,6 +20,7 @@ import {
   ShieldCheck,
   Mic,
   Camera,
+  ClipboardEdit,
 } from "lucide-react"
 
 export type FeatureGroup = {
