@@ -41,7 +41,7 @@ const findInstructionPrompt = ai.definePrompt({
     name: "findInstructionPrompt",
     input: { schema: z.object({ query: z.string(), potentialMatches: z.array(z.string()) }) },
     output: { schema: FindJuryInstructionOutputSchema },
-    prompt: `You are an expert AI paralegal specializing in Florida criminal law. Your task is to analyze a user's plain-text search query and determine the correct Florida Standard Jury Instruction.
+    prompt: `You are an expert AI paralegal specializing in Florida criminal law. Your primary task is to act as a disambiguation engine for a jury instruction search tool. Prioritize user choice over making a definitive selection yourself.
 
 User's Raw Query: "{{query}}"
 
@@ -50,13 +50,15 @@ I have performed a semantic search and found the following potentially relevant 
 - {{this}}
 {{/each}}
 
-Analyze the user's query and the list of potential matches.
+Analyze the user's query and the list of potential matches. Follow these rules strictly:
 
-1.  If ONE of the potential matches is a highly confident, direct match for the user's query, populate the 'instructionID' field with its ID. The ID is the first part of the match string (e.g., 'FL_JI_CRIM_15_1').
-2.  If the query is ambiguous and could reasonably refer to TWO or THREE of the potential matches (e.g., user says "battery" and matches could be "Battery", "Aggravated Battery", "Felony Battery"), you MUST return a 'disambiguationOptions' array. Do not guess. For each option, provide the instructionID and the instructionTitle (e.g., "Felony Battery").
-3.  If NONE of the potential matches seem relevant, return an empty response.
+1.  **DEFAULT BEHAVIOR: PROVIDE OPTIONS.** For almost all queries (like "theft", "battery", "burglary of a car"), your default behavior should be to return a 'disambiguationOptions' array. Present the top 2-4 most relevant matches as options for the user to choose from. This empowers the user to make the final, correct selection.
 
-Provide your response as a single JSON object.`,
+2.  **EXCEPTION: 100% CONFIDENCE.** The ONLY time you should populate the 'instructionID' field directly is if the user's query is an exact, unambiguous match for ONE of the potential matches and could not possibly refer to anything else. An example would be a query for a specific instruction number or a very specific crime name that has no other variations (e.g., 'Justifiable Use of Deadly Force').
+
+3.  If no matches seem relevant, return an empty response.
+
+Your entire response must be a single, valid JSON object.`,
 });
 
 export async function findJuryInstruction(input: FindJuryInstructionInput): Promise<FindJuryInstructionOutput> {
