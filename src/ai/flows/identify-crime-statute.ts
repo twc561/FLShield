@@ -27,10 +27,10 @@ export async function identifyCrimeStatute(input: IdentifyCrimeStatuteInput): Pr
     prompt: `You are an AI paralegal for Florida law. Your task is to identify the single most probable Florida Statute number for the described crime.
 
 Follow these steps:
-1.  Analyze the user's crime description to understand its key components.
-2.  Think about what specific actions define that crime under Florida law.
-3.  Based on your analysis, select the single most appropriate statute number.
-4.  Provide the statute number, the common crime name, and a brief justification for your choice in the required JSON format.
+1.  **Analyze the user's crime description:** Break down the user's query into its core components (e.g., for "Man hit another man with a bat," the components are unwanted touching, use of a weapon, and causing injury).
+2.  **Identify Key Legal Concepts:** Based on the components, determine the key legal concepts. For the example above, this would be "Battery" and "Deadly Weapon."
+3.  **Select the Statute:** Search your knowledge of Florida Statutes and select the single most specific statute that matches these concepts. For "Battery" + "Deadly Weapon," the correct statute is Aggravated Battery (843.045).
+4.  **Provide Output:** Return the statute number, the common crime name, and a brief justification for your choice in the required JSON format.
 
 Crime Description: ${input.crimeDescription}`,
     output: {

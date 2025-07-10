@@ -9,6 +9,11 @@ export type CommonCrimeMapEntry = {
 // to bypass the AI identification step and guarantee accuracy.
 export const commonCrimesMap: CommonCrimeMapEntry[] = [
   {
+    crimeName: "First Degree Murder",
+    statuteNumber: "782.04",
+    keywords: ["murder", "first degree murder", "homicide"],
+  },
+  {
     crimeName: "Assault",
     statuteNumber: "784.011",
     keywords: ["assault"],
@@ -66,7 +71,7 @@ export const commonCrimesMap: CommonCrimeMapEntry[] = [
   {
     crimeName: "Possession of a Controlled Substance",
     statuteNumber: "893.13",
-    keywords: ["possession", "drug possession"],
+    keywords: ["possession", "drug possession", "controlled substance"],
   },
   {
     crimeName: "Drug Trafficking",
@@ -82,5 +87,10 @@ export const commonCrimesMap: CommonCrimeMapEntry[] = [
     crimeName: "Resisting Officer With Violence",
     statuteNumber: "843.01",
     keywords: ["resisting with violence", "rowv"],
+  },
+   {
+    crimeName: "Resisting Officer Without Violence",
+    statuteNumber: "843.02",
+    keywords: ["resisting without violence", "rowov"],
   },
 ];
