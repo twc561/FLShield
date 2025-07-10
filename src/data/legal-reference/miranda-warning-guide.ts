@@ -31,7 +31,7 @@ export type MirandaWarningGuideData = {
   };
 };
 
-type LanguageContent = {
+export type LanguageContent = {
   language: string;
   warningLines: string[];
   waiverQuestions: string[];

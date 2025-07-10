@@ -1,5 +1,7 @@
+
 "use client";
 
+import { useState, useRef, useCallback } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -19,16 +21,121 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import type { MirandaWarningGuideData } from "@/data/legal-reference/miranda-warning-guide";
-import { Gavel, AlertTriangle, Languages, CheckCircle, Mic, Milestone } from "lucide-react";
+import type { MirandaWarningGuideData, LanguageContent } from "@/data/legal-reference/miranda-warning-guide";
+import { Gavel, AlertTriangle, Languages, CheckCircle, Mic, Milestone, Volume2, Loader2, PauseCircle } from "lucide-react";
+import { trilingualTextToSpeech } from "@/ai/flows/trilingual-tts";
+import { Button } from "@/components/ui/button";
+
+const LanguageContentWithAudio = ({ 
+  content, 
+  languageCode, 
+  activeAudioId, 
+  playAudio 
+}: { 
+  content: LanguageContent, 
+  languageCode: 'es-US' | 'ht-HT', 
+  activeAudioId: string | null, 
+  playAudio: (text: string, langCode: 'es-US' | 'ht-HT', id: string) => void 
+}) => {
+  // English is handled by browser native, so we only handle Spanish and Haitian Creole here
+  const isAudioSupported = languageCode === 'es-US' || languageCode === 'ht-HT';
+
+  return (
+    <div className="space-y-4">
+      <div className="p-4 bg-muted/50 rounded-lg">
+        <h4 className="font-semibold text-foreground/90 mb-2">Warning</h4>
+        <ul className="space-y-1">
+          {content.warningLines.map((line: string, i: number) => {
+            const id = `${languageCode}-warning-${i}`;
+            const isLoading = activeAudioId === id;
+            return (
+              <li key={i} className="flex items-center justify-between gap-2">
+                <span className="flex-1"><Mic className="h-4 w-4 mr-2 inline-block text-accent"/>{line}</span>
+                {isAudioSupported && (
+                   <Button variant="ghost" size="icon" onClick={() => playAudio(line, languageCode, id)} disabled={!!activeAudioId && !isLoading}>
+                    {isLoading ? <Loader2 className="h-4 w-4 animate-spin"/> : <Volume2 className="h-5 w-5"/>}
+                  </Button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      <div className="p-4 bg-muted/50 rounded-lg">
+        <h4 className="font-semibold text-foreground/90 mb-2">Waiver Questions</h4>
+        <ul className="space-y-1">
+          {content.waiverQuestions.map((line: string, i: number) => {
+             const id = `${languageCode}-waiver-${i}`;
+             const isLoading = activeAudioId === id;
+            return (
+              <li key={i} className="flex items-center justify-between gap-2">
+                <span className="flex-1"><CheckCircle className="h-4 w-4 mr-2 inline-block text-green-500"/>{line}</span>
+                 {isAudioSupported && (
+                   <Button variant="ghost" size="icon" onClick={() => playAudio(line, languageCode, id)} disabled={!!activeAudioId && !isLoading}>
+                     {isLoading ? <Loader2 className="h-4 w-4 animate-spin"/> : <Volume2 className="h-5 w-5"/>}
+                   </Button>
+                 )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
 
 export function MirandaWarningClient({
   data,
 }: {
   data: MirandaWarningGuideData;
 }) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [activeAudioId, setActiveAudioId] = useState<string | null>(null);
+  
+  const stopAudio = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = '';
+    }
+    setActiveAudioId(null);
+  }, []);
+
+  const playAudio = useCallback(async (text: string, language: 'es-US' | 'ht-HT', id: string) => {
+    if (id === activeAudioId) {
+      stopAudio();
+      return;
+    }
+    
+    stopAudio();
+    setActiveAudioId(id);
+
+    try {
+      const response = await trilingualTextToSpeech({ text, language });
+      const audioDataUri = response.media;
+
+      if (!audioRef.current) {
+        audioRef.current = new Audio();
+        audioRef.current.onended = stopAudio;
+        audioRef.current.onerror = stopAudio;
+      }
+      
+      if (audioRef.current && audioDataUri) {
+        audioRef.current.src = audioDataUri;
+        await audioRef.current.play();
+      } else {
+        throw new Error("Audio generation failed or audio element not available.");
+      }
+    } catch (error) {
+      console.error("Audio playback failed:", error);
+      stopAudio();
+    }
+  }, [activeAudioId, stopAudio]);
+
+
   return (
     <div className="space-y-6">
+      <audio ref={audioRef} />
       <Card>
         <CardHeader>
           <CardTitle>Summary</CardTitle>
@@ -73,22 +180,30 @@ export function MirandaWarningClient({
                             <TabsTrigger value="spanish">Español</TabsTrigger>
                             <TabsTrigger value="haitian_creole">Kreyòl Ayisyen</TabsTrigger>
                           </TabsList>
-                           {Object.entries(data.mirandaWarningTranslations).filter(([key]) => key !== 'title').map(([key, value]) => (
-                               <TabsContent key={key} value={key} className="mt-4 space-y-4">
-                                   <div className="p-4 bg-muted/50 rounded-lg">
-                                       <h4 className="font-semibold text-foreground/90 mb-2">Warning</h4>
-                                       <ul className="space-y-1">
-                                           {value.warningLines.map((line: string, i: number) => <li key={i} className="flex items-start gap-2"><Mic className="h-4 w-4 mt-1 flex-shrink-0 text-accent"/><span>{line}</span></li>)}
-                                       </ul>
-                                   </div>
-                                    <div className="p-4 bg-muted/50 rounded-lg">
-                                       <h4 className="font-semibold text-foreground/90 mb-2">Waiver Questions</h4>
-                                       <ul className="space-y-1">
-                                           {value.waiverQuestions.map((line: string, i: number) => <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-1 flex-shrink-0 text-green-500"/><span>{line}</span></li>)}
-                                       </ul>
-                                   </div>
-                               </TabsContent>
-                           ))}
+                            <TabsContent value="english" className="mt-4">
+                                <LanguageContentWithAudio 
+                                    content={data.mirandaWarningTranslations.english}
+                                    languageCode={'es-US'} // Placeholder, not used for English
+                                    activeAudioId={activeAudioId}
+                                    playAudio={() => alert("Browser native text-to-speech would be used here.")}
+                                />
+                            </TabsContent>
+                            <TabsContent value="spanish" className="mt-4">
+                                <LanguageContentWithAudio 
+                                    content={data.mirandaWarningTranslations.spanish}
+                                    languageCode={'es-US'}
+                                    activeAudioId={activeAudioId}
+                                    playAudio={playAudio}
+                                />
+                            </TabsContent>
+                             <TabsContent value="haitian_creole" className="mt-4">
+                                <LanguageContentWithAudio 
+                                    content={data.mirandaWarningTranslations.haitian_creole}
+                                    languageCode={'ht-HT'}
+                                    activeAudioId={activeAudioId}
+                                    playAudio={playAudio}
+                                />
+                            </TabsContent>
                         </Tabs>
                     </div>
                 </AccordionContent>
