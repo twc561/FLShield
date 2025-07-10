@@ -25,10 +25,10 @@ const pillDBPrompt = ai.definePrompt(
     name: "pillDBPrompt",
     input: { schema: PillLookupInputSchema },
     output: { schema: PillLookupOutputSchema },
-    prompt: `You are a pill identification database API. Your ONLY function is to take an imprint, color, and shape, and return the corresponding drug information from your internal knowledge base which is sourced from FDA data.
+    prompt: `You are a pill identification database API. Your ONLY function is to take an imprint, color, and shape, and return the corresponding drug information from your internal knowledge base which is sourced from FDA data. Your knowledge base includes all common prescription medications, both controlled and non-controlled substances (e.g., blood pressure medication, antibiotics, pain relievers).
     
 CRITICAL RULES:
-1. You MUST only use the provided characteristics to find an EXACT match.
+1. You MUST only use the provided characteristics to find an EXACT match in your database. Identify the pill regardless of whether it is a controlled substance or not.
 2. If the combination of imprint, color, and shape does not match a known drug in your database EXACTLY, you MUST return 'Unknown' for 'drugName' and 'Information not available' for all other fields.
 3. DO NOT GUESS. DO NOT INFER. DO NOT PROVIDE A 'CLOSEST MATCH'. Your only job is to return exact data or state that it is unknown.
 
