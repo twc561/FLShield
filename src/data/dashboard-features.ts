@@ -90,7 +90,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
     ],
   },
   {
-    category: "Reporting & Development",
+    category: "Training & Development",
     icon: GraduationCap,
     features: [
       {
