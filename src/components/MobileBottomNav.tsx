@@ -12,6 +12,7 @@ import {
   Menu,
   Flame,
   LogOut,
+  Bot,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
@@ -23,16 +24,17 @@ import {
 import { menuItems } from "@/lib/menu-items"
 import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
+import { Tape } from "lucide-react"
 
 const mainNavItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
   { href: "/legal-reference/statutes", label: "Statutes", icon: Scale },
+  { href: "/voice-assistant", label: "AI Partner", icon: Bot },
   {
     href: "/field-procedures/scenario-checklists",
     label: "Checklists",
     icon: ListChecks,
   },
-  { href: "/notes", label: "Notes", icon: FileText },
 ]
 
 export function MobileBottomNav() {
@@ -56,7 +58,7 @@ export function MobileBottomNav() {
 
   const isActive = (href: string) => {
     if (!isClient) return false
-    if (href === "/") return pathname === "/"
+    if (href === "/dashboard") return pathname === href
     // For parent routes, we want an exact match, otherwise they are always active.
     const isParent = menuItems.some(item => item.href === href);
     if (isParent) return pathname === href;

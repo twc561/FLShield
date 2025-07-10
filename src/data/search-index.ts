@@ -1,3 +1,4 @@
+
 /**
  * @fileOverview A unified search index for the entire application.
  * This file imports all relevant data sources, transforms them into a
@@ -11,6 +12,7 @@ import { scenarioChecklistsData } from './field-procedures/scenario-checklists';
 import { k9GuideIndex } from './specialized-enforcement/k9-guide-index';
 import { fishingRegulations, huntingRegulations, boatingTopics, protectedSpeciesInfo } from './specialized-enforcement/fwc-regulations';
 import { commonMisperceptionsData } from './officer-wellness-rights/common-misperceptions';
+import { menuItems } from '@/lib/menu-items';
 
 export type SearchableItem = {
   id: string;
@@ -115,7 +117,33 @@ const misperceptionItems: SearchableItem[] = commonMisperceptionsData.map(item =
     category: 'Training & Development',
     href: '/training-development/common-misperceptions',
     keywords: [item.theMisperception, item.category, 'training', 'myth', 'pitfall', ...item.keyCaseLaw.caseName.split(' ')]
-}))
+}));
+
+// Dynamically create search items from the menu structure
+const menuSearchItems: SearchableItem[] = [];
+menuItems.forEach(item => {
+    if (item.items) {
+        item.items.forEach(subItem => {
+            menuSearchItems.push({
+                id: `menu-${subItem.href.replace(/\//g, '-')}`,
+                title: subItem.label,
+                description: `Navigate to the ${subItem.label} tool.`,
+                category: item.label,
+                href: subItem.href,
+                keywords: [subItem.label, item.label, 'tool', 'guide', 'page']
+            });
+        });
+    } else if (item.href) {
+        menuSearchItems.push({
+            id: `menu-${item.href.replace(/\//g, '-')}`,
+            title: item.label,
+            description: `Navigate to the ${item.label} page.`,
+            category: "Navigation",
+            href: item.href,
+            keywords: [item.label, 'page', 'navigation']
+        });
+    }
+});
 
 
 export const unifiedSearchIndex: SearchableItem[] = [
@@ -129,5 +157,6 @@ export const unifiedSearchIndex: SearchableItem[] = [
   ...fwcBoatingItems,
   ...fwcSpeciesItems,
   ...misperceptionItems,
+  ...menuSearchItems,
   // Add other transformed data arrays here as they are created
 ];
