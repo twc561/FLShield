@@ -1,4 +1,3 @@
-
 'use client'
 
 import { PageHeader } from "@/components/PageHeader";
@@ -35,8 +34,8 @@ export default function DailyBriefingPage() {
       variants={containerVariants}
     >
       <PageHeader
-        title="Daily Legal Briefing"
-        description={`Today's update: ${briefing.briefingDate}`}
+        title="Public Intelligence Briefing"
+        description={`AI-Generated Summary for ${briefing.briefingDate}`}
       />
 
       <Card className="w-full">
@@ -87,7 +86,7 @@ export default function DailyBriefingPage() {
         </CardContent>
       </Card>
       <motion.div variants={itemVariants}>
-        <p className="text-center text-sm text-muted-foreground mt-8">Disclaimer: This briefing is for informational purposes only and is not a substitute for legal advice or agency training.</p>
+        <p className="text-center text-sm text-muted-foreground mt-8">Disclaimer: This briefing is for informational purposes only and is not a substitute for legal advice or agency training. It is AI-generated from public sources.</p>
       </motion.div>
     </motion.div>
   );

@@ -1,4 +1,3 @@
-
 export type DailyBriefing = {
   briefingDate: string;
   headline: string;
@@ -18,23 +17,24 @@ export type DailyBriefing = {
 // In a production app, this object would be generated and overwritten daily
 // by the automated AI analysis workflow.
 export const dailyBriefingData: DailyBriefing = {
-  briefingDate: "July 8, 2025",
-  headline: "Court Clarifies \"Plain Smell\" Doctrine for Vehicle Searches",
+  briefingDate: "July 9, 2025",
+  headline: "AI-Generated Public Intelligence Briefing",
   caseInfo: {
-    caseName: "Jones v. State",
-    citation: "SC24-5678 (Fla. 2025)",
-    court: "Florida Supreme Court",
+    caseName: "Synthesized from Public News & RSS Feeds",
+    citation: "For Situational Awareness Only",
+    court: "Florida Public Information",
   },
   plainLanguageSummary:
-    "In a significant ruling today, the Florida Supreme Court addressed the \"plain smell\" doctrine as it applies to vehicles, particularly in light of Florida's medical marijuana laws. The court held that the odor of burnt marijuana alone is no longer sufficient probable cause for a warrantless search of a vehicle, as it is impossible for an officer to distinguish between the smell of legal medical marijuana and illegal recreational marijuana.",
+    "This briefing is a demonstration of an AI model's ability to synthesize publicly available information. In a real-world scenario, this would be populated with AI-summarized content from verified law enforcement press releases, local news RSS feeds, and public safety alerts. The goal is to provide officers with a concise, scannable summary of recent significant events, crime trends, and officer safety bulletins relevant to their patrol area before they begin their shift.",
   tacticalImpact: {
-    title: "What This Means For Your Next Shift",
+    title: "Example Tactical Impact Points",
     points: [
-      "You must now articulate additional factors beyond just the smell of burnt marijuana to establish probable cause for a vehicle search.",
-      "Focus on observing other indicators of illegal activity, such as attempts to conceal items, presence of paraphernalia associated with illegal use, or admissions from the subject about illegal use.",
-      "Your report narrative must be very specific about these \"plus factors.\" Simply stating \"I smelled marijuana\" will likely result in suppressed evidence.",
+      "Be on the lookout (BOLO) for a blue sedan, license plate XYZ, involved in a series of commercial burglaries in the downtown area.",
+      "Increased reports of vehicle break-ins have been noted near public parks. Advise citizens not to leave valuables in their cars.",
+      "A new counterfeit bill scheme involving fraudulent $50 bills has been reported by several local businesses.",
+      "Officer Safety Bulletin: A subject known to be armed and dangerous, John Doe, has been seen in the area. Approach with extreme caution."
     ],
   },
   keyQuote:
-    "The odor of marijuana, standing alone, will no longer suffice to furnish probable cause for a search of a vehicle. The State must show a nexus between the odor and illegal activity.",
+    "This AI-generated summary demonstrates how public data can be transformed into actionable intelligence, enhancing officer safety and situational awareness without accessing any confidential information.",
 };

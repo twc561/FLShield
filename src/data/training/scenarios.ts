@@ -1,4 +1,3 @@
-
 export type ScenarioPack = {
   scenarioID: string;
   scenarioTitle: string;
@@ -25,6 +24,58 @@ export type ScenarioPack = {
 };
 
 export const trainingScenarios: ScenarioPack[] = [
+  {
+    scenarioID: 'DEESCALATE-001',
+    scenarioTitle: 'Mental Health Crisis De-escalation',
+    learningObjective: 'To practice de-escalation with a person in a non-criminal mental health crisis.',
+    scenarioBrief: 'You are dispatched to a public park for a welfare check. The caller reports a man pacing and talking to himself loudly. He is not reported to be aggressive or armed, but is causing public concern.',
+    officerGoal: 'Establish rapport, assess the situation for danger, and persuade the individual to accept voluntary medical assistance.',
+    characterProfile: {
+      name: 'David',
+      persona: 'You are a veteran suffering from a PTSD episode. You feel trapped and are experiencing auditory hallucinations. You are frightened and confused by the police presence. You see them as a threat. You will respond negatively to direct orders but positively to calm, patient, and empathetic language.',
+      secretKnowledge: [
+        'You are a veteran of the Marine Corps.',
+        "You are not armed and do not want to hurt anyone; you just want the 'voices' to stop.",
+        'Your sister is your emergency contact, and talking about her has a calming effect.',
+      ],
+      ttsParameters: {
+        voiceName: 'Algenib',
+      },
+    },
+    dynamicBehaviorTree: [
+      {
+        if: "Officer introduces themself, slows things down, and uses phrases like 'I'm here to help' or 'You seem to be going through a lot right now'.",
+        then: "Shift persona to 'Wary but Listening'. Stop pacing. Ask 'Who are you?' or 'What do you want?'",
+      },
+      {
+        if: "Officer gives direct commands like 'Calm down!' or 'Stop yelling!'.",
+        then: "Shift persona to 'More Agitated'. Begin yelling 'Leave me alone! You can\'t help me!'.",
+      },
+      {
+        if: "Officer asks about his background or family in an empathetic way.",
+        then: "Shift persona to 'Calming Down'. Mention your sister and that you feel lost. Become more open to the suggestion of help.",
+      },
+    ],
+    feedbackTriggers: [
+      {
+        condition: "the officer's first statement is a direct command or order.",
+        feedback: 'Leading with commands can escalate a mental health crisis. Try introducing yourself and stating a clear, non-threatening purpose first.',
+      },
+      {
+        condition: "the officer stands too close or uses an aggressive 'command' stance.",
+        feedback: 'Creating distance and using open, non-threatening body language can significantly lower the subject\'s anxiety and increase compliance.',
+      },
+      {
+        condition: "the officer rushes the conversation or interrupts the subject.",
+        feedback: 'Patience is a key de-escalation tactic. Giving the person time and space to talk can provide valuable information and build trust.',
+      },
+    ],
+    debriefingCriteria: [
+      'Did you successfully build rapport without escalating the situation?',
+      'Did you use active listening to discover a calming trigger (his sister)?',
+      'Did you achieve the goal of persuading him to accept voluntary help?',
+    ],
+  },
   {
     scenarioID: "RTW-001",
     scenarioTitle: "Retail Theft Witness Interview",

@@ -1,4 +1,3 @@
-
 import type { FeatureModule } from "@/types"
 import {
   Book,
@@ -20,6 +19,7 @@ import {
   ShieldQuestion,
   ShieldCheck,
   Mic,
+  Camera,
 } from "lucide-react"
 
 export type FeatureGroup = {
@@ -79,13 +79,13 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         targetPage: "/emergency-response/hazmat-guide",
         category: "Emergency Response",
       },
-      {
-        id: "field-translation-guide",
-        title: "Field Translation Guide",
-        summary: "Trilingual audio phrases for common field encounters.",
-        icon: "Languages",
-        targetPage: "/field-translation-guide",
-        category: "Communication Tools",
+       {
+        id: "visual-evidence-identifier",
+        title: "Visual Evidence ID",
+        summary: "Use your camera to identify unknown pills and other items.",
+        icon: "Camera",
+        targetPage: "/field-procedures/visual-evidence-identifier",
+        category: "Field Procedures",
       },
     ],
   },
@@ -93,10 +93,10 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
     category: "Training & Development",
     icon: GraduationCap,
     features: [
-      {
+       {
         id: "role-play-simulator",
-        title: "AI Role-Play Simulator",
-        summary: "Practice interview and de-escalation skills against AI characters.",
+        title: "AI De-escalation Coach",
+        summary: "Practice de-escalation skills against AI characters.",
         icon: "MessageSquare",
         targetPage: "/training-development/role-play-simulator",
         category: "Training & Development",
@@ -110,12 +110,12 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         category: "Training & Development",
       },
       {
-        id: "common-misperceptions",
-        title: "Common Misperceptions",
-        summary: "Debunk legal myths and procedural pitfalls with this risk management guide.",
-        icon: "ShieldAlert",
-        targetPage: "/training-development/common-misperceptions",
-        category: "Training & Development",
+        id: "ai-report-writer",
+        title: "AI Report Assistant",
+        summary: "Transform your notes into a formal report narrative.",
+        icon: "ClipboardEdit",
+        targetPage: "/reporting-development/ai-report-writer",
+        category: "Reporting & Development"
       },
     ],
   },

@@ -1,7 +1,6 @@
-
 import * as React from "react"
 import {
-  LayoutGrid, Bot, Star, Book, Scale, Gavel, ListChecks, Home, Car, Route, Footprints, Truck, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, Mic, Settings, Newspaper, Download, Users as UsersIcon, FileText as FileTextIcon, Heart
+  LayoutGrid, Bot, Star, Book, Scale, Gavel, ListChecks, Home, Car, Route, Footprints, Truck, Dog, Fish, Stethoscope, Siren, BrainCircuit, HeartPulse, Biohazard, AlertCircle, UserSearch, Briefcase, ClipboardEdit, ShieldQuestion, GraduationCap, ShieldCheck, ShieldAlert, FlaskConical, Users, Smartphone, MessageSquare, FileCheck, Languages as LanguagesIcon, Mic, Settings, Newspaper, Download, Users as UsersIcon, FileText as FileTextIcon, Heart, Camera
 } from "lucide-react"
 
 type SubMenuItem = {
@@ -22,8 +21,8 @@ export const menuItems: MenuItem[] = [
     label: "Training & Briefing",
     icon: GraduationCap,
     items: [
-      { href: "/daily-briefing", label: "Daily Briefing", icon: Newspaper },
-      { href: "/training-development/role-play-simulator", label: "AI Role-Play Simulator", icon: MessageSquare },
+      { href: "/daily-briefing", label: "Public Intelligence Briefing", icon: Newspaper },
+      { href: "/training-development/role-play-simulator", label: "AI De-escalation Coach", icon: MessageSquare },
       { href: "/reporting-development/knowledge-check", label: "Knowledge Check", icon: GraduationCap },
       { href: "/training-development/common-misperceptions", label: "Common Misperceptions", icon: ShieldAlert },
     ],
@@ -33,6 +32,7 @@ export const menuItems: MenuItem[] = [
     icon: Briefcase,
     items: [
       { href: "/legal-reference/statutes", label: "Statute Navigator", icon: Scale },
+      { href: "/field-procedures/visual-evidence-identifier", label: "Visual Evidence ID", icon: Camera },
       { href: "/legal-reference/case-law", label: "Case Law Vault", icon: Gavel },
       { href: "/legal-reference/miranda-warning-guide", label: "Miranda Warning Guide", icon: Mic },
       { href: "/field-translation-guide", label: "Field Translation Guide", icon: LanguagesIcon },
@@ -46,6 +46,7 @@ export const menuItems: MenuItem[] = [
     label: "Reporting & Procedures",
     icon: FileCheck,
     items: [
+      { href: "/reporting-development/ai-report-writer", label: "AI Report Assistant", icon: ClipboardEdit },
       { href: "/field-procedures/scenario-checklists", label: "Scenario Checklists", icon: ListChecks },
       { href: "/reporting-development/ai-charge-assistant", label: "AI Charge Assistant", icon: Gavel },
       { href: "/reporting-development/use-of-force-wizard", label: "Use of Force Wizard", icon: ShieldQuestion },

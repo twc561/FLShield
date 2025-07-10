@@ -37,13 +37,5 @@ import '@/ai/flows/identify-crime-statute.ts';
 import '@/ai/flows/find-jury-instruction.ts';
 import '@/ai/flows/live-debrief-flow.ts';
 import '@/ai/flows/conversational-partner-flow.ts';
-
-
-
-
-
-
-
-
-
-
+import '@/ai/flows/generate-report-narrative.ts';
+import '@/ai/flows/identify-pill.ts';
