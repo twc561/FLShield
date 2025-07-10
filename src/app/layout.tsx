@@ -23,10 +23,8 @@ export default function RootLayout({
   const pathname = usePathname()
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
     if (!isFirebaseConfigured) {
       setIsAuthenticated(false);
       return;
@@ -51,12 +49,9 @@ export default function RootLayout({
     "/security",
   ];
   const isPublicPage = publicPages.includes(pathname);
-
   const authPages = ["/", "/login"];
 
   useEffect(() => {
-    if (!isMounted) return;
-    
     if (isAuthenticated === false && !isPublicPage) {
       router.push('/login');
     }
@@ -65,10 +60,10 @@ export default function RootLayout({
         router.push('/dashboard');
     }
 
-  }, [isAuthenticated, pathname, router, isPublicPage, isMounted]);
+  }, [isAuthenticated, pathname, router, isPublicPage]);
 
   const showAppShell = isAuthenticated && !isPublicPage;
-  const showLoadingScreen = !isMounted || (isAuthenticated === null && !isPublicPage);
+  const showLoadingScreen = isAuthenticated === null && !isPublicPage;
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
