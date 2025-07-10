@@ -26,6 +26,8 @@ export type InstructionDetail = {
   relatedStatute: string;
 };
 
+// This file now serves as a fallback or reference, but is not directly used by the new Navigator UI.
+// The new system uses the instruction-map.ts for lookups.
 export const standardJuryInstructionsPlaceholders: InstructionPlaceholder[] = [
   // Crimes Against Persons
   { id: "FL_JI_CRIM_7_2", instructionNumber: "7.2", instructionTitle: "First Degree Premeditated Murder", category: "Crimes Against Persons", icon: "Swords" },
@@ -57,4 +59,7 @@ export const standardJuryInstructionsPlaceholders: InstructionPlaceholder[] = [
   { id: "FL_JI_CRIM_3_6_F", instructionNumber: "3.6(f)", instructionTitle: "Justifiable Use of Deadly Force", category: "Defenses", icon: "ShieldCheck" },
   { id: "FL_JI_CRIM_3_6_G", instructionNumber: "3.6(g)", instructionTitle: "Justifiable Use of Non-Deadly Force", category: "Defenses", icon: "Shield" },
   { id: "FL_JI_CRIM_3_6_A", instructionNumber: "3.6(a)", instructionTitle: "Insanity", category: "Defenses", icon: "BrainCircuit" },
+  
+  // Resisting Officer
+  { id: "FL_JI_CRIM_21_2", instructionNumber: "21.2", instructionTitle: "Resisting Officer With Violence", category: "Public Order & Obstruction", icon: "UserX" }
 ];

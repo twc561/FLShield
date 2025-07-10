@@ -1,16 +1,14 @@
 
-import { PageHeader } from "@/components/PageHeader"
-import { standardJuryInstructionsPlaceholders } from "@/data/legal-reference/standard-jury-instructions"
-import { StandardJuryInstructionsClient } from "./Client"
+"use client";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function StandardJuryInstructionsPage() {
-  return (
-    <div className="animate-fade-in-up h-full flex flex-col">
-      <PageHeader
-        title="Standard Jury Instructions Navigator"
-        description="Select an instruction to get a detailed, AI-powered analysis focused on the evidence needed to build a strong case."
-      />
-      <StandardJuryInstructionsClient initialPlaceholders={standardJuryInstructionsPlaceholders} />
-    </div>
-  )
+export default function StandardJuryInstructionsRedirect() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace('/legal-reference/jury-instructions-navigator');
+  }, [router]);
+
+  return null; // or a loading spinner
 }

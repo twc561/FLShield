@@ -28,11 +28,11 @@ export const menuItems: MenuItem[] = [
     items: [
       { href: "/legal-reference/statutes", label: "Statute Navigator", icon: Scale },
       { href: "/legal-reference/case-law", label: "Case Law Vault", icon: Gavel },
+      { href: "/legal-reference/jury-instructions-navigator", label: "Jury Instructions", icon: ListChecks },
       { href: "/legal-reference/miranda-warning-guide", label: "Miranda Warning Guide", icon: MicOff },
       { href: "/legal-reference/local-ordinances-guide", label: "Local Ordinances", icon: Home },
       { href: "/legal-reference/constitutional-law-guide", label: "Constitutional Law Guide", icon: Landmark },
       { href: "/legal-reference/rules-of-criminal-procedure", label: "Rules of Criminal Pro...", icon: FileText },
-      { href: "/legal-reference/standard-jury-instructions", label: "Standard Jury Instruc...", icon: ListChecks },
       { href: "/legal-reference/florida-administrative-code", label: "Florida Administrati...", icon: Building },
       { href: "/legal-reference/statutory-case-law-updates", label: "Statutory & Case Law...", icon: Newspaper },
       { href: "/legal-reference/rights-reference-guide", label: "Rights Reference Gui...", icon: ShieldAlert },
