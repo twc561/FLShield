@@ -29,5 +29,7 @@ import '@/ai/flows/analyze-alert-guide.ts';
 import '@/ai/flows/analyze-hazmat-placard.ts';
 import '@/ai/flows/commandSearch.ts';
 import '@/ai/flows/legalAdvisor.ts';
+import '@/ai/flows/generate-image.ts';
+import '@/ai/flows/lookup-hazmat-placard.ts';
 
 

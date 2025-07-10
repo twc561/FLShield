@@ -2,6 +2,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import { useSearchParams } from "next/navigation"
 import * as LucideIcons from "lucide-react"
 import {
@@ -12,9 +13,9 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, Search, Flame, ShieldAlert, Biohazard, Activity, Radiation, Skull, Wind, Bot, CircleDot, AlertTriangle, Info } from "lucide-react"
+import { Loader2, Search, Flame, ShieldAlert, Biohazard, Activity, Radiation, Skull, Wind, Bot, CircleDot, AlertTriangle, Info, Image as ImageIcon, Sparkles } from "lucide-react"
 import { analyzeHazmatPlacard, type AnalyzeHazmatPlacardOutput } from "@/ai/flows/analyze-hazmat-placard"
-import { Skeleton } from "@/components/ui/skeleton"
+import { generateImage } from "@/ai/flows/generate-image"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import type { HazmatClass } from "@/data/emergency-response/hazmat-classes"
@@ -30,6 +31,49 @@ const classIcons: Record<string, React.ElementType> = {
     '8': Biohazard,
     '9': CircleDot
 };
+
+const PlacardImageGenerator = ({ detail }: { detail: AnalyzeHazmatPlacardOutput }) => {
+    const [imageUrl, setImageUrl] = React.useState<string | null>(null);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState<string | null>(null);
+
+    const handleGenerateImage = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const prompt = `Generate a high-resolution image of a hazardous material placard for ${detail.placardInfo.className}. The image must be a clean vector safety symbol, ISO 7010 style, with a white background. The central graphic is a ${detail.placardInfo.graphicDescription}. The design must be simple, clear, and instantly recognizable as a safety warning. Do not include any text or numbers on the placard itself.`;
+            const result = await generateImage({ prompt });
+            setImageUrl(result.imageUrl);
+        } catch (e) {
+            console.error(e);
+            setError("Image generation failed. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    if (imageUrl) {
+        return (
+            <div className="relative aspect-square w-full max-w-xs mx-auto">
+                <Image src={imageUrl} alt={`Generated placard for ${detail.materialName}`} fill className="object-contain" />
+            </div>
+        )
+    }
+
+    return (
+        <Card className="bg-muted/50 text-center p-4">
+            <CardContent className="flex flex-col items-center justify-center gap-4 pt-6">
+                <ImageIcon className="w-12 h-12 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">Generate an AI image of this placard for a visual reference.</p>
+                {error && <p className="text-xs text-destructive">{error}</p>}
+                <Button onClick={handleGenerateImage} disabled={isLoading}>
+                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4 text-accent" />}
+                    {isLoading ? 'Generating...' : 'Generate Placard Image'}
+                </Button>
+            </CardContent>
+        </Card>
+    );
+}
 
 const DetailView = React.memo(({ detail }: { detail: AnalyzeHazmatPlacardOutput }) => {
     const Icon = classIcons[detail.placardInfo.className.charAt(6)] || ShieldAlert;
@@ -53,6 +97,8 @@ const DetailView = React.memo(({ detail }: { detail: AnalyzeHazmatPlacardOutput 
                     </CardDescription>
                 </CardHeader>
             </Card>
+
+            <PlacardImageGenerator detail={detail} />
 
             <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
