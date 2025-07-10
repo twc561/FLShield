@@ -23,6 +23,8 @@ const StatuteLinkSchema = z.object({
 
 const IdentifyWeaponOutputSchema = z.object({
   itemType: z.string().describe("The identified type of weapon (e.g., 'Handgun', 'Rifle', 'Switchblade', 'Shotgun', 'Brass Knuckles'). If unknown, return 'Unknown'."),
+  make: z.string().optional().describe("If the item is a firearm, its manufacturer (e.g., 'Glock', 'Smith & Wesson'). If unknown, return 'Unknown'."),
+  model: z.string().optional().describe("If the item is a firearm, its model (e.g., '19', 'M&P Shield'). If unknown, return 'Unknown'."),
   notes: z.string().describe("A brief, one-sentence note about the item's general classification or characteristics relevant to law enforcement."),
   relevantStatutes: z.array(StatuteLinkSchema).describe("An array of Florida Statutes potentially relevant to the possession, carry, or use of this item."),
 });
@@ -35,13 +37,14 @@ const identifyWeaponPrompt = ai.definePrompt({
     prompt: `You are an expert in firearm and weapon identification for Florida law enforcement. Your task is to analyze an image, identify the primary item, and provide links to relevant Florida Statutes.
 
 CRITICAL INSTRUCTIONS:
-1.  **Identify the primary object in the image.** Classify it into a general category (e.g., "Handgun," "Rifle," "Switchblade," "Shotgun," "Brass Knuckles").
-2.  **Provide relevant statutes based on the item type.** Your response must be constrained to the following list:
+1.  **Identify the primary object in the image.** First, classify it into a general category (e.g., "Handgun," "Rifle," "Switchblade," "Shotgun," "Brass Knuckles").
+2.  **If the item is a firearm, identify its make and model.** Use your visual knowledge to determine the manufacturer (e.g., "Glock," "Sig Sauer") and the specific model (e.g., "17," "P320"). If you cannot confidently determine the make or model, you MUST return "Unknown" for the respective field(s).
+3.  **Provide relevant statutes based on the item type.** Your response must be constrained to the following list:
     *   If "Handgun" or "Firearm": F.S. § 790.01 (Concealed Carry), F.S. § 790.053 (Open Carry), F.S. § 790.23 (Possession by Felon), F.S. § 790.10 (Improper Exhibition).
     *   If "Switchblade": F.S. § 790.01 (Carrying concealed weapons).
     *   If "Brass Knuckles" or other melee weapon: F.S. § 790.01 (Carrying concealed weapons).
-3.  **Do not provide legal advice.** The notes should be purely descriptive of the item's classification.
-4.  If you cannot identify a weapon in the image, you MUST return "Unknown" for the itemType.
+4.  **Do not provide legal advice.** The notes should be purely descriptive of the item's classification.
+5.  If you cannot identify a weapon in the image, you MUST return "Unknown" for the itemType.
 
 Image: {{media url=imageDataUri}}`
 });
