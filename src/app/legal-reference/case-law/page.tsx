@@ -1,4 +1,5 @@
 
+
 // src/app/legal-reference/case-law/page.tsx - SIMPLIFIED FOR DEPLOYMENT
 
 export default function CaseLawPage() {
