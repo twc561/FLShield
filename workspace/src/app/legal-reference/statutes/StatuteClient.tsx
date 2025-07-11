@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Summarizer } from "@/components/Summarizer"
-import { statuteIndex, statutesFullData, type Statute } from "@/data/statutes"
+import type { Statute } from "@/data/statutes"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search, ExternalLink, BookOpen, Loader2, Sparkles, Scale } from "lucide-react"
 import { findStatute } from "@/ai/flows/find-statute"
@@ -340,7 +340,7 @@ export const StatuteClient = memo(function StatuteClient({
               {isAiResult ? (
                 <Sparkles className="h-6 w-6 text-accent" />
               ) : (
-                <Scale className="w-6 h-6 text-primary" />
+                <Scale className="w-6 w-6 text-primary" />
               )}
             </div>
             <div className="flex-1 text-left">
