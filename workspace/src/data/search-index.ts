@@ -1,4 +1,3 @@
-
 /**
  * @fileOverview A unified search index for the entire application.
  * This file imports all relevant data sources, transforms them into a
@@ -6,7 +5,7 @@
  * that can be used by a local search service.
  */
 
-import { caseLawIndex } from './case-law';
+import { caseLawIndex } from './legal-reference/case-law';
 import { statuteIndex } from './statutes';
 import { scenarioChecklistsData } from './field-procedures/scenario-checklists';
 import { k9GuideIndex } from './specialized-enforcement/k9-guide-index';
