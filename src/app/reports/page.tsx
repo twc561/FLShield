@@ -2,7 +2,7 @@
 "use client"
 
 import { useState } from "react"
-import { reportTemplates } from "@/data"
+import { reportTemplates } from "@/data/report-templates"
 import { PageHeader } from "@/components/PageHeader"
 import {
   Card,
@@ -73,10 +73,4 @@ export default function ReportAssistantPage() {
       </div>
     </div>
   )
-}
-
-declare module "react" {
-    interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-      style?: React.CSSProperties & { [key: string]: string | number };
-    }
 }

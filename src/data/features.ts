@@ -1,3 +1,4 @@
+
 import type { FeatureModule } from "@/types"
 import {
   Book,
@@ -94,14 +95,6 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
     category: "Training & Development",
     icon: GraduationCap,
     features: [
-       {
-        id: "role-play-simulator",
-        title: "AI De-escalation Coach",
-        summary: "Practice de-escalation skills against AI characters.",
-        icon: "MessageSquare",
-        targetPage: "/training-development/role-play-simulator",
-        category: "Training & Development",
-      },
       {
         id: "report-proofreader",
         title: "AI Report Proofreader",
