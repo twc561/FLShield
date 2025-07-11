@@ -724,12 +724,13 @@ const allCaseLaws: CaseLaw[] = [
   },
 ];
 
-type CaseLawIndexItem = {
+export type CaseLawIndexItem = {
   id: string;
   title: string;
   citation: string;
   category: string;
   icon: string;
+  tags: string[];
 }
 
 export const caseLawIndex: CaseLawIndexItem[] = allCaseLaws.map(c => ({
@@ -738,6 +739,7 @@ export const caseLawIndex: CaseLawIndexItem[] = allCaseLaws.map(c => ({
   citation: c.citation,
   category: c.category,
   icon: c.icon,
+  tags: c.tags,
 }));
 
 export const caseLawsFullData: Record<string, CaseLaw> = allCaseLaws.reduce((acc, c) => {
