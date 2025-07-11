@@ -1,3 +1,4 @@
+
 /**
  * @fileOverview A unified search index for the entire application.
  * This file imports all relevant data sources, transforms them into a
@@ -49,7 +50,7 @@ const scenarioItems: SearchableItem[] = Object.values(scenarioChecklistsData).ma
     description: `Field Checklist: ${s.subtitle}`,
     category: 'Field Procedures',
     href: '/field-procedures/scenario-checklists',
-    keywords: [s.name, s.subtitle, s.category, ...(Array.isArray(s.keyStatutes) ? s.keyStatutes : []), 'checklist', 'procedure', s.goal],
+    keywords: [s.name, s.subtitle, s.category, ...(Array.isArray(s.keyStatutes) ? s.keyStatutes : []), 'checklist', 'procedure', s.goal].filter(Boolean) as string[],
 }));
 
 // Transform K9 Guide data
