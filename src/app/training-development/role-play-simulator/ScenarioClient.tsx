@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, Bot, User, Loader2, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { streamDebrief } from '@/ai/flows/live-debrief-flow'; // Re-using the streaming flow logic
+import { streamRolePlay } from '@/ai/flows/roleplay-simulator';
 import { motion } from 'framer-motion';
 
 type Message = {
@@ -58,20 +58,20 @@ export function ScenarioClient({
 
         const newMessages: Message[] = [...messages, userMessage, modelMessagePlaceholder];
         setMessages(newMessages);
-
-        const currentInput = userInput;
+        
         setUserInput('');
         setIsLoading(true);
 
         try {
-            // We prepend the system prompt to the conversation history to guide the AI
-            const historyForAI = [
-                { role: 'system' as 'user' | 'model', parts: [{ text: systemPrompt }] },
-                ...newMessages.map(msg => ({ role: msg.role, parts: [{ text: msg.content }] }))
-            ];
+            const historyForAI = newMessages.slice(0, -1).map(msg => ({ // Exclude the placeholder
+                role: msg.role as 'user' | 'model',
+                parts: [{ text: msg.content }],
+            }));
             
-            // Reusing the live debrief flow as it provides simple streaming chat
-            const stream = streamDebrief({ conversationHistory: historyForAI });
+            const stream = streamRolePlay({ 
+                systemPrompt: systemPrompt, 
+                conversationHistory: historyForAI 
+            });
 
             for await (const chunk of stream) {
                 setMessages(prev =>
