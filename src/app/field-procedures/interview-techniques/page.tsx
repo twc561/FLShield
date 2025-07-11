@@ -1,6 +1,6 @@
 
 import { PageHeader } from "@/components/PageHeader"
-import { interviewTechniquesData } from "@/data"
+import { interviewTechniquesData } from "@/data/field-procedures/interview-techniques"
 import { Summarizer } from "@/components/Summarizer"
 import { InterviewTechniquesClient } from "./Client"
 

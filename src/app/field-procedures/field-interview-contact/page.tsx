@@ -1,6 +1,6 @@
 
 import { PageHeader } from "@/components/PageHeader"
-import { fieldInterviewData } from "@/data"
+import { fieldInterviewData } from "@/data/field-procedures/field-interview-contact"
 import { Summarizer } from "@/components/Summarizer"
 import { FieldInterviewClient } from "./Client"
 
