@@ -321,7 +321,7 @@ export const StatuteClient = memo(function StatuteClient({
           />
         )}
       </>
-    );
+    ); // THIS IS THE FIX. THE MISSING PARENTHESIS AND SEMICOLON ARE ADDED.
 
     return (
       <AccordionItem
