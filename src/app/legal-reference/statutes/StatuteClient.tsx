@@ -287,7 +287,7 @@ export const StatuteClient = memo(function StatuteClient({
           />
         )}
       </>
-    ); // SYNTAX FIX: This parenthesis was missing, causing the build to crash.
+    );
 
     return (
       <AccordionItem
