@@ -228,7 +228,7 @@ export const StatuteClient = memo(function StatuteClient({
                 fullText: "No full text available for AI-generated result.",
                 degreeOfCharge: result.degreeOfCharge || "N/A",
                 practicalSummary: result.description || "No summary provided by AI.",
-                elementsOfTheCrime: result.elementsOfTheCrime || "Information not available.",
+                elementsOfTheCrime: result.elementsOfTheCrime || null,
                 example: result.example || "No example provided by AI.",
                 url: `https://www.flsenate.gov/Laws/Statutes/search?search=${encodeURIComponent(
                   result.title || result.code || ''
@@ -407,7 +407,7 @@ export const StatuteClient = memo(function StatuteClient({
             <>
               {categories.map((category) => {
                 const statutesInCategory = getFilteredStatutesForCategory(category);
-                if (statutesInCategory.length === 0) return null;
+                if (!Array.isArray(statutesInCategory) || statutesInCategory.length === 0) return null;
 
                 return (
                   <React.Fragment key={category}>
