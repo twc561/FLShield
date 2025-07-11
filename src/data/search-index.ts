@@ -29,7 +29,7 @@ const caseLawItems: SearchableItem[] = caseLawIndex.map(c => ({
   description: `Case Law: ${c.citation}`,
   category: 'Legal Reference',
   href: '/legal-reference/case-law',
-  keywords: [c.title, c.category, c.citation, 'case law'],
+  keywords: [c.title, c.category, ...c.tags],
 }));
 
 // Transform Statute data
@@ -54,7 +54,7 @@ const scenarioItems: SearchableItem[] = Object.values(scenarioChecklistsData).ma
 
 // Transform K9 Guide data
 const k9HandlerItems: SearchableItem[] = k9GuideIndex.forHandlers.map(item => ({
-    id: `k9-${item.id}`,
+    id: `k9-handler-${item.id}`,
     title: item.title,
     description: `K-9 Guide (Handler): ${item.subtitle}`,
     category: 'Specialized Enforcement',
@@ -63,7 +63,7 @@ const k9HandlerItems: SearchableItem[] = k9GuideIndex.forHandlers.map(item => ({
 }));
 
 const k9PatrolItems: SearchableItem[] = k9GuideIndex.forPatrol.map(item => ({
-    id: `k9-${item.id}`,
+    id: `k9-patrol-${item.id}`,
     title: item.title,
     description: `K-9 Guide (Patrol): ${item.subtitle}`,
     category: 'Specialized Enforcement',
