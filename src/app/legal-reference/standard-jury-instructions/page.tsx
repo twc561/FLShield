@@ -1,3 +1,8 @@
+
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { PageHeader } from "@/components/PageHeader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -5,6 +10,12 @@ import { Info } from "lucide-react";
 import Link from "next/link";
 
 export default function StandardJuryInstructionsRedirectPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace('/legal-reference/jury-instructions-navigator');
+  }, [router]);
+
   return (
     <div className="animate-fade-in-up">
       <PageHeader
@@ -16,9 +27,7 @@ export default function StandardJuryInstructionsRedirectPage() {
         <AlertTitle>Feature Update</AlertTitle>
         <AlertDescription>
           The Jury Instructions guide has been replaced by the new, more accurate{" "}
-          <strong>Jury Instructions Navigator</strong>. This new tool uses a
-          multi-step AI process to ensure you always get the correct
-          information.
+          <strong>Jury Instructions Navigator</strong>. You are being redirected.
         </AlertDescription>
       </Alert>
       <Button asChild className="mt-4">

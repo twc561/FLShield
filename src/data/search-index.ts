@@ -30,7 +30,7 @@ const caseLawItems: SearchableItem[] = caseLawIndex.map(c => ({
   description: `Case Law: ${c.citation}`,
   category: 'Legal Reference',
   href: '/legal-reference/case-law',
-  keywords: [c.title, c.category, ...c.tags],
+  keywords: Array.isArray(c.tags) ? [c.title, c.category, ...c.tags] : [c.title, c.category],
 }));
 
 // Transform Statute data

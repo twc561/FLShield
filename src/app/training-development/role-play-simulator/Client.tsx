@@ -1,5 +1,4 @@
 
-
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react';
@@ -65,12 +64,15 @@ export function ScenarioClient({
         setIsLoading(true);
 
         try {
-            const historyForAI = newMessages.map(msg => ({
-                role: msg.role,
+            const historyForAI = newMessages.slice(0, -1).map(msg => ({ // Exclude the placeholder
+                role: msg.role as 'user' | 'model',
                 parts: [{ text: msg.content }],
             }));
             
-            const stream = streamRolePlay({ systemPrompt: systemPrompt, conversationHistory: historyForAI });
+            const stream = streamRolePlay({ 
+                systemPrompt: systemPrompt, 
+                conversationHistory: historyForAI 
+            });
 
             for await (const chunk of stream) {
                 setMessages(prev =>

@@ -1,9 +1,19 @@
 
+'use client';
+
 import { PageHeader } from "@/components/PageHeader"
 import { statuteIndex, statutesFullData } from "@/data/statutes"
-import { StatuteClient } from "./StatuteClient"
 import { Suspense } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
+import dynamic from 'next/dynamic';
+
+const StatuteClient = dynamic(() => 
+  import('./StatuteClient').then(mod => mod.StatuteClient), 
+  { 
+    ssr: false,
+    loading: () => <StatuteLoading />
+  }
+);
 
 function StatuteLoading() {
   return (

@@ -1,5 +1,5 @@
 
-'use client'
+'use client';
 
 import { PageHeader } from "@/components/PageHeader";
 import { caseLawIndex, caseLawsFullData } from "@/data/case-law";
