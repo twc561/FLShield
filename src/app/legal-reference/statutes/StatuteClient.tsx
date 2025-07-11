@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Summarizer } from "@/components/Summarizer"
-import type { Statute } from "@/data"
+import type { Statute } from "@/data/statutes"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search, ExternalLink, BookOpen, Loader2, Sparkles, Scale } from "lucide-react"
 import { findStatute } from "@/ai/flows/find-statute"
