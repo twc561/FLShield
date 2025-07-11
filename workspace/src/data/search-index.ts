@@ -1,3 +1,4 @@
+
 /**
  * @fileOverview A unified search index for the entire application.
  * This file imports all relevant data sources, transforms them into a
@@ -5,12 +6,12 @@
  * that can be used by a local search service.
  */
 
-import { caseLawIndex } from './legal-reference/case-law';
-import { statuteIndex } from './statutes';
-import { scenarioChecklistsData } from './field-procedures/scenario-checklists';
-import { k9GuideIndex } from './specialized-enforcement/k9-guide-index';
-import { fishingRegulations, huntingRegulations, boatingTopics, protectedSpeciesInfo } from './specialized-enforcement/fwc-regulations';
-import { commonMisperceptionsData } from './officer-wellness-rights/common-misperceptions';
+import { caseLawIndex } from '@/data/case-law';
+import { statuteIndex } from '@/data/statutes';
+import { scenarioChecklistsData } from '@/data/field-procedures/scenario-checklists';
+import { k9GuideIndex } from '@/data/specialized-enforcement/k9-guide-index';
+import { fishingRegulations, huntingRegulations, boatingTopics, protectedSpeciesInfo } from '@/data/specialized-enforcement/fwc-regulations';
+import { commonMisperceptionsData } from '@/data/officer-wellness-rights/common-misperceptions';
 import { menuItems } from '@/lib/menu-items';
 
 export type SearchableItem = {
