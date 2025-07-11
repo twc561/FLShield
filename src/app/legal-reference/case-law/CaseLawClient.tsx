@@ -23,6 +23,7 @@ type CaseLawIndexItem = {
   citation: string;
   category: string;
   icon: string;
+  tags: string[];
 }
 
 export const CaseLawClient = memo(function CaseLawClient({ 
@@ -140,7 +141,7 @@ export const CaseLawClient = memo(function CaseLawClient({
                                           <span className="font-semibold text-foreground/80 not-italic">Real-World Example:</span> {cachedData[c.id].example}
                                       </p>
                                       <div className="flex flex-wrap gap-2 mt-4">
-                                          {cachedData[c.id].tags.map(tag => (
+                                          {Array.isArray(cachedData[c.id].tags) && cachedData[c.id].tags.map(tag => (
                                           <span key={tag} className="px-2 py-1 text-xs rounded-md bg-secondary text-secondary-foreground">
                                               {tag}
                                           </span>
