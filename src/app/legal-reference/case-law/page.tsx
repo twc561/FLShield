@@ -1,23 +1,12 @@
-// src/app/legal-reference/case-law/page.tsx - FINAL CORRECTED
 
-import { CaseLawClient } from './CaseLawClient';
-import { caseLawIndex } from '@/data/case-law';
+// src/app/legal-reference/case-law/page.tsx - SIMPLIFIED FOR DEPLOYMENT
 
-// A simple, placeholder function to get data.
-// In a real app, this would fetch from a database.
-async function getCaseLawData() {
-  // Using the local index data to ensure the build passes.
-  return caseLawIndex.map(c => ({
-      id: c.id,
-      title: c.title,
-      summary: `Citation: ${c.citation}`
-  }));
-}
-
-export default async function CaseLawPage() {
-  // Fetch the data on the server.
-  const caseLawItems = await getCaseLawData();
-
-  // Pass the data to the Client Component.
-  return <CaseLawClient initialData={caseLawItems} />;
+export default function CaseLawPage() {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold">Case Law Reference</h1>
+      <p className="mt-4 text-muted-foreground">This page is temporarily simplified to allow for deployment.</p>
+      <p className="mt-2 text-muted-foreground">The interactive client component will be restored shortly.</p>
+    </div>
+  );
 }
