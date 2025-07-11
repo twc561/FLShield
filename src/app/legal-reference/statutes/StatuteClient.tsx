@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
   CardFooter
@@ -161,11 +160,13 @@ export const StatuteClient = memo(function StatuteClient({
     // Smart Pre-loading: Pre-load popular statutes into the cache on initial mount
     // to make accessing them feel instantaneous.
     const preloadedData: Record<string, Statute> = {};
-    popularStatutes.forEach(id => {
-      if (statutesFullData[id]) {
-        preloadedData[id] = statutesFullData[id];
-      }
-    });
+    if (Array.isArray(popularStatutes)) {
+      popularStatutes.forEach(id => {
+        if (statutesFullData[id]) {
+          preloadedData[id] = statutesFullData[id];
+        }
+      });
+    }
     setCachedData(prev => ({ ...prev, ...preloadedData }));
   }, [statutesFullData]);
 
@@ -189,14 +190,16 @@ export const StatuteClient = memo(function StatuteClient({
     });
   }, [initialStatuteIndex]);
 
-  const totalFilteredResults = useMemo(() => {
-    if (!searchTerm) return initialStatuteIndex.length;
+  const filteredStatutes = useMemo(() => {
+    if (!searchTerm) {
+      return initialStatuteIndex;
+    }
     const lowercasedTerm = searchTerm.toLowerCase();
     return initialStatuteIndex.filter(
       (s) =>
         s.title.toLowerCase().includes(lowercasedTerm) ||
         s.code.toLowerCase().includes(lowercasedTerm)
-    ).length;
+    );
   }, [searchTerm, initialStatuteIndex]);
 
   useEffect(() => {
@@ -205,7 +208,7 @@ export const StatuteClient = memo(function StatuteClient({
       setIsAiSearching(false);
       return;
     }
-    if (totalFilteredResults > 0) {
+    if (filteredStatutes.length > 0) {
       setAiResult(null);
       return;
     }
@@ -256,9 +259,9 @@ export const StatuteClient = memo(function StatuteClient({
     return () => {
       clearTimeout(handler);
     };
-  }, [searchTerm, totalFilteredResults]);
+  }, [searchTerm, filteredStatutes.length]);
   
-  const handleAccordionChange = async (value: string | undefined) => {
+  const handleAccordionChange = useCallback(async (value: string | undefined) => {
     setActiveAccordionItem(value);
     if (!value) return; 
     if (cachedData[value] || loadingId === value) return;
@@ -271,7 +274,7 @@ export const StatuteClient = memo(function StatuteClient({
         setCachedData(prev => ({ ...prev, [value]: fullData }));
     }
     setLoadingId(null);
-  }
+  }, [cachedData, loadingId, statutesFullData]);
 
   const handleGenerateElements = useCallback(async (statute: Statute) => {
     setActiveAccordionItem(statute.id);
@@ -290,19 +293,10 @@ export const StatuteClient = memo(function StatuteClient({
   }, []);
 
   const getFilteredStatutesForCategory = (category: string) => {
-    const filteredByCategory = initialStatuteIndex.filter((s) => s.category === category);
-    if (!searchTerm) {
-      return filteredByCategory;
-    }
-    const lowercasedTerm = searchTerm.toLowerCase();
-    return filteredByCategory.filter(
-      (s) =>
-        s.title.toLowerCase().includes(lowercasedTerm) ||
-        s.code.toLowerCase().includes(lowercasedTerm)
-    );
+    return filteredStatutes.filter((s) => s.category === category);
   };
 
-  const showNotFound = !isAiSearching && !aiResult && searchTerm.length > 0 && totalFilteredResults === 0;
+  const showNotFound = !isAiSearching && !aiResult && searchTerm.length > 0 && filteredStatutes.length === 0;
   
   const renderStatute = (statute: Statute, isAiResult = false) => {
     const content = isAiResult ? (
@@ -409,17 +403,17 @@ export const StatuteClient = memo(function StatuteClient({
             </div>
           )}
 
-          {!isAiSearching && !aiResult && (searchTerm === "" || totalFilteredResults > 0) && (
+          {!isAiSearching && !aiResult && (searchTerm === "" || filteredStatutes.length > 0) && (
             <>
               {categories.map((category) => {
-                const filteredStatutes = getFilteredStatutesForCategory(category);
-                if (filteredStatutes.length === 0) return null;
+                const statutesInCategory = getFilteredStatutesForCategory(category);
+                if (statutesInCategory.length === 0) return null;
 
                 return (
                   <React.Fragment key={category}>
                     <h2 className="text-lg font-bold tracking-tight mt-6 mb-2 px-1">{category}</h2>
                     <div className="space-y-2">
-                      {filteredStatutes.map((statute) => renderStatute(statute as Statute))}
+                      {statutesInCategory.map((statute) => renderStatute(statute as Statute))}
                     </div>
                   </React.Fragment>
                 )
@@ -438,5 +432,3 @@ declare module "react" {
     style?: React.CSSProperties & { [key: string]: string | number }
   }
 }
-
-    

@@ -1,8 +1,7 @@
 
-
 "use client"
 
-import { useState, useMemo, memo } from "react"
+import { useState, useMemo, memo, useCallback } from "react"
 import Link from "next/link"
 import * as LucideIcons from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -13,7 +12,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Summarizer } from "@/components/Summarizer"
-import { caseLawIndex, caseLawsFullData, type CaseLaw } from "@/data/case-law"
+import { type CaseLaw } from "@/data/case-law"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search, Gavel } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -24,6 +23,7 @@ type CaseLawIndexItem = {
   citation: string;
   category: string;
   icon: string;
+  tags: string[];
 }
 
 export const CaseLawClient = memo(function CaseLawClient({ 
@@ -69,7 +69,7 @@ export const CaseLawClient = memo(function CaseLawClient({
     );
   }, [searchTerm, initialCaseIndex]);
 
-  const handleAccordionChange = async (value: string | undefined) => {
+  const handleAccordionChange = useCallback(async (value: string | undefined) => {
     setActiveAccordionItem(value);
     if (!value) return; 
     if (cachedData[value] || loadingId === value) return; 
@@ -82,7 +82,7 @@ export const CaseLawClient = memo(function CaseLawClient({
         setCachedData(prev => ({ ...prev, [value]: fullData }));
     }
     setLoadingId(null);
-  }
+  }, [cachedData, loadingId, caseLawsFullData]);
 
   return (
     <div className="flex flex-col h-full animate-fade-in-up">
@@ -98,12 +98,12 @@ export const CaseLawClient = memo(function CaseLawClient({
         <ScrollArea className="flex-1 -mr-4 pr-4">
           <div className="space-y-6">
             {categoryOrder
-              .filter(category => filteredCaseIndex.some(c => c.category === category))
+              .filter(category => Array.isArray(filteredCaseIndex) && filteredCaseIndex.some(c => c.category === category))
               .map(category => (
                 <div key={category}>
                   <h2 className="text-lg font-bold tracking-tight my-4 px-1">{category}</h2>
                   <Accordion type="single" collapsible className="w-full space-y-2" value={activeAccordionItem} onValueChange={handleAccordionChange}>
-                    {filteredCaseIndex
+                    {Array.isArray(filteredCaseIndex) && filteredCaseIndex
                       .filter(c => c.category === category)
                       .map(c => {
                         const Icon = (LucideIcons as any)[c.icon] || Gavel;
@@ -141,7 +141,7 @@ export const CaseLawClient = memo(function CaseLawClient({
                                           <span className="font-semibold text-foreground/80 not-italic">Real-World Example:</span> {cachedData[c.id].example}
                                       </p>
                                       <div className="flex flex-wrap gap-2 mt-4">
-                                          {cachedData[c.id].tags.map(tag => (
+                                          {Array.isArray(cachedData[c.id].tags) && cachedData[c.id].tags.map(tag => (
                                           <span key={tag} className="px-2 py-1 text-xs rounded-md bg-secondary text-secondary-foreground">
                                               {tag}
                                           </span>
@@ -165,7 +165,7 @@ export const CaseLawClient = memo(function CaseLawClient({
                 </div>
               ))
             }
-            {filteredCaseIndex.length === 0 && searchTerm && (
+            {Array.isArray(filteredCaseIndex) && filteredCaseIndex.length === 0 && searchTerm && (
                 <div className="text-center py-16">
                   <Gavel className="mx-auto h-12 w-12 text-muted-foreground" />
                   <h3 className="mt-4 text-lg font-medium">No Cases Found</h3>

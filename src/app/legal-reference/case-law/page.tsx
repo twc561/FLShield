@@ -1,13 +1,37 @@
 
+import { PageHeader } from "@/components/PageHeader";
+import { caseLawIndex, caseLawsFullData } from "@/data/case-law";
+import { CaseLawClient } from "./CaseLawClient";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// src/app/legal-reference/case-law/page.tsx - SIMPLIFIED FOR DEPLOYMENT
+function CaseLawLoading() {
+  return (
+    <div className="space-y-6">
+      <Skeleton className="h-10 w-full" />
+      <div className="space-y-4">
+        <Skeleton className="h-20 w-full" />
+        <Skeleton className="h-20 w-full" />
+        <Skeleton className="h-20 w-full" />
+      </div>
+    </div>
+  )
+}
+
 
 export default function CaseLawPage() {
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Case Law Reference</h1>
-      <p className="mt-4 text-muted-foreground">This page is temporarily simplified to allow for deployment.</p>
-      <p className="mt-2 text-muted-foreground">The interactive client component will be restored shortly.</p>
+    <div className="h-full flex flex-col">
+      <PageHeader
+        title="Case Law Vault"
+        description="Search landmark cases to get plain-language summaries and officer-focused takeaways."
+      />
+      <Suspense fallback={<CaseLawLoading />}>
+        <CaseLawClient 
+          initialCaseIndex={caseLawIndex}
+          caseLawsFullData={caseLawsFullData}
+        />
+      </Suspense>
     </div>
-  );
+  )
 }
