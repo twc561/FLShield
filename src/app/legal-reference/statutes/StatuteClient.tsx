@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useMemo, useEffect, memo, useCallback } from "react";
@@ -390,6 +389,7 @@ export const StatuteClient = memo(function StatuteClient({
 });
 StatuteClient.displayName = 'StatuteClient';
 
+// This declaration is better placed in a global `*.d.ts` file for project organization.
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
     style?: React.CSSProperties & { [key: string]: string | number };

@@ -1,9 +1,19 @@
 
+'use client'
+
 import { PageHeader } from "@/components/PageHeader";
 import { caseLawIndex, caseLawsFullData } from "@/data/case-law";
-import { CaseLawClient } from "./CaseLawClient";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import dynamic from 'next/dynamic';
+
+const CaseLawClient = dynamic(() => 
+  import('./CaseLawClient').then(mod => mod.CaseLawClient), 
+  { 
+    ssr: false,
+    loading: () => <CaseLawLoading />
+  }
+);
 
 function CaseLawLoading() {
   return (
