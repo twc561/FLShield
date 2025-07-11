@@ -24,6 +24,7 @@ import {
 import type { MirandaWarningGuideData, LanguageContent } from "@/data/legal-reference/miranda-warning-guide";
 import { Gavel, AlertTriangle, Languages, CheckCircle, Mic, Milestone, Volume2, Loader2, PauseCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { textToSpeech } from "@/ai/flows/text-to-speech";
 
 const LanguageContentWithAudio = ({ 
   content, 
@@ -32,13 +33,10 @@ const LanguageContentWithAudio = ({
   playAudio 
 }: { 
   content: LanguageContent, 
-  languageCode: 'es-US' | 'ht-HT', 
+  languageCode: 'en-US' | 'es-US' | 'ht-HT',
   activeAudioId: string | null, 
-  playAudio: (text: string, langCode: 'es-US' | 'ht-HT', id: string) => void 
+  playAudio: (text: string, langCode: 'en-US' | 'es-US' | 'ht-HT', id: string) => void 
 }) => {
-  // English is handled by browser native, so we only handle Spanish and Haitian Creole here
-  const isAudioSupported = languageCode === 'es-US' || languageCode === 'ht-HT';
-
   return (
     <div className="space-y-4">
       <div className="p-4 bg-muted/50 rounded-lg">
@@ -50,11 +48,9 @@ const LanguageContentWithAudio = ({
             return (
               <li key={i} className="flex items-center justify-between gap-2">
                 <span className="flex-1"><Mic className="h-4 w-4 mr-2 inline-block text-accent"/>{line}</span>
-                {isAudioSupported && (
-                   <Button variant="ghost" size="icon" onClick={() => playAudio(line, languageCode, id)} disabled={!!activeAudioId && !isLoading}>
-                    {isLoading ? <Loader2 className="h-4 w-4 animate-spin"/> : <Volume2 className="h-5 w-5"/>}
-                  </Button>
-                )}
+                <Button variant="ghost" size="icon" onClick={() => playAudio(line, languageCode, id)} disabled={!!activeAudioId && !isLoading}>
+                  {isLoading ? <Loader2 className="h-4 w-4 animate-spin"/> : <Volume2 className="h-5 w-5"/>}
+                </Button>
               </li>
             );
           })}
@@ -69,11 +65,9 @@ const LanguageContentWithAudio = ({
             return (
               <li key={i} className="flex items-center justify-between gap-2">
                 <span className="flex-1"><CheckCircle className="h-4 w-4 mr-2 inline-block text-green-500"/>{line}</span>
-                 {isAudioSupported && (
-                   <Button variant="ghost" size="icon" onClick={() => playAudio(line, languageCode, id)} disabled={!!activeAudioId && !isLoading}>
-                     {isLoading ? <Loader2 className="h-4 w-4 animate-spin"/> : <Volume2 className="h-5 w-5"/>}
-                   </Button>
-                 )}
+                 <Button variant="ghost" size="icon" onClick={() => playAudio(line, languageCode, id)} disabled={!!activeAudioId && !isLoading}>
+                   {isLoading ? <Loader2 className="h-4 w-4 animate-spin"/> : <Volume2 className="h-5 w-5"/>}
+                 </Button>
               </li>
             );
           })}
@@ -100,7 +94,7 @@ export function MirandaWarningClient({
     setActiveAudioId(null);
   }, []);
 
-  const playAudio = useCallback(async (text: string, language: 'es-US' | 'ht-HT', id: string) => {
+  const playAudio = useCallback(async (text: string, langCode: 'en-US' | 'es-US' | 'ht-HT', id: string) => {
     if (id === activeAudioId) {
       stopAudio();
       return;
@@ -109,25 +103,32 @@ export function MirandaWarningClient({
     stopAudio();
     setActiveAudioId(id);
 
+    // Map language codes to voice names if necessary, or pass directly if the API supports it.
+    // For this example, we assume direct support or a mapping within the TTS flow.
+    const voiceMap = {
+      'en-US': 'Algenib', // Example voice
+      'es-US': 'Cursa',   // Example voice
+      'ht-HT': 'Deneb',   // Example voice
+    };
+
     try {
-      // Since trilingual-tts is removed, we'll simulate the behavior.
-      // In a real scenario, we might call different TTS flows or have a placeholder.
-      console.log(`Simulating TTS for [${language}]: "${text}"`);
-      // Simulate network delay
-      await new Promise(res => setTimeout(res, 1000));
-      // In a real app with audio, you'd set the audioRef.current.src here
-      // For now, we'll just stop the loading indicator.
-      stopAudio();
+      const response = await textToSpeech({ text, voiceName: voiceMap[langCode] });
+      if (audioRef.current) {
+        audioRef.current.src = response.media;
+        audioRef.current.play().catch(e => {
+          console.error("Audio playback error:", e);
+          stopAudio();
+        });
+      }
     } catch (error) {
       console.error("Audio playback failed:", error);
       stopAudio();
     }
   }, [activeAudioId, stopAudio]);
 
-
   return (
     <div className="space-y-6">
-      <audio ref={audioRef} />
+      <audio ref={audioRef} onEnded={stopAudio} onPause={stopAudio}/>
       <Card>
         <CardHeader>
           <CardTitle>Summary</CardTitle>
@@ -175,9 +176,9 @@ export function MirandaWarningClient({
                             <TabsContent value="english" className="mt-4">
                                 <LanguageContentWithAudio 
                                     content={data.mirandaWarningTranslations.english}
-                                    languageCode={'es-US'} // Placeholder, not used for English
+                                    languageCode={'en-US'}
                                     activeAudioId={activeAudioId}
-                                    playAudio={() => alert("Browser native text-to-speech would be used here.")}
+                                    playAudio={playAudio}
                                 />
                             </TabsContent>
                             <TabsContent value="spanish" className="mt-4">
