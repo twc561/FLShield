@@ -26,7 +26,10 @@ export default function CaseLawPage() {
         description="Search and review relevant case laws by category. Use the AI Summarizer for quick insights."
       />
       <Suspense fallback={<CaseLawLoading />}>
-        <CaseLawClient initialCaseIndex={caseLawIndex} caseLawsFullData={caseLawsFullData} />
+        <CaseLawClient 
+          initialCaseIndex={caseLawIndex} 
+          caseLawsFullData={caseLawsFullData} 
+        />
       </Suspense>
     </div>
   )

@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useMemo, memo } from "react"
@@ -64,7 +65,8 @@ export const CaseLawClient = memo(function CaseLawClient({
     const lowercasedTerm = searchTerm.toLowerCase();
     return initialCaseIndex.filter(c => 
       c.title.toLowerCase().includes(lowercasedTerm) ||
-      c.citation.toLowerCase().includes(lowercasedTerm)
+      c.citation.toLowerCase().includes(lowercasedTerm) ||
+      (Array.isArray(c.tags) && c.tags.some(tag => tag.toLowerCase().includes(lowercasedTerm)))
     );
   }, [searchTerm, initialCaseIndex]);
 
@@ -88,7 +90,7 @@ export const CaseLawClient = memo(function CaseLawClient({
         <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
-              placeholder="Search cases by title or citation..."
+              placeholder="Search cases by title, citation, or tag..."
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
@@ -176,9 +178,3 @@ export const CaseLawClient = memo(function CaseLawClient({
     </div>
   );
 })
-
-declare module "react" {
-    interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-      style?: React.CSSProperties & { [key: string]: string | number };
-    }
-}
