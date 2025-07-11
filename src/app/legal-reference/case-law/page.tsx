@@ -1,5 +1,5 @@
 
-import { caseLawIndex, caseLawsFullData } from "@/data"
+import { caseLawIndex, caseLawsFullData } from "@/data/case-law"
 import { PageHeader } from "@/components/PageHeader"
 import { CaseLawClient } from "./CaseLawClient"
 

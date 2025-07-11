@@ -1,6 +1,6 @@
 
 import { PageHeader } from "@/components/PageHeader"
-import { domesticViolenceData } from "@/data"
+import { domesticViolenceData } from "@/data/field-procedures/domestic-violence"
 import { Summarizer } from "@/components/Summarizer"
 import { DomesticViolenceProtocolClient } from "./Client"
 

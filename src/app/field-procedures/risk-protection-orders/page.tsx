@@ -1,6 +1,6 @@
 
 import { PageHeader } from "@/components/PageHeader"
-import { riskProtectionOrderData } from "@/data"
+import { riskProtectionOrderData } from "@/data/field-procedures/risk-protection-orders"
 import { Summarizer } from "@/components/Summarizer"
 import { RiskProtectionOrdersClient } from "./Client"
 

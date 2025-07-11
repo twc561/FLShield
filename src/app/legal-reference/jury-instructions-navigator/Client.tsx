@@ -14,7 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Loader2, Sparkles, Gavel, FileText, AlertTriangle } from "lucide-react"
 import type { AnalyzeInstructionOutput as InstructionDetail } from "@/ai/flows/analyze-jury-instruction"
 import { analyzeInstruction } from "@/ai/flows/analyze-jury-instruction"
-import type { JuryInstructionIndexItem } from "@/data"
+import type { JuryInstructionIndexItem } from "@/data/legal-reference/jury-instructions-index"
 
 import { Input } from "@/components/ui/input"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"

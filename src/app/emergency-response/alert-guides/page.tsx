@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/PageHeader";
-import { emergencyResponseIndex } from "@/data";
+import { emergencyResponseIndex } from "@/data/emergency-response";
 import { AlertGuidesClient } from "./Client";
-import type { AlertPlaceholder } from "@/data";
+import type { AlertPlaceholder } from "@/data/emergency-response";
 
 export default function AlertGuidesPage() {
   // Filter for only the alert guides placeholders

@@ -1,5 +1,5 @@
 
-import { statuteIndex, statutesFullData } from "@/data"
+import { statuteIndex, statutesFullData } from "@/data/statutes"
 import { PageHeader } from "@/components/PageHeader"
 import { StatuteClient } from "./StatuteClient"
 

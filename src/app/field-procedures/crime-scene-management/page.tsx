@@ -1,6 +1,6 @@
 
 import { PageHeader } from "@/components/PageHeader"
-import { crimeSceneManagementData } from "@/data"
+import { crimeSceneManagementData } from "@/data/field-procedures/crime-scene-management"
 import { Summarizer } from "@/components/Summarizer"
 import { CrimeSceneManagementClient } from "./Client"
 

@@ -1,7 +1,7 @@
 
 import { PageHeader } from "@/components/PageHeader"
 import { JuryInstructionsClient } from "./Client"
-import { juryInstructionsIndex } from "@/data"
+import { juryInstructionsIndex } from "@/data/legal-reference/jury-instructions-index"
 
 export default function JuryInstructionsNavigatorPage() {
   return (

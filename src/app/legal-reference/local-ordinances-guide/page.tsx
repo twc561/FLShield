@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/PageHeader";
-import { ordinanceIndex, ordinanceDetailsData } from "@/data";
+import { ordinanceIndex, ordinanceDetailsData } from "@/data/legal-reference/local-ordinances";
 import { LocalOrdinancesClient } from "./Client";
 
 export default function LocalOrdinancesGuidePage() {

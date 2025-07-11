@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/PageHeader"
-import { scenarioChecklistsData } from "@/data"
+import { scenarioChecklistsData } from "@/data/field-procedures/scenario-checklists"
 import { ScenarioChecklistsClient } from "./Client"
-import type { Scenario } from "@/data"
+import type { Scenario } from "@/data/field-procedures/scenario-checklists"
 
 export default function ScenarioChecklistsPage() {
   const scenarios = Object.values(scenarioChecklistsData)

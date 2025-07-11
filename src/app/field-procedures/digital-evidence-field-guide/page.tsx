@@ -1,6 +1,6 @@
 
 import { PageHeader } from "@/components/PageHeader"
-import { digitalEvidenceData } from "@/data"
+import { digitalEvidenceData } from "@/data/field-procedures/digital-evidence"
 import { Summarizer } from "@/components/Summarizer"
 import { DigitalEvidenceClient } from "./Client"
 

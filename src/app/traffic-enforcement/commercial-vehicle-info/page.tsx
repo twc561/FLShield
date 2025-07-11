@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/PageHeader";
-import { commercialVehicleGuideData } from "@/data";
+import { commercialVehicleGuideData } from "@/data/traffic-enforcement/commercial-vehicle";
 import { CommercialVehicleClient } from "./Client";
 
 export default function CommercialVehicleInfoPage() {
