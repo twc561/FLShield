@@ -1,47 +1,30 @@
 
-"use client"
+"use client";
 
-import React, { useState, useMemo, useEffect, memo, useCallback } from "react"
-import Link from "next/link"
-import { Input } from "@/components/ui/input"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Summarizer } from "@/components/Summarizer"
-import type { Statute } from "@/data/statutes"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search, ExternalLink, BookOpen, Loader2, Sparkles, Scale } from "lucide-react"
-import { findStatute } from "@/ai/flows/find-statute"
-import { generateElementsOfCrime } from "@/ai/flows/generate-elements-flow"
+import React, { useState, useMemo, useEffect, memo, useCallback } from "react";
+import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Summarizer } from "@/components/Summarizer";
+import type { Statute } from "@/data/statutes";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Search, ExternalLink, BookOpen, Loader2, Sparkles, Scale } from "lucide-react";
+import { findStatute } from "@/ai/flows/find-statute";
+import { generateElementsOfCrime } from "@/ai/flows/generate-elements-flow";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
-import { Skeleton } from "@/components/ui/skeleton"
+} from "@/components/ui/accordion";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type StatuteIndexItem = Omit<Statute, 'description' | 'fullText' | 'practicalSummary' | 'example' | 'elementsOfTheCrime' | 'url'>;
 
-// Define a list of "popular" statute IDs to pre-load for a faster user experience.
 const popularStatutes = [
-  's784-011', // Assault
-  's784-03',  // Battery
-  's784-021', // Aggravated Assault
-  's784-045', // Aggravated Battery
-  's812-014', // Theft
-  's810-02',  // Burglary
-  's812-13',  // Robbery
-  's843-01',  // Resisting w/ Violence
-  's843-02',  // Resisting w/o Violence
-  's316-193', // DUI
-  's893-13',  // Drug Possession
-  's790-23',  // Possession of Firearm by Felon
+  's784-011', 's784-03', 's784-021', 's784-045', 's812-014', 's810-02', 
+  's812-13', 's843-01', 's843-02', 's316-193', 's893-13', 's790-23',
 ];
 
 const FullStatuteContent = memo(function FullStatuteContent({
@@ -49,9 +32,9 @@ const FullStatuteContent = memo(function FullStatuteContent({
   onGenerateElements,
   generatedElements,
 }: {
-  statute: Statute
-  onGenerateElements: (statute: Statute) => Promise<void>
-  generatedElements: Record<string, { content: string; isLoading: boolean }>
+  statute: Statute;
+  onGenerateElements: (statute: Statute) => Promise<void>;
+  generatedElements: Record<string, { content: string; isLoading: boolean }>;
 }) {
   return (
     <div className="border-t pt-4">
@@ -85,7 +68,7 @@ const FullStatuteContent = memo(function FullStatuteContent({
                       {(() => {
                           const elementState = generatedElements[statute.id];
                           if (elementState?.content) {
-                              return <div className="whitespace-pre-wrap">{elementState.content}</div>
+                              return <div className="whitespace-pre-wrap">{elementState.content}</div>;
                           }
                           return (
                               <Button
@@ -97,14 +80,10 @@ const FullStatuteContent = memo(function FullStatuteContent({
                                   }}
                                   disabled={elementState?.isLoading}
                               >
-                                  {elementState?.isLoading ? (
-                                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  ) : (
-                                      <Sparkles className="mr-2 h-4 w-4 text-accent" />
-                                  )}
+                                  {elementState?.isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4 text-accent" />}
                                   {elementState?.isLoading ? 'Generating...' : 'Generate with AI'}
                               </Button>
-                          )
+                          );
                       })()}
                   </AccordionContent>
               </Card>
@@ -144,41 +123,31 @@ export const StatuteClient = memo(function StatuteClient({
   initialStatuteIndex,
   statutesFullData,
 }: {
-  initialStatuteIndex: StatuteIndexItem[],
-  statutesFullData: Record<string, Statute>,
+  initialStatuteIndex: StatuteIndexItem[];
+  statutesFullData: Record<string, Statute>;
 }) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [isAiSearching, setIsAiSearching] = useState(false)
-  const [aiResult, setAiResult] = useState<Statute | null>(null)
-  const [generatedElements, setGeneratedElements] = useState<Record<string, { content: string; isLoading: boolean }>>({})
-
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isAiSearching, setIsAiSearching] = useState(false);
+  const [aiResult, setAiResult] = useState<Statute | null>(null);
+  const [generatedElements, setGeneratedElements] = useState<Record<string, { content: string; isLoading: boolean }>>({});
   const [cachedData, setCachedData] = useState<Record<string, Statute>>({});
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [activeAccordionItem, setActiveAccordionItem] = useState<string | undefined>();
 
   useEffect(() => {
-    // Smart Pre-loading: Pre-load popular statutes into the cache on initial mount
-    // to make accessing them feel instantaneous.
     const preloadedData: Record<string, Statute> = {};
-    if (Array.isArray(popularStatutes)) {
-      popularStatutes.forEach(id => {
-        if (statutesFullData[id]) {
-          preloadedData[id] = statutesFullData[id];
-        }
-      });
-    }
+    popularStatutes.forEach(id => {
+      if (statutesFullData[id]) {
+        preloadedData[id] = statutesFullData[id];
+      }
+    });
     setCachedData(prev => ({ ...prev, ...preloadedData }));
   }, [statutesFullData]);
 
-
   const categories = useMemo(() => {
     const categoryOrder = [
-      'Crimes Against Persons',
-      'Property Crimes',
-      'Drug Offenses',
-      'Weapons Offenses',
-      'Public Order & Obstruction',
-      'Traffic Offenses',
+      'Crimes Against Persons', 'Property Crimes', 'Drug Offenses', 
+      'Weapons Offenses', 'Public Order & Obstruction', 'Traffic Offenses',
     ];
     const uniqueCategories = [...new Set(initialStatuteIndex.map((s) => s.category))];
     return uniqueCategories.sort((a, b) => {
@@ -190,16 +159,14 @@ export const StatuteClient = memo(function StatuteClient({
     });
   }, [initialStatuteIndex]);
 
-  const filteredStatutes = useMemo(() => {
-    if (!searchTerm) {
-      return initialStatuteIndex;
-    }
+  const totalFilteredResults = useMemo(() => {
+    if (!searchTerm) return initialStatuteIndex.length;
     const lowercasedTerm = searchTerm.toLowerCase();
     return initialStatuteIndex.filter(
       (s) =>
         s.title.toLowerCase().includes(lowercasedTerm) ||
         s.code.toLowerCase().includes(lowercasedTerm)
-    );
+    ).length;
   }, [searchTerm, initialStatuteIndex]);
 
   useEffect(() => {
@@ -208,7 +175,7 @@ export const StatuteClient = memo(function StatuteClient({
       setIsAiSearching(false);
       return;
     }
-    if (filteredStatutes.length > 0) {
+    if (totalFilteredResults > 0) {
       setAiResult(null);
       return;
     }
@@ -228,7 +195,7 @@ export const StatuteClient = memo(function StatuteClient({
                 fullText: "No full text available for AI-generated result.",
                 degreeOfCharge: result.degreeOfCharge || "N/A",
                 practicalSummary: result.description || "No summary provided by AI.",
-                elementsOfTheCrime: result.elementsOfTheCrime || null,
+                elementsOfTheCrime: result.elementsOfTheCrime || "Information not available.",
                 example: result.example || "No example provided by AI.",
                 url: `https://www.flsenate.gov/Laws/Statutes/search?search=${encodeURIComponent(
                   result.title || result.code || ''
@@ -236,7 +203,6 @@ export const StatuteClient = memo(function StatuteClient({
                 category: 'AI Result'
               };
               setAiResult(newStatute);
-              // Auto-expand the accordion to show the AI result
               setActiveAccordionItem(newStatute.id);
             } else {
               setAiResult(null);
@@ -256,19 +222,14 @@ export const StatuteClient = memo(function StatuteClient({
         });
     }, 800);
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchTerm, filteredStatutes.length]);
+    return () => clearTimeout(handler);
+  }, [searchTerm, totalFilteredResults]);
   
   const handleAccordionChange = useCallback(async (value: string | undefined) => {
     setActiveAccordionItem(value);
-    if (!value) return; 
-    if (cachedData[value] || loadingId === value) return;
-
+    if (!value || cachedData[value] || loadingId === value) return;
     setLoadingId(value);
-    await new Promise(res => setTimeout(res, 300)); // Simulate network delay
-
+    await new Promise(res => setTimeout(res, 300));
     const fullData = statutesFullData[value];
     if (fullData) {
         setCachedData(prev => ({ ...prev, [value]: fullData }));
@@ -293,10 +254,17 @@ export const StatuteClient = memo(function StatuteClient({
   }, []);
 
   const getFilteredStatutesForCategory = (category: string) => {
-    return filteredStatutes.filter((s) => s.category === category);
+    const filteredByCategory = initialStatuteIndex.filter((s) => s.category === category);
+    if (!searchTerm) return filteredByCategory;
+    const lowercasedTerm = searchTerm.toLowerCase();
+    return filteredByCategory.filter(
+      (s) =>
+        s.title.toLowerCase().includes(lowercasedTerm) ||
+        s.code.toLowerCase().includes(lowercasedTerm)
+    );
   };
 
-  const showNotFound = !isAiSearching && !aiResult && searchTerm.length > 0 && filteredStatutes.length === 0;
+  const showNotFound = !isAiSearching && !aiResult && searchTerm.length > 0 && totalFilteredResults === 0;
   
   const renderStatute = (statute: Statute, isAiResult = false) => {
     const content = isAiResult ? (
@@ -321,7 +289,7 @@ export const StatuteClient = memo(function StatuteClient({
           />
         )}
       </>
-    ); // THIS IS THE FIX. THE MISSING PARENTHESIS AND SEMICOLON ARE ADDED.
+    );
 
     return (
       <AccordionItem
@@ -359,13 +327,12 @@ export const StatuteClient = memo(function StatuteClient({
           placeholder="Search by title, code, or keyword (e.g. 'DUI')"
           value={searchTerm}
           onChange={(e) => {
-            setSearchTerm(e.target.value)
+            setSearchTerm(e.target.value);
             setAiResult(null);
           }}
           className="pl-10"
         />
       </div>
-
       <ScrollArea className="flex-1 -mr-4 pr-4">
         {isAiSearching && (
           <div className="text-center py-16">
@@ -378,7 +345,6 @@ export const StatuteClient = memo(function StatuteClient({
             </p>
           </div>
         )}
-
         <Accordion type="single" collapsible className="w-full" value={activeAccordionItem} onValueChange={handleAccordionChange}>
           {!isAiSearching && aiResult && (
             <div>
@@ -391,7 +357,6 @@ export const StatuteClient = memo(function StatuteClient({
               </div>
             </div>
           )}
-
           {showNotFound && (
             <div className="text-center py-16">
                 <BookOpen className="mx-auto h-12 w-12 text-muted-foreground" />
@@ -402,33 +367,33 @@ export const StatuteClient = memo(function StatuteClient({
                 </p>
             </div>
           )}
-
-          {!isAiSearching && !aiResult && (searchTerm === "" || filteredStatutes.length > 0) && (
+          {!isAiSearching && !aiResult && (searchTerm === "" || totalFilteredResults > 0) && (
             <>
               {categories.map((category) => {
-                const statutesInCategory = getFilteredStatutesForCategory(category);
-                if (!Array.isArray(statutesInCategory) || statutesInCategory.length === 0) return null;
-
+                const filteredStatutes = getFilteredStatutesForCategory(category);
+                if (filteredStatutes.length === 0) {
+                  return null;
+                }
                 return (
                   <React.Fragment key={category}>
                     <h2 className="text-lg font-bold tracking-tight mt-6 mb-2 px-1">{category}</h2>
                     <div className="space-y-2">
-                      {statutesInCategory.map((statute) => renderStatute(statute as Statute))}
+                      {filteredStatutes.map((statute) => renderStatute(statute as Statute))}
                     </div>
                   </React.Fragment>
-                )
+                );
               })}
             </>
           )}
         </Accordion>
       </ScrollArea>
     </div>
-  )
-})
+  );
+});
 StatuteClient.displayName = 'StatuteClient';
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-    style?: React.CSSProperties & { [key: string]: string | number }
+    style?: React.CSSProperties & { [key: string]: string | number };
   }
 }
