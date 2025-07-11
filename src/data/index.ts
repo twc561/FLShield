@@ -2,7 +2,6 @@
 export * from './case-law.ts';
 export * from './statutes.ts';
 export * from './report-templates.ts';
-export * from './dashboard-features.ts';
 export * from './field-procedures/crime-scene-management.ts';
 export * from './field-procedures/digital-evidence.ts';
 export * from './field-procedures/field-interview-contact.ts';
