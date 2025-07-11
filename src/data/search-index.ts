@@ -11,7 +11,7 @@ import { scenarioChecklistsData } from '@/data/field-procedures/scenario-checkli
 import { k9GuideIndex } from '@/data/specialized-enforcement/k9-guide-index.ts';
 import { fishingRegulations, huntingRegulations, boatingTopics, protectedSpeciesInfo } from '@/data/specialized-enforcement/fwc-regulations.ts';
 import { commonMisperceptionsData } from '@/data/officer-wellness-rights/common-misperceptions.ts';
-import { menuItems } from '@/lib/menu-items';
+import { menuItems } from '@/lib/menu-items.ts';
 
 export type SearchableItem = {
   id: string;
