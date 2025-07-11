@@ -139,6 +139,7 @@ const FullStatuteContent = memo(function FullStatuteContent({
     </div>
   );
 });
+FullStatuteContent.displayName = 'FullStatuteContent';
 
 export const StatuteClient = memo(function StatuteClient({
   initialStatuteIndex,
@@ -181,7 +182,7 @@ export const StatuteClient = memo(function StatuteClient({
     const uniqueCategories = [...new Set(initialStatuteIndex.map((s) => s.category))];
     return uniqueCategories.sort((a, b) => {
         const indexA = categoryOrder.indexOf(a);
-        const indexB = order.indexOf(b);
+        const indexB = categoryOrder.indexOf(b);
         if (indexA === -1) return 1;
         if (indexB === -1) return -1;
         return indexA - indexB;
@@ -430,6 +431,7 @@ export const StatuteClient = memo(function StatuteClient({
     </div>
   )
 })
+StatuteClient.displayName = 'StatuteClient';
 
 declare module "react" {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
