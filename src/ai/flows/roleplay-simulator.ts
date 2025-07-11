@@ -1,41 +1,36 @@
-import { config } from 'dotenv';
-config();
 
-import '@/ai/flows/summarize-document.ts';
-import '@/ai/flows/generate-feature-summary.ts';
-import '@/ai/flows/generate-wellness-tip.ts';
-import '@/ai/flows/find-statute.ts';
-import '@/ai/flows/generate-elements-flow.ts';
-import '@/ai/flows/suggest-charges.ts';
-import '@/ai/flows/generate-uof-narrative.ts';
-import '@/ai/flows/query-fwc-regulations.ts';
-import '@/ai/flows/summarize-debrief.ts';
-import '@/ai/flows/proofread-report.ts';
-import '@/ai/flows/text-to-speech.ts';
-import '@/ai/flows/active-listener.ts';
-import '@/ai/flows/analyze-ordinance.ts';
-import '@/ai/flows/analyze-constitution.ts';
-import '@/ai/flows/analyze-criminal-procedure-rule.ts';
-import '@/ai/flows/analyze-jury-instruction.ts';
-import '@/ai/flows/analyze-fac-rule.ts';
-import '@/ai/flows/analyze-legal-update.ts';
-import '@/ai/flows/analyze-substance.ts';
-import '@/ai/flows/analyze-k9-topic.ts';
-import '@/ai/flows/generate-first-aid-protocol.ts';
-import '@/ai/flows/analyze-alert-guide.ts';
-import '@/ai/flows/analyze-hazmat-placard.ts';
-import '@/ai/flows/commandSearch.ts';
-import '@/ai/flows/legalAdvisor.ts';
-import '@/ai/flows/generate-image.ts';
-import '@/ai/flows/lookup-hazmat-placard.ts';
-import '@/ai/flows/generate-first-aid-protocol-image.ts';
-import '@/ai/flows/generate-substance-image.ts';
-import '@/ai/flows/identify-crime-statute.ts';
-import '@/ai/flows/find-jury-instruction.ts';
-import '@/ai/flows/live-debrief-flow.ts';
-import '@/ai/flows/conversational-partner-flow.ts';
-import '@/ai/flows/generate-report-narrative.ts';
-import '@/ai/flows/identify-pill.ts';
-import '@/ai/flows/identify-hazmat-placard.ts';
-import '@/ai/flows/identify-weapon.ts';
-import '@/ai/tools/pill-lookup-tool.ts';
+'use server';
+/**
+ * @fileOverview A conversational AI agent for role-playing scenarios.
+ * This flow is designed for real-time, interactive training sessions.
+ */
+import { ai } from '@/ai/genkit';
+import { z } from 'zod';
+
+const RolePlayInputSchema = z.object({
+  systemPrompt: z.string().describe("The setup instructions for the AI's persona and the scenario context."),
+  conversationHistory: z.array(
+    z.object({
+      role: z.enum(['user', 'model']),
+      parts: z.array(z.object({ text: z.string() })),
+    })
+  ),
+});
+export type RolePlayInput = z.infer<typeof RolePlayInputSchema>;
+
+
+// This is an async generator function, which is what allows streaming.
+export async function* streamRolePlay(input: RolePlayInput) {
+  const { systemPrompt, conversationHistory } = input;
+  
+  const { stream } = ai.generateStream({
+    system: systemPrompt,
+    history: conversationHistory,
+    prompt: conversationHistory[conversationHistory.length - 1].parts[0].text,
+  });
+
+  // Yield each chunk of text as it comes in from the stream
+  for await (const chunk of stream) {
+    yield chunk.text;
+  }
+}

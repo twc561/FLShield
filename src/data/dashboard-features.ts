@@ -34,7 +34,8 @@ import {
   Truck,
   HeartPulse,
   AlertCircle,
-  UserSearch
+  UserSearch,
+  Bot
 } from "lucide-react"
 
 export type FeatureGroup = {
@@ -45,6 +46,36 @@ export type FeatureGroup = {
 
 // Re-categorized based on intuitive, workflow-oriented model
 export const dashboardFeatureGroups: FeatureGroup[] = [
+  {
+    category: "AI Tools",
+    icon: Bot,
+    features: [
+       {
+        id: "ai-voice-partner",
+        title: "AI Partner Mode",
+        summary: "Your hands-free, voice-to-voice AI partner.",
+        icon: "Mic",
+        targetPage: "/voice-assistant",
+        category: "AI Tools",
+      },
+      {
+        id: "ai-legal-advisor",
+        title: "AI Advisor",
+        summary: "Analyze a scenario against policy, statutes, and case law.",
+        icon: "ShieldQuestion",
+        targetPage: "/ai-legal-advisor",
+        category: "AI Tools",
+      },
+       {
+        id: "ai-role-play-simulator",
+        title: "AI Role-Play Simulator",
+        summary: "Practice de-escalation with a variety of AI personas.",
+        icon: "MessageSquare",
+        targetPage: "/training-development/role-play-simulator",
+        category: "AI Tools",
+      },
+    ],
+  },
   {
     category: "Reference & Investigation",
     icon: Book,

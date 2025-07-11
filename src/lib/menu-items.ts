@@ -63,6 +63,7 @@ export const menuItems: MenuItem[] = [
       { href: "/reporting-development/ai-charge-assistant", label: "AI Charge Assistant", icon: Gavel },
       { href: "/reporting-development/ai-report-writer", label: "AI Report Assistant", icon: ClipboardEdit },
       { href: "/training-development/report-proofreader", label: "AI Report Proofreader", icon: FileCheck },
+      { href: "/training-development/role-play-simulator", label: "AI Role-Play Simulator", icon: MessageSquare },
     ],
   },
   {
