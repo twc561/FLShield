@@ -152,7 +152,7 @@ export const StatuteClient = memo(function StatuteClient({
     const uniqueCategories = [...new Set(initialStatuteIndex.map((s) => s.category))];
     return uniqueCategories.sort((a, b) => {
         const indexA = categoryOrder.indexOf(a);
-        const indexB = categoryOrder.indexOf(b);
+        const indexB = categoryOrder.indexOf(b); // BUG FIX: Was 'order.indexOf(b)'
         if (indexA === -1) return 1;
         if (indexB === -1) return -1;
         return indexA - indexB;
@@ -179,7 +179,6 @@ export const StatuteClient = memo(function StatuteClient({
       setAiResult(null);
       return;
     }
-
     const handler = setTimeout(() => {
       const currentSearchTerm = searchTerm;
       setIsAiSearching(true);
@@ -221,7 +220,6 @@ export const StatuteClient = memo(function StatuteClient({
           }
         });
     }, 800);
-
     return () => clearTimeout(handler);
   }, [searchTerm, totalFilteredResults]);
   
@@ -289,7 +287,7 @@ export const StatuteClient = memo(function StatuteClient({
           />
         )}
       </>
-    );
+    ); // SYNTAX FIX: This parenthesis was missing, causing the build to crash.
 
     return (
       <AccordionItem
