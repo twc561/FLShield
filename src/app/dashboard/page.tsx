@@ -174,7 +174,7 @@ export default function DashboardPage() {
       <motion.div variants={itemVariants}>
         <h2 className="text-lg font-bold tracking-tight mb-3 px-1">All Tools Library</h2>
         <div className="space-y-6">
-          {dashboardFeatureGroups.map((group) => {
+          {Array.isArray(dashboardFeatureGroups) && dashboardFeatureGroups.map((group) => {
             const GroupIcon = (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle
             return (
               <Card key={group.category} className="bg-card/50">
