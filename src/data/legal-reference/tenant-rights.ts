@@ -14,44 +14,41 @@ export interface TenantRightsSection {
 
 export const tenantRightsData: TenantRightsSection[] = [
   {
-    id: "habitability-standards",
-    title: "Habitability & Living Conditions",
-    description: "Landlord obligations for maintaining safe and livable rental properties",
+    id: "overview-basics",
+    title: "Florida Landlord-Tenant Law Overview",
+    description: "Essential background and key principles for understanding tenant-landlord disputes",
     content: [
       {
-        title: "Warranty of Habitability",
-        legalBasis: "F.S. § 83.51 - Landlord obligations",
+        title: "Primary Legal Framework",
+        legalBasis: "F.S. Chapter 83 - Landlord and Tenant",
         details: [
-          "Landlord must maintain premises in good repair and comply with applicable building, housing, and health codes",
-          "Must keep common areas clean and safe",
-          "Must maintain electrical, plumbing, sanitary, heating, ventilating, and air conditioning systems",
-          "Must provide functioning facilities for heat, running water, and hot water",
-          "Must provide adequate locks and keys for unit security",
-          "Must maintain structural components including roofs, windows, screens, doors, floors, steps, porches, exterior walls, and foundations"
-        ],
-        consequences: [
-          "Tenant may terminate lease with 7 days written notice if landlord fails to maintain habitability",
-          "Tenant may withhold rent after proper notice procedures",
-          "Tenant may seek damages for uninhabitable conditions"
+          "Florida Residential Landlord and Tenant Act governs most rental relationships",
+          "Applies to single-family homes, apartments, condos, and mobile homes",
+          "Does not apply to hotels, motels, or transient occupancy",
+          "Local ordinances may provide additional protections",
+          "Federal Fair Housing Act applies to all rental housing"
         ]
       },
       {
-        title: "Pest Control Responsibilities",
-        legalBasis: "F.S. § 83.51(2)(a)",
+        title: "Officer's Role in Civil Disputes",
         details: [
-          "Landlord responsible for extermination of pests in common areas",
-          "Landlord responsible for extermination of wood-destroying organisms",
-          "Tenant responsible for keeping unit clean to prevent attraction of pests",
-          "Tenant may be responsible for pest control if infestation caused by tenant's conduct"
+          "Landlord-tenant disputes are primarily civil matters, not criminal",
+          "Officers should maintain neutrality and not give legal advice",
+          "Document observations factually without taking sides",
+          "Refer parties to appropriate civil legal resources",
+          "Arrest only if criminal laws are violated (trespass, assault, etc.)",
+          "Self-help evictions may constitute criminal violations"
         ]
       },
       {
-        title: "Mold and Environmental Hazards",
+        title: "When Police May Intervene",
         details: [
-          "Landlord must address mold issues that affect habitability",
-          "Must disclose known lead paint hazards in pre-1978 properties",
-          "Must provide information about asbestos if known to exist",
-          "Cannot retaliate against tenant for reporting environmental hazards"
+          "Threats of violence or actual violence between parties",
+          "Criminal trespass after proper legal eviction",
+          "Destruction of property or vandalism",
+          "Theft of tenant's belongings during illegal eviction",
+          "Harassment that rises to criminal level",
+          "Violation of protective orders or injunctions"
         ]
       }
     ]
@@ -97,21 +94,178 @@ export const tenantRightsData: TenantRightsSection[] = [
         ]
       },
       {
-        title: "Advance Rent and Fees",
+        title: "Common Payment Disputes",
         details: [
-          "Last month's rent may be collected in advance",
-          "Application fees must be reasonable and disclosed",
-          "Pet deposits separate from security deposits",
-          "Utility deposits may be required if tenant pays utilities",
-          "Move-in fees must be clearly disclosed and reasonable"
+          "Disputes over late fees and their reasonableness",
+          "Arguments about partial payment acceptance",
+          "Confusion over security deposit vs. last month's rent",
+          "Disagreements about utility payment responsibilities",
+          "Issues with application fees and move-in costs"
+        ]
+      }
+    ]
+  },
+  {
+    id: "habitability-standards",
+    title: "Habitability & Living Conditions",
+    description: "Landlord obligations for maintaining safe and livable rental properties",
+    content: [
+      {
+        title: "Warranty of Habitability",
+        legalBasis: "F.S. § 83.51 - Landlord obligations",
+        details: [
+          "Landlord must maintain premises in good repair and comply with applicable building, housing, and health codes",
+          "Must keep common areas clean and safe",
+          "Must maintain electrical, plumbing, sanitary, heating, ventilating, and air conditioning systems",
+          "Must provide functioning facilities for heat, running water, and hot water",
+          "Must provide adequate locks and keys for unit security",
+          "Must maintain structural components including roofs, windows, screens, doors, floors, steps, porches, exterior walls, and foundations"
+        ],
+        consequences: [
+          "Tenant may terminate lease with 7 days written notice if landlord fails to maintain habitability",
+          "Tenant may withhold rent after proper notice procedures",
+          "Tenant may seek damages for uninhabitable conditions"
+        ]
+      },
+      {
+        title: "Health and Safety Issues",
+        details: [
+          "Landlord must address mold issues that affect habitability",
+          "Must disclose known lead paint hazards in pre-1978 properties",
+          "Must provide information about asbestos if known to exist",
+          "Cannot retaliate against tenant for reporting environmental hazards",
+          "Must maintain smoke detectors and carbon monoxide detectors as required"
+        ]
+      },
+      {
+        title: "Pest Control Responsibilities",
+        legalBasis: "F.S. § 83.51(2)(a)",
+        details: [
+          "Landlord responsible for extermination of pests in common areas",
+          "Landlord responsible for extermination of wood-destroying organisms",
+          "Tenant responsible for keeping unit clean to prevent attraction of pests",
+          "Tenant may be responsible for pest control if infestation caused by tenant's conduct"
+        ]
+      },
+      {
+        title: "Common Field Situations",
+        details: [
+          "Tenants calling about no heat/AC during extreme weather",
+          "Complaints about water leaks or plumbing failures",
+          "Disputes over who is responsible for pest problems",
+          "Arguments about maintenance delays and emergency repairs",
+          "Tenants refusing to pay rent due to habitability issues"
+        ]
+      }
+    ]
+  },
+  {
+    id: "eviction-procedures",
+    title: "Eviction Process & Legal Procedures",
+    description: "Legal eviction procedures and what officers need to know about the process",
+    content: [
+      {
+        title: "Grounds for Eviction",
+        legalBasis: "F.S. Chapter 83, Part II - Landlord and Tenant",
+        details: [
+          "Nonpayment of rent (3 day notice required)",
+          "Material violation of lease terms (7 day notice with right to cure)",
+          "Repeat violations within 12 months (7 day notice, no cure)",
+          "Criminal activity on premises (immediate notice)",
+          "Holdover after lease expiration (varies by lease type)",
+          "Violation of Florida law (7 day notice)"
+        ]
+      },
+      {
+        title: "Required Notice Periods",
+        timeframes: [
+          "3 days for nonpayment of rent",
+          "7 days for curable lease violations",
+          "7 days for non-curable repeat violations",
+          "30 days for month-to-month tenancy termination",
+          "15 days for week-to-week tenancy termination"
+        ],
+        details: [
+          "Notice must be in writing and properly served",
+          "Must specify exact reason and cure period if applicable",
+          "Cannot combine different types of notices",
+          "Must allow full cure period before filing lawsuit"
+        ]
+      },
+      {
+        title: "Court Process Requirements",
+        details: [
+          "Landlord must file lawsuit in county court after notice period expires",
+          "Tenant has right to respond and contest eviction",
+          "Sheriff executes final eviction order, not landlord",
+          "Tenant has right to legal representation",
+          "Judge determines if eviction is proper under law",
+          "Appeals process available for both parties"
+        ]
+      },
+      {
+        title: "Officer's Role in Evictions",
+        details: [
+          "Only sheriff's deputies can execute court-ordered evictions",
+          "Verify court order is valid and current before acting",
+          "Allow reasonable time for tenant to gather belongings",
+          "Document condition of premises and any abandoned property",
+          "Do not remove tenants without proper court order",
+          "Arrest for trespass only after legal eviction is complete"
+        ]
+      }
+    ]
+  },
+  {
+    id: "illegal-eviction-practices",
+    title: "Illegal Eviction & Self-Help Prohibitions",
+    description: "What landlords cannot do and potential criminal violations",
+    content: [
+      {
+        title: "Self-Help Eviction Prohibitions",
+        legalBasis: "F.S. § 83.67 - Prohibited practices",
+        details: [
+          "Cannot change locks without providing immediate access",
+          "Cannot shut off utilities to force tenant out",
+          "Cannot remove tenant's belongings from unit",
+          "Cannot physically remove tenant without court order",
+          "Cannot harass or threaten tenant to leave",
+          "Cannot block access to common areas or parking"
+        ],
+        consequences: [
+          "Tenant entitled to damages plus attorney fees",
+          "Criminal charges possible for illegal eviction methods",
+          "Landlord may be ordered to restore utilities/access"
+        ]
+      },
+      {
+        title: "Potential Criminal Violations",
+        details: [
+          "Theft - removing tenant's belongings without court order",
+          "Criminal mischief - damaging tenant's property",
+          "Trespass - entering unit without proper notice",
+          "Harassment - repeated unwanted contact to force move-out",
+          "Assault/battery - physical confrontations",
+          "Extortion - demanding money under threat of illegal eviction"
+        ]
+      },
+      {
+        title: "Red Flags for Officers",
+        details: [
+          "Landlord changing locks while tenant still has possession",
+          "Utility shut-offs during ongoing tenancy",
+          "Tenant's belongings placed outside without court order",
+          "Landlord threatening immediate removal without legal process",
+          "Evidence of forced entry to remove tenant",
+          "Tenant reporting harassment or threats from landlord"
         ]
       }
     ]
   },
   {
     id: "privacy-entry-rights",
-    title: "Privacy & Landlord Entry",
-    description: "Tenant privacy rights and landlord's right of entry limitations",
+    title: "Privacy & Landlord Entry Rights",
+    description: "Tenant privacy rights and landlord's limited right of entry",
     content: [
       {
         title: "Notice Requirements for Entry",
@@ -150,76 +304,14 @@ export const tenantRightsData: TenantRightsSection[] = [
         ]
       },
       {
-        title: "Prohibited Entry Practices",
+        title: "Common Entry Disputes",
         details: [
-          "Cannot enter without proper notice except for emergencies",
-          "Cannot harass tenant through excessive entry requests",
-          "Cannot enter to inspect cleanliness unless health hazard",
-          "Cannot change locks without providing new keys immediately",
-          "Cannot use entry right to retaliate against tenant"
-        ]
-      }
-    ]
-  },
-  {
-    id: "eviction-procedures",
-    title: "Eviction Process & Tenant Defenses",
-    description: "Legal eviction procedures and tenant rights during eviction proceedings",
-    content: [
-      {
-        title: "Grounds for Eviction",
-        legalBasis: "F.S. Chapter 83, Part II - Landlord and Tenant",
-        details: [
-          "Nonpayment of rent (3 day notice required)",
-          "Material violation of lease terms (7 day notice with right to cure)",
-          "Repeat violations within 12 months (7 day notice, no cure)",
-          "Criminal activity on premises (immediate notice)",
-          "Holdover after lease expiration (varies by lease type)",
-          "Violation of Florida law (7 day notice)"
-        ]
-      },
-      {
-        title: "Required Notice Periods",
-        timeframes: [
-          "3 days for nonpayment of rent",
-          "7 days for curable lease violations",
-          "7 days for non-curable repeat violations",
-          "30 days for month-to-month tenancy termination",
-          "15 days for week-to-week tenancy termination"
-        ],
-        details: [
-          "Notice must be in writing and properly served",
-          "Must specify exact reason and cure period if applicable",
-          "Cannot combine different types of notices",
-          "Must allow full cure period before filing lawsuit"
-        ]
-      },
-      {
-        title: "Self-Help Eviction Prohibitions",
-        legalBasis: "F.S. § 83.67 - Prohibited practices",
-        details: [
-          "Cannot change locks without providing immediate access",
-          "Cannot shut off utilities to force tenant out",
-          "Cannot remove tenant's belongings from unit",
-          "Cannot physically remove tenant without court order",
-          "Cannot harass or threaten tenant to leave"
-        ],
-        consequences: [
-          "Tenant entitled to damages plus attorney fees",
-          "Criminal charges possible for illegal eviction methods",
-          "Landlord may be ordered to restore utilities/access"
-        ]
-      },
-      {
-        title: "Tenant Defenses in Court",
-        details: [
-          "Improper notice (content, timing, or service)",
-          "Landlord's failure to maintain habitability",
-          "Retaliatory eviction for tenant complaints",
-          "Discrimination based on protected class",
-          "Landlord's breach of lease terms",
-          "Payment of rent or cure of violation within notice period",
-          "Waiver of landlord's right to evict"
+          "Landlord entering without proper notice",
+          "Disagreements about what constitutes an emergency",
+          "Excessive entry requests that constitute harassment",
+          "Entry for non-permitted purposes (checking cleanliness)",
+          "Entry outside permitted hours without consent",
+          "Tenant changing locks without providing landlord keys"
         ]
       }
     ]
@@ -227,7 +319,7 @@ export const tenantRightsData: TenantRightsSection[] = [
   {
     id: "discrimination-retaliation",
     title: "Discrimination & Retaliation Protection",
-    description: "Fair housing protections and anti-retaliation laws for tenants",
+    description: "Fair housing protections and anti-retaliation laws",
     content: [
       {
         title: "Protected Classes Under Fair Housing",
@@ -371,6 +463,16 @@ export const tenantRightsData: TenantRightsSection[] = [
           "Right to sublease with park approval",
           "Protection from forced sales at below market value"
         ]
+      },
+      {
+        title: "Unique Mobile Home Issues",
+        details: [
+          "Disputes over lot rent vs. home ownership",
+          "Park rule changes affecting residents",
+          "Guest and visitor policy conflicts",
+          "Maintenance responsibilities for lot vs. home",
+          "Issues with forced sales when parks close"
+        ]
       }
     ]
   }
@@ -397,13 +499,19 @@ export const tenantRightsResources = {
       organization: "HUD Fair Housing Hotline",
       phone: "1-800-669-9777",
       purpose: "Housing discrimination complaints"
+    },
+    {
+      organization: "Clerk of Court (Civil Division)",
+      phone: "Varies by county",
+      purpose: "Eviction court records and procedures"
     }
   ],
   keyStatutes: [
     "F.S. Chapter 83 - Landlord and Tenant",
     "F.S. Chapter 723 - Mobile Home Parks", 
     "F.S. § 760.20-760.37 - Fair Housing Act",
-    "F.S. § 83.595 - Domestic Violence Protections"
+    "F.S. § 83.595 - Domestic Violence Protections",
+    "F.S. § 83.67 - Prohibited Practices"
   ],
   commonDocuments: [
     "Lease agreement and all addenda",
@@ -412,6 +520,15 @@ export const tenantRightsResources = {
     "All written communications with landlord",
     "Photos of unit condition",
     "Rent payment receipts",
-    "Notice documents"
+    "Notice documents",
+    "Court orders or judgments"
+  ],
+  officerTips: [
+    "Document everything - take photos, get written statements",
+    "Remain neutral - do not give legal advice to either party",
+    "Verify any court orders before taking action",
+    "Refer civil disputes to appropriate legal resources",
+    "Only arrest when criminal laws are clearly violated",
+    "Know your local legal aid organizations for referrals"
   ]
 }

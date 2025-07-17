@@ -44,10 +44,12 @@ interface TenantRightsClientProps {
 }
 
 const sectionIcons = {
-  'habitability-standards': Home,
+  'overview-basics': AlertTriangle,
   'rent-payment-security': DollarSign,
-  'privacy-entry-rights': Eye,
+  'habitability-standards': Home,
   'eviction-procedures': Gavel,
+  'illegal-eviction-practices': Shield,
+  'privacy-entry-rights': Eye,
   'discrimination-retaliation': Shield,
   'lease-termination': Calendar,
   'mobile-home-rights': Truck
@@ -84,8 +86,8 @@ export function TenantRightsClient({ data }: TenantRightsClientProps) {
 
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="sections">Rights & Laws</TabsTrigger>
+          <TabsTrigger value="overview">Officer Guide</TabsTrigger>
+          <TabsTrigger value="sections">Laws & Rights</TabsTrigger>
           <TabsTrigger value="resources">Resources</TabsTrigger>
           <TabsTrigger value="quick-ref">Quick Reference</TabsTrigger>
         </TabsList>
@@ -255,7 +257,29 @@ export function TenantRightsClient({ data }: TenantRightsClientProps) {
                 </div>
               </CardContent>
             </Card>
-          </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="h-5 w-5" />
+                  Officer Field Tips
+                </CardTitle>
+                <CardDescription>
+                  Best practices for handling landlord-tenant disputes
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {tenantRightsResources.officerTips.map((tip, index) => (
+                    <div key={index} className="flex items-start gap-2 text-sm">
+                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
+                      <span>{tip}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>v>
 
           <Card>
             <CardHeader>
