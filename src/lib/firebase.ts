@@ -2,12 +2,12 @@ import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAKOZL2TdqleyUtbrbKHJfjObRqpBz2s28",
-  authDomain: "florida-shield.firebaseapp.com",
-  projectId: "florida-shield",
-  storageBucket: "florida-shield.firebasestorage.app",
-  messagingSenderId: "320998993928",
-  appId: "1:320998993928:web:79043e80e835f9c3eee1bd"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
 
@@ -20,15 +20,9 @@ export const isFirebaseConfigured =
     firebaseConfig.authDomain &&
     firebaseConfig.projectId;
 
-if (isFirebaseConfigured && typeof window !== 'undefined') {
-    try {
-        app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-        auth = getAuth(app);
-    } catch (error) {
-        console.error('Firebase initialization error:', error);
-        app = null;
-        auth = null;
-    }
+if (isFirebaseConfigured) {
+    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+    auth = getAuth(app);
 }
 
 export { app, auth };

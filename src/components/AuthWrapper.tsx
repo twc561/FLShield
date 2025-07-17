@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useState, useEffect } from 'react';
@@ -17,15 +16,18 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const pathname = usePathname();
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (!isFirebaseConfigured) {
             console.warn("Firebase is not configured. Authentication will be skipped.");
+            setIsLoading(false);
             return;
         }
 
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setUser(user);
+            setIsLoading(false);
         });
 
         return () => unsubscribe();
@@ -58,7 +60,12 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         if (isAuthenticated && pathname === '/') {
             router.push('/dashboard');
         }
-    }, [isAuthenticated, isPublicPage, isAuthPage, pathname, router]);
+    }, [isAuthenticated, isPublicPage, router, isLoading]);
+
+    // Show loading screen during auth check
+    if (isFirebaseConfigured && isLoading) {
+        return <LoadingScreen />;
+    }
 
     return <>{children}</>;
 }
