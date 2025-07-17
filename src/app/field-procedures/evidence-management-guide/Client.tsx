@@ -18,7 +18,7 @@ import {
   Clock
 } from 'lucide-react'
 import { evidenceManagementData } from '@/data/field-procedures/evidence-management'
-import PageHeader from '@/components/PageHeader'
+import { PageHeader } from '@/components/PageHeader'
 
 type SectionProps = {
   title: string
