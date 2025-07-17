@@ -30,6 +30,21 @@ export default function RootLayout({
   const [isLoading, setIsLoading] = useState(true)
   const [isClient, setIsClient] = useState(false)
 
+  const publicPages = [
+    "/",
+    "/login",
+    "/features",
+    "/agency-intelligence",
+    "/cjis-compliance",
+    "/support",
+    "/request-demo",
+    "/terms-of-use",
+    "/privacy-policy",
+    "/security",
+  ];
+
+  const isPublicPage = publicPages.includes(pathname);
+
   useEffect(() => {
     setIsClient(true)
   }, [])
