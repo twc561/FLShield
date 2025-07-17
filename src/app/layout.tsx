@@ -23,25 +23,16 @@ const LoadingScreen = () => (
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   const pathname = usePathname()
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true)
+  const [isClient, setIsClient] = useState(false)
 
-  const publicPages = [
-    "/",
-    "/login",
-    "/features",
-    "/agency-intelligence",
-    "/cjis-compliance",
-    "/support",
-    "/request-demo",
-    "/terms-of-use",
-    "/privacy-policy",
-    "/security",
-  ];
-  const isPublicPage = publicPages.includes(pathname);
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {

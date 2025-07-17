@@ -38,7 +38,8 @@ import {
   FlaskConical,
   Eye,
   Search,
-  MapPin
+  MapPin,
+  Shackles
 } from "lucide-react"
 
 export type FeatureGroup = {

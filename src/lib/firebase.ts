@@ -20,9 +20,15 @@ export const isFirebaseConfigured =
     firebaseConfig.authDomain &&
     firebaseConfig.projectId;
 
-if (isFirebaseConfigured) {
-    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-    auth = getAuth(app);
+if (isFirebaseConfigured && typeof window !== 'undefined') {
+    try {
+        app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+        auth = getAuth(app);
+    } catch (error) {
+        console.error('Firebase initialization error:', error);
+        app = null;
+        auth = null;
+    }
 }
 
 export { app, auth };
