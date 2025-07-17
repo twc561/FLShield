@@ -1,4 +1,3 @@
-
 import type { FeatureModule } from "@/types"
 import {
   Book,
@@ -107,9 +106,17 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
       {
         id: "asset-forfeiture-guide",
         title: "Asset Forfeiture Guide",
-        summary: "Comprehensive guide to civil and criminal asset forfeiture procedures.",
+        summary: "Procedures for seizure and forfeiture under Florida law.",
         icon: "Scale",
         targetPage: "/legal-reference/asset-forfeiture-guide",
+        category: "Legal Reference",
+      },
+      {
+        id: "tenant-rights-guide",
+        title: "Florida Tenant Rights Guide",
+        summary: "Comprehensive landlord-tenant law reference for officer use.",
+        icon: "Home",
+        targetPage: "/legal-reference/tenant-rights-guide",
         category: "Legal Reference",
       },
       {

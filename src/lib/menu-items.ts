@@ -82,6 +82,7 @@ export const menuItems: MenuItem[] = [
       { href: "/specialized-enforcement/animal-cruelty-investigation", label: "Animal Cruelty Guide", icon: Stethoscope },
       { href: "/traffic-enforcement/commercial-vehicle-info", label: "Commercial Vehicles", icon: Truck },
       { href: "/legal-reference/asset-forfeiture-guide", label: "Asset Forfeiture Guide", icon: Scale },
+      { href: "/legal-reference/tenant-rights-guide", label: "Florida Tenant Rights Guide", icon: Home },
       { href: "/field-procedures/evidence-management-guide", label: "Evidence Management", icon: FileCheck },
     ],
   },
