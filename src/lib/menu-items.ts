@@ -116,6 +116,7 @@ export const menuItems: MenuItem[] = [
       { href: "/officer-wellness-rights/court-testimony-guide", label: "Court Testimony Guide", icon: Mic },
       { href: "/wellness", label: "Wellness Hub", icon: Heart },
       { href: "/officer-wellness-rights/police-officers-bill-of-rights", label: "Police Officer's Bill...", icon: ShieldCheck },
+      { href: "/officer-wellness-rights/community-engagement-guide", label: "Community Engagement", icon: Users },
       { href: "/field-translation-guide", label: "Field Translator", icon: Languages },
     ],
   },

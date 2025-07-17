@@ -259,6 +259,14 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         category: "Wellness",
       },
       {
+        id: "community-engagement-guide",
+        title: "Community Engagement Guide",
+        summary: "Best practices for building positive community relations and trust.",
+        icon: "Users",
+        targetPage: "/officer-wellness-rights/community-engagement-guide",
+        category: "Officer Support & Development",
+      },
+      {
         id: "field-translation-guide",
         title: "Field Translator",
         summary: "Audio translations for common field commands.",
