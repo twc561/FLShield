@@ -17,7 +17,6 @@ import {
   Clock
 } from 'lucide-react'
 import { evidenceManagementData } from '@/data/field-procedures/evidence-management'
-import { PageHeader } from '@/components/PageHeader'
 
 type SectionProps = {
   title: string
@@ -43,11 +42,6 @@ export default function EvidenceManagementClient() {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Evidence Management Guide</h1>
-        <p className="text-muted-foreground mt-2">Complete procedures for evidence collection, chain of custody, and court preparation</p>
-      </div>
-
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>

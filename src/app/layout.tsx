@@ -1,4 +1,3 @@
-
 'use client'
 
 import { usePathname } from "next/navigation"
@@ -29,7 +28,7 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname()
   const [isLoading, setIsLoading] = useState(true);
-  
+
   const publicPages = [
     "/",
     "/login",
