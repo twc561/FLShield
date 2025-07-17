@@ -36,7 +36,6 @@ import {
   Languages,
   Bot,
   FlaskConical,
-  Handcuffs,
   Search,
 } from "lucide-react"
 
@@ -87,7 +86,7 @@ export const menuItems: MenuItem[] = [
   },
   {
     label: "Field Operations & Procedures",
-    icon: Handcuffs,
+    icon: ShieldCheck,
     items: [
       { href: "/field-procedures/scenario-checklists", label: "Field Scenario Checklists", icon: ListChecks },
       { href: "/field-procedures/field-interview-contact", label: "Field Interview Standards", icon: Users },

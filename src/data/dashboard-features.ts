@@ -1,4 +1,3 @@
-
 import type { FeatureModule } from "@/types"
 import {
   Book,
@@ -37,7 +36,6 @@ import {
   UserSearch,
   Bot,
   FlaskConical,
-  Handcuffs,
   Eye,
   Search,
   MapPin
@@ -161,7 +159,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
   },
   {
     category: "Field Operations & Procedures",
-    icon: Handcuffs,
+    icon: ShieldCheck,
     features: [
       {
         id: "scenario-checklists",
