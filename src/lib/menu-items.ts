@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import {
   Book,
@@ -35,6 +36,8 @@ import {
   Languages,
   Bot,
   FlaskConical,
+  Handcuffs,
+  Search,
 } from "lucide-react"
 
 type SubMenuItem = {
@@ -50,77 +53,105 @@ type MenuItem = {
   items?: SubMenuItem[]
 }
 
-// Re-categorized based on intuitive, workflow-oriented model
+// Reorganized menu structure based on officer workflow and logical task groupings
 export const menuItems: MenuItem[] = [
   {
-    label: "AI Tools",
+    label: "AI Assistant Tools",
     icon: Bot,
     items: [
       { href: "/voice-assistant", label: "AI Partner Mode", icon: Mic },
-      { href: "/ai-legal-advisor", label: "AI Advisor", icon: ShieldQuestion },
+      { href: "/ai-legal-advisor", label: "AI Legal Advisor", icon: ShieldQuestion },
       { href: "/field-procedures/visual-evidence-identifier", label: "Visual Evidence ID", icon: Camera },
       { href: "/reporting-development/ai-charge-assistant", label: "AI Charge Assistant", icon: Gavel },
       { href: "/reporting-development/ai-report-writer", label: "AI Report Assistant", icon: ClipboardEdit },
-      { href: "/training-development/report-proofreader", label: "AI Report Proofreader", icon: FileCheck },
+      { href: "/training-development/report-proofreader", label: "Report Writing Feedback", icon: FileCheck },
       { href: "/training-development/role-play-simulator", label: "AI Role-Play Simulator", icon: MessageSquare },
     ],
   },
   {
-    label: "Reference & Investigation",
-    icon: Book,
+    label: "Legal Reference Library",
+    icon: Scale,
     items: [
-      { href: "/legal-reference/statutes", label: "Statute Navigator", icon: Scale },
-      { href: "/legal-reference/case-law", label: "Case Law Vault", icon: Gavel },
-      { href: "/legal-reference/jury-instructions-navigator", label: "Jury Instructions", icon: Users },
+      { href: "/legal-reference/statutes", label: "Florida Statutes", icon: Scale },
+      { href: "/legal-reference/case-law", label: "Case Law Database", icon: Gavel },
       { href: "/legal-reference/constitutional-law-guide", label: "Constitutional Law", icon: ShieldAlert },
-      { href: "/legal-reference/rules-of-criminal-procedure", label: "Rules of Crim. Pro.", icon: FileTextIcon },
+      { href: "/legal-reference/rules-of-criminal-procedure", label: "Criminal Procedure Rules", icon: FileTextIcon },
+      { href: "/legal-reference/jury-instructions-navigator", label: "Standard Jury Instructions", icon: Users },
       { href: "/legal-reference/local-ordinances-guide", label: "Local Ordinances", icon: Home },
-      { href: "/legal-reference/statutory-case-law-updates", label: "Legal Updates", icon: Newspaper },
-      { href: "/specialized-enforcement/controlled-substances-guide", label: "Controlled Substances", icon: FlaskConical },
-      { href: "/specialized-enforcement/k9-officer-guide", label: "K-9 Operations Guide", icon: Dog },
-      { href: "/specialized-enforcement/fwc-regulations-guide", label: "FWC Regulations", icon: Fish },
-      { href: "/specialized-enforcement/animal-cruelty-investigation", label: "Animal Cruelty Guide", icon: Stethoscope },
-      { href: "/traffic-enforcement/commercial-vehicle-info", label: "Commercial Vehicles", icon: Truck },
-      { href: "/legal-reference/asset-forfeiture-guide", label: "Asset Forfeiture Guide", icon: Scale },
-      { href: "/legal-reference/tenant-rights-guide", label: "Florida Tenant Rights Guide", icon: Home },
-      { href: "/field-procedures/evidence-management-guide", label: "Evidence Management", icon: FileCheck },
+      { href: "/legal-reference/tenant-rights-guide", label: "Landlord-Tenant Law", icon: Home },
+      { href: "/legal-reference/asset-forfeiture-guide", label: "Asset Forfeiture Procedures", icon: Scale },
+      { href: "/legal-reference/statutory-case-law-updates", label: "Legal Updates & Changes", icon: Newspaper },
     ],
   },
   {
-    label: "Field Encounters & Checklists",
-    icon: ListChecks,
+    label: "Field Operations & Procedures",
+    icon: Handcuffs,
     items: [
-      { href: "/field-procedures/scenario-checklists", label: "Scenario Checklists", icon: ListChecks },
-      { href: "/field-procedures/field-interview-contact", label: "Field Interview Guide", icon: Users },
-      { href: "/field-procedures/domestic-violence-protocol", label: "DV Protocol", icon: ShieldAlert },
+      { href: "/field-procedures/scenario-checklists", label: "Field Scenario Checklists", icon: ListChecks },
+      { href: "/field-procedures/field-interview-contact", label: "Field Interview Standards", icon: Users },
       { href: "/traffic-enforcement/dui-investigation", label: "DUI Investigation Guide", icon: Car },
-      { href: "/emergency-response/alert-guides", label: "Alert Activation Guides", icon: AlertCircle },
-      { href: "/emergency-response/first-aid-guide", label: "First Aid Field Guide", icon: HeartPulse },
-      { href: "/emergency-response/hazmat-guide", label: "HAZMAT Placard Guide", icon: Biohazard },
+      { href: "/field-procedures/domestic-violence-protocol", label: "Domestic Violence Protocol", icon: ShieldAlert },
+      { href: "/field-procedures/evidence-management-guide", label: "Evidence Management", icon: FileCheck },
+      { href: "/field-procedures/crime-scene-management", label: "Crime Scene Management", icon: Wind },
+      { href: "/field-procedures/interview-techniques", label: "Interview Techniques", icon: Users },
+      { href: "/field-procedures/risk-protection-orders", label: "Risk Protection Orders", icon: ShieldAlert },
+      { href: "/field-translation-guide", label: "Field Translator", icon: Languages },
     ],
   },
   {
-    label: "Reporting & Documentation",
+    label: "Emergency Response Protocols",
+    icon: Siren,
+    items: [
+      { href: "/emergency-response/alert-guides", label: "Emergency Alert Protocols", icon: AlertCircle },
+      { href: "/emergency-response/first-aid-guide", label: "Field First Aid Guide", icon: HeartPulse },
+      { href: "/emergency-response/hazmat-guide", label: "HAZMAT Response Guide", icon: Biohazard },
+      { href: "/emergency-response/baker-act-guide", label: "Baker Act Procedures", icon: Heart },
+      { href: "/emergency-response/marchman-act-guide", label: "Marchman Act Procedures", icon: FlaskConical },
+    ],
+  },
+  {
+    label: "Specialized Enforcement",
+    icon: Search,
+    items: [
+      { href: "/specialized-enforcement/controlled-substances-guide", label: "Drug Identification Guide", icon: FlaskConical },
+      { href: "/specialized-enforcement/k9-officer-guide", label: "K-9 Operations Manual", icon: Dog },
+      { href: "/specialized-enforcement/fwc-regulations-guide", label: "Fish & Wildlife Regulations", icon: Fish },
+      { href: "/traffic-enforcement/commercial-vehicle-info", label: "Commercial Vehicle Guide", icon: Truck },
+      { href: "/specialized-enforcement/animal-cruelty-investigation", label: "Animal Cruelty Guide", icon: Stethoscope },
+      { href: "/traffic-enforcement/traffic-statutes-schedules", label: "Traffic Enforcement Guide", icon: Car },
+    ],
+  },
+  {
+    label: "Report Writing & Documentation",
     icon: ClipboardEdit,
     items: [
-      { href: "/notes", label: "Field Notes", icon: ClipboardEdit },
-      { href: "/reporting-development/use-of-force-wizard", label: "Use of Force Wizard", icon: ShieldCheck },
-      { href: "/field-procedures/crime-scene-management", label: "Crime Scene Management", icon: Wind },
+      { href: "/notes", label: "Digital Field Notes", icon: ClipboardEdit },
+      { href: "/reporting-development/use-of-force-wizard", label: "Use of Force Articulation", icon: ShieldCheck },
       { href: "/reporting-development/shift-report-generator", label: "Shift Report Generator", icon: ClipboardEdit },
+      { href: "/field-procedures/digital-evidence-field-guide", label: "Digital Evidence Guide", icon: Camera },
     ]
   },
   {
-    label: "Officer Support & Development",
+    label: "Training & Professional Development",
     icon: GraduationCap,
     items: [
-      { href: "/daily-briefing", label: "Public Intelligence Briefing", icon: Newspaper },
-      { href: "/reporting-development/knowledge-check", label: "Knowledge Drills", icon: BrainCircuit },
-      { href: "/training-development/common-misperceptions", label: "Field Pitfalls Guide", icon: ShieldAlert },
-      { href: "/officer-wellness-rights/court-testimony-guide", label: "Court Testimony Guide", icon: Mic },
-      { href: "/wellness", label: "Wellness Hub", icon: Heart },
-      { href: "/officer-wellness-rights/police-officers-bill-of-rights", label: "Police Officer's Bill...", icon: ShieldCheck },
-      { href: "/officer-wellness-rights/community-engagement-guide", label: "Community Engagement", icon: Users },
-      { href: "/field-translation-guide", label: "Field Translator", icon: Languages },
+      { href: "/reporting-development/knowledge-check", label: "Knowledge Assessment Drills", icon: BrainCircuit },
+      { href: "/training-development/common-misperceptions", label: "Common Field Pitfalls", icon: ShieldAlert },
+      { href: "/officer-wellness-rights/court-testimony-guide", label: "Court Testimony Preparation", icon: Mic },
+      { href: "/legal-reference/miranda-warning-guide", label: "Miranda Rights Guide", icon: ShieldCheck },
+      { href: "/legal-reference/rights-reference-guide", label: "Constitutional Rights Reference", icon: Scale },
+    ],
+  },
+  {
+    label: "Officer Wellness & Rights",
+    icon: Heart,
+    items: [
+      { href: "/wellness", label: "Wellness Resources Hub", icon: Heart },
+      { href: "/officer-wellness-rights/police-officers-bill-of-rights", label: "Police Officer's Bill of Rights", icon: ShieldCheck },
+      { href: "/officer-wellness-rights/community-engagement-guide", label: "Community Relations Guide", icon: Users },
+      { href: "/daily-briefing", label: "Intelligence Briefing", icon: Newspaper },
+      { href: "/wellness/active-listener", label: "Confidential Support Chat", icon: Heart },
+      { href: "/wellness/live-debrief", label: "Incident Debrief Tool", icon: MessageSquare },
     ],
   },
 ];
