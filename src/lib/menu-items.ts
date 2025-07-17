@@ -80,6 +80,8 @@ export const menuItems: MenuItem[] = [
       { href: "/legal-reference/local-ordinances-guide", label: "Local Ordinances", icon: Home },
       { href: "/legal-reference/tenant-rights-guide", label: "Landlord-Tenant Law", icon: Home },
       { href: "/legal-reference/asset-forfeiture-guide", label: "Asset Forfeiture Procedures", icon: Scale },
+      { href: "/legal-reference/miranda-warning-guide", label: "Miranda Rights Guide", icon: ShieldCheck },
+      { href: "/legal-reference/rights-reference-guide", label: "Constitutional Rights Reference", icon: Scale },
       { href: "/legal-reference/statutory-case-law-updates", label: "Legal Updates & Changes", icon: Newspaper },
     ],
   },
@@ -138,8 +140,6 @@ export const menuItems: MenuItem[] = [
       { href: "/reporting-development/knowledge-check", label: "Knowledge Assessment Drills", icon: BrainCircuit },
       { href: "/training-development/common-misperceptions", label: "Common Field Pitfalls", icon: ShieldAlert },
       { href: "/officer-wellness-rights/court-testimony-guide", label: "Court Testimony Preparation", icon: Mic },
-      { href: "/legal-reference/miranda-warning-guide", label: "Miranda Rights Guide", icon: ShieldCheck },
-      { href: "/legal-reference/rights-reference-guide", label: "Constitutional Rights Reference", icon: Scale },
     ],
   },
   {
