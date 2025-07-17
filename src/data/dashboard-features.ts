@@ -112,6 +112,14 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         targetPage: "/legal-reference/asset-forfeiture-guide",
         category: "Legal Reference",
       },
+      {
+        id: "evidence-management-guide",
+        title: "Evidence Management Guide",
+        summary: "Complete chain of custody procedures, evidence handling, and storage protocols.",
+        icon: "FileCheck",
+        targetPage: "/field-procedures/evidence-management-guide",
+        category: "Field Procedures",
+      },
        {
         id: "fwc-regulations-guide",
         title: "FWC Regulations Guide",
