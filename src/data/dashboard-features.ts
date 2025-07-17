@@ -236,6 +236,14 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         targetPage: "/notes",
         category: "Reporting & Development",
       },
+      {
+        id: "shift-report-generator",
+        title: "Shift Report Generator",
+        summary: "Document entire shift activities, metrics, and equipment status in one comprehensive report.",
+        icon: "ClipboardEdit",
+        targetPage: "/reporting-development/shift-report-generator",
+        category: "Reporting & Development",
+      },
     ],
   },
   {

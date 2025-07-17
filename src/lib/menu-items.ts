@@ -105,6 +105,7 @@ export const menuItems: MenuItem[] = [
       { href: "/notes", label: "Field Notes", icon: ClipboardEdit },
       { href: "/reporting-development/use-of-force-wizard", label: "Use of Force Wizard", icon: ShieldCheck },
       { href: "/field-procedures/crime-scene-management", label: "Crime Scene Management", icon: Wind },
+      { href: "/reporting-development/shift-report-generator", label: "Shift Report Generator", icon: ClipboardEdit },
     ]
   },
   {
