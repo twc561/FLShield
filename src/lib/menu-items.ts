@@ -149,4 +149,11 @@ export const menuItems: MenuItem[] = [
       { href: "/wellness/live-debrief", label: "Incident Debrief Tool", icon: MessageSquare },
     ],
   },
+  {
+    label: "Restraint Techniques",
+    icon: Shackles,
+    items: [
+      { href: "/restraint-techniques/handcuffing-procedures", label: "Handcuffing Procedures", icon: Shackles },
+    ],
+  },
 ];
