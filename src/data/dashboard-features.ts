@@ -104,6 +104,14 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         targetPage: "/legal-reference/local-ordinances-guide",
         category: "Legal Reference",
       },
+      {
+        id: "asset-forfeiture-guide",
+        title: "Asset Forfeiture Guide",
+        summary: "Comprehensive guide to civil and criminal asset forfeiture procedures.",
+        icon: "Scale",
+        targetPage: "/legal-reference/asset-forfeiture-guide",
+        category: "Legal Reference",
+      },
        {
         id: "fwc-regulations-guide",
         title: "FWC Regulations Guide",

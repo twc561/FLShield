@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import {
   Book,
@@ -82,6 +81,7 @@ export const menuItems: MenuItem[] = [
       { href: "/specialized-enforcement/fwc-regulations-guide", label: "FWC Regulations", icon: Fish },
       { href: "/specialized-enforcement/animal-cruelty-investigation", label: "Animal Cruelty Guide", icon: Stethoscope },
       { href: "/traffic-enforcement/commercial-vehicle-info", label: "Commercial Vehicles", icon: Truck },
+      { href: "/legal-reference/asset-forfeiture-guide", label: "Asset Forfeiture Guide", icon: Scale },
     ],
   },
   {
