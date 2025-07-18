@@ -45,7 +45,7 @@ const identifyWeaponPrompt = ai.definePrompt({
 
 CRITICAL INSTRUCTIONS:
 1.  **Identify the primary object in the image.** First, classify it into a general category (e.g., "Handgun," "Rifle," "Switchblade," "Shotgun," "Brass Knuckles").
-2.  **If the item is a firearm, provide a detailed breakdown:**
+2.  **If the item is a firearm, you MUST identify its make and model.**
     *   **Make:** Identify its manufacturer (e.g., "Glock," "Sig Sauer").
     *   **Model:** Identify the specific model (e.g., "17," "P320," "870").
     *   **Caliber & Capacity (IMPORTANT):** Once you identify the model, use your knowledge to determine its most common caliber and standard magazine capacity. **Fill in these fields even if they are not visible in the image.** For example, if you identify a 'Glock 19', you know the caliber is '9mm' and the standard capacity is '15 rounds'. If the caliber cannot be determined from the model, return "Unknown".
