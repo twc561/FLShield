@@ -14,12 +14,12 @@ import {
   FlaskConical,
   Gavel,
   GraduationCap,
-  Shackles,
   Heart,
   HeartPulse,
   Home,
   Languages,
   ListChecks,
+  Lock,
   MessageSquare,
   Mic,
   Newspaper,
@@ -151,9 +151,9 @@ export const menuItems: MenuItem[] = [
   },
   {
     label: "Restraint Techniques",
-    icon: Shackles,
+    icon: Lock,
     items: [
-      { href: "/restraint-techniques/handcuffing-procedures", label: "Handcuffing Procedures", icon: Shackles },
+      { href: "/restraint-techniques/handcuffing-procedures", label: "Handcuffing Procedures", icon: Lock },
     ],
   },
 ];

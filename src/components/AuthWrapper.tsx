@@ -25,12 +25,16 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
             return;
         }
 
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
-            setIsLoading(false);
-        });
+        if (auth) {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+                setUser(user);
+                setIsLoading(false);
+            });
 
-        return () => unsubscribe();
+            return () => unsubscribe();
+        } else {
+            setIsLoading(false);
+        }
     }, []);
 
     const publicPages = [

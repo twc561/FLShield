@@ -50,9 +50,15 @@ export default function RootLayout({
   }, [])
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-        setIsLoading(false);
-    });
+    if (auth) {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+          setIsLoading(false);
+      });
+      
+      return () => unsubscribe();
+    } else {
+      setIsLoading(false);
+    }
 
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -65,8 +71,6 @@ export default function RootLayout({
           });
       });
     }
-
-    return () => unsubscribe();
   }, [])
 
   return (
