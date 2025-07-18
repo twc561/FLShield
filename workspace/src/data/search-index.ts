@@ -30,7 +30,7 @@ const caseLawItems: SearchableItem[] = caseLawIndex.map(c => ({
   description: `Case Law: ${c.citation}`,
   category: 'Legal Reference',
   href: '/legal-reference/case-law',
-  keywords: [c.title, c.category, ...c.tags],
+  keywords: Array.isArray(c.tags) ? [c.title, c.category, ...c.tags] : [c.title, c.category],
 }));
 
 // Transform Statute data
@@ -40,7 +40,7 @@ const statuteItems: SearchableItem[] = statuteIndex.map(s => ({
   description: `Florida Statute: ${s.code}`,
   category: 'Legal Reference',
   href: '/legal-reference/statutes',
-  keywords: [s.title, s.code, s.category, 'statute', 'law'],
+  keywords: [s.title, s.code, s.category, 'statute', 'law', s.degreeOfCharge].filter(Boolean) as string[],
 }));
 
 // Transform Scenario Checklist data
@@ -50,7 +50,7 @@ const scenarioItems: SearchableItem[] = Object.values(scenarioChecklistsData).ma
     description: `Field Checklist: ${s.subtitle}`,
     category: 'Field Procedures',
     href: '/field-procedures/scenario-checklists',
-    keywords: [s.name, s.subtitle, s.category, ...s.keyStatutes, 'checklist', 'procedure'],
+    keywords: [s.name, s.subtitle, s.category, ...(Array.isArray(s.keyStatutes) ? s.keyStatutes : []), 'checklist', 'procedure', s.goal].filter(Boolean) as string[],
 }));
 
 // Transform K9 Guide data
