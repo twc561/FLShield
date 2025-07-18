@@ -3,6 +3,7 @@
 
 import * as React from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import {
   Sheet,
   SheetContent,
@@ -32,6 +33,23 @@ export function DailyBriefingSheet() {
     setSelectedOption(index)
   }
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1 }
+  };
+
+
   if (!briefingData) {
     return null
   }
@@ -54,61 +72,75 @@ export function DailyBriefingSheet() {
           </SheetDescription>
         </SheetHeader>
         <ScrollArea className="flex-1">
-            <div className="p-4 space-y-6">
+            <motion.div 
+              className="p-4 space-y-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+            >
                 {/* Section 1: Interactive Scenario */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-3">
-                           <MessageCircleQuestion className="h-5 w-5 text-primary" />
-                           Interactive Scenario
-                        </CardTitle>
-                        <CardDescription>{scenario.title}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <p className="text-sm text-muted-foreground">{scenario.situation}</p>
-                        <p className="text-sm font-semibold text-foreground/90">{scenario.question}</p>
-                        <div className="space-y-2">
-                            {scenario.options.map((option, index) => (
-                                <div key={index}>
-                                    <Button
-                                        variant={selectedOption === index ? (option.isCorrect ? "default" : "destructive") : "secondary"}
-                                        className="w-full justify-start text-left h-auto py-2"
-                                        onClick={() => handleOptionClick(index)}
-                                    >
-                                        {option.text}
-                                    </Button>
-                                    {selectedOption === index && (
-                                        <div className={cn(
-                                            "mt-2 p-2 text-xs rounded-md flex items-start gap-2",
-                                            option.isCorrect ? "bg-green-500/10 text-green-700" : "bg-destructive/10 text-destructive"
-                                        )}>
-                                            {option.isCorrect ? <CheckCircle className="h-4 w-4 flex-shrink-0" /> : <XCircle className="h-4 w-4 flex-shrink-0" />}
-                                            <p>{option.feedback}</p>
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
+                <motion.div variants={itemVariants}>
+                  <Card>
+                      <CardHeader>
+                          <CardTitle className="flex items-center gap-3">
+                            <MessageCircleQuestion className="h-5 w-5 text-primary" />
+                            Interactive Scenario
+                          </CardTitle>
+                          <CardDescription>{scenario.title}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                          <p className="text-sm text-muted-foreground">{scenario.situation}</p>
+                          <p className="text-sm font-semibold text-foreground/90">{scenario.question}</p>
+                          <div className="space-y-2">
+                              {scenario.options.map((option, index) => (
+                                  <div key={index}>
+                                      <Button
+                                          variant={selectedOption === index ? (option.isCorrect ? "default" : "destructive") : "secondary"}
+                                          className="w-full justify-start text-left h-auto py-2"
+                                          onClick={() => handleOptionClick(index)}
+                                          disabled={selectedOption !== null}
+                                      >
+                                          {option.text}
+                                      </Button>
+                                      {selectedOption === index && (
+                                          <motion.div 
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className={cn(
+                                                "mt-2 p-2 text-xs rounded-md flex items-start gap-2",
+                                                option.isCorrect ? "bg-green-500/10 text-green-700" : "bg-destructive/10 text-destructive"
+                                            )}
+                                          >
+                                              {option.isCorrect ? <CheckCircle className="h-4 w-4 flex-shrink-0" /> : <XCircle className="h-4 w-4 flex-shrink-0" />}
+                                              <p>{option.feedback}</p>
+                                          </motion.div>
+                                      )}
+                                  </div>
+                              ))}
+                          </div>
+                      </CardContent>
+                  </Card>
+                </motion.div>
 
                 {/* Section 2: Knowledge Deep Dive */}
-                <Card>
-                     <CardHeader>
-                        <CardTitle className="flex items-center gap-3">
-                           <FileText className="h-5 w-5 text-primary" />
-                           Knowledge Deep Dive
-                        </CardTitle>
-                        <CardDescription>{knowledgeDive.title}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                         <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
-                           {knowledgeDive.takeaways.map((item, i) => <li key={i}>{item}</li>)}
-                        </ul>
-                        <p className="text-xs text-muted-foreground italic border-l-2 pl-3">{knowledgeDive.details}</p>
-                    </CardContent>
-                </Card>
-            </div>
+                <motion.div variants={itemVariants}>
+                  <Card>
+                      <CardHeader>
+                          <CardTitle className="flex items-center gap-3">
+                            <FileText className="h-5 w-5 text-primary" />
+                            Knowledge Deep Dive
+                          </CardTitle>
+                          <CardDescription>{knowledgeDive.title}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                          <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+                            {knowledgeDive.takeaways.map((item, i) => <li key={i}>{item}</li>)}
+                          </ul>
+                          <p className="text-xs text-muted-foreground italic border-l-2 pl-3">{knowledgeDive.details}</p>
+                      </CardContent>
+                  </Card>
+                </motion.div>
+            </motion.div>
         </ScrollArea>
         <SheetFooter className="p-4 border-t bg-background">
           <SheetClose asChild>
