@@ -34,7 +34,8 @@ import {
   AlertTriangle,
   Phone,
   FileText,
-  Clock
+  Clock,
+  HeartCrack
 } from 'lucide-react'
 import type { TenantRightsSection } from '@/data/legal-reference/tenant-rights'
 import { tenantRightsResources } from '@/data/legal-reference/tenant-rights'
@@ -52,7 +53,8 @@ const sectionIcons: Record<string, React.ElementType> = {
   'privacy-entry-rights': Eye,
   'discrimination-retaliation': Shield,
   'lease-termination': Calendar,
-  'mobile-home-rights': Truck
+  'mobile-home-rights': Truck,
+  'domestic-violence-protections': HeartCrack
 }
 
 type SectionProps = {
@@ -257,48 +259,7 @@ export function TenantRightsClient({ data }: TenantRightsClientProps) {
                 </div>
               </CardContent>
             </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
-                  Officer Field Tips
-                </CardTitle>
-                <CardDescription>
-                  Best practices for handling landlord-tenant disputes
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {tenantRightsResources.officerTips.map((tip, index) => (
-                    <div key={index} className="flex items-start gap-2 text-sm">
-                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
-                      <span>{tip}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
           </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Important Documents for Tenants</CardTitle>
-              <CardDescription>
-                Documents tenants should maintain for legal protection
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-2 md:grid-cols-2">
-                {tenantRightsResources.commonDocuments.map((doc, index) => (
-                  <div key={index} className="flex items-center gap-2 text-sm">
-                    <FileText className="h-3 w-3 text-blue-600" />
-                    <span>{doc}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
 
         <TabsContent value="quick-ref" className="space-y-6">
@@ -350,41 +311,7 @@ export function TenantRightsClient({ data }: TenantRightsClientProps) {
                 <div>• Reasonable purposes only</div>
               </CardContent>
             </Card>
-
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Tenant Defenses</CardTitle>
-              </CardHeader>
-              <CardContent className="text-sm space-y-1">
-                <div>• Improper notice</div>
-                <div>• Habitability issues</div>
-                <div>• Retaliation claims</div>
-                <div>• Discrimination</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Criminal Elements</CardTitle>
-              </CardHeader>
-              <CardContent className="text-sm space-y-1">
-                <div>• Illegal eviction methods</div>
-                <div>• Fraudulent practices</div>
-                <div>• Criminal trespass</div>
-                <div>• Theft of deposits</div>
-              </CardContent>
-            </Card>
           </div>
-
-          <Alert>
-            <Shield className="h-4 w-4" />
-            <AlertTitle>Officer Best Practices</AlertTitle>
-            <AlertDescription className="text-sm">
-              • Document all interactions and evidence • Refer civil disputes to appropriate legal resources 
-              • Identify potential criminal violations (illegal evictions, fraud) • Protect tenant safety during disputes 
-              • Understand when to involve social services • Know local housing authority contacts
-            </AlertDescription>
-          </Alert>
         </TabsContent>
       </Tabs>
     </div>

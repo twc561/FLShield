@@ -52,6 +52,8 @@ const Section = memo(({ title, icon: Icon, children, value }: {
     </Card>
   </AccordionItem>
 ))
+Section.displayName = 'Section';
+
 
 const PropertyTypeIcon = ({ category }: { category: string }) => {
   switch (category) {

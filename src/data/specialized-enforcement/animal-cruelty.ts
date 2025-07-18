@@ -1,3 +1,4 @@
+
 import type { Scenario } from "@/data/field-procedures/scenario-checklists";
 
 // --- Data Types for Animal Cruelty Guide ---

@@ -248,17 +248,6 @@ export const tenantRightsData: TenantRightsSection[] = [
           "Assault/battery - physical confrontations",
           "Extortion - demanding money under threat of illegal eviction"
         ]
-      },
-      {
-        title: "Red Flags for Officers",
-        details: [
-          "Landlord changing locks while tenant still has possession",
-          "Utility shut-offs during ongoing tenancy",
-          "Tenant's belongings placed outside without court order",
-          "Landlord threatening immediate removal without legal process",
-          "Evidence of forced entry to remove tenant",
-          "Tenant reporting harassment or threats from landlord"
-        ]
       }
     ]
   },
@@ -292,27 +281,6 @@ export const tenantRightsData: TenantRightsSection[] = [
           "Court order or other legal process",
           "Emergency situations threatening property or safety"
         ]
-      },
-      {
-        title: "Emergency Entry Rights",
-        details: [
-          "No notice required for genuine emergencies",
-          "Must be immediate threat to health, safety, or property",
-          "Examples: fire, flood, gas leak, break-in in progress",
-          "Cannot fabricate emergency to gain entry",
-          "Must document reason for emergency entry"
-        ]
-      },
-      {
-        title: "Common Entry Disputes",
-        details: [
-          "Landlord entering without proper notice",
-          "Disagreements about what constitutes an emergency",
-          "Excessive entry requests that constitute harassment",
-          "Entry for non-permitted purposes (checking cleanliness)",
-          "Entry outside permitted hours without consent",
-          "Tenant changing locks without providing landlord keys"
-        ]
       }
     ]
   },
@@ -332,29 +300,6 @@ export const tenantRightsData: TenantRightsSection[] = [
           "Sexual orientation and gender identity (varies by locality)",
           "Source of income (varies by locality)",
           "Military status (federal protection)"
-        ]
-      },
-      {
-        title: "Prohibited Discriminatory Practices",
-        details: [
-          "Refusing to rent based on protected class",
-          "Different terms, conditions, or privileges",
-          "Discriminatory advertising or statements",
-          "False denial of availability",
-          "Different application requirements or fees",
-          "Harassment based on protected characteristics",
-          "Steering tenants to certain areas based on class"
-        ]
-      },
-      {
-        title: "Reasonable Accommodations for Disabilities",
-        details: [
-          "Must allow reasonable modifications to unit",
-          "Must make reasonable accommodations in policies",
-          "Cannot charge extra fees for disability accommodations",
-          "Must allow service animals regardless of no-pet policies",
-          "Cannot inquire about nature or severity of disability",
-          "Must engage in interactive process for accommodation requests"
         ]
       },
       {
@@ -387,32 +332,10 @@ export const tenantRightsData: TenantRightsSection[] = [
           "Domestic violence victims may terminate with proper documentation",
           "Military personnel have federal SCRA protections",
           "Uninhabitable conditions may justify early termination",
-          "Landlord's material breach may allow termination",
-          "Some localities provide additional early termination rights"
+          "Landlord's material breach may allow termination"
         ],
         timeframes: [
-          "30 days notice for domestic violence termination",
-          "Varies for military deployment terminations"
-        ]
-      },
-      {
-        title: "Notice Requirements for Termination",
-        details: [
-          "Month-to-month: 30 days written notice",
-          "Week-to-week: 15 days written notice",
-          "Fixed-term lease: expires automatically unless renewed",
-          "Notice must specify termination date",
-          "Must be delivered according to lease terms"
-        ]
-      },
-      {
-        title: "Move-Out Inspection Rights",
-        details: [
-          "Tenant may request pre-move-out inspection",
-          "Landlord must provide opportunity to cure defects",
-          "Take photos/video of unit condition at move-out",
-          "Document pre-existing damage at move-in",
-          "Right to be present during final inspection"
+          "30 days notice for domestic violence termination"
         ]
       },
       {
@@ -427,56 +350,8 @@ export const tenantRightsData: TenantRightsSection[] = [
         ]
       }
     ]
-  },
-  {
-    id: "mobile-home-rights",
-    title: "Mobile Home Tenant Rights",
-    description: "Special protections for mobile home park residents",
-    content: [
-      {
-        title: "Mobile Home Park Regulations",
-        legalBasis: "F.S. Chapter 723 - Mobile Home Parks",
-        details: [
-          "Special notice requirements for rent increases",
-          "Restrictions on arbitrary rules changes",
-          "Right to sell mobile home within park",
-          "Protection from discriminatory guest policies",
-          "Right to organize tenant associations"
-        ]
-      },
-      {
-        title: "Rent Control and Increases",
-        details: [
-          "90 days written notice required for rent increases",
-          "No more than two increases per 12-month period",
-          "Increases must be reasonable and not retaliatory",
-          "Special protections for senior citizens in some areas",
-          "Cannot increase rent during lease term unless specified"
-        ]
-      },
-      {
-        title: "Sale and Transfer Rights",
-        details: [
-          "Right to sell mobile home to qualified buyer",
-          "Park owner cannot unreasonably reject buyers",
-          "Transfer fees must be reasonable",
-          "Right to sublease with park approval",
-          "Protection from forced sales at below market value"
-        ]
-      },
-      {
-        title: "Unique Mobile Home Issues",
-        details: [
-          "Disputes over lot rent vs. home ownership",
-          "Park rule changes affecting residents",
-          "Guest and visitor policy conflicts",
-          "Maintenance responsibilities for lot vs. home",
-          "Issues with forced sales when parks close"
-        ]
-      }
-    ]
   }
-]
+];
 
 export const tenantRightsResources = {
   emergencyContacts: [
@@ -491,11 +366,6 @@ export const tenantRightsResources = {
       purpose: "Free legal assistance for low-income tenants"
     },
     {
-      organization: "Florida Department of Agriculture (Weights & Measures)",
-      phone: "1-800-356-3887", 
-      purpose: "Security deposit violations"
-    },
-    {
       organization: "HUD Fair Housing Hotline",
       phone: "1-800-669-9777",
       purpose: "Housing discrimination complaints"
@@ -508,27 +378,8 @@ export const tenantRightsResources = {
   ],
   keyStatutes: [
     "F.S. Chapter 83 - Landlord and Tenant",
-    "F.S. Chapter 723 - Mobile Home Parks", 
     "F.S. § 760.20-760.37 - Fair Housing Act",
     "F.S. § 83.595 - Domestic Violence Protections",
     "F.S. § 83.67 - Prohibited Practices"
-  ],
-  commonDocuments: [
-    "Lease agreement and all addenda",
-    "Security deposit receipt",
-    "Move-in/move-out inspection reports",
-    "All written communications with landlord",
-    "Photos of unit condition",
-    "Rent payment receipts",
-    "Notice documents",
-    "Court orders or judgments"
-  ],
-  officerTips: [
-    "Document everything - take photos, get written statements",
-    "Remain neutral - do not give legal advice to either party",
-    "Verify any court orders before taking action",
-    "Refer civil disputes to appropriate legal resources",
-    "Only arrest when criminal laws are clearly violated",
-    "Know your local legal aid organizations for referrals"
   ]
-}
+};

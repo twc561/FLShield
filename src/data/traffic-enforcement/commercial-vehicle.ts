@@ -1,3 +1,4 @@
+
 export type ChecklistItem = {
   StepNumber: number;
   CheckItem: string;
@@ -174,7 +175,7 @@ export const commercialVehicleGuideData: CommercialVehicleGuide = {
         HazardClass: "2.3",
         ERG_GuideNumber: "124",
         KeyEmergencyActions:
-          "TOXIC INHALATION HAZARD. Vapors are heavier than air and corrosive. Stay upwind and uphill. Evacuate downwind. Use of SCBA is critical for any entry.",
+          "TOXIC INHALATION HAZARD. Vapors are heavier than air and corrosive. Stay upwind and uphill. Use of SCBA is critical for any entry.",
       },
     ],
     oversizeLoadGuide: [

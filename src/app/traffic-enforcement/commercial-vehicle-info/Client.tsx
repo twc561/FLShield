@@ -193,3 +193,4 @@ export const CommercialVehicleClient = React.memo(
     );
   }
 );
+CommercialVehicleClient.displayName = "CommercialVehicleClient";

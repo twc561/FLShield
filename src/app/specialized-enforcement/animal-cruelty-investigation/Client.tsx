@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -225,3 +226,4 @@ export const AnimalCrueltyClient = React.memo(function AnimalCrueltyClient({ dat
     </Accordion>
   )
 })
+AnimalCrueltyClient.displayName = "AnimalCrueltyClient";
