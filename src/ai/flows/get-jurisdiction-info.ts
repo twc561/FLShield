@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI flow to get jurisdiction information from geographic coordinates.
@@ -22,9 +23,9 @@ function getAddressComponent(components: any[], type: string): string {
 export async function getJurisdictionInfo(
   input: GetJurisdictionInput
 ): Promise<GetJurisdictionOutput> {
-  const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   if (!apiKey) {
-    throw new Error("Google Maps API key is missing.");
+    throw new Error("Google Maps API key is missing. Please add it to your .env file.");
   }
 
   const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${input.latitude},${input.longitude}&key=${apiKey}`;
@@ -55,7 +56,7 @@ export async function getJurisdictionInfo(
 CRITICAL INSTRUCTIONS:
 1.  **Analyze the Location:** Given the city and county, identify the primary law enforcement agency, the judicial circuit, and the appellate court district.
 2.  **Primary LE Agency:** This is usually the City Police Department if inside city limits, or the County Sheriff's Office if in an unincorporated area.
-3.  **Strict JSON Output:** Return the information as a single, valid JSON object matching the requested schema.
+3.  **Strict JSON Output:** Return the information as a single, valid JSON object matching the requested schema. Do not return any text outside the JSON structure. If you cannot determine a field, return "N/A" for that field.
 
 City: ${locationData.city}
 County: ${locationData.county}

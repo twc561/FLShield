@@ -4,37 +4,58 @@
 import React, { useState } from 'react';
 import { PageHeader } from '@/components/PageHeader';
 import { useGeolocation } from '@/hooks/use-geolocation';
-import { Loader2, MapPin, Building, Search, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Loader2, MapPin, Building, Search, AlertTriangle, ShieldCheck, Image as ImageIcon } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { getJurisdictionInfo, type GetJurisdictionOutput } from '@/ai/flows/get-jurisdiction-info';
 import Link from 'next/link';
+import NextImage from 'next/image';
 
-const JurisdictionResultDisplay = ({ data }: { data: GetJurisdictionOutput }) => (
-  <Card className="animate-fade-in-up">
-    <CardHeader>
-      <CardTitle>Jurisdictional Analysis</CardTitle>
-      <CardDescription>Based on your current location.</CardDescription>
-    </CardHeader>
-    <CardContent className="space-y-2">
-      <p><strong>City:</strong> {data.city}</p>
-      <p><strong>County:</strong> {data.county}</p>
-      <p><strong>Primary LE Jurisdiction:</strong> {data.lawEnforcementJurisdiction}</p>
-      <p><strong>Judicial Circuit:</strong> {data.judicialCircuit}</p>
-      <p><strong>Appellate District:</strong> {data.appellateDistrict}</p>
-    </CardContent>
-    <CardFooter>
-      <Button asChild>
-        <Link href={`/legal-reference/local-ordinances-guide?search=${data.city}`}>
-          <Search className="mr-2 h-4 w-4" />
-          Search {data.city} Ordinances
-        </Link>
-      </Button>
-    </CardFooter>
-  </Card>
-);
+const JurisdictionResultDisplay = ({ data, position }: { data: GetJurisdictionOutput, position: GeolocationPosition | null }) => {
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    const streetViewUrl = position 
+        ? `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${position.coords.latitude},${position.coords.longitude}&heading=151.78&pitch=-0.76&key=${apiKey}`
+        : null;
+
+    return (
+        <Card className="animate-fade-in-up">
+            <CardHeader>
+                <CardTitle>Jurisdictional Analysis</CardTitle>
+                <CardDescription>Based on your current location.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                {streetViewUrl && (
+                     <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
+                        <NextImage 
+                            src={streetViewUrl} 
+                            alt="Street View of current location"
+                            fill
+                            className="object-cover"
+                        />
+                     </div>
+                )}
+                <div className="space-y-2">
+                    <p><strong>City:</strong> {data.city}</p>
+                    <p><strong>County:</strong> {data.county}</p>
+                    <p><strong>Primary LE Jurisdiction:</strong> {data.lawEnforcementJurisdiction}</p>
+                    <p><strong>Judicial Circuit:</strong> {data.judicialCircuit}</p>
+                    <p><strong>Appellate District:</strong> {data.appellateDistrict}</p>
+                </div>
+            </CardContent>
+            <CardFooter>
+            <Button asChild>
+                <Link href={`/legal-reference/local-ordinances-guide?search=${data.city}`}>
+                <Search className="mr-2 h-4 w-4" />
+                Search {data.city} Ordinances
+                </Link>
+            </Button>
+            </CardFooter>
+        </Card>
+    );
+};
+
 
 export default function JurisdictionFinderPage() {
   const { position, error, isLoading: isGeoLoading, hasPermission, requestPermission } = useGeolocation();
@@ -129,7 +150,7 @@ export default function JurisdictionFinderPage() {
       </Card>
       
       {aiError && <p className="text-destructive">{aiError}</p>}
-      {jurisdictionData && <JurisdictionResultDisplay data={jurisdictionData} />}
+      {jurisdictionData && <JurisdictionResultDisplay data={jurisdictionData} position={position}/>}
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
