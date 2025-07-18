@@ -60,13 +60,13 @@ export default function AgencyIntelligencePage() {
                 <section className="text-center py-20 sm:py-24 bg-muted/30">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in-up">
                          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
-                            Your Policy. Florida Statutes. Your AI Partner.
+                            Your Policy. Florida Law. One AI Partner.
                         </h1>
                          <h2 className="mt-4 max-w-3xl mx-auto text-2xl font-semibold tracking-tight">
-                            Instant, Vetted Answers for Every Officer.
+                            The Public Records Intelligence Engine for Law Enforcement.
                         </h2>
                         <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
-                           Shield FL goes beyond generic legal search. We integrate your department's specific policies, Florida Statutes, and controlling case law into a single, AI-powered engine, giving your officers unparalleled, real-time guidance.
+                           Shield FL transforms your agency's public-facing policies and manuals into an interactive knowledge base. Our AI synthesizes this with Florida Statutes and case law to give your officers instant, defensible answers in the field.
                         </p>
                         <div className="mt-8">
                             <Button asChild size="lg">
@@ -81,41 +81,41 @@ export default function AgencyIntelligencePage() {
                     <section className="max-w-4xl mx-auto text-center">
                         <h2 className="text-3xl font-bold tracking-tight">The Challenge: The Gap Between Policy and Practice</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                           Your Use of Force policy, your pursuit procedures, your response protocols—they are the backbone of professional law enforcement and the foundation of community trust. But even the best officer can't memorize every line of a 300-page manual. In a split-second, high-stress situation, how do you ensure your team's actions are not just lawful, but perfectly aligned with your agency's specific standards? This is the gap Shield FL was built to close.
+                           Your Use of Force policy, your pursuit procedures, your response protocols—they are the backbone of professional law enforcement. But in a split-second, high-stress situation, how do you ensure your team's actions are not just lawful, but perfectly aligned with your agency's specific standards? This is the gap Shield FL was built to close.
                         </p>
                     </section>
 
                     {/* The Solution Section */}
                     <section>
                         <div className="max-w-4xl mx-auto text-center">
-                            <h2 className="text-3xl font-bold tracking-tight">The Solution: The Shield FL Intelligence Engine</h2>
+                            <h2 className="text-3xl font-bold tracking-tight">The Solution: Your Agency's Private Intelligence Engine</h2>
                             <p className="mt-4 text-lg text-muted-foreground">
-                                Think of the Shield FL Intelligence Engine as the ultimate research partner, riding along with every officer. It has read, indexed, and understood your entire policy manual, and can cross-reference it with state law and relevant case law in seconds. It provides your officers with the 'why' behind their training, precisely when they need it most.
+                                Think of Shield FL as a secure, private AI research partner that has read, indexed, and understood your entire policy manual. It cross-references this with state law and relevant case law in seconds, providing officers with the 'why' behind their training, precisely when they need it most.
                             </p>
                         </div>
 
                         <div className="mt-12 max-w-3xl mx-auto">
-                            <h3 className="text-2xl font-bold tracking-tight text-center mb-8">How It Works: A Process Built on Trust and Precision</h3>
+                            <h3 className="text-2xl font-bold tracking-tight text-center mb-8">How It Works: A Simple & Secure Process</h3>
                             <div className="space-y-4">
                                 <HowItWorksStep 
                                     step={1} 
-                                    title="Secure Policy Integration" 
-                                    description="It starts with your data. Using our secure, CJIS-aligned portal, your agency provides us with its current policy and procedure manuals. This data is encrypted, isolated, and remains your exclusive intellectual property."
+                                    title="Public Document Ingestion" 
+                                    description="It starts with your public-facing documents. You provide us with your policy and procedure manuals—the same documents you would provide for a public records request. No secure portals are needed because we only handle public information."
                                 />
                                 <HowItWorksStep 
                                     step={2} 
                                     title="Building Your Agency's Knowledge Core" 
-                                    description="Our system doesn't just 'read' your policies; it ingests and understands them. We use a process called Retrieval-Augmented Generation (RAG) to convert your manuals into a sophisticated knowledge core. Every policy, procedure, and guideline is indexed based on its semantic meaning, preparing it for complex, situational queries."
+                                    description="Our system doesn't just 'read' your policies; it ingests and understands them. We use a process called Retrieval-Augmented Generation (RAG) to convert your manuals into a sophisticated, private knowledge core. Every policy, procedure, and guideline is indexed for situational queries."
                                 />
                                 <HowItWorksStep 
                                     step={3} 
                                     title="Multi-Source Synthesis at Query Time" 
-                                    description="When an officer asks a question—'Can I use a PIT maneuver on this vehicle?'—the engine instantly searches multiple sources. It retrieves the most relevant information from 1) Your Department's Pursuit Policy, 2) Florida Statute §316.192, and 3) Controlling case law like Scott v. Harris."
+                                    description="When an officer asks a question—'Can I use a PIT maneuver on this vehicle?'—the engine instantly searches multiple sources. It retrieves the most relevant information from 1) Your Department's Pursuit Policy, 2) Florida Statutes, and 3) Controlling case law like Scott v. Harris."
                                 />
                                 <HowItWorksStep 
                                     step={4} 
                                     title="The Prioritized, Comprehensive Answer" 
-                                    description="This is the critical step. The retrieved data is fed to our advanced AI with a unique instruction: deliver a single, comprehensive answer that prioritizes your agency's policy above all else. The result is a legally sound, ethically consistent, and department-compliant recommendation, delivered in seconds."
+                                    description="This is the critical step. The retrieved data is fed to our advanced AI with a unique instruction: deliver a single, comprehensive answer that prioritizes your agency's policy above all else. The result is a legally sound and department-compliant recommendation, delivered in seconds."
                                 />
                             </div>
                         </div>
@@ -167,7 +167,7 @@ export default function AgencyIntelligencePage() {
                         </div>
                         <h2 className="text-3xl font-bold tracking-tight">Security & Trust: Our Foundational Commitment</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                           We understand the sensitive nature of law enforcement data. The Shield FL platform is built on Google's secure cloud infrastructure, leveraging best-in-class security protocols including end-to-end encryption, role-based access controls, and robust data isolation to ensure your agency's information is protected and confidential.
+                           We understand the sensitive nature of law enforcement technology. Shield FL is built on Google's secure cloud infrastructure, leveraging best-in-class security protocols including end-to-end encryption and role-based access controls. Because we only handle public record information, we provide enterprise-grade security without the high cost and complexity of a CJIS-audited environment, making advanced AI accessible to more agencies.
                         </p>
                     </section>
                     
@@ -182,8 +182,8 @@ export default function AgencyIntelligencePage() {
                                 <p className="text-sm text-muted-foreground mt-1">We meet with your command staff to understand your needs and establish a partnership agreement.</p>
                             </div>
                             <div className="text-center">
-                                <h3 className="font-bold text-lg">2. Secure Data Transfer</h3>
-                                <p className="text-sm text-muted-foreground mt-1">You securely upload your policy manuals through our dedicated portal.</p>
+                                <h3 className="font-bold text-lg">2. Public Document Link</h3>
+                                <p className="text-sm text-muted-foreground mt-1">You provide a public link to your agency's policy manuals. Our system securely ingests the data.</p>
                             </div>
                             <div className="text-center">
                                 <h3 className="font-bold text-lg">3. Go-Live & Training</h3>

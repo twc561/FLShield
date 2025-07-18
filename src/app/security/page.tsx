@@ -26,14 +26,14 @@ export default function SecurityPage() {
       <main>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 animate-fade-in-up">
           <PageHeader
-            title="Security & Compliance"
-            description="Built with the trust and security of your agency as our highest priority."
+            title="Security by Design"
+            description="Built with the trust and integrity of your agency as our highest priority."
           />
           <div className="max-w-4xl mx-auto space-y-8">
             <Card>
               <CardHeader>
-                <CardTitle>Our Security-First Philosophy</CardTitle>
-                <CardDescription>We understand that law enforcement technology demands the highest standards of security and data integrity. Our platform is architected around these core principles.</CardDescription>
+                <CardTitle>Our Public Records Intelligence Philosophy</CardTitle>
+                <CardDescription>We believe that making public information highly accessible and useful is a critical, unmet need. Our security model is built around this principle.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <SecurityFeature
@@ -43,18 +43,18 @@ export default function SecurityPage() {
                 />
                 <SecurityFeature
                   icon={DatabaseZap}
-                  title="Zero-Retention Policy on Sensitive Interactions"
-                  description="Features like the Active Listener Chatbot and Report Proofreader are designed to be ephemeral. User inputs are processed in memory for the AI model and are never logged, stored, or monitored, ensuring absolute user privacy and confidentiality."
+                  title="Zero-Retention Policy on Sensitive AI Interactions"
+                  description="Features like the Active Listener Chatbot and Report Proofreader are designed to be ephemeral. User inputs are processed in memory and are never logged, stored, or monitored, ensuring absolute user privacy and confidentiality."
                 />
                  <SecurityFeature
                   icon={BrainCircuit}
                   title="AI Reliability and Grounding"
-                  description="Our AI models are specifically 'grounded' on a curated database of Florida Statutes, case law summaries, and law enforcement best practices. This minimizes hallucinations and ensures that AI-generated answers for legal queries cite specific sources for verification."
+                  description="Our AI models are specifically 'grounded' on a curated database of Florida Statutes, case law summaries, and your agency's public policies. This minimizes hallucinations and ensures that AI-generated answers cite specific sources for verification."
                 />
                 <SecurityFeature
                   icon={Users}
                   title="Role-Based Access Control"
-                  description="Agency-level deployments will feature robust, role-based access control, ensuring that officers, supervisors, and administrators only have access to the features and data appropriate for their roles."
+                  description="Agency-level deployments feature robust, role-based access control, ensuring that officers, supervisors, and administrators only have access to the features and data appropriate for their roles."
                 />
               </CardContent>
             </Card>
@@ -63,19 +63,19 @@ export default function SecurityPage() {
               <CardHeader>
                 <CardTitle className="text-destructive flex items-center gap-3">
                   <ShieldAlert/>
-                  CJIS Compliance Status: NON-COMPLIANT
+                  A Note on CJIS: An Inapplicable Standard
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-destructive-foreground/90">
-                  Shield FL is a <strong>training and informational aid only</strong>. It is hosted in a standard environment and does not meet the strict security requirements for handling Criminal Justice Information (CJI).
+                  Shield FL is a <strong>training and informational aid only</strong> that operates exclusively on public records. The CJIS Security Policy, which governs sensitive Criminal Justice Information (CJI), is not applicable to our data model.
                 </p>
                 <p className="mt-2 text-destructive-foreground/80">
-                    Users are strictly prohibited from entering any real PII, CJI, or case-specific details. For more information, please review our full CJIS statement.
+                    This is a deliberate design choice. By not handling CJI, we can provide a powerful, low-cost AI tool without the risks associated with protected data. Users are strictly prohibited from entering any real PII or CJI.
                 </p>
                 <Button asChild variant="link" className="p-0 h-auto mt-2 text-destructive-foreground font-bold">
                     <Link href="/cjis-compliance">
-                        View CJIS Compliance Statement
+                        Learn more about our Public Records focus
                     </Link>
                 </Button>
               </CardContent>

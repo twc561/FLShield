@@ -1,3 +1,4 @@
+
 'use client'
 
 import { PageHeader } from "@/components/PageHeader"
@@ -36,19 +37,19 @@ export default function SupportPage() {
               <AccordionItem value="item-3">
                 <AccordionTrigger className="text-lg text-left">Is the Shield FL platform CJIS compliant?</AccordionTrigger>
                 <AccordionContent className="text-base text-muted-foreground">
-                  No. The CJIS Security Policy applies to systems that handle confidential Criminal Justice Information (CJI). By design, Shield FL operates exclusively on public record information, so the formal CJIS compliance framework does not apply to our service. This deliberate focus allows us to provide a powerful, efficient, and accessible reference tool without the complexities and costs associated with processing protected data. Our goal is to be the best in the world at making public data useful, not to be another gateway to private CJI.
+                  No, and this is by design. The CJIS Security Policy applies to systems that handle confidential Criminal Justice Information (CJI). By focusing exclusively on public records, Shield FL operates in a different category where CJIS compliance is not applicable. This allows us to provide a powerful, efficient, and accessible reference tool without the complexities and costs associated with processing protected data.
                 </AccordionContent>
               </AccordionItem>
                <AccordionItem value="item-4">
                 <AccordionTrigger className="text-lg text-left">If you're not CJIS compliant, how do you handle security?</AccordionTrigger>
                 <AccordionContent className="text-base text-muted-foreground">
-                  We understand that any platform used by law enforcement must be secure, regardless of the data it handles. We have engineered Shield FL with enterprise-grade security best practices from the ground up. Our platform is built on Google Cloud's secure infrastructure and includes mandatory Multi-Factor Authentication (MFA) for all user accounts, end-to-end data encryption for all information in transit and at rest, and strict internal access controls. Our commitment is to provide a reliable, secure, and trustworthy platform for your officers.
+                  We understand that any platform used by law enforcement must be secure. We have engineered Shield FL with enterprise-grade security best practices from the ground up. Our platform is built on Google Cloud's secure infrastructure and includes mandatory Multi-Factor Authentication (MFA), end-to-end data encryption, and strict internal access controls. Our commitment is to provide a reliable and trustworthy platform for accessing public information.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-5">
                 <AccordionTrigger className="text-lg text-left">How can my agency's policies be added to the platform?</AccordionTrigger>
                 <AccordionContent className="text-base text-muted-foreground">
-                  Since our platform works with publicly accessible documents, the process is simple. You can provide us with a copy of your policy manual in the same way you would for any public records request—typically via a direct link on your website or as an email attachment. Our team then ingests the document, indexes it, and integrates it into your agency's private version of the Shield FL search engine. This ensures we never require a complex, secure portal, as we are only handling information that is already available to the public.
+                  Since our platform works with publicly accessible documents, the process is simple. You can provide us with a copy of your policy manual in the same way you would for any public records request—typically via a direct link on your website or as an email attachment. Our team then ingests the document, indexes it, and integrates it into your agency's private version of the Shield FL search engine.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-6">
