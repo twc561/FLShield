@@ -45,10 +45,9 @@ CRITICAL INSTRUCTIONS:
 2.  **If the item is a firearm, provide a detailed breakdown:**
     *   **Make:** Identify its manufacturer (e.g., "Glock," "Sig Sauer").
     *   **Model:** Identify the specific model (e.g., "17," "P320," "870").
-    *   **Caliber:** Identify the caliber or gauge. If not visible or determinable, return "Unknown".
-    *   **Standard Capacity:** State the standard magazine capacity for this model.
+    *   **Caliber & Capacity (IMPORTANT):** Once you identify the model, use your knowledge to determine its most common caliber and standard magazine capacity. **Fill in these fields even if they are not visible in the image.** For example, if you identify a 'Glock 19', you know the caliber is '9mm' and the standard capacity is '15 rounds'. If the caliber cannot be determined from the model, return "Unknown".
     *   **Common Variants:** List 1-2 common sub-models or generations if applicable.
-3.  **No Guessing:** If you cannot confidently determine a specific detail (like make, model, or caliber), you MUST return "Unknown" for that specific field. Do not guess.
+3.  **No Guessing:** If you cannot confidently determine the Make or Model, you MUST return "Unknown" for those fields.
 4.  **CHECK FOR ILLEGAL MODIFICATIONS (IMPORTANT):** Carefully examine the firearm for any illegal modifications.
     *   **Specifically, look for a 'Glock switch' or similar auto-sear device**, which is a small component on the back of the slide that allows for fully automatic fire. If you identify such a device, you MUST populate the 'illegalModifications' array with the string 'Machine Gun Conversion Device (Glock Switch)'.
     *   Look for other illegal modifications like a sawed-off barrel on a shotgun/rifle or a vertical foregrip on a pistol.
