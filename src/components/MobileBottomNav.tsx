@@ -18,6 +18,8 @@ import {
   Sheet,
   SheetContent,
   SheetHeader,
+  SheetTitle,
+  SheetDescription,
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { signOut } from "firebase/auth"
@@ -93,16 +95,19 @@ export function MobileBottomNav() {
         </SheetTrigger>
         <SheetContent side="left" className="w-3/4 p-0 flex flex-col">
           <SheetHeader className="p-4 border-b">
-            <Link
-              href="/"
-              className="flex items-center gap-2.5"
-              onClick={handleLinkClick}
-            >
-              <Flame className="w-8 h-8 text-primary" />
-              <span className="font-bold text-lg text-foreground">
-                Florida Shield
-              </span>
-            </Link>
+            <SheetTitle asChild>
+                <Link
+                href="/"
+                className="flex items-center gap-2.5"
+                onClick={handleLinkClick}
+                >
+                <Flame className="w-8 h-8 text-primary" />
+                <span className="font-bold text-lg text-foreground">
+                    Florida Shield
+                </span>
+                </Link>
+            </SheetTitle>
+            <SheetDescription className="sr-only">Main application menu</SheetDescription>
           </SheetHeader>
           <div className="overflow-y-auto flex-1 p-2">
             <AppMenuContent onLinkClick={handleLinkClick} />
