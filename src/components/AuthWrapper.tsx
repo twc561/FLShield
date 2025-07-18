@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState, useEffect } from 'react';
@@ -41,6 +42,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         "/", "/login", "/features", "/agency-intelligence",
         "/cjis-compliance", "/support", "/request-demo",
         "/terms-of-use", "/privacy-policy", "/security",
+        "/for-officers"
     ];
     const authPages = ["/login"]; // Only login page now
 
