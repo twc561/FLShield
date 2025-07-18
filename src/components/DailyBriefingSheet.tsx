@@ -66,7 +66,7 @@ export function DailyBriefingSheet() {
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-md p-0 flex flex-col">
         <SheetHeader className="p-4 border-b">
-          <SheetTitle>{briefingData.title}</SheetTitle>
+          <SheetTitle className="break-words">{briefingData.title}</SheetTitle>
           <SheetDescription>
             A micro-lesson to sharpen your skills.
           </SheetDescription>
@@ -84,19 +84,19 @@ export function DailyBriefingSheet() {
                       <CardHeader>
                           <CardTitle className="flex items-center gap-3">
                             <MessageCircleQuestion className="h-5 w-5 text-primary" />
-                            Interactive Scenario
+                            <span className="break-words">Interactive Scenario</span>
                           </CardTitle>
-                          <CardDescription>{scenario.title}</CardDescription>
+                          <CardDescription className="break-words">{scenario.title}</CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                          <p className="text-sm text-muted-foreground">{scenario.situation}</p>
-                          <p className="text-sm font-semibold text-foreground/90">{scenario.question}</p>
+                          <p className="text-sm text-muted-foreground break-words">{scenario.situation}</p>
+                          <p className="text-sm font-semibold text-foreground/90 break-words">{scenario.question}</p>
                           <div className="space-y-2">
                               {scenario.options.map((option, index) => (
                                   <div key={index}>
                                       <Button
                                           variant={selectedOption === index ? (option.isCorrect ? "default" : "destructive") : "secondary"}
-                                          className="w-full justify-start text-left h-auto py-2"
+                                          className="w-full justify-start text-left h-auto py-2 whitespace-normal"
                                           onClick={() => handleOptionClick(index)}
                                           disabled={selectedOption !== null}
                                       >
@@ -107,7 +107,7 @@ export function DailyBriefingSheet() {
                                             initial={{ opacity: 0, y: -10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             className={cn(
-                                                "mt-2 p-2 text-xs rounded-md flex items-start gap-2",
+                                                "mt-2 p-2 text-xs rounded-md flex items-start gap-2 break-words",
                                                 option.isCorrect ? "bg-green-500/10 text-green-700" : "bg-destructive/10 text-destructive"
                                             )}
                                           >
@@ -128,15 +128,15 @@ export function DailyBriefingSheet() {
                       <CardHeader>
                           <CardTitle className="flex items-center gap-3">
                             <FileText className="h-5 w-5 text-primary" />
-                            Knowledge Deep Dive
+                            <span className="break-words">Knowledge Deep Dive</span>
                           </CardTitle>
-                          <CardDescription>{knowledgeDive.title}</CardDescription>
+                          <CardDescription className="break-words">{knowledgeDive.title}</CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                          <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+                          <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground break-words">
                             {knowledgeDive.takeaways.map((item, i) => <li key={i}>{item}</li>)}
                           </ul>
-                          <p className="text-xs text-muted-foreground italic border-l-2 pl-3">{knowledgeDive.details}</p>
+                          <p className="text-xs text-muted-foreground italic border-l-2 pl-3 break-words">{knowledgeDive.details}</p>
                       </CardContent>
                   </Card>
                 </motion.div>
