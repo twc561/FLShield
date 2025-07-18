@@ -178,11 +178,11 @@ export const unifiedSearchIndex: SearchableItem[] = [
     keywords: ['jurisdiction', 'finder', 'gps', 'location', 'ordinance', 'city', 'county']
   },
   {
-    id: 'feature-nearby-resources',
-    title: 'Nearby Resources',
-    description: 'Find closest police stations, hospitals, and courthouses.',
-    category: 'Field Operations & Procedures',
-    href: '/field-procedures/nearby-resources',
-    keywords: ['nearby', 'resources', 'hospital', 'courthouse', 'police', 'station']
+    id: 'feature-ai-tools',
+    title: 'AI Assistant Tools',
+    description: 'A hub for all AI-powered features in the application.',
+    category: 'AI Assistant Tools',
+    href: '/ai-tools',
+    keywords: ['ai', 'tools', 'assistant', 'hub', 'artificial intelligence']
   }
 ];

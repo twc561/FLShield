@@ -29,7 +29,7 @@ import { AppMenuContent } from "./AppMenuContent"
 const mainNavItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
   { href: "/legal-reference/statutes", label: "Statutes", icon: Scale },
-  { href: "/voice-assistant", label: "AI Partner", icon: Bot },
+  { href: "/ai-tools", label: "AI Tools", icon: Bot },
   {
     href: "/field-procedures/scenario-checklists",
     label: "Checklists",
@@ -59,7 +59,7 @@ export function MobileBottomNav() {
   const isActive = (href: string) => {
     if (!isClient) return false
     // Exact match for dashboard, startsWith for others to handle nested pages.
-    if (href === "/dashboard") return pathname === href
+    if (href === "/dashboard" || href === "/ai-tools") return pathname === href
     return pathname.startsWith(href)
   }
 
