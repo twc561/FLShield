@@ -46,7 +46,7 @@ export function DailyBriefingSheet() {
           Daily Briefing
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[90vw] sm:max-w-lg p-0 flex flex-col">
+      <SheetContent className="w-full sm:max-w-md p-0 flex flex-col">
         <SheetHeader className="p-4 border-b">
           <SheetTitle>{briefingData.title}</SheetTitle>
           <SheetDescription>
