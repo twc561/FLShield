@@ -9,7 +9,7 @@ import { auth } from "@/lib/firebase"
 import { PageHeader } from "@/components/PageHeader"
 import AICommandSearch from "@/components/AICommandSearch"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { DailyBriefingSheet } from "@/components/DailyBriefingSheet" // Import the new component
+import { DailyBriefingSheet } from "@/components/DailyBriefingSheet"
 import Link from 'next/link'
 import * as LucideIcons from "lucide-react"
 
@@ -157,11 +157,15 @@ export default function DashboardPage() {
       initial="hidden"
       animate="show"
     >
-      <DailyBriefingSheet /> 
-      <PageHeader 
-        title={`${greeting}, ${userName || "Officer"}.`}
-        description="Welcome to your Mission Hub. How can I help?"
-      />
+      <div className="flex justify-between items-start gap-4">
+        <PageHeader 
+          title={`${greeting}, ${userName || "Officer"}.`}
+          description="Welcome to your Mission Hub. How can I help?"
+        />
+        <div className="pt-2">
+           <DailyBriefingSheet /> 
+        </div>
+      </div>
       
       <motion.div variants={itemVariants}>
         <AICommandSearch />

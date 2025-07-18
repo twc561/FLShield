@@ -41,7 +41,7 @@ export function DailyBriefingSheet() {
   return (
     <Sheet onOpenChange={() => setSelectedOption(null)}>
       <SheetTrigger asChild>
-        <Button variant="outline" className="fixed top-20 right-4 sm:top-6 sm:right-6 z-10">
+        <Button variant="outline">
           <Lightbulb className="mr-2 h-4 w-4 text-accent" />
           Daily Briefing
         </Button>
