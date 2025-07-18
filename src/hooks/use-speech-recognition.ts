@@ -35,35 +35,36 @@ export function useSpeechRecognition(): SpeechRecognitionHook {
         recognition.interimResults = true;
         recognition.lang = 'en-US';
 
-      recognition.onresult = (event) => {
-        let interim = '';
-        let final = '';
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            final += event.results[i][0].transcript;
-          } else {
-            interim += event.results[i][0].transcript;
+        recognition.onresult = (event) => {
+          let interim = '';
+          let final = '';
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+              final += event.results[i][0].transcript;
+            } else {
+              interim += event.results[i][0].transcript;
+            }
           }
-        }
-        setInterimTranscript(interim);
-        if (final) {
-          setFinalTranscript(final);
-        }
-      };
+          setInterimTranscript(interim);
+          if (final) {
+            setFinalTranscript(final);
+          }
+        };
       
-      recognition.onerror = (event) => {
-        setError(event.error);
-        console.error('Speech recognition error', event.error);
-        setIsListening(false);
-      };
+        recognition.onerror = (event) => {
+          setError(event.error);
+          console.error('Speech recognition error', event.error);
+          setIsListening(false);
+        };
 
-      recognition.onend = () => {
-        setIsListening(false);
-      };
+        recognition.onend = () => {
+          setIsListening(false);
+        };
 
-    } else {
-        setIsSupported(false);
-        setError("Speech recognition is not supported in this browser.");
+      } else {
+          setIsSupported(false);
+          setError("Speech recognition is not supported in this browser.");
+      }
     }
 
     return () => {
