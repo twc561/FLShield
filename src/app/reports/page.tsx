@@ -1,7 +1,7 @@
-
 "use client"
 
 import { useState } from "react"
+import { motion } from "framer-motion"
 import { reportTemplates } from "@/data/report-templates"
 import { PageHeader } from "@/components/PageHeader"
 import {
@@ -32,45 +32,66 @@ export default function ReportAssistantPage() {
     })
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1 },
+  };
+
+
   return (
-    <div className="animate-fade-in-up">
+    <motion.div
+      initial="hidden"
+      animate="show"
+      variants={containerVariants}
+    >
       <PageHeader
         title="Report Writing Assistant"
         description="Streamline your reporting with pre-made templates. Click to copy."
       />
       <div className="space-y-6">
-        {reportTemplates.map((template, index) => (
-          <Card
+        {reportTemplates.map((template) => (
+          <motion.div
             key={template.id}
-            className="animate-fade-in-up"
-            style={{ animationDelay: `${index * 100}ms` }}
+            variants={itemVariants}
           >
-            <CardHeader>
-              <CardTitle>{template.title}</CardTitle>
-              <CardDescription>{template.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-48 rounded-md border p-4 bg-background/50">
-                <pre className="text-sm text-muted-foreground whitespace-pre-wrap font-sans">
-                  {template.template}
-                </pre>
-              </ScrollArea>
-            </CardContent>
-            <CardFooter>
-              <Button
-                onClick={() => handleCopy(template.id, template.template)}
-              >
-                {copiedId === template.id ? (
-                  <Check className="mr-2 h-4 w-4" />
-                ) : (
-                  <Copy className="mr-2 h-4 w-4" />
-                )}
-                {copiedId === template.id ? "Copied!" : "Copy Template"}
-              </Button>
-            </CardFooter>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>{template.title}</CardTitle>
+                <CardDescription>{template.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="h-48 rounded-md border p-4 bg-background/50">
+                  <pre className="text-sm text-muted-foreground whitespace-pre-wrap font-sans">
+                    {template.template}
+                  </pre>
+                </ScrollArea>
+              </CardContent>
+              <CardFooter>
+                <Button
+                  onClick={() => handleCopy(template.id, template.template)}
+                >
+                  {copiedId === template.id ? (
+                    <Check className="mr-2 h-4 w-4" />
+                  ) : (
+                    <Copy className="mr-2 h-4 w-4" />
+                  )}
+                  {copiedId === template.id ? "Copied!" : "Copy Template"}
+                </Button>
+              </CardFooter>
+            </Card>
+          </motion.div>
         ))}
       </div>
-    </div>
+    </motion.div>
   )
 }
