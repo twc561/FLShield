@@ -18,7 +18,7 @@ function PillResult({ result }: { result: IdentifyPillOutput }) {
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Unable to Identify</AlertTitle>
         <AlertDescription>
-            The AI could not confidently identify the substance from the provided image and description. This could be due to a poor quality image, a non-standard pill, or an illicit substance. Do not ingest.
+            {result.keyWarnings || "The AI could not confidently identify the substance from the provided image. This could be due to a poor quality image, a non-standard pill, or an illicit substance. Do not ingest."}
         </AlertDescription>
       </Alert>
     )
@@ -48,7 +48,7 @@ function PillResult({ result }: { result: IdentifyPillOutput }) {
             <Info className="h-4 w-4"/>
             <AlertTitle>Source Information</AlertTitle>
             <AlertDescription>
-                This information was summarized by AI from publicly available data from sources like Drugs.com, WebMD, and the NLM.
+                This information was summarized by AI from publicly available data from sources like Drugs.com, WebMD, and the NLM. Always confirm with official sources.
             </AlertDescription>
         </Alert>
       </CardContent>
@@ -134,7 +134,7 @@ export default function PillIdentifierPage() {
             </Button>
             {previewUrl && (
                 <div className="mt-4 relative w-48 h-48 border rounded-md">
-                    <Image src={previewUrl} alt="Pill preview" layout="fill" objectFit="cover" className="rounded-md" />
+                    <Image src={previewUrl} alt="Pill preview" layout="fill" objectFit="contain" className="rounded-md" />
                 </div>
             )}
         </CardContent>

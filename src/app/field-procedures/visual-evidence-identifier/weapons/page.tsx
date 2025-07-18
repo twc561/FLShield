@@ -51,7 +51,7 @@ function WeaponResult({ result }: { result: IdentifyWeaponOutput }) {
             </Alert>
         )}
         {result.make && (
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                  <div className="p-3 bg-muted/50 rounded-lg">
                     <p className="font-semibold text-foreground/90">Make</p>
                     <p className="text-muted-foreground">{result.make}</p>
@@ -91,11 +91,11 @@ function WeaponResult({ result }: { result: IdentifyWeaponOutput }) {
                              <Button asChild variant="secondary" className="w-full justify-start text-left h-auto py-2">
                                 <Link href={`/legal-reference/statutes?search=${statute.statuteNumber}`}>
                                     <Gavel className="mr-3 h-4 w-4 flex-shrink-0" />
-                                    <div>
+                                    <div className="flex-1 min-w-0">
                                         <p className="font-semibold">{statute.statuteNumber}</p>
-                                        <p className="text-xs font-normal text-muted-foreground">{statute.title}</p>
+                                        <p className="text-xs font-normal text-muted-foreground text-wrap">{statute.title}</p>
                                     </div>
-                                    <ExternalLink className="ml-auto h-4 w-4 text-muted-foreground" />
+                                    <ExternalLink className="ml-auto h-4 w-4 text-muted-foreground flex-shrink-0" />
                                 </Link>
                             </Button>
                         </li>
