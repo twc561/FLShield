@@ -104,15 +104,10 @@ const resourceFinderFlow = ai.defineFlow(
     outputSchema: ResourceFinderOutputSchema,
   },
   async (input) => {
-    const llmResponse = await ai.generate({
-      prompt: `You are a helpful assistant for law enforcement in Florida. Based on the user's location, find the nearest and most relevant local resources using the available tools. The user is at latitude ${input.latitude} and longitude ${input.longitude}.`,
-      tools: [findFloridaResources],
-      output: {
-        schema: ResourceFinderOutputSchema,
-      }
-    });
-
-    return llmResponse.output() || { resources: [] };
+    // Directly call the tool instead of asking the AI to do it.
+    // This is more reliable for deterministic tasks.
+    const result = await findFloridaResources(input);
+    return result || { resources: [] };
   }
 );
 
