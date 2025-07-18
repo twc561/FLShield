@@ -3,7 +3,7 @@
 
 import { MarketingHeader } from "@/components/MarketingHeader";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Car, FileText, Gavel, Scale, ShieldCheck, Video } from "lucide-react";
 import Link from 'next/link'
 import { useRouter } from "next/navigation";
@@ -22,11 +22,11 @@ const FeatureCard = ({ icon: Icon, title, description, href }: { icon: React.Ele
             <p className="text-muted-foreground">{description}</p>
         </CardContent>
         {href && (
-            <CardContent>
+            <CardFooter>
                 <Button variant="link" asChild className="p-0 h-auto">
                     <Link href={href}>Learn More <ArrowRight className="ml-2 h-4 w-4"/></Link>
                 </Button>
-            </CardContent>
+            </CardFooter>
         )}
     </Card>
 );
