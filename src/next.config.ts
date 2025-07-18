@@ -54,7 +54,7 @@ const nextConfig: NextConfig = {
       }
     ],
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config) => {
     // Prevent watching of files that might be changed by Genkit, causing a restart loop
     config.watchOptions = {
       ignored: [
