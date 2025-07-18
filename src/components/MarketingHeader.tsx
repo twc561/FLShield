@@ -9,9 +9,10 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle 
 import { Flame, Menu } from 'lucide-react'
 
 const navLinks = [
-  { href: "/features", label: "Features" },
+  { href: "/for-officers", label: "For Officers" },
   { href: "/agency-intelligence", label: "For Agencies" },
-  { href: "/cjis-compliance", label: "Security" },
+  { href: "/features", label: "Features" },
+  { href: "/security", label: "Security" },
   { href: "/support", label: "Support" },
 ];
 
