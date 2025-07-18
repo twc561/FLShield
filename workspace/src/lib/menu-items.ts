@@ -1,43 +1,6 @@
 
 import * as React from "react"
-import {
-  Book,
-  ListChecks,
-  Briefcase,
-  GraduationCap,
-  Scale,
-  Gavel,
-  Fish,
-  Biohazard,
-  MessageSquare,
-  FileCheck,
-  ShieldAlert,
-  ShieldQuestion,
-  ShieldCheck,
-  Mic,
-  Camera,
-  ClipboardEdit,
-  Users,
-  Car,
-  Home,
-  Newspaper,
-  FileText as FileTextIcon,
-  BrainCircuit,
-  Siren,
-  HeartPulse,
-  AlertCircle,
-  UserSearch,
-  Dog,
-  Stethoscope,
-  Truck,
-  Heart,
-  Wind,
-  Footprints,
-  Languages,
-  Bot,
-  FlaskConical,
-  Shackles,
-} from "lucide-react"
+import { Book, ListChecks, Briefcase, GraduationCap, Scale, Gavel, Fish, Biohazard, MessageSquare, FileCheck, ShieldAlert, ShieldQuestion, ShieldCheck, Mic, Camera, ClipboardEdit, Users, Car, Home, Newspaper, FileText as FileTextIcon, BrainCircuit, Siren, HeartPulse, AlertCircle, UserSearch, Dog, Stethoscope, Truck, Heart, Wind, Footprints, Languages, Bot, FlaskConical, Shapes as Shackles } from "lucide-react"
 
 type SubMenuItem = {
   href: string
