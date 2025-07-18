@@ -72,14 +72,6 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         category: "AI Assistant Tools",
       },
       {
-        id: "ai-role-play-simulator",
-        title: "AI Role-Play Simulator",
-        summary: "Practice de-escalation with diverse AI personas and scenarios.",
-        icon: "MessageSquare",
-        targetPage: "/training-development/role-play-simulator",
-        category: "AI Assistant Tools",
-      },
-      {
         id: "visual-evidence-identifier",
         title: "Visual Evidence ID",
         summary: "Use your camera to identify unknown pills, weapons, and hazmat.",
@@ -438,8 +430,15 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
   {
     category: "Restraint Techniques",
     icon: Lock,
-    items: [
-      { href: "/restraint-techniques/handcuffing-procedures", label: "Handcuffing Procedures", icon: Lock },
+    features: [
+      {
+        id: "handcuffing-procedures",
+        title: "Handcuffing Procedures",
+        summary: "A guide to safe and effective handcuffing techniques.",
+        icon: "Lock",
+        targetPage: "/restraint-techniques/handcuffing-procedures",
+        category: "Restraint Techniques",
+       },
     ],
   },
 ]
