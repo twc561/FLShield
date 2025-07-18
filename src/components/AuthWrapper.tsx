@@ -46,25 +46,32 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         return () => unsubscribe();
     }, [isPublicPage, router]);
 
+    useEffect(() => {
+        if (isLoading) {
+            return; // Don't do anything while auth state is being determined
+        }
+
+        // If not authenticated and trying to access a protected page, redirect
+        if (!user && !isPublicPage) {
+            router.push('/login');
+        }
+
+        // If authenticated and trying to access the marketing homepage or login page, redirect to dashboard
+        if (user && (pathname === '/' || pathname === '/login')) {
+            router.push('/dashboard');
+        }
+    }, [user, isLoading, isPublicPage, pathname, router]);
+
     if (isLoading) {
         return <LoadingScreen />;
     }
     
-    // If not authenticated and trying to access a protected page, redirect
+    // While redirecting, show a loading screen to prevent flashing content
     if (!user && !isPublicPage) {
-        router.push('/login');
-        return <LoadingScreen />;
-    }
-
-    // If authenticated and trying to access the marketing homepage, redirect to dashboard
-    if (user && pathname === '/') {
-        router.push('/dashboard');
         return <LoadingScreen />;
     }
     
-    // If authenticated and on login page, redirect to dashboard
-    if (user && pathname === '/login') {
-      router.push('/dashboard');
+    if (user && (pathname === '/' || pathname === '/login')) {
       return <LoadingScreen />;
     }
     
