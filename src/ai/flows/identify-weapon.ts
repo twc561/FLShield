@@ -28,6 +28,7 @@ const IdentifyWeaponOutputSchema = z.object({
   caliber: z.string().optional().describe("The caliber or gauge of the firearm (e.g., '9mm', '12 Gauge'). If not determinable from the image, return 'Unknown'."),
   standardMagazineCapacity: z.string().optional().describe("The standard round capacity for this model's magazine. If unknown, return 'N/A'."),
   commonVariants: z.array(z.string()).optional().describe("A list of common sub-models or variants (e.g., 'Gen 3', 'Gen 4', 'Compact')."),
+  illegalModifications: z.array(z.string()).optional().describe("An array of any identified illegal modifications, e.g., ['Machine Gun Conversion Device (Glock Switch)']."),
   notes: z.string().describe("A brief, one-sentence note about the item's general classification or characteristics relevant to law enforcement."),
   relevantStatutes: z.array(StatuteLinkSchema).describe("An array of Florida Statutes potentially relevant to the possession, carry, or use of this item."),
 });
@@ -48,12 +49,16 @@ CRITICAL INSTRUCTIONS:
     *   **Standard Capacity:** State the standard magazine capacity for this model.
     *   **Common Variants:** List 1-2 common sub-models or generations if applicable.
 3.  **No Guessing:** If you cannot confidently determine a specific detail (like make, model, or caliber), you MUST return "Unknown" for that specific field. Do not guess.
-4.  **Provide relevant statutes based on the item type.** Your response must be constrained to the following list:
+4.  **CHECK FOR ILLEGAL MODIFICATIONS (IMPORTANT):** Carefully examine the firearm for any illegal modifications.
+    *   **Specifically, look for a 'Glock switch' or similar auto-sear device**, which is a small component on the back of the slide that allows for fully automatic fire. If you identify such a device, you MUST populate the 'illegalModifications' array with the string 'Machine Gun Conversion Device (Glock Switch)'.
+    *   Look for other illegal modifications like a sawed-off barrel on a shotgun/rifle or a vertical foregrip on a pistol.
+5.  **Provide relevant statutes based on the item type and modifications.** Your response must be constrained to the following list:
+    *   If a **'Glock switch' or auto-sear is identified**, you MUST include **F.S. § 790.222 (Possession of machine guns)** in addition to other relevant statutes.
     *   If "Handgun" or "Firearm": F.S. § 790.01 (Concealed Carry), F.S. § 790.053 (Open Carry), F.S. § 790.23 (Possession by Felon), F.S. § 790.10 (Improper Exhibition).
     *   If "Switchblade": F.S. § 790.01 (Carrying concealed weapons).
     *   If "Brass Knuckles" or other melee weapon: F.S. § 790.01 (Carrying concealed weapons).
-5.  **Do not provide legal advice.** The notes should be purely descriptive of the item's classification.
-6.  If you cannot identify a weapon in the image, you MUST return "Unknown" for the itemType.
+6.  **Do not provide legal advice.** The notes should be purely descriptive of the item's classification.
+7.  If you cannot identify a weapon in the image, you MUST return "Unknown" for the itemType.
 
 Image: {{media url=imageDataUri}}`
 });

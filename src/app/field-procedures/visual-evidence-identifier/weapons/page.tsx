@@ -11,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Loader2, Sparkles, Camera, AlertTriangle, ShieldAlert as ShieldAlertIcon, Gavel, ExternalLink, Swords } from 'lucide-react';
 import { identifyWeaponFromImage, type IdentifyWeaponOutput } from '@/ai/flows/identify-weapon';
 import Image from 'next/image';
+import { Badge } from '@/components/ui/badge';
 
 function WeaponResult({ result }: { result: IdentifyWeaponOutput }) {
   if (!result.itemType || result.itemType === "Unknown") {
@@ -37,6 +38,18 @@ function WeaponResult({ result }: { result: IdentifyWeaponOutput }) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {result.illegalModifications && result.illegalModifications.length > 0 && (
+            <Alert variant="destructive">
+                <ShieldAlertIcon className="h-4 w-4" />
+                <AlertTitle>Illegal Modification Detected!</AlertTitle>
+                <AlertDescription>
+                    The AI has identified a potential illegal modification on this firearm:
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {result.illegalModifications.map(mod => <Badge key={mod} variant="destructive" className="text-base">{mod}</Badge>)}
+                    </div>
+                </AlertDescription>
+            </Alert>
+        )}
         {result.make && (
             <div className="grid grid-cols-2 gap-4 text-sm">
                  <div className="p-3 bg-muted/50 rounded-lg">
