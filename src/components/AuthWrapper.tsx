@@ -19,59 +19,54 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        if (!isFirebaseConfigured) {
-            console.warn("Firebase is not configured. Authentication will be skipped.");
-            setIsLoading(false);
-            return;
-        }
-
-        if (auth) {
-            const unsubscribe = onAuthStateChanged(auth, (user) => {
-                setUser(user);
-                setIsLoading(false);
-            });
-
-            return () => unsubscribe();
-        } else {
-            setIsLoading(false);
-        }
-    }, []);
-
     const publicPages = [
         "/", "/login", "/features", "/agency-intelligence",
         "/cjis-compliance", "/support", "/request-demo",
         "/terms-of-use", "/privacy-policy", "/security",
         "/for-officers"
     ];
-    const authPages = ["/login"]; // Only login page now
 
     const isPublicPage = publicPages.includes(pathname);
-    const isAuthPage = authPages.includes(pathname);
-    const isAuthenticated = !!user;
 
     useEffect(() => {
-        if (!isFirebaseConfigured) return;
-
-        // If user is not authenticated and trying to access a protected page, redirect to login.
-        if (!isAuthenticated && !isPublicPage) {
-            router.push('/login');
+        if (!isFirebaseConfigured) {
+            console.warn("Firebase is not configured. Authentication will be skipped.");
+            setIsLoading(false);
+            if (!isPublicPage) {
+                router.push('/login');
+            }
+            return;
         }
 
-        // If user is authenticated and on the login page, redirect to dashboard.
-        if (isAuthenticated && isAuthPage) {
-            router.push('/dashboard');
-        }
-         // If user is authenticated and on the marketing homepage, redirect to dashboard.
-        if (isAuthenticated && pathname === '/') {
-            router.push('/dashboard');
-        }
-    }, [isAuthenticated, isPublicPage, router, isLoading]);
+        const unsubscribe = onAuthStateChanged(auth!, (user) => {
+            setUser(user);
+            setIsLoading(false);
+        });
 
-    // Show loading screen during auth check
-    if (isFirebaseConfigured && isLoading) {
+        return () => unsubscribe();
+    }, [isPublicPage, router]);
+
+    if (isLoading) {
+        return <LoadingScreen />;
+    }
+    
+    // If not authenticated and trying to access a protected page, redirect
+    if (!user && !isPublicPage) {
+        router.push('/login');
         return <LoadingScreen />;
     }
 
+    // If authenticated and trying to access the marketing homepage, redirect to dashboard
+    if (user && pathname === '/') {
+        router.push('/dashboard');
+        return <LoadingScreen />;
+    }
+    
+    // If authenticated and on login page, redirect to dashboard
+    if (user && pathname === '/login') {
+      router.push('/dashboard');
+      return <LoadingScreen />;
+    }
+    
     return <>{children}</>;
 }
