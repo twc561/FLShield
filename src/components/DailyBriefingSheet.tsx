@@ -46,15 +46,15 @@ export function DailyBriefingSheet() {
           Daily Briefing
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[90vw] sm:max-w-md p-0 flex flex-col">
-        <SheetHeader className="p-4 sm:p-6 pb-4 border-b">
+      <SheetContent className="w-[90vw] sm:max-w-lg p-0 flex flex-col">
+        <SheetHeader className="p-4 border-b">
           <SheetTitle>{briefingData.title}</SheetTitle>
           <SheetDescription>
             A micro-lesson to sharpen your skills.
           </SheetDescription>
         </SheetHeader>
         <ScrollArea className="flex-1">
-            <div className="p-4 sm:p-6 space-y-6">
+            <div className="p-4 space-y-6">
                 {/* Section 1: Interactive Scenario */}
                 <Card>
                     <CardHeader>
