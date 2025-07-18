@@ -99,14 +99,14 @@ export default function NearbyResourcesPage() {
         description="Find essential facilities near your current location."
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {resourceTypes.map(({ name, Icon, query }) => (
-            <Card key={name} className="hover:border-primary transition-colors">
+        {resourceTypes.map((item) => (
+            <Card key={item.name} className="hover:border-primary transition-colors">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{name}</CardTitle>
-                <Icon className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium">{item.name}</CardTitle>
+                <item.Icon className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <Button onClick={() => handleResourceClick(query)} className="w-full">
+                <Button onClick={() => handleResourceClick(item.query)} className="w-full">
                   <LinkIcon className="mr-2 h-4 w-4" /> Find Nearest
                 </Button>
               </CardContent>
