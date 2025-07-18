@@ -36,6 +36,7 @@ import {
   Languages,
   Bot,
   FlaskConical,
+  Shackles,
 } from "lucide-react"
 
 type SubMenuItem = {

@@ -25,6 +25,7 @@ import {
   Newspaper,
   Scale,
   Search,
+  Shackles,
   ShieldAlert,
   ShieldCheck,
   ShieldQuestion,
