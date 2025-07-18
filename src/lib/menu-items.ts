@@ -46,16 +46,15 @@ export const menuItems: MenuItem[] = [
     label: "Field Operations & Procedures",
     icon: ShieldCheck,
     items: [
-      { href: "/field-procedures/crime-scene-management", label: "Crime Scene Management", icon: Wind },
+      { href: "/field-procedures/scenario-checklists", label: "Field Scenario Checklists", icon: ListChecks },
+      { href: "/field-procedures/field-interview-contact", label: "Field Interview Standards", icon: Users },
+      { href: "/traffic-enforcement/dui-investigation", label: "DUI Investigation Guide", icon: Car },
       { href: "/field-procedures/domestic-violence-protocol", label: "Domestic Violence Protocol", icon: ShieldAlert },
       { href: "/field-procedures/evidence-management-guide", label: "Evidence Management", icon: FileCheck },
-      { href: "/field-procedures/field-interview-contact", label: "Field Interview Standards", icon: Users },
-      { href: "/field-translation-guide", label: "Field Translator", icon: Languages },
+      { href: "/field-procedures/crime-scene-management", label: "Crime Scene Management", icon: Wind },
       { href: "/field-procedures/interview-techniques", label: "Interview Techniques", icon: Users },
-      { href: "/field-procedures/jurisdiction-finder", label: "Jurisdiction Finder", icon: MapPin },
       { href: "/field-procedures/risk-protection-orders", label: "Risk Protection Orders", icon: ShieldAlert },
-      { href: "/field-procedures/scenario-checklists", label: "Scenario Checklists", icon: ListChecks },
-      { href: "/traffic-enforcement/dui-investigation", label: "DUI Investigation Guide", icon: Car },
+      { href: "/field-translation-guide", label: "Field Translator", icon: Languages },
     ],
   },
   {
@@ -120,9 +119,9 @@ export const menuItems: MenuItem[] = [
     label: "Training & Professional Development",
     icon: GraduationCap,
     items: [
+      { href: "/reporting-development/knowledge-check", label: "Knowledge Assessment Drills", icon: BrainCircuit },
       { href: "/training-development/common-misperceptions", label: "Common Field Pitfalls", icon: ShieldAlert },
       { href: "/officer-wellness-rights/court-testimony-guide", label: "Court Testimony Preparation", icon: Mic },
-      { href: "/reporting-development/knowledge-check", label: "Knowledge Assessment Drills", icon: BrainCircuit },
     ],
   },
 ];

@@ -13,6 +13,7 @@ import { k9GuideIndex } from '@/data/specialized-enforcement/k9-guide-index';
 import { fishingRegulations, huntingRegulations, boatingTopics, protectedSpeciesInfo } from '@/data/specialized-enforcement/fwc-regulations';
 import { commonMisperceptionsData } from '@/data/officer-wellness-rights/common-misperceptions';
 import { menuItems } from '@/lib/menu-items';
+import { handcuffingData } from './restraint-techniques/handcuffing';
 
 export type SearchableItem = {
   id: string;
@@ -119,6 +120,15 @@ const misperceptionItems: SearchableItem[] = commonMisperceptionsData.map(item =
     keywords: [item.theMisperception, item.category, 'training', 'myth', 'pitfall', ...item.keyCaseLaw.caseName.split(' ')]
 }));
 
+const handcuffingItems: SearchableItem[] = handcuffingData.techniques.map(t => ({
+    id: `handcuffing-${t.id}`,
+    title: t.title,
+    description: `Restraint Technique: ${t.description}`,
+    category: 'Restraint Techniques',
+    href: '/restraint-techniques/handcuffing-procedures',
+    keywords: ['handcuffing', 'restraint', t.title.toLowerCase(), 'cuffing', 'detain'],
+}));
+
 // Dynamically create search items from the menu structure
 const menuSearchItems: SearchableItem[] = [];
 menuItems.forEach(item => {
@@ -157,6 +167,7 @@ export const unifiedSearchIndex: SearchableItem[] = [
   ...fwcBoatingItems,
   ...fwcSpeciesItems,
   ...misperceptionItems,
+  ...handcuffingItems,
   ...menuSearchItems,
   {
     id: 'feature-jurisdiction-finder',
