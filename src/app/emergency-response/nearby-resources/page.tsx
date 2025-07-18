@@ -5,7 +5,7 @@ import React from 'react';
 import { PageHeader } from '@/components/PageHeader';
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { Loader2, Hospital, Building, AlertTriangle, ShieldCheck, Link as LinkIcon, Handcuffs, Baby } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
