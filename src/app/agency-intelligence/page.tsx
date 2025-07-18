@@ -66,7 +66,7 @@ export default function AgencyIntelligencePage() {
                             Instant, Vetted Answers for Every Officer.
                         </h2>
                         <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
-                           Shield FL goes beyond generic legal search. We integrate your department&apos;s specific policies, Florida Statutes, and controlling case law into a single, AI-powered engine, giving your officers unparalleled, real-time guidance.
+                           Shield FL goes beyond generic legal search. We integrate your department's specific policies, Florida Statutes, and controlling case law into a single, AI-powered engine, giving your officers unparalleled, real-time guidance.
                         </p>
                         <div className="mt-8">
                             <Button asChild size="lg">
@@ -81,7 +81,7 @@ export default function AgencyIntelligencePage() {
                     <section className="max-w-4xl mx-auto text-center">
                         <h2 className="text-3xl font-bold tracking-tight">The Challenge: The Gap Between Policy and Practice</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                           Your Use of Force policy, your pursuit procedures, your response protocols—they are the backbone of professional law enforcement and the foundation of community trust. But even the best officer can&apos;t memorize every line of a 300-page manual. In a split-second, high-stress situation, how do you ensure your team&apos;s actions are not just lawful, but perfectly aligned with your agency&apos;s specific standards? This is the gap Shield FL was built to close.
+                           Your Use of Force policy, your pursuit procedures, your response protocols—they are the backbone of professional law enforcement and the foundation of community trust. But even the best officer can't memorize every line of a 300-page manual. In a split-second, high-stress situation, how do you ensure your team's actions are not just lawful, but perfectly aligned with your agency's specific standards? This is the gap Shield FL was built to close.
                         </p>
                     </section>
 
@@ -90,7 +90,7 @@ export default function AgencyIntelligencePage() {
                         <div className="max-w-4xl mx-auto text-center">
                             <h2 className="text-3xl font-bold tracking-tight">The Solution: The Shield FL Intelligence Engine</h2>
                             <p className="mt-4 text-lg text-muted-foreground">
-                                Think of the Shield FL Intelligence Engine as the ultimate research partner, riding along with every officer. It has read, indexed, and understood your entire policy manual, and can cross-reference it with state law and relevant case law in seconds. It provides your officers with the &apos;why&apos; behind their training, precisely when they need it most.
+                                Think of the Shield FL Intelligence Engine as the ultimate research partner, riding along with every officer. It has read, indexed, and understood your entire policy manual, and can cross-reference it with state law and relevant case law in seconds. It provides your officers with the 'why' behind their training, precisely when they need it most.
                             </p>
                         </div>
 
@@ -167,7 +167,7 @@ export default function AgencyIntelligencePage() {
                         </div>
                         <h2 className="text-3xl font-bold tracking-tight">Security & Trust: Our Foundational Commitment</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                           We understand the sensitive nature of law enforcement data. The Shield FL platform is built on Google&apos;s secure cloud infrastructure, leveraging best-in-class security protocols including end-to-end encryption, role-based access controls, and robust data isolation to ensure your agency&apos;s information is protected and confidential.
+                           We understand the sensitive nature of law enforcement data. The Shield FL platform is built on Google's secure cloud infrastructure, leveraging best-in-class security protocols including end-to-end encryption, role-based access controls, and robust data isolation to ensure your agency's information is protected and confidential.
                         </p>
                     </section>
                     
@@ -198,7 +198,7 @@ export default function AgencyIntelligencePage() {
                             <CardHeader className="text-center p-6">
                                 <CardTitle className="text-2xl">Equip Your Officers with Confidence. Empower Your Agency with Shield FL.</CardTitle>
                                 <CardContent className="p-0 pt-4">
-                                    <p className="text-muted-foreground">Give your team the tool they need to make the right call, every time. Contact us today to schedule a personalized demo and learn how Shield FL can be tailored to your agency&apos;s specific needs.</p>
+                                    <p className="text-muted-foreground">Give your team the tool they need to make the right call, every time. Contact us today to schedule a personalized demo and learn how Shield FL can be tailored to your agency's specific needs.</p>
                                     <form onSubmit={handleSubmit} className="mt-6 space-y-4 text-left">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div className="space-y-1.5">
