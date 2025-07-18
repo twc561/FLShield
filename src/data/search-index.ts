@@ -158,5 +158,20 @@ export const unifiedSearchIndex: SearchableItem[] = [
   ...fwcSpeciesItems,
   ...misperceptionItems,
   ...menuSearchItems,
-  // Add other transformed data arrays here as they are created
+  {
+    id: 'feature-jurisdiction-finder',
+    title: 'Jurisdiction Finder',
+    description: 'Use GPS to identify your current jurisdiction and access local laws.',
+    category: 'Field Operations & Procedures',
+    href: '/field-procedures/jurisdiction-finder',
+    keywords: ['jurisdiction', 'finder', 'gps', 'location', 'ordinance', 'city', 'county']
+  },
+  {
+    id: 'feature-nearby-resources',
+    title: 'Nearby Resources Locator',
+    description: 'One-tap directions to hospitals, jails, and courthouses.',
+    category: 'Emergency Response Protocols',
+    href: '/emergency-response/nearby-resources',
+    keywords: ['nearby', 'resources', 'hospital', 'jail', 'courthouse', 'map', 'directions']
+  }
 ];

@@ -164,6 +164,14 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         category: "Field Operations & Procedures",
       },
       {
+        id: "jurisdiction-finder",
+        title: "Jurisdiction Finder",
+        summary: "Use GPS to identify your current jurisdiction and access local laws.",
+        icon: "MapPin",
+        targetPage: "/field-procedures/jurisdiction-finder",
+        category: "Field Operations & Procedures",
+      },
+      {
         id: "field-interview-contact",
         title: "Field Interview Standards",
         summary: "Legal standards for encounters, detentions, and arrests.",
@@ -217,6 +225,14 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
     category: "Emergency Response Protocols",
     icon: Siren,
     features: [
+      {
+        id: "nearby-resources",
+        title: "Nearby Resources Locator",
+        summary: "One-tap directions to hospitals, jails, and courthouses.",
+        icon: "MapPin",
+        targetPage: "/emergency-response/nearby-resources",
+        category: "Emergency Response Protocols",
+      },
       {
         id: "alert-guides",
         title: "Emergency Alert Protocols",
@@ -423,6 +439,22 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         summary: "Daily public safety intelligence and situational awareness.",
         icon: "Newspaper",
         targetPage: "/daily-briefing",
+        category: "Officer Wellness & Rights",
+      },
+      {
+        id: "active-listener",
+        title: "Confidential Support Chat",
+        summary: "A private space to talk through anything on your mind. Not saved.",
+        icon: "Heart",
+        targetPage: "/wellness/active-listener",
+        category: "Officer Wellness & Rights",
+      },
+      {
+        id: "live-debrief",
+        title: "Incident Debrief Tool",
+        summary: "Real-time, guided conversation to process stressful events. Not saved.",
+        icon: "MessageSquare",
+        targetPage: "/wellness/live-debrief",
         category: "Officer Wellness & Rights",
       },
     ],
