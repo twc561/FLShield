@@ -67,14 +67,6 @@ const locationTools: FeatureModule[] = [
     targetPage: '/field-procedures/jurisdiction-finder',
     category: 'Field Operations & Procedures'
   },
-  {
-    id: 'nearby-resources',
-    title: 'Nearby Resources',
-    summary: 'One-tap directions to hospitals, jails, and courthouses.',
-    icon: 'Hospital',
-    targetPage: '/emergency-response/nearby-resources',
-    category: 'Emergency Response Protocols'
-  }
 ];
 
 

@@ -35,11 +35,10 @@ export const menuItems: MenuItem[] = [
     icon: Siren,
     items: [
       { href: "/emergency-response/alert-guides", label: "Emergency Alert Protocols", icon: AlertCircle },
-      { href: "/emergency-response/baker-act-guide", label: "Baker Act Procedures", icon: Heart },
       { href: "/emergency-response/first-aid-guide", label: "Field First Aid Guide", icon: HeartPulse },
       { href: "/emergency-response/hazmat-guide", label: "HAZMAT Response Guide", icon: Biohazard },
+      { href: "/emergency-response/baker-act-guide", label: "Baker Act Procedures", icon: Heart },
       { href: "/emergency-response/marchman-act-guide", label: "Marchman Act Procedures", icon: FlaskConical },
-      { href: "/emergency-response/nearby-resources", label: "Nearby Resources", icon: MapPin },
     ],
   },
   {

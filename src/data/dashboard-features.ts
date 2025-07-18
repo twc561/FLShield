@@ -226,14 +226,6 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
     icon: Siren,
     features: [
       {
-        id: "nearby-resources",
-        title: "Nearby Resources Locator",
-        summary: "One-tap directions to hospitals, jails, and courthouses.",
-        icon: "MapPin",
-        targetPage: "/emergency-response/nearby-resources",
-        category: "Emergency Response Protocols",
-      },
-      {
         id: "alert-guides",
         title: "Emergency Alert Protocols",
         summary: "AMBER, Silver, Blue Alert activation and response procedures.",
