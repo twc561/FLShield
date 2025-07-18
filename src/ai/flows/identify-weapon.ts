@@ -34,11 +34,14 @@ const IdentifyWeaponOutputSchema = z.object({
 });
 export type IdentifyWeaponOutput = z.infer<typeof IdentifyWeaponOutputSchema>;
 
+// Define a schema for the AI model's direct output, without the statutes
+const WeaponIdentificationOnlySchema = IdentifyWeaponOutputSchema.omit({ relevantStatutes: true });
+
 const identifyWeaponPrompt = ai.definePrompt({
     name: 'identifyWeaponPrompt',
     input: { schema: z.object({ imageDataUri: z.string() }) },
-    output: { schema: IdentifyWeaponOutputSchema },
-    prompt: `You are an expert in firearm and weapon identification for Florida law enforcement. Your task is to analyze an image, identify the primary item, and provide a detailed breakdown and links to relevant Florida Statutes.
+    output: { schema: WeaponIdentificationOnlySchema }, // AI only outputs the weapon details
+    prompt: `You are an expert in firearm and weapon identification for Florida law enforcement. Your task is to analyze an image, identify the primary item, and provide a detailed breakdown.
 
 CRITICAL INSTRUCTIONS:
 1.  **Identify the primary object in the image.** First, classify it into a general category (e.g., "Handgun," "Rifle," "Switchblade," "Shotgun," "Brass Knuckles").
@@ -51,22 +54,46 @@ CRITICAL INSTRUCTIONS:
 4.  **CHECK FOR ILLEGAL MODIFICATIONS (IMPORTANT):** Carefully examine the firearm for any illegal modifications.
     *   **Specifically, look for a 'Glock switch' or similar auto-sear device**, which is a small component on the back of the slide that allows for fully automatic fire. If you identify such a device, you MUST populate the 'illegalModifications' array with the string 'Machine Gun Conversion Device (Glock Switch)'.
     *   Look for other illegal modifications like a sawed-off barrel on a shotgun/rifle or a vertical foregrip on a pistol.
-5.  **Provide relevant statutes based on the item type and modifications.** Your response must be constrained to the following list:
-    *   If a **'Glock switch' or auto-sear is identified**, you MUST include **F.S. § 790.222 (Possession of machine guns)** in addition to other relevant statutes.
-    *   If "Handgun" or "Firearm": F.S. § 790.01 (Concealed Carry), F.S. § 790.053 (Open Carry), F.S. § 790.23 (Possession by Felon), F.S. § 790.10 (Improper Exhibition).
-    *   If "Switchblade": F.S. § 790.01 (Carrying concealed weapons).
-    *   If "Brass Knuckles" or other melee weapon: F.S. § 790.01 (Carrying concealed weapons).
-6.  **Do not provide legal advice.** The notes should be purely descriptive of the item's classification.
-7.  If you cannot identify a weapon in the image, you MUST return "Unknown" for the itemType.
+5.  **Do not provide legal advice.** The notes should be purely descriptive of the item's classification.
+6.  If you cannot identify a weapon in the image, you MUST return "Unknown" for the itemType.
 
 Image: {{media url=imageDataUri}}`
 });
 
 export async function identifyWeaponFromImage(input: IdentifyWeaponInput): Promise<IdentifyWeaponOutput> {
-  const { output } = await identifyWeaponPrompt({ imageDataUri: input.imageDataUri });
+  // Step 1: Get the weapon identification from the AI model
+  const { output: identification } = await identifyWeaponPrompt({ imageDataUri: input.imageDataUri });
 
-  if (!output) {
+  if (!identification) {
       throw new Error("AI weapon identification model failed to return a response.");
   }
-  return output;
+
+  // Step 2: Programmatically determine relevant statutes based on the AI's output
+  const relevantStatutes: { statuteNumber: string; title: string }[] = [];
+  const itemType = identification.itemType || "Unknown";
+  const hasGlockSwitch = identification.illegalModifications?.some(mod => mod.includes("Glock Switch")) || false;
+
+  if (itemType.includes("Handgun") || itemType.includes("Rifle") || itemType.includes("Shotgun") || itemType.includes("Firearm")) {
+    relevantStatutes.push(
+      { statuteNumber: "F.S. § 790.01", title: "Carrying concealed weapons" },
+      { statuteNumber: "F.S. § 790.053", title: "Open carrying of weapons" },
+      { statuteNumber: "F.S. § 790.23", title: "Possession of firearm by felon" },
+      { statuteNumber: "F.S. § 790.10", title: "Improper exhibition of dangerous weapons" }
+    );
+  } else if (itemType.includes("Switchblade") || itemType.includes("Brass Knuckles")) {
+    relevantStatutes.push({ statuteNumber: "F.S. § 790.01", title: "Carrying concealed weapons" });
+  }
+
+  if (hasGlockSwitch) {
+    // Add the specific statute for machine guns if a switch is detected
+    relevantStatutes.unshift({ statuteNumber: "F.S. § 790.222", title: "Possession of machine guns" });
+  }
+  
+  // Step 3: Combine the AI identification with the determined statutes
+  const finalOutput: IdentifyWeaponOutput = {
+    ...identification,
+    relevantStatutes: relevantStatutes
+  };
+
+  return finalOutput;
 }
