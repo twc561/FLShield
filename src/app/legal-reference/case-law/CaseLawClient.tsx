@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useMemo, memo, useCallback } from "react"
@@ -176,9 +177,3 @@ export const CaseLawClient = memo(function CaseLawClient({
     </div>
   );
 })
-
-declare module "react" {
-    interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-      style?: React.CSSProperties & { [key: string]: string | number };
-    }
-}

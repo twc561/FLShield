@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -60,9 +61,3 @@ export const DomesticViolenceProtocolClient = React.memo(function DomesticViolen
     </Accordion>
   )
 })
-
-declare module "react" {
-  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-    style?: React.CSSProperties & { [key: string]: string | number };
-  }
-}
