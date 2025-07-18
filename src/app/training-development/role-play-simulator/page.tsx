@@ -4,7 +4,7 @@
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, ArrowRight } from "lucide-react";
+import { MessageSquare, ArrowRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ShieldAlert } from "lucide-react";
@@ -19,10 +19,18 @@ const personas = [
 export default function RolePlaySimulatorPage() {
     return (
         <div className="animate-fade-in-up">
-            <PageHeader
-                title="AI Role-Play Simulator"
-                description="Hone your communication and de-escalation skills in a safe, repeatable environment. Select a persona to begin."
-            />
+            <div className="flex justify-between items-start gap-4">
+                <PageHeader
+                    title="AI Role-Play Simulator"
+                    description="Hone your communication and de-escalation skills in a safe, repeatable environment. Select a persona to begin."
+                />
+                <Button asChild variant="outline">
+                    <Link href="/dashboard">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back to Dashboard
+                    </Link>
+                </Button>
+            </div>
              <Alert variant="destructive" className="mb-6">
                 <ShieldAlert className="h-4 w-4" />
                 <AlertTitle>For Training Purposes Only</AlertTitle>
