@@ -1,5 +1,6 @@
+
 import * as React from "react"
-import { AlertCircle, Biohazard, Bot, BrainCircuit, Camera, Car, ClipboardEdit, Dog, FileCheck, FileText, Fish, FlaskConical, Gavel, GraduationCap, Heart, HeartPulse, Home, Languages, ListChecks, Lock, MessageSquare, Mic, Newspaper, Scale, Search, Shapes as Shackles, ShieldAlert, ShieldCheck, ShieldQuestion, Siren, Stethoscope, Truck, Users, Wind } from 'lucide-react'
+import { AlertCircle, Biohazard, Bot, BrainCircuit, Camera, Car, ClipboardEdit, Dog, FileCheck, FileText, Fish, FlaskConical, Gavel, GraduationCap, Heart, HeartPulse, Home, Languages, ListChecks, Lock, MapPin, MessageSquare, Mic, Newspaper, Scale, Search, Shapes as Shackles, ShieldAlert, ShieldCheck, ShieldQuestion, Siren, Stethoscope, Truck, Users, Wind, Footprints } from 'lucide-react'
 
 type SubMenuItem = {
   href: string
@@ -51,6 +52,7 @@ export const menuItems: MenuItem[] = [
     icon: ShieldCheck,
     items: [
       { href: "/field-procedures/scenario-checklists", label: "Field Scenario Checklists", icon: ListChecks },
+      { href: "/field-procedures/jurisdiction-finder", label: "Jurisdiction Finder", icon: MapPin },
       { href: "/field-procedures/field-interview-contact", label: "Field Interview Standards", icon: Users },
       { href: "/traffic-enforcement/dui-investigation", label: "DUI Investigation Guide", icon: Car },
       { href: "/field-procedures/domestic-violence-protocol", label: "Domestic Violence Protocol", icon: ShieldAlert },
@@ -65,6 +67,7 @@ export const menuItems: MenuItem[] = [
     label: "Emergency Response Protocols",
     icon: Siren,
     items: [
+      { href: "/emergency-response/nearby-resources", label: "Nearby Resources", icon: MapPin },
       { href: "/emergency-response/alert-guides", label: "Emergency Alert Protocols", icon: AlertCircle },
       { href: "/emergency-response/first-aid-guide", label: "Field First Aid Guide", icon: HeartPulse },
       { href: "/emergency-response/hazmat-guide", label: "HAZMAT Response Guide", icon: Biohazard },
@@ -85,7 +88,7 @@ export const menuItems: MenuItem[] = [
     ],
   },
   {
-    label: "Report Writing & Documentation",
+    label: "Reporting & Documentation",
     icon: ClipboardEdit,
     items: [
       { href: "/notes", label: "Digital Field Notes", icon: ClipboardEdit },
