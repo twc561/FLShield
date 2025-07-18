@@ -10,12 +10,12 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 const resourceTypes = [
-  { name: 'Hospitals', icon: Hospital, query: 'hospital' },
-  { name: 'Trauma Centers', icon: AlertTriangle, query: 'trauma center' },
-  { name: 'Courthouses', icon: Building, query: 'courthouse' },
-  { name: 'County Jails', icon: Handcuffs, query: 'county jail' },
-  { name: 'Juvenile Assessment Centers', icon: Baby, query: 'juvenile assessment center' },
-  { name: 'Police Departments', icon: ShieldCheck, query: 'police department' },
+  { name: 'Hospitals', Icon: Hospital, query: 'hospital' },
+  { name: 'Trauma Centers', Icon: AlertTriangle, query: 'trauma center' },
+  { name: 'Courthouses', Icon: Building, query: 'courthouse' },
+  { name: 'County Jails', Icon: Handcuffs, query: 'county jail' },
+  { name: 'Juvenile Assessment Centers', Icon: Baby, query: 'juvenile assessment center' },
+  { name: 'Police Departments', Icon: ShieldCheck, query: 'police department' },
 ];
 
 export default function NearbyResourcesPage() {
@@ -99,7 +99,7 @@ export default function NearbyResourcesPage() {
         description="Find essential facilities near your current location."
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {resourceTypes.map(({ name, icon: Icon, query }) => (
+        {resourceTypes.map(({ name, Icon, query }) => (
             <Card key={name} className="hover:border-primary transition-colors">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{name}</CardTitle>
