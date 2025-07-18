@@ -54,6 +54,7 @@ export const menuItems: MenuItem[] = [
       { href: "/field-procedures/interview-techniques", label: "Interview Techniques", icon: Users },
       { href: "/field-procedures/risk-protection-orders", label: "Risk Protection Orders", icon: ShieldAlert },
       { href: "/field-translation-guide", label: "Field Translator", icon: Languages },
+      { href: "/field-procedures/nearby-resources", label: "Nearby Resources", icon: MapPin },
     ],
   },
   {

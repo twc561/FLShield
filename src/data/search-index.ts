@@ -177,4 +177,12 @@ export const unifiedSearchIndex: SearchableItem[] = [
     href: '/field-procedures/jurisdiction-finder',
     keywords: ['jurisdiction', 'finder', 'gps', 'location', 'ordinance', 'city', 'county']
   },
+  {
+    id: 'feature-nearby-resources',
+    title: 'Nearby Resources',
+    description: 'Find closest police stations, hospitals, and courthouses.',
+    category: 'Field Operations & Procedures',
+    href: '/field-procedures/nearby-resources',
+    keywords: ['nearby', 'resources', 'hospital', 'courthouse', 'police', 'station']
+  }
 ];
