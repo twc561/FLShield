@@ -43,7 +43,7 @@ interface TenantRightsClientProps {
   data: TenantRightsSection[]
 }
 
-const sectionIcons = {
+const sectionIcons: Record<string, React.ElementType> = {
   'overview-basics': AlertTriangle,
   'rent-payment-security': DollarSign,
   'habitability-standards': Home,
@@ -58,7 +58,7 @@ const sectionIcons = {
 type SectionProps = {
   title: string
   children: React.ReactNode
-  icon?: React.ComponentType<any>
+  icon?: React.ComponentType<{ className?: string }>
 }
 
 const Section = ({ title, children, icon: Icon }: SectionProps) => (
@@ -279,7 +279,7 @@ export function TenantRightsClient({ data }: TenantRightsClientProps) {
                 </div>
               </CardContent>
             </Card>
-          </div>v>
+          </div>
 
           <Card>
             <CardHeader>
@@ -390,3 +390,4 @@ export function TenantRightsClient({ data }: TenantRightsClientProps) {
     </div>
   )
 }
+TenantRightsClient.displayName = "TenantRightsClient";

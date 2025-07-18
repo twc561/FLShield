@@ -17,12 +17,8 @@ import {
   Trash2, 
   Clock, 
   Car, 
-  RadioIcon, 
-  Camera, 
-  Shield,
   FileText,
   Download,
-  Save
 } from 'lucide-react'
 import { 
   shiftReportTemplate, 
@@ -159,7 +155,7 @@ ${shiftData.shiftSummary}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
+                <FileText className="h-5 w-5" />
                 Officer & Shift Information
               </CardTitle>
             </CardHeader>
@@ -411,7 +407,7 @@ ${shiftData.shiftSummary}
                   </div>
                   <div>
                     <Label htmlFor="fuelLevel">Fuel Level</Label>
-                    <Select onValueChange={(value) => setShiftData(prev => ({
+                    <Select value={shiftData.equipmentStatus.vehicle.fuelLevel} onValueChange={(value) => setShiftData(prev => ({
                       ...prev,
                       equipmentStatus: {
                         ...prev.equipmentStatus,
@@ -438,7 +434,7 @@ ${shiftData.shiftSummary}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label>Radio</Label>
-                  <Select onValueChange={(value) => setShiftData(prev => ({
+                  <Select value={shiftData.equipmentStatus.radio} onValueChange={(value) => setShiftData(prev => ({
                     ...prev,
                     equipmentStatus: { ...prev.equipmentStatus, radio: value as any }
                   }))}>
@@ -454,7 +450,7 @@ ${shiftData.shiftSummary}
                 </div>
                 <div>
                   <Label>Body Camera</Label>
-                  <Select onValueChange={(value) => setShiftData(prev => ({
+                  <Select value={shiftData.equipmentStatus.bodyCamera} onValueChange={(value) => setShiftData(prev => ({
                     ...prev,
                     equipmentStatus: { ...prev.equipmentStatus, bodyCamera: value as any }
                   }))}>
@@ -470,7 +466,7 @@ ${shiftData.shiftSummary}
                 </div>
                 <div>
                   <Label>Weapon</Label>
-                  <Select onValueChange={(value) => setShiftData(prev => ({
+                  <Select value={shiftData.equipmentStatus.weapon} onValueChange={(value) => setShiftData(prev => ({
                     ...prev,
                     equipmentStatus: { ...prev.equipmentStatus, weapon: value as any }
                   }))}>

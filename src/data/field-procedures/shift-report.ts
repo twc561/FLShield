@@ -19,7 +19,6 @@ export interface ShiftMetrics {
   totalCitations: number
   totalWarnings: number
   milesPatrolled?: number
-  fuelUsed?: number
 }
 
 export interface ShiftReportData {
@@ -79,7 +78,6 @@ export const shiftReportTemplate: ShiftReportData = {
     totalCitations: 0,
     totalWarnings: 0,
     milesPatrolled: 0,
-    fuelUsed: 0
   },
   equipmentStatus: {
     vehicle: {

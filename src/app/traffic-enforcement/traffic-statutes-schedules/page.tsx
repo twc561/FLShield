@@ -1,9 +1,20 @@
 
+'use client';
+
 import { PageHeader } from "@/components/PageHeader"
 import { trafficViolationsIndex, trafficViolationsFullData } from "@/data/traffic-enforcement/traffic-violations"
 import { TrafficStatutesClient } from "./Client"
 import { Suspense } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
+import dynamic from 'next/dynamic';
+
+const TrafficStatutesClientComponent = dynamic(() => 
+  import('./Client').then(mod => mod.TrafficStatutesClient), 
+  { 
+    ssr: false,
+    loading: () => <TrafficStatutesLoading />
+  }
+);
 
 function TrafficStatutesLoading() {
   return (
@@ -27,7 +38,7 @@ export default function TrafficStatutesSchedulesPage() {
         description="A searchable quick-reference guide for common Florida traffic violations, including elements, fines, and officer notes."
       />
       <Suspense fallback={<TrafficStatutesLoading />}>
-        <TrafficStatutesClient 
+        <TrafficStatutesClientComponent
           initialViolations={trafficViolationsIndex} 
           violationsFullData={trafficViolationsFullData} 
         />

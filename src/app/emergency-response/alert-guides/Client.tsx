@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -17,7 +18,8 @@ import { analyzeAlertGuide } from "@/ai/flows/analyze-alert-guide"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
-const DetailView = React.memo(({ detail }: { detail: AnalyzeAlertGuideOutput }) => (
+const DetailView = React.memo(function DetailView({ detail }: { detail: AnalyzeAlertGuideOutput }) {
+  return (
     <div className="space-y-6">
       <p className="text-muted-foreground">{detail.purpose}</p>
   
@@ -71,7 +73,9 @@ const DetailView = React.memo(({ detail }: { detail: AnalyzeAlertGuideOutput }) 
         </CardContent>
       </Card>
     </div>
-  ));
+  )
+});
+DetailView.displayName = 'DetailView';
 
 export const AlertGuidesClient = React.memo(function AlertGuidesClient({
   placeholders,
@@ -146,3 +150,4 @@ export const AlertGuidesClient = React.memo(function AlertGuidesClient({
     </Accordion>
   );
 });
+AlertGuidesClient.displayName = 'AlertGuidesClient';
