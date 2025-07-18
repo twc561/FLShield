@@ -18,12 +18,12 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { interactiveBriefingData, type InteractiveBriefing } from '@/data/daily-briefing'
 import { ArrowRight, CheckCircle, Lightbulb, MessageCircleQuestion, XCircle, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 
 export function DailyBriefingSheet() {
   const [briefingData, setBriefingData] = React.useState<InteractiveBriefing | null>(null)
   const [selectedOption, setSelectedOption] = React.useState<number | null>(null)
 
-  // In a real app, this would fetch data from Firebase based on the current date.
   React.useEffect(() => {
     setBriefingData(interactiveBriefingData)
   }, [])
@@ -33,7 +33,6 @@ export function DailyBriefingSheet() {
   }
 
   if (!briefingData) {
-    // You could return a skeleton loader here
     return null
   }
 
@@ -55,17 +54,19 @@ export function DailyBriefingSheet() {
           </SheetDescription>
         </SheetHeader>
         <ScrollArea className="flex-1">
-            <div className="p-6 space-y-8">
+            <div className="p-4 space-y-6">
                 {/* Section 1: Interactive Scenario */}
-                <section>
-                    <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
-                        <MessageCircleQuestion className="h-5 w-5 text-primary" />
-                        Interactive Scenario
-                    </h3>
-                    <div className="p-4 border rounded-lg bg-card space-y-4">
-                        <p className="text-sm font-semibold">{scenario.title}</p>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-3">
+                           <MessageCircleQuestion className="h-5 w-5 text-primary" />
+                           Interactive Scenario
+                        </CardTitle>
+                        <CardDescription>{scenario.title}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
                         <p className="text-sm text-muted-foreground">{scenario.situation}</p>
-                        <p className="text-sm font-semibold text-primary">{scenario.question}</p>
+                        <p className="text-sm font-semibold text-foreground/90">{scenario.question}</p>
                         <div className="space-y-2">
                             {scenario.options.map((option, index) => (
                                 <div key={index}>
@@ -88,31 +89,33 @@ export function DailyBriefingSheet() {
                                 </div>
                             ))}
                         </div>
-                    </div>
-                </section>
+                    </CardContent>
+                </Card>
 
                 {/* Section 2: Knowledge Deep Dive */}
-                <section>
-                     <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
-                        <FileText className="h-5 w-5 text-primary" />
-                        Knowledge Deep Dive
-                    </h3>
-                    <div className="p-4 border rounded-lg bg-card space-y-4">
-                        <p className="text-sm font-semibold">{knowledgeDive.title}</p>
+                <Card>
+                     <CardHeader>
+                        <CardTitle className="flex items-center gap-3">
+                           <FileText className="h-5 w-5 text-primary" />
+                           Knowledge Deep Dive
+                        </CardTitle>
+                        <CardDescription>{knowledgeDive.title}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
                          <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
                            {knowledgeDive.takeaways.map((item, i) => <li key={i}>{item}</li>)}
                         </ul>
-                        <p className="text-xs text-muted-foreground italic">{knowledgeDive.details}</p>
-                    </div>
-                </section>
+                        <p className="text-xs text-muted-foreground italic border-l-2 pl-3">{knowledgeDive.details}</p>
+                    </CardContent>
+                </Card>
             </div>
         </ScrollArea>
-        <SheetFooter className="p-6 border-t bg-background">
+        <SheetFooter className="p-4 border-t bg-background">
           <SheetClose asChild>
-            <Button asChild className="w-full">
+            <Button asChild className="w-full group">
               <Link href={relatedGuideLink}>
                 {relatedGuideTitle}
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
           </SheetClose>
