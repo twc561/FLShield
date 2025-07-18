@@ -318,7 +318,7 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
             phase: 'Dispatch & Tactical Approach',
             title: 'Receiving the Call',
             content: 'You are dispatched to a physical domestic disturbance. Critical info to get from dispatch: Are weapons involved? Is anyone injured? History of calls at this address? Who is the complainant?',
-            aiTip: 'Park your vehicle at least one house away. Turn down your radio and listen at the door/windows for a few moments before knocking. Always have a cover officer.',
+            aiTip: 'All responding units should turn off sirens and lights several blocks away to maintain a silent approach. Determine rally points before arriving.',
             choices: [{ text: "Arrived on scene.", nextStepId: "arrival" }]
         },
         'arrival': {
