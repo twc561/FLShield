@@ -1,7 +1,8 @@
 {
-  "name": "nextn",
+  "name": "flshield",
   "version": "0.5.1",
   "private": true,
+  "description": "The essential digital partner for the modern Florida officer.",
   "scripts": {
     "dev": "next dev",
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
