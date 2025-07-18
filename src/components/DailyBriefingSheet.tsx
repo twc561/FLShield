@@ -46,15 +46,15 @@ export function DailyBriefingSheet() {
           Daily Briefing
         </Button>
       </SheetTrigger>
-      <SheetContent className="sm:max-w-md w-full p-0 flex flex-col">
-        <SheetHeader className="p-6 pb-4 border-b">
+      <SheetContent className="w-[90vw] sm:max-w-md p-0 flex flex-col">
+        <SheetHeader className="p-4 sm:p-6 pb-4 border-b">
           <SheetTitle>{briefingData.title}</SheetTitle>
           <SheetDescription>
             A micro-lesson to sharpen your skills.
           </SheetDescription>
         </SheetHeader>
         <ScrollArea className="flex-1">
-            <div className="p-4 space-y-6">
+            <div className="p-4 sm:p-6 space-y-6">
                 {/* Section 1: Interactive Scenario */}
                 <Card>
                     <CardHeader>
@@ -71,7 +71,7 @@ export function DailyBriefingSheet() {
                             {scenario.options.map((option, index) => (
                                 <div key={index}>
                                     <Button
-                                        variant={selectedOption === index ? "default" : "secondary"}
+                                        variant={selectedOption === index ? (option.isCorrect ? "default" : "destructive") : "secondary"}
                                         className="w-full justify-start text-left h-auto py-2"
                                         onClick={() => handleOptionClick(index)}
                                     >
