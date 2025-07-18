@@ -1,3 +1,4 @@
+
 export type DailyBriefing = {
   briefingDate: string;
   headline: string;
@@ -37,4 +38,67 @@ export const dailyBriefingData: DailyBriefing = {
   },
   keyQuote:
     "This AI-generated summary demonstrates how public data can be transformed into actionable intelligence, enhancing officer safety and situational awareness without accessing any confidential information.",
+};
+
+// Data structure for the new interactive daily briefing overlay
+export type InteractiveBriefing = {
+  title: string;
+  publishDate: string;
+  scenario: {
+    title: string;
+    situation: string;
+    question: string;
+    options: {
+      text: string;
+      feedback: string;
+      isCorrect: boolean;
+    }[];
+  };
+  knowledgeDive: {
+    title: string;
+    takeaways: string[];
+    details: string;
+  };
+  relatedGuideLink: string;
+  relatedGuideTitle: string;
+};
+
+// Example data for one day's briefing.
+export const interactiveBriefingData: InteractiveBriefing = {
+  title: "Daily Briefing: Traffic Stops & Searches",
+  publishDate: "2024-07-20", // In a real app, this would match the current date
+  scenario: {
+    title: "Scenario: The Traffic Stop",
+    situation: "You conduct a lawful traffic stop for a broken taillight. Upon making contact, you smell the faint odor of fresh marijuana coming from the vehicle. The driver appears nervous.",
+    question: "What is your next legal step?",
+    options: [
+      {
+        text: "Order the driver out and immediately search the vehicle.",
+        feedback: "Incorrect. While the odor is a factor, recent case law in Florida suggests smell alone is not sufficient PC for a vehicle search due to legal hemp. You need more evidence ('plus factors').",
+        isCorrect: false
+      },
+      {
+        text: "Begin a DUI investigation based on the odor.",
+        feedback: "Correct. The odor provides reasonable suspicion to expand the scope of the stop to a DUI investigation. This allows you to ask more questions and request Field Sobriety Tests.",
+        isCorrect: true
+      },
+      {
+        text: "Ignore the smell and just issue the taillight ticket.",
+        feedback: "Suboptimal. While safe, you would be failing to investigate a potential criminal violation based on reasonable suspicion.",
+        isCorrect: false
+      }
+    ]
+  },
+  knowledgeDive: {
+    title: "Deep Dive: The Automobile Exception",
+    takeaways: [
+      "Established in Carroll v. U.S.",
+      "Allows for warrantless search of a vehicle if there is probable cause to believe it contains evidence of a crime.",
+      "Justified by the inherent mobility of vehicles.",
+      "The scope of the search is limited to areas where the evidence could reasonably be found."
+    ],
+    details: "This exception is one of the most frequently used in law enforcement. It is crucial to be able to articulate your specific, fact-based probable cause in your report to justify the warrantless search."
+  },
+  relatedGuideLink: "/legal-reference/case-law",
+  relatedGuideTitle: "Explore the Case Law Vault"
 };

@@ -1,3 +1,4 @@
+
 import type { FeatureModule } from "@/types"
 import {
   Book,
@@ -39,7 +40,7 @@ import {
   Eye,
   Search,
   MapPin,
-  Shackles
+  Lock,
 } from "lucide-react"
 
 export type FeatureGroup = {
@@ -313,7 +314,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
     ],
   },
   {
-    category: "Report Writing & Documentation",
+    category: "Reporting & Documentation",
     icon: ClipboardEdit,
     features: [
       {
@@ -351,7 +352,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
       {
         id: "field-notes",
         title: "Digital Field Notes",
-        summary: "Persistent, auto-saving notepad for field documentation.",
+        summary: "Persistent, auto-saving digital notepad for field documentation.",
         icon: "FileTextIcon",
         targetPage: "/notes",
         category: "Report Writing & Documentation",
@@ -432,6 +433,13 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         targetPage: "/daily-briefing",
         category: "Officer Wellness & Rights",
       },
+    ],
+  },
+  {
+    category: "Restraint Techniques",
+    icon: Lock,
+    items: [
+      { href: "/restraint-techniques/handcuffing-procedures", label: "Handcuffing Procedures", icon: Lock },
     ],
   },
 ]

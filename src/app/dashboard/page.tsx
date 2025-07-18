@@ -9,7 +9,7 @@ import { auth } from "@/lib/firebase"
 import { PageHeader } from "@/components/PageHeader"
 import AICommandSearch from "@/components/AICommandSearch"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { DailyBriefingSheet } from "@/components/DailyBriefingSheet" // Import the new component
 import Link from 'next/link'
 import * as LucideIcons from "lucide-react"
 
@@ -63,9 +63,9 @@ const FeaturedTools = () => {
     // analyzing context (time, location, user history).
     // Here, we simulate it by selecting a few key tools.
     const featured: FeatureModule[] = [
-        dashboardFeatureGroups.find(g => g.category === 'Field Encounters & Checklists')?.features[0],
-        dashboardFeatureGroups.find(g => g.category === 'Reference & Investigation')?.features[0],
-        dashboardFeatureGroups.find(g => g.category === 'Reporting & Documentation')?.features[2],
+        dashboardFeatureGroups.find(g => g.category === "Field Operations & Procedures")?.features[0],
+        dashboardFeatureGroups.find(g => g.category === "Legal Reference Library")?.features[0],
+        dashboardFeatureGroups.find(g => g.category === "Reporting & Documentation")?.features[2],
     ].filter(Boolean) as FeatureModule[];
 
     return (
@@ -157,6 +157,7 @@ export default function DashboardPage() {
       initial="hidden"
       animate="show"
     >
+      <DailyBriefingSheet /> 
       <PageHeader 
         title={`${greeting}, ${userName || "Officer"}.`}
         description="Welcome to your Mission Hub. How can I help?"

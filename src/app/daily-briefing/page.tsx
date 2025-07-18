@@ -1,11 +1,13 @@
+
 'use client'
 
+import { motion } from "framer-motion";
 import { PageHeader } from "@/components/PageHeader";
 import { dailyBriefingData } from "@/data/daily-briefing";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, ShieldCheck } from "lucide-react";
-import { motion } from "framer-motion";
+import { DailyBriefingSheet } from "@/components/DailyBriefingSheet";
 
 export default function DailyBriefingPage() {
   const briefing = dailyBriefingData;
@@ -33,10 +35,15 @@ export default function DailyBriefingPage() {
       animate="show"
       variants={containerVariants}
     >
-      <PageHeader
-        title="Public Intelligence Briefing"
-        description={`AI-Generated Summary for ${briefing.briefingDate}`}
-      />
+      <div className="flex justify-between items-start gap-4">
+        <PageHeader
+          title="Public Intelligence Briefing"
+          description={`AI-Generated Summary for ${briefing.briefingDate}`}
+        />
+        <div className="pt-2">
+           <DailyBriefingSheet />
+        </div>
+      </div>
 
       <Card className="w-full">
         <CardHeader>
