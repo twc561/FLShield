@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
 import { ChevronDown } from "lucide-react"
 import {
   Collapsible,
@@ -20,9 +21,34 @@ import { menuItems } from "@/lib/menu-items"
 
 export function AppMenuContent({ onLinkClick }: { onLinkClick?: () => void }) {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const isActive = (href: string) => {
     return pathname === href || (href !== "/dashboard" && href !== "/" && pathname.startsWith(href))
+  }
+
+  // Prevent hydration mismatch by not rendering interactive elements until mounted
+  if (!mounted) {
+    return (
+      <SidebarMenu className="p-0">
+        {menuItems.map((item) => (
+          <SidebarMenuItem key={item.label}>
+            <SidebarMenuButton variant="ghost" className="w-full">
+              <div className="flex items-center gap-2">
+                <item.icon className="size-5" />
+                <span className="group-data-[collapsible=icon]:hidden">
+                  {item.label}
+                </span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
+    )
   }
 
   return (
