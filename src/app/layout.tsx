@@ -18,7 +18,6 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const [isClient, setIsClient] = useState(false)
 
   const publicPages = [
     "/",
@@ -34,11 +33,7 @@ export default function RootLayout({
     "/for-officers",
   ];
 
-  const isPublicPage = isClient ? publicPages.includes(pathname) : true;
-
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
+  const isPublicPage = publicPages.includes(pathname);
 
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
