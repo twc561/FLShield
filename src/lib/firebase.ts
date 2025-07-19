@@ -1,15 +1,19 @@
+
+// Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+  apiKey: "AIzaSyAKOZL2TdqleyUtbrbKHJfjObRqpBz2s28",
+  authDomain: "florida-shield.firebaseapp.com",
+  projectId: "florida-shield",
+  storageBucket: "florida-shield.firebasestorage.app",
+  messagingSenderId: "320998993928",
+  appId: "1:320998993928:web:79043e80e835f9c3eee1bd"
 };
-
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
@@ -21,6 +25,7 @@ export const isFirebaseConfigured =
     firebaseConfig.projectId;
 
 if (isFirebaseConfigured) {
+    // Initialize Firebase
     app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
     auth = getAuth(app);
 }
