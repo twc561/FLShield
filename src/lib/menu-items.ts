@@ -15,15 +15,15 @@ type MenuItem = {
   items?: SubMenuItem[]
 }
 
-// Reorganized menu structure based on officer workflow and logical task groupings
+// Alphabetized menu structure with critical tools prioritized at top
 export const menuItems: MenuItem[] = [
   {
     label: "AI Assistant Tools",
     icon: Bot,
     items: [
+      { href: "/reporting-development/ai-charge-assistant", label: "AI Charge Assistant", icon: Gavel },
       { href: "/ai-legal-advisor", label: "AI Legal Advisor", icon: ShieldQuestion },
       { href: "/voice-assistant", label: "AI Partner Mode", icon: Mic },
-      { href: "/reporting-development/ai-charge-assistant", label: "AI Charge Assistant", icon: Gavel },
       { href: "/reporting-development/ai-report-writer", label: "AI Report Assistant", icon: ClipboardEdit },
       { href: "/training-development/role-play-simulator", label: "AI Role-Play Simulator", icon: MessageSquare },
       { href: "/training-development/report-proofreader", label: "Report Writing Feedback", icon: FileCheck },
@@ -34,10 +34,10 @@ export const menuItems: MenuItem[] = [
     label: "Emergency Response Protocols",
     icon: Siren,
     items: [
+      { href: "/emergency-response/baker-act-guide", label: "Baker Act Procedures", icon: Heart },
       { href: "/emergency-response/alert-guides", label: "Emergency Alert Protocols", icon: AlertCircle },
       { href: "/emergency-response/first-aid-guide", label: "Field First Aid Guide", icon: HeartPulse },
       { href: "/emergency-response/hazmat-guide", label: "HAZMAT Response Guide", icon: Biohazard },
-      { href: "/emergency-response/baker-act-guide", label: "Baker Act Procedures", icon: Heart },
       { href: "/emergency-response/marchman-act-guide", label: "Marchman Act Procedures", icon: FlaskConical },
     ],
   },
@@ -45,16 +45,17 @@ export const menuItems: MenuItem[] = [
     label: "Field Operations & Procedures",
     icon: ShieldCheck,
     items: [
-      { href: "/field-procedures/scenario-checklists", label: "Field Scenario Checklists", icon: ListChecks },
-      { href: "/field-procedures/field-interview-contact", label: "Field Interview Standards", icon: Users },
-      { href: "/traffic-enforcement/dui-investigation", label: "DUI Investigation Guide", icon: Car },
-      { href: "/field-procedures/domestic-violence-protocol", label: "Domestic Violence Protocol", icon: ShieldAlert },
-      { href: "/field-procedures/evidence-management-guide", label: "Evidence Management", icon: FileCheck },
       { href: "/field-procedures/crime-scene-management", label: "Crime Scene Management", icon: Wind },
-      { href: "/field-procedures/interview-techniques", label: "Interview Techniques", icon: Users },
-      { href: "/field-procedures/risk-protection-orders", label: "Risk Protection Orders", icon: ShieldAlert },
+      { href: "/field-procedures/digital-evidence-field-guide", label: "Digital Evidence Guide", icon: Camera },
+      { href: "/field-procedures/domestic-violence-protocol", label: "Domestic Violence Protocol", icon: ShieldAlert },
+      { href: "/traffic-enforcement/dui-investigation", label: "DUI Investigation Guide", icon: Car },
+      { href: "/field-procedures/evidence-management-guide", label: "Evidence Management", icon: FileCheck },
+      { href: "/field-procedures/field-interview-contact", label: "Field Interview Standards", icon: Users },
+      { href: "/field-procedures/scenario-checklists", label: "Field Scenario Checklists", icon: ListChecks },
       { href: "/field-translation-guide", label: "Field Translator", icon: Languages },
+      { href: "/field-procedures/interview-techniques", label: "Interview Techniques", icon: Users },
       { href: "/field-procedures/jurisdiction-finder", label: "Jurisdiction Finder", icon: MapPin },
+      { href: "/field-procedures/risk-protection-orders", label: "Risk Protection Orders", icon: ShieldAlert },
     ],
   },
   {
@@ -80,8 +81,8 @@ export const menuItems: MenuItem[] = [
     items: [
       { href: "/officer-wellness-rights/community-engagement-guide", label: "Community Relations Guide", icon: Users },
       { href: "/wellness/active-listener", label: "Confidential Support Chat", icon: Heart },
-      { href: "/daily-briefing", label: "Intelligence Briefing", icon: Newspaper },
       { href: "/wellness/live-debrief", label: "Incident Debrief Tool", icon: MessageSquare },
+      { href: "/daily-briefing", label: "Intelligence Briefing", icon: Newspaper },
       { href: "/officer-wellness-rights/police-officers-bill-of-rights", label: "Police Officer's Bill of Rights", icon: ShieldCheck },
       { href: "/wellness", label: "Wellness Resources Hub", icon: Heart },
     ],
@@ -90,7 +91,6 @@ export const menuItems: MenuItem[] = [
     label: "Reporting & Documentation",
     icon: ClipboardEdit,
     items: [
-      { href: "/field-procedures/digital-evidence-field-guide", label: "Digital Evidence Guide", icon: Camera },
       { href: "/notes", label: "Digital Field Notes", icon: ClipboardEdit },
       { href: "/reporting-development/shift-report-generator", label: "Shift Report Generator", icon: ClipboardEdit },
       { href: "/reporting-development/use-of-force-wizard", label: "Use of Force Articulation", icon: ShieldCheck },
@@ -119,9 +119,9 @@ export const menuItems: MenuItem[] = [
     label: "Training & Professional Development",
     icon: GraduationCap,
     items: [
-      { href: "/reporting-development/knowledge-check", label: "Knowledge Assessment Drills", icon: BrainCircuit },
       { href: "/training-development/common-misperceptions", label: "Common Field Pitfalls", icon: ShieldAlert },
       { href: "/officer-wellness-rights/court-testimony-guide", label: "Court Testimony Preparation", icon: Mic },
+      { href: "/reporting-development/knowledge-check", label: "Knowledge Assessment Drills", icon: BrainCircuit },
     ],
   },
 ];
