@@ -82,7 +82,6 @@ export const menuItems: MenuItem[] = [
       { href: "/officer-wellness-rights/community-engagement-guide", label: "Community Relations Guide", icon: Users },
       { href: "/wellness/active-listener", label: "Confidential Support Chat", icon: Heart },
       { href: "/wellness/live-debrief", label: "Incident Debrief Tool", icon: MessageSquare },
-      { href: "/daily-briefing", label: "Intelligence Briefing", icon: Newspaper },
       { href: "/officer-wellness-rights/police-officers-bill-of-rights", label: "Police Officer's Bill of Rights", icon: ShieldCheck },
       { href: "/wellness", label: "Wellness Resources Hub", icon: Heart },
     ],
