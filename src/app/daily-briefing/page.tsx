@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -19,9 +18,9 @@ export default function DailyBriefingPage() {
     const matchesSearch = module.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          module.hook.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          module.rationale.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesCategory = selectedCategory === 'all' || module.category === selectedCategory;
-    
+
     return matchesSearch && matchesCategory;
   });
 
@@ -54,108 +53,106 @@ export default function DailyBriefingPage() {
         description="Review past Daily Roll Call modules and enhance your knowledge with interactive micro-learning content."
       />
 
+      
+/>
+
       {/* Search and Filter Controls */}
-      <Card className="mb-6">
-        <CardContent className="p-6 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search briefings by topic, content, or keywords..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+      <div className="bg-card rounded-lg p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Search modules by title, content, or category..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
-
-          <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6">
-              {categories.map((category) => (
-                <TabsTrigger key={category.id} value={category.id} className="text-xs">
-                  <span className="mr-1">{category.icon}</span>
-                  <span className="hidden sm:inline">{category.name}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </CardContent>
-      </Card>
-
-      {/* Results */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">
-            {filteredModules.length} Briefing{filteredModules.length !== 1 ? 's' : ''} Found
-          </h2>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredModules.map((module) => {
-            const isCompleted = getCompletionStatus(module.id) === 'completed';
-            
-            return (
-              <Card key={module.id} className={`hover:shadow-lg transition-shadow ${isCompleted ? 'border-green-200 bg-green-50/50' : ''}`}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-2">
-                      <div className="text-xl">{module.categoryIcon}</div>
-                      <Badge variant="outline" className={`${categoryColors[module.category]} text-xs`}>
-                        {module.category.replace('-', ' ')}
-                      </Badge>
-                    </div>
-                    {isCompleted && (
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                    )}
-                  </div>
-                  <CardTitle className="text-base leading-tight">
-                    {module.title}
-                  </CardTitle>
-                </CardHeader>
-                
-                <CardContent className="space-y-3">
-                  <p className="text-sm text-muted-foreground line-clamp-3">
-                    {module.hook}
-                  </p>
-                  
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="h-3 w-3" />
-                      <span>Created: {new Date(module.dateCreated).toLocaleDateString()}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <BookOpen className="h-3 w-3" />
-                      <span>Difficulty: {module.difficulty}</span>
-                    </div>
-                  </div>
+        {/* Category Filter Tabs */}
+        <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
+</TabsList>
+        </Tabs>
+      </div>
 
-                  {/* Mini Preview of Rationale */}
-                  <div className="text-xs bg-muted/50 p-2 rounded">
-                    <strong>Key Point:</strong> {module.rationale.substring(0, 120)}...
+      {/* Modules Grid */}
+      <div className="space-y-6">
+        {categories.map((category) => (
+          <TabsContent key={category.id} value={selectedCategory} className="m-0">
+            {(selectedCategory === 'all' || selectedCategory === category.id) && 
+             filteredModules.filter(module => selectedCategory === 'all' || module.category === category.id).length > 0 && (
+              <div className="space-y-4">
+                {selectedCategory === 'all' && (
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-2xl">{category.icon}</span>
+                    <h2 className="text-xl font-semibold text-card-foreground">{category.name}</h2>
+                    <Badge variant="secondary" className="ml-auto">
+                      {filteredModules.filter(m => m.category === category.id).length} modules
+                    </Badge>
                   </div>
+                )}
 
-                  <div className="flex items-center justify-between pt-2">
-                    <span className="text-xs text-muted-foreground">
-                      {module.deepDiveLinks.length} related resource{module.deepDiveLinks.length !== 1 ? 's' : ''}
-                    </span>
-                    <Button size="sm" variant="outline">
-                      {isCompleted ? 'Review' : 'Start'} Briefing
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {filteredModules
+                    .filter(module => selectedCategory === 'all' || module.category === category.id)
+                    .map((module) => {
+                      const completionStatus = getCompletionStatus(module.id);
+
+                      return (
+                        <Card key={module.id} className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20">
+                          <CardHeader className="pb-4">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <span className="text-lg">{module.categoryIcon}</span>
+                                <Badge 
+                                  variant="outline" 
+                                  className={categoryColors[module.category]}
+                                >
+                                  {categories.find(c => c.id === module.category)?.name}
+                                </Badge>
+                              </div>
+                              {completionStatus === 'completed' ? (
+                                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                              ) : (
+                                <Clock className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                              )}
+                            </div>
+                            <CardTitle className="text-lg leading-tight">{module.title}</CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            <p className="text-sm text-muted-foreground leading-relaxed">{module.hook}</p>
+
+                            <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
+                              <div className="flex items-center gap-1">
+                                <Calendar className="h-3 w-3" />
+                                {new Date(module.dateCreated).toLocaleDateString()}
+                              </div>
+                              <Badge variant="secondary" className="text-xs">
+                                {module.difficulty}
+                              </Badge>
+                            </div>
+
+                            <Button variant="outline" size="sm" className="w-full mt-4">
+                              <BookOpen className="h-4 w-4 mr-2" />
+                              {completionStatus === 'completed' ? 'Review Module' : 'Start Module'}
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
+          </TabsContent>
+        ))}
 
         {filteredModules.length === 0 && (
-          <Card className="p-12 text-center">
-            <div className="text-muted-foreground">
-              <Clock className="h-12 w-12 mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">No briefings found</h3>
-              <p>Try adjusting your search terms or category filters.</p>
-            </div>
-          </Card>
+          <div className="text-center py-12">
+            <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-muted-foreground mb-2">No modules found</h3>
+            <p className="text-sm text-muted-foreground">Try adjusting your search terms or selected category.</p>
+          </div>
         )}
       </div>
     </div>
