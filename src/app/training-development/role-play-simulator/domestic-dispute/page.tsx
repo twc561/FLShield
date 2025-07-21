@@ -1,4 +1,3 @@
-
 'use client';
 
 import { ScenarioClient } from '../ScenarioClient';
@@ -16,17 +15,11 @@ Character traits:
 
 Show how de-escalation techniques can transform a hostile situation into a productive conversation.`;
 
-const initialMessage = `*You come to the door looking agitated and defensive*
+const initialMessage = `*You respond to a domestic dispute call. Neighbors reported loud arguing from this residence. You arrive at the front door and can hear raised voices inside. You knock firmly.*
 
-Look, officer, this is just a misunderstanding. We were having a discussion, that's all. I don't know why the neighbors felt they needed to call you.
+Police department! I need to speak with someone about a complaint we received. Please come to the door.
 
-*You cross your arms and look irritated*
-
-My partner and I... we just disagree about some things, but it's not like anyone was in danger or anything. This is our private business.
-
-*You glance back into the house nervously*
-
-Can we just... handle this ourselves? We don't need police involved in our personal matters.`;
+*You position yourself safely and wait for someone to answer*`;
 
 export default function DomesticDisputeScenario() {
     return (

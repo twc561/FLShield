@@ -1,4 +1,3 @@
-
 'use client';
 
 import { ScenarioClient } from '../ScenarioClient';
@@ -18,17 +17,13 @@ Example speech: "Look, I'm sorry, okay? This is my first time doing anything lik
 
 Show how positive interaction with youth can be a teaching moment.`;
 
-const initialMessage = `*You're standing with your head down, clearly embarrassed and scared*
+const initialMessage = `*You've been called to a retail store where security has detained a juvenile for shoplifting. You arrive to find a nervous teenager being held by store security.*
 
-I... I didn't mean to... I mean, I wasn't really going to steal it. I was just... I don't know what I was thinking.
+Hello, I'm Officer [Your Name]. The store manager called us about a shoplifting incident. I need to speak with you about what happened here today.
 
-*You look up nervously*
+*You approach professionally while assessing the situation*
 
-Are you going to call my parents? Please don't call my parents. They're going to be so disappointed in me. I've never done anything like this before, I swear.
-
-*Your voice gets quieter*
-
-Am I going to jail? I'm only 16. This is going to ruin everything, isn't it? College, my future... everything?`;
+Can you tell me your name and age? And do you understand why I'm here?`;
 
 export default function JuvenileContactScenario() {
     return (

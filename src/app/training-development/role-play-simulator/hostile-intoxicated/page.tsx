@@ -1,4 +1,3 @@
-
 'use client';
 
 import { ScenarioClient } from '../ScenarioClient';
@@ -18,17 +17,11 @@ Example speech: "I'm not... I'm not doing anything wrong here, officer! This is 
 
 Show how proper handling of intoxicated individuals can prevent escalation.`;
 
-const initialMessage = `*You're swaying slightly and speaking loudly*
+const initialMessage = `*You respond to a call about an intoxicated individual causing a disturbance. You arrive to find someone standing on a street corner who appears heavily intoxicated and is being loud and argumentative.*
 
-Hey! Hey officer! What's the problem here? I'm just... I'm just walking around, minding my own business!
+Good evening. I'm Officer [Your Name]. I received a call about someone causing a disturbance in this area. I need you to calm down and speak with me for a moment.
 
-*You gesture wildly with your arms*
-
-This is a free country, right? I can walk wherever I want! I haven't done anything... anything wrong here!
-
-*You take a step closer, not threateningly but unsteadily*
-
-Why are you looking at me like that? I'm not causing any trouble! Those people over there... they called you, didn't they? They don't like me!`;
+*You maintain a safe distance and use a firm but calm tone*`;
 
 export default function HostileIntoxicatedScenario() {
     return (
