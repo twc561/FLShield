@@ -195,9 +195,28 @@ export function ScenarioClient({
             }
         } catch (error) {
             console.error("AI Role-Play Error:", error);
+            
+            let errorMessage = "[Error: The AI model could not respond. Please try again.]";
+            
+            // Provide more helpful error messages
+            if (error instanceof Error) {
+                console.error("Error details:", error.message);
+                
+                if (error.message.includes('network') || error.message.includes('fetch')) {
+                    errorMessage = "[Network Error: Please check your connection and try again.]";
+                } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
+                    errorMessage = "[Service Busy: Please wait a moment and try again.]";
+                } else if (error.message.includes('timeout')) {
+                    errorMessage = "[Timeout Error: The response took too long. Please try again.]";
+                }
+            }
+            
             setMessages(prev =>
                 prev.map(msg =>
-                    msg.id === modelMessageId ? { ...msg, content: "[Error: The AI model could not respond.]" } : msg
+                    msg.id === modelMessageId ? { 
+                        ...msg, 
+                        content: errorMessage
+                    } : msg
                 )
             );
         } finally {

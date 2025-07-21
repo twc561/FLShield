@@ -194,6 +194,15 @@ CURRENT SITUATION AWARENESS:
 
 Remember: You are playing a character, not providing training feedback. Stay in character completely.`;
 
+    // Validate inputs before making AI call
+    if (!enhancedPrompt || enhancedPrompt.trim().length === 0) {
+      throw new Error('System prompt is empty or invalid');
+    }
+    
+    if (!lastOfficerMessage || lastOfficerMessage.trim().length === 0) {
+      throw new Error('User message is empty or invalid');
+    }
+
     const { stream } = await ai.generateStream({
       system: enhancedPrompt,
       history: conversationHistory,
@@ -212,7 +221,33 @@ Remember: You are playing a character, not providing training feedback. Stay in 
     }
   } catch (error) {
     console.error('AI Role-Play Error:', error);
-    yield 'Sorry, I encountered an error. Please try again.';
+    
+    // Provide more specific error messages based on error type
+    if (error instanceof Error) {
+      console.error('Error details:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    
+    // Fallback response based on scenario type
+    const fallbackResponses = {
+      'calm_cooperative': "I'm sorry, I'm having trouble responding right now. Could you please repeat what you said?",
+      'agitated_uncooperative': "Look, I can't... something's not working right. Can we try this again?",
+      'nervous_citizen': "I'm sorry officer, I'm having trouble understanding. Could you help me?",
+      'emotionally_distraught': "*takes a moment to collect thoughts* I'm sorry, I'm just so overwhelmed right now...",
+      'mental_health_crisis': "*looks confused* I... I can't think clearly right now. What were you saying?",
+      'hostile_intoxicated': "*stumbles over words* What? I can't... what are you asking me?",
+      'deceptive_evasive': "Uh... I'm not sure what you mean. Can you ask that again?",
+      'juvenile_contact': "I'm sorry, I don't know what's happening. Am I in trouble?",
+      'elderly_confused': "*looks puzzled* I'm sorry dear, I didn't catch that. What did you say?",
+      'business_complaint': "I'm sorry, I'm having difficulty right now. Could you please repeat that?",
+      'domestic_dispute': "*pauses* I'm sorry, I'm just really stressed right now. What were you asking?",
+      'language_barrier': "No understand... sorry... problema with words..."
+    };
+    
+    const fallback = fallbackResponses[scenarioType as keyof typeof fallbackResponses] 
+      || "I apologize, I'm having difficulty responding right now. Could you please try again?";
+    
+    yield fallback;
   }
 }
 
