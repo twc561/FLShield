@@ -38,11 +38,29 @@ const PillVisualsSchema = z.object({
 });
 
 export async function identifyPillFromImage(input: IdentifyPillInput): Promise<IdentifyPillOutput> {
-  // Step 1: Analyze the image to get visual characteristics
-  const { output: visualAnalysis } = await ai.generate({
-    prompt: `You are a forensic image analyst. Analyze the following image of a pill and extract its key visual characteristics. Describe ONLY the imprint, color, and shape.
+  // Try analysis up to 2 times if the first attempt yields "illegible" results
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    console.log(`[Pill Identification] Attempt ${attempt}/2`);
     
-    Image: {{media url=imageDataUri}}`,
+    // Step 1: Analyze the image to get visual characteristics
+    const { output: visualAnalysis } = await ai.generate({
+    prompt: `You are a forensic pharmaceutical analyst specializing in pill identification. Analyze this pill image with extreme precision:
+
+CRITICAL INSTRUCTIONS:
+1. IMPRINT: Look carefully for ANY text, numbers, or symbols on the pill. Common formats include:
+   - Letters and numbers (e.g., "M 30", "XANAX 1.0", "OC 80")
+   - Single letters (e.g., "V", "E")
+   - Numbers only (e.g., "833", "484")
+   - Brand names (e.g., "ADDERALL", "SYNTHROID")
+   If you cannot clearly read the imprint, state "illegible" - do not guess.
+
+2. COLOR: Identify the PRIMARY color. Common colors: White, Blue, Yellow, Green, Pink, Orange, Purple, Brown, Gray.
+
+3. SHAPE: Be precise about shape. Common shapes: Round, Oval, Capsule-shape, Square, Diamond, Triangle.
+
+Look at the pill from multiple angles if visible. Pay special attention to lighting and shadows that might obscure details.
+
+Image: {{media url=imageDataUri}}`,
     input: { imageDataUri: input.imageDataUri },
     output: {
       schema: PillVisualsSchema,
@@ -50,16 +68,28 @@ export async function identifyPillFromImage(input: IdentifyPillInput): Promise<I
   });
 
   if (!visualAnalysis) {
-    throw new Error("AI failed to analyze the pill image.");
+      if (attempt === 2) {
+        throw new Error("AI failed to analyze the pill image after multiple attempts.");
+      }
+      continue;
+    }
+
+    // If imprint is illegible and this is the first attempt, try once more
+    if (visualAnalysis.imprint === "illegible" && attempt === 1) {
+      console.log("[Pill Identification] Imprint illegible, retrying with enhanced analysis");
+      continue;
+    }
+
+    const visualDescriptionText = `${visualAnalysis.color}, ${visualAnalysis.shape}, imprint ${visualAnalysis.imprint}`;
+
+    // Step 2: Use the local database lookup tool to get a definitive answer.
+    const identificationResult = await lookupPill(visualAnalysis);
+    
+    return {
+      ...identificationResult,
+      visualDescription: visualDescriptionText
+    };
   }
-
-  const visualDescriptionText = `${visualAnalysis.color}, ${visualAnalysis.shape}, imprint ${visualAnalysis.imprint}`;
-
-  // Step 2: Use the local database lookup tool to get a definitive answer.
-  const identificationResult = await lookupPill(visualAnalysis);
   
-  return {
-    ...identificationResult,
-    visualDescription: visualDescriptionText
-  };
+  throw new Error("Failed to analyze pill image after multiple attempts.");
 }

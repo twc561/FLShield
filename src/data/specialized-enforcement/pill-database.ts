@@ -147,5 +147,46 @@ export const pillDatabase: PillInfo[] = [
     drugName: 'Levothyroxine (Synthroid, 100mcg)',
     primaryUse: 'A thyroid hormone used to treat hypothyroidism.',
     keyWarnings: 'Must be taken on an empty stomach. Dosage is very specific; taking too much can cause symptoms of hyperthyroidism like a rapid heart rate.',
+  },
+  // Additional common medications
+  {
+    imprint: 'XANAX 1.0',
+    color: 'Blue',
+    shape: 'Oval',
+    drugName: 'Alprazolam (Xanax, 1mg)',
+    primaryUse: 'A benzodiazepine used to treat anxiety and panic disorders.',
+    keyWarnings: 'High potential for addiction and abuse. Can cause severe withdrawal symptoms. Dangerous when combined with alcohol or opioids.',
+  },
+  {
+    imprint: 'V 36 01',
+    color: 'Yellow',
+    shape: 'Round',
+    drugName: 'Hydrocodone/Acetaminophen (Vicodin, 5/500mg)',
+    primaryUse: 'An opioid pain medication used to treat moderate to severe pain.',
+    keyWarnings: 'High potential for addiction and respiratory depression. Contains acetaminophen which can cause liver damage in high doses.',
+  },
+  {
+    imprint: 'ADDERALL 20 MG',
+    color: 'Orange',
+    shape: 'Round',
+    drugName: 'Amphetamine/Dextroamphetamine (Adderall, 20mg)',
+    primaryUse: 'A stimulant used to treat ADHD and narcolepsy.',
+    keyWarnings: 'High potential for abuse and dependence. Can cause cardiovascular problems and psychiatric effects.',
+  },
+  {
+    imprint: 'OC 80',
+    color: 'Green',
+    shape: 'Round',
+    drugName: 'OxyContin (Oxycodone, 80mg)',
+    primaryUse: 'A long-acting opioid pain medication for severe, chronic pain.',
+    keyWarnings: 'Extremely high potential for addiction and fatal overdose. This is a high-dose formulation that can be lethal if misused.',
+  },
+  {
+    imprint: 'TEVA 833',
+    color: 'Yellow',
+    shape: 'Round',
+    drugName: 'Clonazepam (Klonopin, 0.5mg)',
+    primaryUse: 'A benzodiazepine used to treat seizures and panic disorder.',
+    keyWarnings: 'Can cause dependence and withdrawal symptoms. Dangerous when combined with alcohol or opioids.',
   }
 ];

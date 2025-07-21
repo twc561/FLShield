@@ -74,8 +74,33 @@ export default function PillIdentifierPage() {
     }
   };
 
+  const validateImageQuality = (file: File): string | null => {
+    // Check file size (should be reasonable but not too small)
+    if (file.size < 10000) { // Less than 10KB might be too small
+      return "Image file is too small. Please use a higher quality image.";
+    }
+    if (file.size > 10000000) { // More than 10MB might be too large
+      return "Image file is too large. Please use a smaller image.";
+    }
+    
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      return "Please select a valid image file.";
+    }
+    
+    return null;
+  };
+
   const handleAnalyze = async () => {
     if (!imageFile) return;
+    
+    // Validate image quality
+    const validationError = validateImageQuality(imageFile);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    
     setIsLoading(true);
     setError(null);
     setResult(null);
@@ -112,6 +137,14 @@ export default function PillIdentifierPage() {
             <AlertTitle>For Field Identification Only</AlertTitle>
             <AlertDescription>
                 This tool is for preliminary identification and training purposes. It is NOT a substitute for a laboratory test. Do not taste or consume any unknown substance.
+            </AlertDescription>
+        </Alert>
+
+        <Alert>
+            <Camera className="h-4 w-4" />
+            <AlertTitle>Image Quality Tips</AlertTitle>
+            <AlertDescription>
+                For best results: Use good lighting, ensure the pill is in focus, capture any text/numbers clearly, and include the entire pill in the frame. Avoid blurry or dark images.
             </AlertDescription>
         </Alert>
 
