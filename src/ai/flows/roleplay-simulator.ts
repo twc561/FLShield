@@ -23,14 +23,21 @@ export type RolePlayInput = z.infer<typeof RolePlayInputSchema>;
 export async function* streamRolePlay(input: RolePlayInput) {
   const { systemPrompt, conversationHistory } = input;
   
-  const { stream } = ai.generateStream({
-    system: systemPrompt,
-    history: conversationHistory,
-    prompt: conversationHistory[conversationHistory.length - 1].parts[0].text,
-  });
+  try {
+    const { stream } = await ai.generateStream({
+      system: systemPrompt,
+      history: conversationHistory,
+      prompt: conversationHistory[conversationHistory.length - 1].parts[0].text,
+    });
 
-  // Yield each chunk of text as it comes in from the stream
-  for await (const chunk of stream) {
-    yield chunk.text;
+    // Yield each chunk of text as it comes in from the stream
+    for await (const chunk of stream) {
+      if (chunk.text) {
+        yield chunk.text;
+      }
+    }
+  } catch (error) {
+    console.error('AI Role-Play Error:', error);
+    yield 'Sorry, I encountered an error. Please try again.';
   }
 }

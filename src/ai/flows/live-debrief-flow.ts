@@ -37,13 +37,20 @@ Officer: "${
 Generate a brief, supportive, and conversational response.
 `;
 
-  const { stream } = ai.generateStream({
-    prompt: prompt,
-    history: input.conversationHistory.slice(0, -1), // Pass history excluding the latest prompt
-  });
+  try {
+    const { stream } = await ai.generateStream({
+      prompt: prompt,
+      history: input.conversationHistory.slice(0, -1), // Pass history excluding the latest prompt
+    });
 
-  // Yield each chunk of text as it comes in from the stream
-  for await (const chunk of stream) {
-    yield chunk.text;
+    // Yield each chunk of text as it comes in from the stream
+    for await (const chunk of stream) {
+      if (chunk.text) {
+        yield chunk.text;
+      }
+    }
+  } catch (error) {
+    console.error('Live Debrief Error:', error);
+    yield 'I apologize, but I encountered an issue. Please try again.';
   }
 }
