@@ -409,8 +409,14 @@ export function ScenarioClient({
                                     {message.role === 'model' && <div className="p-2 bg-primary/10 rounded-full"><Bot className="w-5 h-5 text-primary" /></div>}
                                     <div className={cn("max-w-xs md:max-w-md lg:max-w-lg", message.role === 'user' ? '' : '')}>
                                         <div className={cn("p-3 rounded-lg flex items-center gap-2", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground')}>
-                                            {message.content ? <p className="whitespace-pre-wrap text-foreground">{message.content}</p> : <Loader2 className="w-5 h-5 animate-spin text-foreground" />}
-                                        </div>
+                            {message.content ? (
+                                <p className={cn("whitespace-pre-wrap", message.role === 'user' ? 'text-primary-foreground' : 'text-foreground')}>
+                                    {message.content}
+                                </p>
+                            ) : (
+                                <Loader2 className="w-5 h-5 animate-spin text-foreground" />
+                            )}
+                        </div>
                                         {message.analysis && (
                                             <div className="mt-2 flex flex-wrap gap-1">
                                                 <Badge variant="outline" className="text-xs text-foreground border-foreground/20">
