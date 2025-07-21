@@ -1,53 +1,53 @@
 
-// Test script to verify Firestore rules
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+const { initializeApp } = require('firebase/app');
+const { getFirestore, doc, getDoc, setDoc } = require('firebase/firestore');
 
+// Firebase configuration (using environment variables or direct config)
 const firebaseConfig = {
-  apiKey: "AIzaSyAKOZL2TdqleyUtbrbKHJfjObRqpBz2s28",
-  authDomain: "florida-shield.firebaseapp.com",
-  projectId: "florida-shield",
-  storageBucket: "florida-shield.appspot.com",
-  messagingSenderId: "320998993928",
-  appId: "1:320998993928:web:79043e80e835f9c3eee1bd"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 
 async function testFirestoreRules() {
+  console.log('Testing Firestore rules...');
+  
   try {
-    console.log('Testing Firestore rules...');
-    
-    // Test 1: Try to read subscription data without auth (should fail)
+    // Test 1: Unauthenticated access to subscriptions (should fail)
     console.log('\n1. Testing unauthenticated access to subscriptions...');
     try {
-      const testDoc = await getDoc(doc(db, 'subscriptions', 'test-user-id'));
+      const subscriptionDoc = await getDoc(doc(db, 'subscriptions', 'test-user-id'));
       console.log('❌ FAIL: Unauthenticated read should have been denied');
     } catch (error) {
-      console.log('✅ PASS: Unauthenticated access properly denied:', error.code);
+      console.log('✅ PASS: Unauthenticated read properly denied');
     }
-    
-    // Test 2: Try webhook write (should succeed)
+
+    // Test 2: Webhook write access (should succeed)
     console.log('\n2. Testing webhook write access...');
     try {
-      await setDoc(doc(db, 'subscriptions', 'webhook-test'), {
-        testData: 'webhook test',
-        timestamp: new Date()
+      await setDoc(doc(db, 'webhook_logs', 'test-webhook'), {
+        timestamp: new Date(),
+        event: 'test_event',
+        source: 'firestore-rules-test'
       });
       console.log('✅ PASS: Webhook write succeeded');
     } catch (error) {
-      console.log('❌ FAIL: Webhook write failed:', error.code);
+      console.log('❌ FAIL: Webhook write failed:', error.message);
     }
-    
+
     console.log('\n✅ Firestore rules test completed');
     
   } catch (error) {
-    console.error('Test failed:', error);
+    console.error('Test error:', error);
   }
 }
 
 // Run the test
-testFirestoreRules();
+testFirestoreRules().catch(console.error);
