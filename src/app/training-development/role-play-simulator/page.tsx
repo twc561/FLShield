@@ -147,13 +147,13 @@ export default function RolePlaySimulatorPage() {
             {/* Hero Features Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {features.map((feature, index) => (
-                    <Card key={index} className="relative overflow-hidden border-0 bg-gradient-to-br from-slate-50 to-slate-100 hover:shadow-lg transition-all duration-300 hover:scale-105">
+                    <Card key={index} className="relative overflow-hidden border-0 bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-lg transition-all duration-300 hover:scale-105">
                         <CardContent className="p-6 text-center">
                             <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                                 <feature.icon className="h-6 w-6 text-white" />
                             </div>
-                            <h3 className="font-semibold mb-2 text-slate-900">{feature.title}</h3>
-                            <p className="text-sm text-slate-600 leading-relaxed">{feature.description}</p>
+                            <h3 className="font-semibold mb-2 text-blue-900">{feature.title}</h3>
+                            <p className="text-sm text-blue-700 leading-relaxed">{feature.description}</p>
                         </CardContent>
                     </Card>
                 ))}
@@ -219,8 +219,8 @@ export default function RolePlaySimulatorPage() {
             {/* Scenarios Section */}
             <div>
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-slate-900 mb-4">Training Scenarios</h2>
-                    <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                    <h2 className="text-3xl font-bold text-blue-900 mb-4">Training Scenarios</h2>
+                    <p className="text-lg text-blue-700 max-w-2xl mx-auto">
                         Choose from carefully crafted scenarios designed to challenge and improve your communication skills
                     </p>
                 </div>
@@ -229,7 +229,7 @@ export default function RolePlaySimulatorPage() {
                     {personas.map(persona => {
                         const IconComponent = persona.icon;
                         return (
-                            <Card key={persona.id} className="group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
+                            <Card key={persona.id} className="group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden">
                                 <div className={`h-2 bg-gradient-to-r ${persona.color.replace('/10', '')}`} />
                                 <CardHeader className="pb-4">
                                     <div className="flex items-start justify-between mb-3">
@@ -238,10 +238,10 @@ export default function RolePlaySimulatorPage() {
                                                 <IconComponent className={`h-6 w-6 ${persona.iconColor}`} />
                                             </div>
                                             <div>
-                                                <CardTitle className="text-xl text-slate-900 group-hover:text-blue-600 transition-colors">
+                                                <CardTitle className="text-xl text-blue-900 group-hover:text-blue-700 transition-colors">
                                                     {persona.title}
                                                 </CardTitle>
-                                                <CardDescription className="mt-1 text-slate-600">
+                                                <CardDescription className="mt-1 text-blue-700">
                                                     {persona.description}
                                                 </CardDescription>
                                             </div>
@@ -253,24 +253,24 @@ export default function RolePlaySimulatorPage() {
                                 </CardHeader>
 
                                 <CardContent className="space-y-4">
-                                    <div className="p-4 bg-slate-50 rounded-lg border-l-4 border-l-blue-500">
-                                        <p className="text-sm font-medium text-slate-700 mb-1">Scenario Context:</p>
-                                        <p className="text-sm text-slate-600">{persona.scenario}</p>
+                                    <div className="p-4 bg-blue-100 rounded-lg border-l-4 border-l-blue-500">
+                                        <p className="text-sm font-medium text-blue-800 mb-1">Scenario Context:</p>
+                                        <p className="text-sm text-blue-700">{persona.scenario}</p>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4 text-sm">
-                                        <div className="flex items-center gap-2 text-slate-600">
+                                        <div className="flex items-center gap-2 text-blue-700">
                                             <Clock className="h-4 w-4" />
                                             <span>{persona.duration}</span>
                                         </div>
-                                        <div className="flex items-center gap-2 text-slate-600">
+                                        <div className="flex items-center gap-2 text-blue-700">
                                             <Users className="h-4 w-4" />
                                             <span>1-on-1 Interaction</span>
                                         </div>
                                     </div>
 
                                     <div>
-                                        <p className="text-sm font-medium mb-2 text-slate-700">Key Skills Practiced:</p>
+                                        <p className="text-sm font-medium mb-2 text-blue-800">Key Skills Practiced:</p>
                                         <div className="flex flex-wrap gap-1">
                                             {persona.skills.map((skill, index) => (
                                                 <Badge key={index} variant="secondary" className="text-xs bg-blue-100 text-blue-800 hover:bg-blue-200">
@@ -281,12 +281,12 @@ export default function RolePlaySimulatorPage() {
                                     </div>
 
                                     <div>
-                                        <p className="text-sm font-medium mb-2 text-slate-700">Learning Objectives:</p>
+                                        <p className="text-sm font-medium mb-2 text-blue-800">Learning Objectives:</p>
                                         <div className="space-y-1">
                                             {persona.learningObjectives.map((objective, index) => (
                                                 <div key={index} className="flex items-start gap-2">
                                                     <CheckCircle2 className="h-3 w-3 text-green-600 mt-0.5 flex-shrink-0" />
-                                                    <span className="text-xs text-slate-600">{objective}</span>
+                                                    <span className="text-xs text-blue-700">{objective}</span>
                                                 </div>
                                             ))}
                                         </div>
