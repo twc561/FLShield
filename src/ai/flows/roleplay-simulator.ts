@@ -239,6 +239,13 @@ export async function* streamRolePlay(input: RolePlayInput) {
   const { systemPrompt, conversationHistory, scenarioType, currentStressLevel = 5, officerApproach } = input;
 
   try {
+    // Debug logging
+    console.log('RolePlay Input:', {
+      systemPromptLength: systemPrompt?.length || 0,
+      historyLength: conversationHistory?.length || 0,
+      scenarioType,
+      currentStressLevel
+    });
     // Analyze the conversation history to adapt behavior
     const conversationLength = conversationHistory.length;
     const lastOfficerMessage = conversationHistory[conversationHistory.length - 1]?.parts[0]?.text || '';
@@ -294,6 +301,11 @@ Remember: You are playing a character, not providing training feedback. Stay in 
       throw new Error('User message is empty or invalid');
     }
 
+    console.log('Making AI call with:', {
+      prompt: lastOfficerMessage.substring(0, 100) + '...',
+      historyCount: conversationHistory.length
+    });
+
     const { stream } = await ai.generateStream({
       system: enhancedPrompt,
       history: conversationHistory,
@@ -304,10 +316,30 @@ Remember: You are playing a character, not providing training feedback. Stay in 
       }
     });
 
-    // Yield each chunk of text as it comes in from the stream
-    for await (const chunk of stream) {
-      if (chunk.text) {
-        yield chunk.text;
+    // Handle the stream response properly
+    try {
+      for await (const chunk of stream) {
+        if (chunk.text) {
+          yield chunk.text;
+        }
+      }
+    } catch (streamError) {
+      console.error('Stream processing error:', streamError);
+      // If streaming fails, try to get the full response
+      const response = await ai.generate({
+        system: enhancedPrompt,
+        history: conversationHistory,
+        prompt: lastOfficerMessage,
+        config: {
+          temperature: 0.8,
+          maxOutputTokens: 200,
+        }
+      });
+      
+      if (response.text) {
+        yield response.text;
+      } else {
+        throw new Error('No response generated from AI model');
       }
     }
   } catch (error) {

@@ -201,13 +201,19 @@ export function ScenarioClient({
             // Provide more helpful error messages
             if (error instanceof Error) {
                 console.error("Error details:", error.message);
+                console.error("Error stack:", error.stack);
                 
-                if (error.message.includes('network') || error.message.includes('fetch')) {
+                if (error.message.includes('stream is not async iterable')) {
+                    errorMessage = "[Streaming Error: Retrying with standard response...]";
+                    // Try to continue without streaming
+                } else if (error.message.includes('network') || error.message.includes('fetch')) {
                     errorMessage = "[Network Error: Please check your connection and try again.]";
                 } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
                     errorMessage = "[Service Busy: Please wait a moment and try again.]";
                 } else if (error.message.includes('timeout')) {
                     errorMessage = "[Timeout Error: The response took too long. Please try again.]";
+                } else if (error.message.includes('Firebase')) {
+                    errorMessage = "[Authentication Error: Please refresh the page and try again.]";
                 }
             }
             
