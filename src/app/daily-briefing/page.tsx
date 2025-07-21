@@ -80,87 +80,87 @@ export default function DailyBriefingPage() {
               </TabsTrigger>
             ))}
           </TabsList>
-        </Tabs>
-      </div>
 
-      {/* Modules Grid */}
-      <div className="space-y-6">
-        {categories.map((category) => (
-          <TabsContent key={category.id} value={selectedCategory} className="m-0">
-            {(selectedCategory === 'all' || selectedCategory === category.id) && 
-             filteredModules.filter(module => selectedCategory === 'all' || module.category === category.id).length > 0 && (
-              <div className="space-y-4">
-                {selectedCategory === 'all' && (
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="text-2xl">{category.icon}</span>
-                    <h2 className="text-xl font-semibold text-card-foreground">{category.name}</h2>
-                    <Badge variant="secondary" className="ml-auto">
-                      {filteredModules.filter(m => m.category === category.id).length} modules
-                    </Badge>
+          {/* Modules Grid */}
+          <div className="space-y-6">
+            {categories.map((category) => (
+              <TabsContent key={category.id} value={selectedCategory} className="m-0">
+                {(selectedCategory === 'all' || selectedCategory === category.id) && 
+                 filteredModules.filter(module => selectedCategory === 'all' || module.category === category.id).length > 0 && (
+                  <div className="space-y-4">
+                    {selectedCategory === 'all' && (
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="text-2xl">{category.icon}</span>
+                        <h2 className="text-xl font-semibold text-card-foreground">{category.name}</h2>
+                        <Badge variant="secondary" className="ml-auto">
+                          {filteredModules.filter(m => m.category === category.id).length} modules
+                        </Badge>
+                      </div>
+                    )}
+
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                      {filteredModules
+                        .filter(module => selectedCategory === 'all' || module.category === category.id)
+                        .map((module) => {
+                          const completionStatus = getCompletionStatus(module.id);
+
+                          return (
+                            <Card key={module.id} className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20">
+                              <CardHeader className="pb-4">
+                                <div className="flex items-start justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-lg">{module.categoryIcon}</span>
+                                    <Badge 
+                                      variant="outline" 
+                                      className={categoryColors[module.category]}
+                                    >
+                                      {categories.find(c => c.id === module.category)?.name}
+                                    </Badge>
+                                  </div>
+                                  {completionStatus === 'completed' ? (
+                                    <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                                  ) : (
+                                    <Clock className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                                  )}
+                                </div>
+                                <CardTitle className="text-lg leading-tight">{module.title}</CardTitle>
+                              </CardHeader>
+                              <CardContent className="space-y-4">
+                                <p className="text-sm text-muted-foreground leading-relaxed">{module.hook}</p>
+
+                                <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
+                                  <div className="flex items-center gap-1">
+                                    <Calendar className="h-3 w-3" />
+                                    {new Date(module.dateCreated).toLocaleDateString()}
+                                  </div>
+                                  <Badge variant="secondary" className="text-xs">
+                                    {module.difficulty}
+                                  </Badge>
+                                </div>
+
+                                <Button variant="outline" size="sm" className="w-full mt-4">
+                                  <BookOpen className="h-4 w-4 mr-2" />
+                                  {completionStatus === 'completed' ? 'Review Module' : 'Start Module'}
+                                </Button>
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
+                    </div>
                   </div>
                 )}
+              </TabsContent>
+            ))}
 
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {filteredModules
-                    .filter(module => selectedCategory === 'all' || module.category === category.id)
-                    .map((module) => {
-                      const completionStatus = getCompletionStatus(module.id);
-
-                      return (
-                        <Card key={module.id} className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20">
-                          <CardHeader className="pb-4">
-                            <div className="flex items-start justify-between mb-2">
-                              <div className="flex items-center gap-2">
-                                <span className="text-lg">{module.categoryIcon}</span>
-                                <Badge 
-                                  variant="outline" 
-                                  className={categoryColors[module.category]}
-                                >
-                                  {categories.find(c => c.id === module.category)?.name}
-                                </Badge>
-                              </div>
-                              {completionStatus === 'completed' ? (
-                                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                              ) : (
-                                <Clock className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                              )}
-                            </div>
-                            <CardTitle className="text-lg leading-tight">{module.title}</CardTitle>
-                          </CardHeader>
-                          <CardContent className="space-y-4">
-                            <p className="text-sm text-muted-foreground leading-relaxed">{module.hook}</p>
-
-                            <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
-                              <div className="flex items-center gap-1">
-                                <Calendar className="h-3 w-3" />
-                                {new Date(module.dateCreated).toLocaleDateString()}
-                              </div>
-                              <Badge variant="secondary" className="text-xs">
-                                {module.difficulty}
-                              </Badge>
-                            </div>
-
-                            <Button variant="outline" size="sm" className="w-full mt-4">
-                              <BookOpen className="h-4 w-4 mr-2" />
-                              {completionStatus === 'completed' ? 'Review Module' : 'Start Module'}
-                            </Button>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                </div>
+            {filteredModules.length === 0 && (
+              <div className="text-center py-12">
+                <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-muted-foreground mb-2">No modules found</h3>
+                <p className="text-sm text-muted-foreground">Try adjusting your search terms or selected category.</p>
               </div>
             )}
-          </TabsContent>
-        ))}
-
-        {filteredModules.length === 0 && (
-          <div className="text-center py-12">
-            <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-muted-foreground mb-2">No modules found</h3>
-            <p className="text-sm text-muted-foreground">Try adjusting your search terms or selected category.</p>
           </div>
-        )}
+        </Tabs>
       </div>
     </div>
   );

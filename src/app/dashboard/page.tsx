@@ -2,23 +2,24 @@
 
 import React, { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { onAuthStateChanged, type User } from "firebase/auth"
-import { auth } from "@/lib/firebase"
-
 import { PageHeader } from "@/components/PageHeader"
-import AICommandSearch from "@/components/AICommandSearch"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { DailyBriefingSheet } from "@/components/DailyBriefingSheet"
-import Link from 'next/link'
-import * as LucideIcons from "lucide-react"
-
-import { dashboardFeatureGroups } from "@/data/dashboard-features"
-import type { FeatureModule } from "@/data/dashboard-features"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { BrainCircuit, Users, AlertTriangle, BookOpen, Shield, Zap, Clock, TrendingUp, MapPin, MessageSquare, FileText, Briefcase, Target, Eye, GraduationCap, Heart, Search, Headphones, Crown } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { DailyRollCall } from "@/components/DailyRollCall"
 import { BriefingStats } from "@/components/BriefingStats"
 import { Badge } from "@/components/ui/badge"
 import { useSubscription } from "@/hooks/use-subscription"
+import { onAuthStateChanged, type User } from "firebase/auth"
+import { auth } from "@/lib/firebase"
+
+import AICommandSearch from "@/components/AICommandSearch"
+import Link from 'next/link'
+import * as LucideIcons from "lucide-react"
+
+import { dashboardFeatureGroups } from "@/data/dashboard-features"
+import type { FeatureModule } from "@/data/dashboard-features"
 
 
 const containerVariants = {
@@ -170,7 +171,7 @@ export default function DashboardPage() {
             {`${greeting}, ${userName || "Officer"}.`}
             {mounted && isPro && (
               <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 shadow-lg">
-                <LucideIcons.Crown className="w-3 h-3 mr-1" />
+                <Crown className="w-3 h-3 mr-1" />
                 Pro
               </Badge>
             )}
