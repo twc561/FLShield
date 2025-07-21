@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview Enhanced conversational AI agent for realistic role-playing scenarios.
@@ -197,23 +196,23 @@ const scenarioCharacters = {
 function buildConversationContext(history: any[], maxTokens: number = 300): string {
   let context = '';
   let tokenCount = 0;
-  
+
   // Only use last 3 exchanges maximum
   const recentHistory = history.slice(-6);
-  
+
   for (let i = recentHistory.length - 1; i >= 0; i--) {
     const entry = recentHistory[i];
     const entryText = `${entry.role === 'user' ? 'Officer' : 'You'}: "${entry.parts[0].text.substring(0, 100)}"`;
-    
+
     // Rough token estimation (3 chars = 1 token for safety)
     const entryTokens = entryText.length / 3;
-    
+
     if (tokenCount + entryTokens > maxTokens) break;
-    
+
     context = entryText + '\n' + context;
     tokenCount += entryTokens;
   }
-  
+
   return context.trim();
 }
 
@@ -229,9 +228,9 @@ function buildGeminiPrompt(
   const lastContext = conversationHistory.length > 0 
     ? `Previous: Officer said "${conversationHistory[conversationHistory.length - 1]?.parts[0]?.text?.substring(0, 50) || ''}"`
     : '';
-  
+
   const stressCategory = stressLevel <= 3 ? 'calm' : stressLevel <= 6 ? 'stressed' : 'very stressed';
-  
+
   return `You are ${character.name}: ${character.basePersonality}. You are ${stressCategory}.
 
 ${lastContext}
@@ -244,19 +243,19 @@ Respond as this character in 1-2 sentences:`;
 // Analyze officer's approach for character response
 function determineApproachType(message: string): 'professional' | 'aggressive' | 'empathetic' {
   const lower = message.toLowerCase();
-  
+
   // Empathetic indicators
   if (lower.includes('understand') || lower.includes('help') || lower.includes('listen') || 
       lower.includes('sorry') || lower.includes('concerned') || lower.includes('care')) {
     return 'empathetic';
   }
-  
+
   // Aggressive indicators
   if (lower.includes('!') || lower.includes('need to') || lower.includes('must') ||
       lower.includes('calm down') || lower.includes('stop') || lower.length < 15) {
     return 'aggressive';
   }
-  
+
   // Default to professional
   return 'professional';
 }
@@ -305,7 +304,7 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
 
     console.log('Making Gemini AI call...');
 
-    // Use Gemini with better token limits for conversational responses
+    // Use Gemini with increased token limits for detailed roleplay responses
     const aiResponse = await ai.generate({
       prompt: geminiPrompt,
       config: {
@@ -325,12 +324,12 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
       if (typeof aiResponse.text === 'function') {
         responseText = aiResponse.text()?.trim() || '';
       }
-      
+
       // If no response from text(), try raw candidates
       if (!responseText && aiResponse.raw?.candidates?.[0]?.content?.parts?.[0]?.text) {
         responseText = aiResponse.raw.candidates[0].content.parts[0].text.trim();
       }
-      
+
       console.log('Extracted response length:', responseText.length);
       console.log('Response preview:', responseText.substring(0, 100));
     } catch (textError) {
@@ -341,18 +340,18 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
     // If we got a response, clean and return it
     if (responseText && responseText.length > 0) {
       let cleanResponse = responseText;
-      
+
       // Remove any unwanted prefixes
       cleanResponse = cleanResponse.replace(/^(You:|Character:|Response:|[A-Za-z\s]+:)\s*/i, '');
-      
+
       // Remove markdown formatting
       cleanResponse = cleanResponse.replace(/\*\*(.*?)\*\*/g, '$1');
-      
+
       // Ensure proper dialogue formatting
       if (!cleanResponse.startsWith('"') && !cleanResponse.startsWith('*') && !cleanResponse.includes(':')) {
         cleanResponse = `"${cleanResponse}"`;
       }
-      
+
       return cleanResponse;
     }
 
@@ -361,7 +360,7 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
 
   } catch (error) {
     console.error('Gemini RolePlay Error:', error);
-    
+
     // Get character for error fallback
     const character = scenarioCharacters[scenarioType as keyof typeof scenarioCharacters] || {
       name: 'Individual',
@@ -376,7 +375,7 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
 function generateSmartFallback(character: any, stressLevel: number, currentAction: string, scenarioType: string): string {
   const stressCategory = stressLevel <= 3 ? 'low' : stressLevel <= 6 ? 'medium' : 'high';
   const approachType = determineApproachType(currentAction);
-  
+
   // Quick character responses for common scenarios
   const quickResponses = {
     'Cooperative Witness': {
