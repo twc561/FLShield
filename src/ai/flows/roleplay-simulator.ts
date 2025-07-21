@@ -1,7 +1,8 @@
+
 'use server';
 /**
  * @fileOverview Enhanced conversational AI agent for realistic role-playing scenarios.
- * This flow includes dynamic behavior, emotional states, and adaptive responses.
+ * This flow uses a reliable non-streaming approach with simulated streaming for consistent performance.
  */
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
@@ -234,7 +235,22 @@ CHARACTER BEHAVIOR:
 `,
 };
 
-// This is an async generator function with enhanced realism
+// Simulate streaming by breaking response into chunks
+function* simulateStreaming(text: string) {
+  const words = text.split(' ');
+  const chunkSize = Math.max(1, Math.floor(words.length / 8)); // Break into ~8 chunks
+  
+  for (let i = 0; i < words.length; i += chunkSize) {
+    const chunk = words.slice(i, i + chunkSize).join(' ');
+    if (i + chunkSize < words.length) {
+      yield chunk + ' ';
+    } else {
+      yield chunk;
+    }
+  }
+}
+
+// Main roleplay function with reliable generation
 export async function* streamRolePlay(input: RolePlayInput) {
   const { systemPrompt, conversationHistory, scenarioType, currentStressLevel = 5, officerApproach } = input;
 
@@ -246,6 +262,7 @@ export async function* streamRolePlay(input: RolePlayInput) {
       scenarioType,
       currentStressLevel
     });
+
     // Analyze the conversation history to adapt behavior
     const conversationLength = conversationHistory.length;
     const lastOfficerMessage = conversationHistory[conversationHistory.length - 1]?.parts[0]?.text || '';
@@ -306,69 +323,30 @@ Remember: You are playing a character, not providing training feedback. Stay in 
       historyCount: conversationHistory.length
     });
 
-    const { stream } = await ai.generateStream({
+    // Use standard generation instead of streaming for reliability
+    const response = await ai.generate({
       system: enhancedPrompt,
       history: conversationHistory,
       prompt: lastOfficerMessage,
       config: {
-        temperature: 0.8, // Higher temperature for more varied responses
-        maxOutputTokens: 200, // Limit to keep responses conversational
+        temperature: 0.8,
+        maxOutputTokens: 200,
       }
     });
 
-    // Handle the stream response with better error handling
-    let streamProcessed = false;
-    let accumulatedText = '';
-    
-    try {
-      // Check if stream is actually async iterable
-      if (stream && typeof stream[Symbol.asyncIterator] === 'function') {
-        for await (const chunk of stream) {
-          if (chunk && chunk.text) {
-            accumulatedText += chunk.text;
-            yield chunk.text;
-            streamProcessed = true;
-          }
-        }
-      } else {
-        console.log('Stream is not async iterable, using fallback');
-        throw new Error('Stream is not async iterable');
-      }
-      
-      // If no text was yielded from stream, try fallback
-      if (!streamProcessed || accumulatedText.length === 0) {
-        console.log('No text from stream, using fallback');
-        throw new Error('No text from stream');
-      }
-      
-    } catch (streamError) {
-      console.error('Stream processing error:', streamError);
-      console.log('Attempting fallback to standard generation...');
-      
-      try {
-        // If streaming fails, try to get the full response
-        const response = await ai.generate({
-          system: enhancedPrompt,
-          history: conversationHistory,
-          prompt: lastOfficerMessage,
-          config: {
-            temperature: 0.8,
-            maxOutputTokens: 200,
-          }
-        });
-        
-        if (response && response.text && response.text.trim().length > 0) {
-          console.log('Fallback successful, yielding response');
-          yield response.text;
-        } else {
-          console.error('Fallback also failed - no response text');
-          throw new Error('No response generated from AI model in fallback');
-        }
-      } catch (fallbackError) {
-        console.error('Fallback generation also failed:', fallbackError);
-        throw new Error('Both streaming and fallback generation failed');
-      }
+    if (!response?.text || response.text.trim().length === 0) {
+      throw new Error('No response generated from AI model');
     }
+
+    console.log('AI response received, simulating streaming...');
+
+    // Simulate streaming for better UX
+    for (const chunk of simulateStreaming(response.text)) {
+      yield chunk;
+      // Add small delay to simulate real streaming
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+
   } catch (error) {
     console.error('AI Role-Play Error:', error);
     

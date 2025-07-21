@@ -186,38 +186,39 @@ export function ScenarioClient({
                 currentStressLevel: newStressLevel,
             });
 
+            let hasReceivedContent = false;
             for await (const chunk of stream) {
+                hasReceivedContent = true;
                 setMessages(prev =>
                     prev.map(msg =>
                         msg.id === modelMessageId ? { ...msg, content: msg.content + chunk } : msg
                     )
                 );
             }
+
+            // If no content was received, show a generic error
+            if (!hasReceivedContent) {
+                throw new Error('No response received from AI');
+            }
         } catch (error) {
             console.error("AI Role-Play Error:", error);
             
-            let errorMessage = "[Error: The AI model could not respond. Please try again.]";
+            let errorMessage = "I'm having trouble responding right now. Could you try rephrasing your message?";
             
-            // Provide more helpful error messages
+            // Provide contextual error messages based on the error
             if (error instanceof Error) {
                 console.error("Error details:", error.message);
-                console.error("Error stack:", error.stack);
                 
-                // If it's a streaming error that should have been handled by fallback
-                if (error.message.includes('stream') || error.message.includes('async iterable')) {
-                    errorMessage = "[Temporary issue with response streaming. Please try your message again.]";
-                } else if (error.message.includes('Both streaming and fallback generation failed')) {
-                    errorMessage = "[AI service temporarily unavailable. Please wait a moment and try again.]";
-                } else if (error.message.includes('network') || error.message.includes('fetch')) {
-                    errorMessage = "[Network Error: Please check your connection and try again.]";
+                if (error.message.includes('network') || error.message.includes('fetch')) {
+                    errorMessage = "Connection issue detected. Please check your internet and try again.";
                 } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
-                    errorMessage = "[Service Busy: Please wait a moment and try again.]";
+                    errorMessage = "Service is temporarily busy. Please wait a moment and try again.";
                 } else if (error.message.includes('timeout')) {
-                    errorMessage = "[Timeout Error: The response took too long. Please try again.]";
+                    errorMessage = "Request timed out. Please try with a shorter message.";
                 } else if (error.message.includes('Firebase') || error.message.includes('auth')) {
-                    errorMessage = "[Authentication Error: Please refresh the page and try again.]";
-                } else {
-                    errorMessage = "[Unexpected error occurred. Please try again or refresh the page.]";
+                    errorMessage = "Authentication error. Please refresh the page and try again.";
+                } else if (error.message.includes('empty') || error.message.includes('invalid')) {
+                    errorMessage = "Please make sure your message isn't empty and try again.";
                 }
             }
             
