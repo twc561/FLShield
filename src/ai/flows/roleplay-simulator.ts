@@ -217,7 +217,7 @@ function buildConversationContext(history: any[], maxTokens: number = 300): stri
   return context.trim();
 }
 
-// Enhanced prompt builder for Gemini with token optimization
+// Simplified prompt builder for better Gemini responses
 function buildGeminiPrompt(
   character: any,
   conversationHistory: any[],
@@ -225,22 +225,20 @@ function buildGeminiPrompt(
   stressLevel: number,
   officerApproach: string
 ): string {
-  // Get only last 2 exchanges to minimize tokens
-  const recentContext = conversationHistory.slice(-4).map(h => 
-    `${h.role === 'user' ? 'Officer' : 'You'}: "${h.parts[0].text}"`
-  ).join('\n');
+  // Get only the last exchange to minimize tokens
+  const lastContext = conversationHistory.length > 0 
+    ? `Previous: Officer said "${conversationHistory[conversationHistory.length - 1]?.parts[0]?.text?.substring(0, 50) || ''}"`
+    : '';
   
-  const stressCategory = stressLevel <= 3 ? 'low' : stressLevel <= 6 ? 'medium' : 'high';
-  const approachType = determineApproachType(currentAction);
+  const stressCategory = stressLevel <= 3 ? 'calm' : stressLevel <= 6 ? 'stressed' : 'very stressed';
   
-  return `You are ${character.name}. ${character.basePersonality}. Stress: ${stressLevel}/10.
+  return `You are ${character.name}: ${character.basePersonality}. You are ${stressCategory}.
 
-Context:
-${recentContext}
+${lastContext}
 
-Officer: "${currentAction}"
+Officer just said: "${currentAction}"
 
-Your response (${character.responsePatterns[approachType]}):`;
+Respond as this character in 1-2 sentences:`;
 }
 
 // Analyze officer's approach for character response
@@ -307,46 +305,51 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
 
     console.log('Making Gemini AI call...');
 
-    // Use Gemini with strict token limits to prevent errors
+    // Use Gemini with better token limits for conversational responses
     const aiResponse = await ai.generate({
       prompt: geminiPrompt,
       config: {
-        temperature: 0.7,  // Balanced creativity
-        maxOutputTokens: 100,  // Very short responses to prevent token errors
-        topP: 0.8,
-        topK: 30
+        temperature: 0.8,  // More creativity for natural conversation
+        maxOutputTokens: 250,  // Increased for proper conversational responses
+        topP: 0.9,
+        topK: 40
       }
     });
 
     console.log('Raw Gemini Response:', aiResponse);
 
-    // Extract response with multiple fallback methods
+    // Improved response extraction for Gemini
     let responseText = '';
     try {
+      // Try the text() function first (most reliable for Gemini)
       if (typeof aiResponse.text === 'function') {
         responseText = aiResponse.text()?.trim() || '';
-      } else if (aiResponse.message?.content?.[0]?.text) {
-        responseText = aiResponse.message.content[0].text.trim();
-      } else if (aiResponse.raw?.candidates?.[0]?.content?.parts?.[0]?.text) {
+      }
+      
+      // If no response from text(), try raw candidates
+      if (!responseText && aiResponse.raw?.candidates?.[0]?.content?.parts?.[0]?.text) {
         responseText = aiResponse.raw.candidates[0].content.parts[0].text.trim();
       }
       
-      console.log('Extracted response:', responseText);
+      console.log('Extracted response length:', responseText.length);
+      console.log('Response preview:', responseText.substring(0, 100));
     } catch (textError) {
       console.error('Error extracting Gemini response:', textError);
       responseText = '';
     }
 
-    // If we got a response, return it
+    // If we got a response, clean and return it
     if (responseText && responseText.length > 0) {
-      // Clean up the response to ensure it's character dialogue
       let cleanResponse = responseText;
       
-      // Remove any "You:" or similar prefixes that might appear
-      cleanResponse = cleanResponse.replace(/^(You:|Character:|[A-Za-z\s]+:)\s*/i, '');
+      // Remove any unwanted prefixes
+      cleanResponse = cleanResponse.replace(/^(You:|Character:|Response:|[A-Za-z\s]+:)\s*/i, '');
       
-      // If response doesn't start with dialogue or action, format it
-      if (!cleanResponse.startsWith('"') && !cleanResponse.startsWith('*')) {
+      // Remove markdown formatting
+      cleanResponse = cleanResponse.replace(/\*\*(.*?)\*\*/g, '$1');
+      
+      // Ensure proper dialogue formatting
+      if (!cleanResponse.startsWith('"') && !cleanResponse.startsWith('*') && !cleanResponse.includes(':')) {
         cleanResponse = `"${cleanResponse}"`;
       }
       
