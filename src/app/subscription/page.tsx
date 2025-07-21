@@ -22,7 +22,7 @@ export default function SubscriptionPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          priceId: 'price_monthly_999', // You'll need to create this in Stripe Dashboard
+          priceId: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID,
         }),
       })
 
