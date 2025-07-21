@@ -46,6 +46,7 @@ export function ScenarioClient({
     initialMessage: string;
     scenarioType?: string;
 }) {
+    const [mounted, setMounted] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [userInput, setUserInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -63,27 +64,48 @@ export function ScenarioClient({
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const messageStartTime = useRef<Date | null>(null);
 
-    // Effect to add the initial AI message when the component mounts
     useEffect(() => {
-        const initialMsg: Message = {
-            id: 'init-1',
-            role: 'model',
-            content: initialMessage,
-            timestamp: new Date(),
-        };
-        setMessages([initialMsg]);
-        setStartTime(new Date());
-    }, [initialMessage]);
+        setMounted(true);
+    }, []);
 
-    const scrollToBottom = () => {
+    useEffect(() => {
+        // Add initial AI message only after mounting
+        if (mounted && initialMessage && messages.length === 0) {
+            const initialMsg: Message = {
+                id: 'init-1',
+                role: 'model',
+                content: initialMessage,
+                timestamp: new Date(),
+            };
+            setMessages([initialMsg]);
+            setStartTime(new Date());
+        }
+    }, [mounted, initialMessage, messages.length]);
+
+    const scrollToBottom = useCallback(() => {
         if (scrollAreaRef.current) {
             scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
         }
-    };
+    }, []);
 
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+        if (mounted) {
+            scrollToBottom();
+        }
+    }, [messages, mounted, scrollToBottom]);
+
+    // Prevent hydration issues
+    if (!mounted) {
+        return (
+            <div className="container mx-auto p-6">
+                <div className="bg-card rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
+                    <div className="text-center py-10">
+                        <div className="animate-pulse">Loading scenario...</div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     // Calculate stress level based on conversation
     const calculateStressLevel = (newMessages: Message[]) => {

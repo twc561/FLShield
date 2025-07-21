@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -29,7 +28,7 @@ export function useSubscription() {
   // Handle auth state changes
   useEffect(() => {
     if (!mounted) return
-    
+
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser)
       if (!currentUser) {
@@ -60,6 +59,12 @@ export function useSubscription() {
       },
       (error) => {
         console.error('Error fetching subscription:', error)
+        // If it's a permission error, user likely doesn't have a subscription
+        if (error instanceof Error && error.message.includes('permission')) {
+          setSubscription(null)
+        } else {
+          setSubscription(null)
+        }
         setLoading(false)
       }
     )
@@ -98,6 +103,6 @@ export function useSubscription() {
     if (!mounted) return false
     return !isFeatureFree(path) && !!user
   }
-  
+
   return { subscription, loading, isPro, mounted, isFeatureFree, requiresSubscription }
 }
