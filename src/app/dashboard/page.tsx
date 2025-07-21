@@ -17,6 +17,8 @@ import type { FeatureModule } from "@/data/dashboard-features"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { DailyRollCall } from "@/components/DailyRollCall"
 import { BriefingStats } from "@/components/BriefingStats"
+import { Badge } from "@/components/ui/badge"
+import { useSubscription } from "@/hooks/use-subscription"
 
 
 const containerVariants = {
@@ -120,6 +122,7 @@ const PinnedTools = () => {
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("")
   const [userName, setUserName] = useState<string | null>(null);
+  const { isPro, mounted } = useSubscription()
 
   useEffect(() => {
     const getGreeting = () => {
@@ -162,7 +165,17 @@ export default function DashboardPage() {
       animate="show"
     >
       <PageHeader 
-        title={`${greeting}, ${userName || "Officer"}.`}
+        title={
+          <div className="flex items-center gap-3">
+            {`${greeting}, ${userName || "Officer"}.`}
+            {mounted && isPro && (
+              <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 shadow-lg">
+                <LucideIcons.Crown className="w-3 h-3 mr-1" />
+                Pro
+              </Badge>
+            )}
+          </div>
+        }
         description="Welcome to your Mission Hub. How can I help?"
       />
 
