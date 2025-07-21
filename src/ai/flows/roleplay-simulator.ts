@@ -2,7 +2,7 @@
 'use server';
 /**
  * @fileOverview Enhanced conversational AI agent for realistic role-playing scenarios.
- * This flow uses a reliable non-streaming approach with simulated streaming for consistent performance.
+ * This flow uses a simple, reliable approach without streaming for consistent performance.
  */
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
@@ -235,23 +235,8 @@ CHARACTER BEHAVIOR:
 `,
 };
 
-// Simulate streaming by breaking response into chunks
-function* simulateStreaming(text: string) {
-  const words = text.split(' ');
-  const chunkSize = Math.max(1, Math.floor(words.length / 8)); // Break into ~8 chunks
-  
-  for (let i = 0; i < words.length; i += chunkSize) {
-    const chunk = words.slice(i, i + chunkSize).join(' ');
-    if (i + chunkSize < words.length) {
-      yield chunk + ' ';
-    } else {
-      yield chunk;
-    }
-  }
-}
-
-// Main roleplay function with reliable generation
-export async function* streamRolePlay(input: RolePlayInput) {
+// Simple function that returns a complete response immediately
+export async function generateRolePlayResponse(input: RolePlayInput): Promise<string> {
   const { systemPrompt, conversationHistory, scenarioType, currentStressLevel = 5, officerApproach } = input;
 
   try {
@@ -323,7 +308,7 @@ Remember: You are playing a character, not providing training feedback. Stay in 
       historyCount: conversationHistory.length
     });
 
-    // Use standard generation instead of streaming for reliability
+    // Use simple generation without any streaming
     const response = await ai.generate({
       system: enhancedPrompt,
       history: conversationHistory,
@@ -338,14 +323,8 @@ Remember: You are playing a character, not providing training feedback. Stay in 
       throw new Error('No response generated from AI model');
     }
 
-    console.log('AI response received, simulating streaming...');
-
-    // Simulate streaming for better UX
-    for (const chunk of simulateStreaming(response.text)) {
-      yield chunk;
-      // Add small delay to simulate real streaming
-      await new Promise(resolve => setTimeout(resolve, 50));
-    }
+    console.log('AI response received successfully');
+    return response.text;
 
   } catch (error) {
     console.error('AI Role-Play Error:', error);
@@ -375,8 +354,14 @@ Remember: You are playing a character, not providing training feedback. Stay in 
     const fallback = fallbackResponses[scenarioType as keyof typeof fallbackResponses] 
       || "I apologize, I'm having difficulty responding right now. Could you please try again?";
     
-    yield fallback;
+    return fallback;
   }
+}
+
+// Legacy function for backward compatibility (now calls the simple function)
+export async function* streamRolePlay(input: RolePlayInput) {
+  const response = await generateRolePlayResponse(input);
+  yield response;
 }
 
 // Helper function to analyze officer's approach

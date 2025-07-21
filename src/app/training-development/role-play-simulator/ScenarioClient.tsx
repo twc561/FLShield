@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react';
@@ -90,7 +89,7 @@ export function ScenarioClient({
     const calculateStressLevel = (newMessages: Message[]) => {
         let stress = 5; // baseline
         const recentMessages = newMessages.slice(-4); // last 2 exchanges
-        
+
         recentMessages.forEach(msg => {
             if (msg.role === 'user') {
                 const analysis = analyzeOfficerApproach(msg.content);
@@ -100,22 +99,22 @@ export function ScenarioClient({
                 if (analysis.techniques.includes('empathy')) stress -= 1;
             }
         });
-        
+
         return Math.max(1, Math.min(10, Math.round(stress)));
     };
 
     // Update performance metrics
     const updatePerformanceMetrics = (message: string, responseTime: number) => {
         const analysis = analyzeOfficerApproach(message);
-        
+
         setPerformanceMetrics(prev => {
             const newMetrics = { ...prev };
-            
+
             // Update technique variety
             analysis.techniques.forEach(technique => 
                 newMetrics.techniqueVariety.add(technique)
             );
-            
+
             // Update scores based on techniques used
             if (analysis.tone === 'empathetic') {
                 newMetrics.empathyScore = Math.min(100, newMetrics.empathyScore + 5);
@@ -126,10 +125,10 @@ export function ScenarioClient({
             if (analysis.techniques.length > 1) {
                 newMetrics.effectivenessScore = Math.min(100, newMetrics.effectivenessScore + 3);
             }
-            
+
             // Track response times
             newMetrics.responseTime.push(responseTime);
-            
+
             return newMetrics;
         });
     };
@@ -142,7 +141,7 @@ export function ScenarioClient({
             : 0;
 
         const analysis = analyzeOfficerApproach(userInput);
-        
+
         const userMessage: Message = { 
             id: `user-${Date.now()}`, 
             role: 'user', 
@@ -150,7 +149,7 @@ export function ScenarioClient({
             timestamp: new Date(),
             analysis,
         };
-        
+
         const modelMessageId = `model-${Date.now()}`;
         const modelMessagePlaceholder: Message = { 
             id: modelMessageId, 
@@ -161,14 +160,14 @@ export function ScenarioClient({
 
         const newMessages: Message[] = [...messages, userMessage, modelMessagePlaceholder];
         setMessages(newMessages);
-        
+
         // Update stress level based on interaction
         const newStressLevel = calculateStressLevel(newMessages);
         setCurrentStressLevel(newStressLevel);
-        
+
         // Update performance metrics
         updatePerformanceMetrics(userInput, responseTime);
-        
+
         setUserInput('');
         setIsLoading(true);
         messageStartTime.current = new Date(); // Start timing for next response
@@ -178,37 +177,37 @@ export function ScenarioClient({
                 role: msg.role as 'user' | 'model',
                 parts: [{ text: msg.content }],
             }));
+
+            try {
+            setIsLoading(true);
             
-            const stream = streamRolePlay({ 
-                systemPrompt: systemPrompt, 
+
+            // Call the simple roleplay function
+            const { generateRolePlayResponse } = await import('@/ai/flows/roleplay-simulator');
+            const response = await generateRolePlayResponse({
+                systemPrompt: systemPrompt,
                 conversationHistory: historyForAI,
-                scenarioType,
+                scenarioType: scenarioType,
                 currentStressLevel: newStressLevel,
+                officerApproach: userInput
             });
 
-            let hasReceivedContent = false;
-            for await (const chunk of stream) {
-                hasReceivedContent = true;
-                setMessages(prev =>
-                    prev.map(msg =>
-                        msg.id === modelMessageId ? { ...msg, content: msg.content + chunk } : msg
-                    )
-                );
-            }
+              setMessages(prev =>
+                prev.map(msg =>
+                    msg.id === modelMessageId ? { ...msg, content: response } : msg
+                )
+            );
 
-            // If no content was received, show a generic error
-            if (!hasReceivedContent) {
-                throw new Error('No response received from AI');
-            }
-        } catch (error) {
+            
+        } catch (error: any) {
             console.error("AI Role-Play Error:", error);
-            
+
             let errorMessage = "I'm having trouble responding right now. Could you try rephrasing your message?";
-            
+
             // Provide contextual error messages based on the error
             if (error instanceof Error) {
                 console.error("Error details:", error.message);
-                
+
                 if (error.message.includes('network') || error.message.includes('fetch')) {
                     errorMessage = "Connection issue detected. Please check your internet and try again.";
                 } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
@@ -221,7 +220,41 @@ export function ScenarioClient({
                     errorMessage = "Please make sure your message isn't empty and try again.";
                 }
             }
-            
+
+             setMessages(prev =>
+                prev.map(msg =>
+                    msg.id === modelMessageId ? { 
+                        ...msg, 
+                        content: errorMessage
+                    } : msg
+                )
+            );
+        } finally {
+            setIsLoading(false);
+        }
+        
+        } catch (error) {
+            console.error("AI Role-Play Error:", error);
+
+            let errorMessage = "I'm having trouble responding right now. Could you try rephrasing your message?";
+
+            // Provide contextual error messages based on the error
+            if (error instanceof Error) {
+                console.error("Error details:", error.message);
+
+                if (error.message.includes('network') || error.message.includes('fetch')) {
+                    errorMessage = "Connection issue detected. Please check your internet and try again.";
+                } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
+                    errorMessage = "Service is temporarily busy. Please wait a moment and try again.";
+                } else if (error.message.includes('timeout')) {
+                    errorMessage = "Request timed out. Please try with a shorter message.";
+                } else if (error.message.includes('Firebase') || error.message.includes('auth')) {
+                    errorMessage = "Authentication error. Please refresh the page and try again.";
+                } else if (error.message.includes('empty') || error.message.includes('invalid')) {
+                    errorMessage = "Please make sure your message isn't empty and try again.";
+                }
+            }
+
             setMessages(prev =>
                 prev.map(msg =>
                     msg.id === modelMessageId ? { 
