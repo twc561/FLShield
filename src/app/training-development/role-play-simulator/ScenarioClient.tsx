@@ -64,6 +64,12 @@ export function ScenarioClient({
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const messageStartTime = useRef<Date | null>(null);
 
+    const scrollToBottom = useCallback(() => {
+        if (scrollAreaRef.current) {
+            scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
+        }
+    }, []);
+
     useEffect(() => {
         setMounted(true);
     }, []);
@@ -82,33 +88,14 @@ export function ScenarioClient({
         }
     }, [mounted, initialMessage, messages.length]);
 
-    const scrollToBottom = useCallback(() => {
-        if (scrollAreaRef.current) {
-            scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
-        }
-    }, []);
-
     useEffect(() => {
         if (mounted) {
             scrollToBottom();
         }
     }, [messages, mounted, scrollToBottom]);
 
-    // Prevent hydration issues
-    if (!mounted) {
-        return (
-            <div className="container mx-auto p-6">
-                <div className="bg-card rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
-                    <div className="text-center py-10">
-                        <div className="animate-pulse">Loading scenario...</div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     // Calculate stress level based on conversation
-    const calculateStressLevel = (newMessages: Message[]) => {
+    const calculateStressLevel = useCallback((newMessages: Message[]) => {
         let stress = 5; // baseline
         const recentMessages = newMessages.slice(-4); // last 2 exchanges
 
@@ -123,10 +110,10 @@ export function ScenarioClient({
         });
 
         return Math.max(1, Math.min(10, Math.round(stress)));
-    };
+    }, []);
 
     // Update performance metrics
-    const updatePerformanceMetrics = (message: string, responseTime: number) => {
+    const updatePerformanceMetrics = useCallback((message: string, responseTime: number) => {
         const analysis = analyzeOfficerApproach(message);
 
         setPerformanceMetrics(prev => {
@@ -153,7 +140,7 @@ export function ScenarioClient({
 
             return newMetrics;
         });
-    };
+    }, []);
 
     const handleSendMessage = useCallback(async () => {
         if (!userInput.trim()) return;
@@ -293,9 +280,9 @@ export function ScenarioClient({
         } finally {
             setIsLoading(false);
         }
-    }, [messages, userInput, systemPrompt, scenarioType]);
+    }, [messages, userInput, systemPrompt, scenarioType, calculateStressLevel, updatePerformanceMetrics]);
 
-    const handleRestart = () => {
+    const handleRestart = useCallback(() => {
         const initialMsg: Message = {
             id: 'init-1',
             role: 'model',
@@ -314,24 +301,37 @@ export function ScenarioClient({
             techniqueVariety: new Set(),
         });
         messageStartTime.current = null;
-    };
+    }, [initialMessage]);
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             handleSendMessage();
         }
-    };
+    }, [handleSendMessage]);
 
-    const getStressColor = (level: number) => {
+    const getStressColor = useCallback((level: number) => {
         if (level <= 3) return 'text-green-600';
         if (level <= 6) return 'text-yellow-600';
         return 'text-red-600';
-    };
+    }, []);
 
     const averageResponseTime = performanceMetrics.responseTime.length > 0
         ? performanceMetrics.responseTime.reduce((a, b) => a + b, 0) / performanceMetrics.responseTime.length / 1000
         : 0;
+
+    // Prevent hydration issues - early return after all hooks
+    if (!mounted) {
+        return (
+            <div className="container mx-auto p-6">
+                <div className="bg-card rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
+                    <div className="text-center py-10">
+                        <div className="animate-pulse">Loading scenario...</div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col h-full">
