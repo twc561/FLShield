@@ -8,7 +8,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-12-18.acacia',
 })
 
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+if (!endpointSecret) {
+  console.error('STRIPE_WEBHOOK_SECRET is not configured');
+  return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
+}
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
