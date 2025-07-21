@@ -135,3 +135,16 @@ Remember: You are playing a character, not providing training feedback. Stay in 
     yield 'Sorry, I encountered an error. Please try again.';
   }
 }
+
+// Helper function to analyze officer's approach
+export async function analyzeOfficerApproach(message: string): Promise<{
+  tone: 'professional' | 'aggressive' | 'empathetic' | 'rushed';
+  techniques: string[];
+}> {
+  // Implement your logic here to analyze the officer's message
+  // and determine their tone and techniques
+  return {
+    tone: 'professional', // Replace with actual analysis
+    techniques: [], // Replace with actual analysis
+  };
+}
