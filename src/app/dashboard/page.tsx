@@ -161,15 +161,10 @@ export default function DashboardPage() {
       initial="hidden"
       animate="show"
     >
-      <div className="flex justify-between items-start gap-4">
-        <PageHeader 
-          title={`${greeting}, ${userName || "Officer"}.`}
-          description="Welcome to your Mission Hub. How can I help?"
-        />
-        <div className="pt-2">
-           <DailyBriefingSheet /> 
-        </div>
-      </div>
+      <PageHeader 
+        title={`${greeting}, ${userName || "Officer"}.`}
+        description="Welcome to your Mission Hub. How can I help?"
+      />
 
       <motion.div variants={itemVariants}>
         <AICommandSearch />
