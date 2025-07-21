@@ -453,6 +453,7 @@ function generateSmartFallback(character: any, stressLevel: number, currentActio
 
   return scenarioQuickResponses[scenarioType] || 
          `"Sorry, could you repeat that? I want to make sure I understand what you're asking."`;
+}
 
 // Error fallback with character awareness
 function generateErrorFallback(character: any, stressLevel: number, scenarioType: string): string {
