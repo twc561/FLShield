@@ -153,13 +153,22 @@ export function ScenarioClient({
         messageStartTime.current = new Date();
 
         try {
+            // Build history for AI with recent context focus
             const historyForAI = newMessages.slice(0, -1).map(msg => ({ 
                 role: msg.role as 'user' | 'model',
                 parts: [{ text: msg.content }],
             }));
 
+            // Import the enhanced roleplay simulator
             const { generateRolePlayResponse } = await import('@/ai/flows/roleplay-simulator');
             
+            console.log('Sending to enhanced Gemini AI:', {
+                scenarioType,
+                stressLevel: newStressLevel,
+                historyLength: historyForAI.length,
+                lastMessage: userInput.substring(0, 50) + '...'
+            });
+
             const response = await generateRolePlayResponse({
                 systemPrompt: systemPrompt,
                 conversationHistory: historyForAI,
@@ -168,34 +177,65 @@ export function ScenarioClient({
                 officerApproach: userInput
             });
 
-            const safeResponse = (typeof response === 'string' && response.trim()) 
-                ? response.trim() 
-                : "I'm having trouble responding right now. Could you try rephrasing your message?";
+            // Enhanced response processing
+            let finalResponse = '';
+            
+            if (typeof response === 'string' && response.trim()) {
+                finalResponse = response.trim();
+                
+                // Add character name prefix if not present
+                if (!finalResponse.includes(':') && !finalResponse.startsWith('*')) {
+                    const scenarioName = scenarioType?.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Character';
+                    finalResponse = `${scenarioName}: "${finalResponse}"`;
+                }
+            } else {
+                // Enhanced fallback based on scenario
+                const fallbacks = {
+                    'mental_health_crisis': "*looking confused and distressed* I'm sorry, I'm having trouble focusing right now. What did you ask?",
+                    'hostile_intoxicated': "*swaying slightly* What? I didn't catch that... what are you trying to say?",
+                    'emotionally_distraught': "*wiping tears* I'm sorry, I'm just so overwhelmed. Could you repeat that?",
+                    'juvenile_contact': "*nervously fidgeting* I'm sorry, I'm really confused right now. Are you going to call my parents?",
+                    'elderly_confused': "*looking puzzled* I'm sorry dear, my mind isn't as sharp as it used to be. What was that?",
+                    'language_barrier': "*struggling with English* Sorry, sorry... no understand good. You speak slow please?",
+                    'agitated_uncooperative': "*frustrated* This whole day has been a disaster. What exactly do you want from me?",
+                    'domestic_dispute': "*defensive* Look, can we just handle this quietly? I don't want the whole neighborhood involved.",
+                    'calm_cooperative': "I'm sorry, I got a bit distracted. Could you repeat your question?",
+                    'nervous_citizen': "*anxiously* I'm sorry, I'm just really nervous. What did you need to know?",
+                    'business_complaint': "*impatiently* Sorry, I'm just frustrated with this whole situation. What were you asking?",
+                    'deceptive_evasive': "*hesitating* Uh... I'm not sure I understand what you're asking exactly."
+                };
+                
+                finalResponse = fallbacks[scenarioType as keyof typeof fallbacks] || 
+                               "I'm here. What did you need to talk to me about?";
+            }
 
             setMessages(prev =>
                 prev.map(msg =>
-                    msg.id === modelMessageId ? { ...msg, content: safeResponse } : msg
+                    msg.id === modelMessageId ? { ...msg, content: finalResponse } : msg
                 )
             );
 
         } catch (error: any) {
-            console.error("AI Role-Play Error:", error);
+            console.error("Enhanced AI Role-Play Error:", error);
 
-            let errorMessage = "I'm having trouble responding right now. Could you try rephrasing your message?";
+            // Character-aware error responses
+            const characterErrorResponses = {
+                'mental_health_crisis': "*becoming more agitated* I can't... I can't think straight right now. Everything's so confusing.",
+                'hostile_intoxicated': "*slurring* What the hell is going on? I can't... this doesn't make sense.",
+                'emotionally_distraught': "*breaking down* I'm sorry, I just can't handle any more right now.",
+                'juvenile_contact': "*panic in voice* Oh no, oh no... am I in big trouble? Is something wrong with the system?",
+                'elderly_confused': "*very confused* I don't understand what's happening. Is everything alright, officer?",
+                'language_barrier': "*frustrated* No comprendo... system no work? Computer broken?",
+                'agitated_uncooperative': "*angry* Great, now even the computer's not working! This day just keeps getting worse!",
+                'domestic_dispute': "*worried* Is there a problem with the system? Are you recording this?",
+                'calm_cooperative': "I'm sorry, there seems to be a technical issue. Should we try again?",
+                'nervous_citizen': "*very anxiously* Oh no, did I break something? I didn't mean to cause any problems!",
+                'business_complaint': "*frustrated* Now even the technology isn't working? This is exactly the kind of thing I'm dealing with!",
+                'deceptive_evasive': "*suspicious* Is this some kind of trick? Why isn't it working?"
+            };
 
-            if (error instanceof Error) {
-                if (error.message.includes('network') || error.message.includes('fetch')) {
-                    errorMessage = "Connection issue detected. Please check your internet and try again.";
-                } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
-                    errorMessage = "Service is temporarily busy. Please wait a moment and try again.";
-                } else if (error.message.includes('timeout')) {
-                    errorMessage = "Request timed out. Please try with a shorter message.";
-                } else if (error.message.includes('Firebase') || error.message.includes('auth')) {
-                    errorMessage = "Authentication error. Please refresh the page and try again.";
-                } else if (error.message.includes('empty') || error.message.includes('invalid')) {
-                    errorMessage = "Please make sure your message isn't empty and try again.";
-                }
-            }
+            const errorMessage = characterErrorResponses[scenarioType as keyof typeof characterErrorResponses] || 
+                                "I apologize, I'm having difficulty responding right now. Could you try asking again?";
 
             setMessages(prev =>
                 prev.map(msg =>
