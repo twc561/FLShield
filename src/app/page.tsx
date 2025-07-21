@@ -33,18 +33,20 @@ export default function LandingPage() {
 
     const MOBILE_BREAKPOINT = 768;
     const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
-    const hintKey = 'mobileMarketingNavHintShown';
+    const hintKey = 'marketingNavHintShown';
 
     const hasSeenHint = localStorage.getItem(hintKey);
 
-    if (isMobile && !hasSeenHint) {
+    if (!hasSeenHint) {
       setTimeout(() => {
         toast({
           title: "Navigation Tip",
-          description: "Tap the menu icon in the top right to explore all features.",
+          description: isMobile 
+            ? "Tap the menu icon in the top right to explore all features."
+            : "Click the navigation links in the header to explore all features, or use the menu for quick access.",
         });
         localStorage.setItem(hintKey, 'true');
-      }, 1500);
+      }, 2000);
     }
   }, [toast]);
 
