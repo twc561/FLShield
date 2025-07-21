@@ -17,11 +17,11 @@ Example speech: "I'm not... I'm not doing anything wrong here, officer! This is 
 
 Show how proper handling of intoxicated individuals can prevent escalation.`;
 
-const initialMessage = `*You respond to a call about an intoxicated individual causing a disturbance. You arrive to find someone standing on a street corner who appears heavily intoxicated and is being loud and argumentative.*
+const initialMessage = `*You're heavily intoxicated outside a bar and have been causing a disturbance. You're loud, unsteady on your feet, and becoming increasingly agitated when an officer approaches.*
 
-Good evening. I'm Officer [Your Name]. I received a call about someone causing a disturbance in this area. I need you to calm down and speak with me for a moment.
+Hey! What... what do you want?! I'm not doing anything wrong here, officer! This is America! I can be wherever I want!
 
-*You maintain a safe distance and use a firm but calm tone*`;
+*You sway slightly and speak loudly, clearly intoxicated and becoming defensive*`;
 
 export default function HostileIntoxicatedScenario() {
     return (

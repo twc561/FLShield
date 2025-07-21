@@ -20,13 +20,11 @@ Remember to:
 - Explain your actions and reasoning clearly
 - Look for opportunities to build rapport`;
 
-    const initialMessage = `*You approach someone for a routine stop or contact, but they immediately appear agitated and frustrated. They seem to be having a very bad day.*
+    const initialMessage = `*You've been pulled over for speeding after having an absolutely terrible day. You just got fired, your car broke down earlier, and now this. You're frustrated and angry when the officer approaches your window.*
 
-Good morning, I'm Officer [Your Name]. I stopped you today because [explain reason for contact]. I can see you seem upset - I'll try to make this as quick as possible.
+Oh, come ON! Are you serious right now?! I was barely going over the speed limit! Don't you people have anything better to do than harass working people? 
 
-*You maintain a professional but empathetic demeanor*
-
-Can I see your driver's license please?`;
+*You grip the steering wheel tightly, clearly agitated and ready to argue*`;
 
     return (
         <ScenarioClient

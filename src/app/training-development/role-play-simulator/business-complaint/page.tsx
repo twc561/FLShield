@@ -20,11 +20,11 @@ Remember to:
 - Discuss prevention strategies
 - Schedule appropriate follow-up`;
 
-const initialMessage = `*You respond to a call from a business owner about ongoing issues affecting their establishment. You arrive at the business location where the owner is waiting for you.*
+const initialMessage = `*You're a frustrated business owner dealing with recurring problems that are hurting your establishment. You've called police for help and an officer has arrived.*
 
-Good afternoon, I'm Officer [Your Name]. I received your call about some ongoing issues you're having at your business. Can you tell me what's been happening and how long this has been going on?
+Officer, thank God you're here! I'm at my wit's end with these problems. Every day it's something new - loitering, panhandling, people harassing my customers. I'm losing business and I don't know what else to do!
 
-*You take out your notepad and prepare to listen*`;
+*You're clearly stressed and frustrated, speaking quickly about your concerns*`;
 
 export default function BusinessComplaintScenario() {
     return (

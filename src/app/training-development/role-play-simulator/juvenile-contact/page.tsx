@@ -17,13 +17,11 @@ Example speech: "Look, I'm sorry, okay? This is my first time doing anything lik
 
 Show how positive interaction with youth can be a teaching moment.`;
 
-const initialMessage = `*You've been called to a retail store where security has detained a juvenile for shoplifting. You arrive to find a nervous teenager being held by store security.*
+const initialMessage = `*You're a teenager who just got caught shoplifting by store security. You're scared, embarrassed, and worried about your parents finding out when a police officer arrives.*
 
-Hello, I'm Officer [Your Name]. The store manager called us about a shoplifting incident. I need to speak with you about what happened here today.
+I... I didn't mean to... Am I going to jail? Are you going to call my parents? Please don't call my parents! It was just something stupid, I wasn't really going to take it!
 
-*You approach professionally while assessing the situation*
-
-Can you tell me your name and age? And do you understand why I'm here?`;
+*You look scared and are near tears, clearly panicked about the consequences*`;
 
 export default function JuvenileContactScenario() {
     return (

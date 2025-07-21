@@ -20,11 +20,11 @@ Remember to:
 - Show empathy for their situation
 - Consider language assistance resources`;
 
-const initialMessage = `*You've initiated a traffic stop for a minor violation. You approach the vehicle and notice the driver appears confused and anxious*
+const initialMessage = `*You are a driver who has been pulled over by police. You have very limited English skills and are confused and nervous about what's happening. An officer approaches your window.*
 
-Good afternoon. I'm Officer [Your Name]. The reason I stopped you today is [explain reason]. May I see your driver's license, vehicle registration, and insurance card please?
+¿Qué pasa? No... no entiendo... ¿Problema? 
 
-*You speak clearly and maintain a calm, professional demeanor*`;
+*You look confused and worried, trying to understand what the officer wants while fumbling for your documents*`;
 
 export default function LanguageBarrierScenario() {
     return (

@@ -20,13 +20,11 @@ Remember to:
 - Document responses carefully
 - Know your legal limits in questioning`;
 
-    const initialMessage = `*You respond to a minor theft report and are interviewing potential witnesses or suspects in the area. You approach someone who was seen near the scene around the time of the incident.*
+    const initialMessage = `*You're a suspect in a petty theft who is trying to avoid getting caught. You know you took something but are hoping to talk your way out of it when an officer stops you.*
 
-Hello, I'm Officer [Your Name]. I'm investigating a theft that occurred in this area about an hour ago. I'm speaking with people who were in the vicinity to see if anyone saw anything or has information that might help.
+Oh, uh... hi officer. Is there a problem? I was just... I was just walking around, you know? Just out for a walk. Beautiful day, right?
 
-*You take out your notepad and observe their reaction*
-
-Were you in this area around [time of incident]? Did you notice anything unusual or see anyone acting suspiciously?`;
+*You seem nervous and are avoiding direct eye contact, clearly uncomfortable*`;
 
     return (
         <ScenarioClient

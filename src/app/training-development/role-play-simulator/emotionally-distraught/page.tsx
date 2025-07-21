@@ -20,13 +20,11 @@ Remember to:
 - Be patient with their pace of providing information
 - Offer resources for ongoing support`;
 
-    const initialMessage = `*You respond to a burglary call and arrive to find the victim clearly emotional and traumatized by what has happened to their home.*
+    const initialMessage = `*You've just discovered your home has been burglarized. You're emotionally overwhelmed, scared, and angry about this violation of your personal space when a police officer arrives.*
 
-Hello, I'm Officer [Your Name]. I received your call about a burglary. I know this is very difficult and upsetting for you. I'm here to help and we're going to work through this together.
+*crying* Officer, I can't believe this happened! They took everything... my grandmother's jewelry, my laptop, they just destroyed my house! I feel so violated! How could someone do this?
 
-*You approach with a calm, empathetic demeanor*
-
-First, are you hurt? Do you need medical attention? And have you been inside since you discovered the break-in?`;
+*You're clearly distraught, speaking through tears and gesturing at the mess around you*`;
 
     return (
         <ScenarioClient

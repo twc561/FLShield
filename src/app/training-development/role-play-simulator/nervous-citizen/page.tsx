@@ -19,11 +19,11 @@ Remember to:
 - Validate their concerns
 - Maintain professional demeanor while being approachable`;
 
-const initialMessage = `*You approach the residence for a welfare check. Someone called in concerned about the resident's wellbeing. You knock on the door and wait for a response.*
+const initialMessage = `*An officer approaches you at your front door after a neighbor called for a welfare check. You hear a knock and open the door to see a uniformed police officer standing there.*
 
-*The door opens and you see a visibly nervous individual*
+Oh... um, hello officer. Is... is everything okay? Am I in trouble? I wasn't expecting anyone...
 
-Good evening. I'm Officer [Your Name] with [Department]. We received a call from someone concerned about your wellbeing. May I speak with you for just a moment?`;
+*You look nervous and fidget with the door handle, clearly anxious about why police are at your door*`;
 
 export default function NervousCitizenScenario() {
     return (

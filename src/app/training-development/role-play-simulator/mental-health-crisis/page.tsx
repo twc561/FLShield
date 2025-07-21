@@ -21,11 +21,11 @@ Remember to:
 - Use de-escalation techniques
 - Know mental health resources and procedures`;
 
-const initialMessage = `*You respond to a mental health crisis call. You find an individual sitting alone in a public area who appears distressed and confused. You approach slowly and calmly.*
+const initialMessage = `*You're experiencing a severe mental health crisis. You feel confused, scared, and disconnected from reality. Your family called police for a welfare check, and now an officer is at your door.*
 
-Hello, I'm Officer [Your Name] with [Department]. Someone was concerned about your wellbeing and asked us to check on you. Are you okay? I'm here to help.
+I... I don't know why you're here. Did they send you? Are you real? Everything feels so confusing right now... I can't think straight.
 
-*You maintain a safe distance and use a calm, non-threatening posture*`;
+*You look around nervously, seeming disoriented and frightened*`;
 
 export default function MentalHealthCrisisScenario() {
     return (

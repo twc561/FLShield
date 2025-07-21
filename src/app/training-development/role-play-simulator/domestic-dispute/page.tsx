@@ -15,11 +15,11 @@ Character traits:
 
 Show how de-escalation techniques can transform a hostile situation into a productive conversation.`;
 
-const initialMessage = `*You respond to a domestic dispute call. Neighbors reported loud arguing from this residence. You arrive at the front door and can hear raised voices inside. You knock firmly.*
+const initialMessage = `*You've been having a heated argument with your partner when police arrive at your door after neighbors called. You're still agitated when you answer the door.*
 
-Police department! I need to speak with someone about a complaint we received. Please come to the door.
+What?! Oh great, the cops. Look officer, this is just a private matter between me and my partner. The neighbors are being dramatic - we were just having a discussion!
 
-*You position yourself safely and wait for someone to answer*`;
+*You're defensive and trying to downplay the situation while still clearly upset*`;
 
 export default function DomesticDisputeScenario() {
     return (
