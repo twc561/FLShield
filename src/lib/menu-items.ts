@@ -1,6 +1,5 @@
-
 import * as React from "react"
-import { AlertCircle, Biohazard, Bot, BrainCircuit, Camera, Car, ClipboardEdit, Dog, FileCheck, FileText, Fish, FlaskConical, Gavel, GraduationCap, Heart, HeartPulse, Home, Languages, ListChecks, Lock, MapPin, MessageSquare, Mic, Newspaper, Scale, Search, ShieldAlert, ShieldCheck, ShieldQuestion, Siren, Stethoscope, Truck, Users, Wind, Footprints } from 'lucide-react'
+import { AlertCircle, Biohazard, Bot, BrainCircuit, Camera, Car, ClipboardEdit, Dog, FileCheck, FileText, Fish, FlaskConical, Gavel, GraduationCap, Heart, HeartPulse, Home, Languages, ListChecks, Lock, MapPin, MessageSquare, Mic, Newspaper, Scale, Search, ShieldAlert, ShieldCheck, ShieldQuestion, Siren, Stethoscope, Truck, Users, Wind, Footprints, CreditCard } from 'lucide-react'
 
 type SubMenuItem = {
   href: string
@@ -84,6 +83,13 @@ export const menuItems: MenuItem[] = [
       { href: "/wellness/live-debrief", label: "Incident Debrief Tool", icon: MessageSquare },
       { href: "/officer-wellness-rights/police-officers-bill-of-rights", label: "Police Officer's Bill of Rights", icon: ShieldCheck },
       { href: "/wellness", label: "Wellness Resources Hub", icon: Heart },
+    ],
+  },
+    {
+    label: "Account & Billing",
+    icon: Heart,
+    items: [
+      { href: "/subscription", label: "Upgrade to Pro", icon: CreditCard },
     ],
   },
   {
