@@ -123,15 +123,22 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
     setIsCustomSearching(true);
     setCustomSearchResult(null);
     setCustomSearchError(null);
+    
     try {
+      console.log('Starting AI ordinance analysis...', { jurisdiction: customJurisdiction, query: customQuery });
       const result = await analyzeOrdinance({
-        jurisdiction: customJurisdiction,
-        query: customQuery,
+        jurisdiction: customJurisdiction.trim(),
+        query: customQuery.trim(),
       });
+      console.log('AI ordinance analysis result:', result);
       setCustomSearchResult(result);
+      
+      if (result.ordinanceNumber === "Not Found") {
+        setCustomSearchError("No specific ordinance found for your query. Please try a different search term or check the jurisdiction spelling.");
+      }
     } catch (err) {
       console.error("AI ordinance search failed:", err);
-      setCustomSearchError("The AI model failed to retrieve this ordinance. Please check the jurisdiction spelling or try again later.");
+      setCustomSearchError(`The AI analysis failed: ${err instanceof Error ? err.message : 'Unknown error'}. Please try again or contact support if the issue persists.`);
     } finally {
       setIsCustomSearching(false);
     }
@@ -153,19 +160,21 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
           <form onSubmit={handleCustomSearch} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input 
-                placeholder="Jurisdiction (e.g., St. Lucie County)" 
+                placeholder="Jurisdiction (e.g., City of Miami, Orange County)" 
                 value={customJurisdiction}
                 onChange={(e) => setCustomJurisdiction(e.target.value)}
+                disabled={isCustomSearching}
               />
               <Input 
-                placeholder="Ordinance # or keyword (e.g., 'loud music')" 
+                placeholder="Ordinance # or keyword (e.g., 'Sec. 21-28', 'noise')" 
                 value={customQuery}
                 onChange={(e) => setCustomQuery(e.target.value)}
+                disabled={isCustomSearching}
               />
             </div>
-            <Button type="submit" disabled={isCustomSearching || !customJurisdiction || !customQuery}>
+            <Button type="submit" disabled={isCustomSearching || !customJurisdiction.trim() || !customQuery.trim()} className="w-full sm:w-auto">
               {isCustomSearching ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
-              {isCustomSearching ? 'Analyzing...' : 'Analyze Ordinance'}
+              {isCustomSearching ? 'AI Analyzing Ordinance...' : 'Analyze Ordinance'}
             </Button>
           </form>
         </CardContent>
