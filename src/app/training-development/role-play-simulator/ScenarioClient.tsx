@@ -278,21 +278,21 @@ export function ScenarioClient({
                             <CardContent>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                     <div>
-                                        <label className="text-sm font-medium">Empathy Score</label>
+                                        <label className="text-sm font-medium text-foreground">Empathy Score</label>
                                         <div className="flex items-center gap-2">
                                             <Progress value={performanceMetrics.empathyScore} className="flex-1" />
-                                            <span className="text-sm">{performanceMetrics.empathyScore}%</span>
+                                            <span className="text-sm text-foreground">{performanceMetrics.empathyScore}%</span>
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="text-sm font-medium">Professionalism</label>
+                                        <label className="text-sm font-medium text-foreground">Professionalism</label>
                                         <div className="flex items-center gap-2">
                                             <Progress value={performanceMetrics.professionalismScore} className="flex-1" />
-                                            <span className="text-sm">{performanceMetrics.professionalismScore}%</span>
+                                            <span className="text-sm text-foreground">{performanceMetrics.professionalismScore}%</span>
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="text-sm font-medium">Subject Stress Level</label>
+                                        <label className="text-sm font-medium text-foreground">Subject Stress Level</label>
                                         <div className="flex items-center gap-2">
                                             <Progress value={currentStressLevel * 10} className="flex-1" />
                                             <span className={cn("text-sm font-medium", getStressColor(currentStressLevel))}>
@@ -301,23 +301,23 @@ export function ScenarioClient({
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="text-sm font-medium flex items-center gap-1">
+                                        <label className="text-sm font-medium flex items-center gap-1 text-foreground">
                                             <Clock className="h-3 w-3" />
                                             Avg Response Time
                                         </label>
-                                        <div className="text-lg font-semibold">
+                                        <div className="text-lg font-semibold text-foreground">
                                             {averageResponseTime.toFixed(1)}s
                                         </div>
                                     </div>
                                 </div>
                                 <div className="mt-4">
-                                    <label className="text-sm font-medium">Techniques Used</label>
+                                    <label className="text-sm font-medium text-foreground">Techniques Used</label>
                                     <div className="flex flex-wrap gap-1 mt-2">
                                         {Array.from(performanceMetrics.techniqueVariety).map((technique, index) => (
-                                            <Badge key={index} variant="secondary">{technique}</Badge>
+                                            <Badge key={index} variant="secondary" className="text-foreground bg-secondary/80">{technique}</Badge>
                                         ))}
                                         {performanceMetrics.techniqueVariety.size === 0 && (
-                                            <span className="text-sm text-muted-foreground">No techniques identified yet</span>
+                                            <span className="text-sm text-foreground/60">No techniques identified yet</span>
                                         )}
                                     </div>
                                 </div>
@@ -340,22 +340,22 @@ export function ScenarioClient({
                                 >
                                     {message.role === 'model' && <div className="p-2 bg-primary/10 rounded-full"><Bot className="w-5 h-5 text-primary" /></div>}
                                     <div className={cn("max-w-xs md:max-w-md lg:max-w-lg", message.role === 'user' ? '' : '')}>
-                                        <div className={cn("p-3 rounded-lg flex items-center gap-2", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted/50')}>
-                                            {message.content ? <p className="whitespace-pre-wrap">{message.content}</p> : <Loader2 className="w-5 h-5 animate-spin" />}
+                                        <div className={cn("p-3 rounded-lg flex items-center gap-2", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground')}>
+                                            {message.content ? <p className="whitespace-pre-wrap text-foreground">{message.content}</p> : <Loader2 className="w-5 h-5 animate-spin text-foreground" />}
                                         </div>
                                         {message.analysis && (
                                             <div className="mt-2 flex flex-wrap gap-1">
-                                                <Badge variant="outline" className="text-xs">
+                                                <Badge variant="outline" className="text-xs text-foreground border-foreground/20">
                                                     {message.analysis.tone}
                                                 </Badge>
                                                 {message.analysis.techniques.map((technique, idx) => (
-                                                    <Badge key={idx} variant="secondary" className="text-xs">
+                                                    <Badge key={idx} variant="secondary" className="text-xs text-foreground bg-secondary/80">
                                                         {technique}
                                                     </Badge>
                                                 ))}
                                             </div>
                                         )}
-                                        <div className="text-xs text-muted-foreground mt-1">
+                                        <div className="text-xs text-foreground/70 mt-1">
                                             {message.timestamp.toLocaleTimeString()}
                                         </div>
                                     </div>
@@ -386,7 +386,7 @@ export function ScenarioClient({
                             <RefreshCw className="mr-2 h-4 w-4" />
                             Restart Scenario
                         </Button>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-sm text-foreground/80">
                             Subject stress: <span className={cn("font-medium", getStressColor(currentStressLevel))}>{currentStressLevel}/10</span>
                         </div>
                     </div>
