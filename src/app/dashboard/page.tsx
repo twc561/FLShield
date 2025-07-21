@@ -65,7 +65,7 @@ const ToolCard = ({ module }: { module: FeatureModule }) => {
 
 
 
-const FeaturedTools = () => {
+const FeaturedTools = ({ isClient }: { isClient: boolean }) => {
     const { isPro, mounted } = useSubscription()
     
     // In a real AI-driven app, this logic would be powered by a model
@@ -81,7 +81,7 @@ const FeaturedTools = () => {
         <motion.div variants={itemVariants}>
             <div className="flex items-center justify-between mb-3">
                 <h2 className="text-lg font-bold tracking-tight px-1">Smart Suggestions</h2>
-                {mounted && isPro && (
+                {isClient && mounted && isPro && (
                     <Badge variant="outline" className="text-amber-600 border-amber-300">
                         <Crown className="w-3 h-3 mr-1" />
                         Pro Features
@@ -92,7 +92,7 @@ const FeaturedTools = () => {
                 {featured.map(tool => (
                      <Link href={tool.targetPage} key={tool.id} className="group">
                         <Card className="h-full hover:border-primary transition-colors relative">
-                            {mounted && isPro && tool.isPremium && (
+                            {isClient && mounted && isPro && tool.isPremium && (
                                 <div className="absolute top-2 right-2">
                                     <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs">
                                         <Crown className="w-3 h-3 mr-1" />
@@ -139,11 +139,14 @@ const PinnedTools = () => {
 
 
 export default function DashboardPage() {
-  const [greeting, setGreeting] = useState("")
-  const [userName, setUserName] = useState<string | null>(null);
+  const [greeting, setGreeting] = useState("Good day")
+  const [userName, setUserName] = useState<string | null>("Officer");
   const { isPro, mounted } = useSubscription()
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    setIsClient(true)
+    
     const getGreeting = () => {
       const hour = new Date().getHours()
       if (hour < 12) {
@@ -187,7 +190,7 @@ export default function DashboardPage() {
         title={
           <div className="flex items-center gap-3">
             {`${greeting}, ${userName || "Officer"}.`}
-            {mounted && isPro && (
+            {isClient && mounted && isPro && (
               <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 shadow-lg text-sm px-3 py-1">
                 <Crown className="w-4 h-4 mr-2" />
                 Shield FL Pro
@@ -196,7 +199,7 @@ export default function DashboardPage() {
           </div>
         }
         description={
-          mounted && isPro ? (
+          isClient && mounted && isPro ? (
             <div className="flex items-center gap-2 text-amber-600">
               <Crown className="w-4 h-4" />
               <span>Pro Member - All premium features unlocked</span>
@@ -212,7 +215,7 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Pro Status Card */}
-      {mounted && isPro && (
+      {isClient && mounted && isPro && (
         <motion.div variants={itemVariants}>
           <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
             <CardContent className="p-4">
@@ -246,7 +249,7 @@ export default function DashboardPage() {
           <BriefingStats />
         </div>
 
-      <FeaturedTools />
+      <FeaturedTools isClient={isClient} />
 
       <PinnedTools />
 
