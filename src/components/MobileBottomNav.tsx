@@ -12,6 +12,7 @@ import {
   Flame,
   LogOut,
   Bot,
+  Crown,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
@@ -25,6 +26,8 @@ import {
 import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { AppMenuContent } from "./AppMenuContent"
+import { useSubscription } from "@/hooks/use-subscription"
+import { Badge } from "@/components/ui/badge"
 
 const mainNavItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
@@ -42,6 +45,7 @@ export function MobileBottomNav() {
   const router = useRouter()
   const [isSheetOpen, setIsSheetOpen] = React.useState(false)
   const [isClient, setIsClient] = React.useState(false)
+  const { isPro, mounted } = useSubscription()
 
   React.useEffect(() => {
     setIsClient(true)
@@ -68,7 +72,19 @@ export function MobileBottomNav() {
   }
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-card border-t z-50 flex justify-around items-center">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t z-50">
+      {/* Pro Status Bar */}
+      {isClient && mounted && isPro && (
+        <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-1">
+          <div className="flex items-center justify-center gap-2 text-white text-xs font-medium">
+            <Crown className="w-3 h-3" />
+            <span>Shield FL Pro Active</span>
+          </div>
+        </div>
+      )}
+      
+      {/* Navigation Bar */}
+      <div className="h-16 flex justify-around items-center">
       {mainNavItems.map((item) => (
         <Link
           key={item.href}
@@ -86,11 +102,16 @@ export function MobileBottomNav() {
         <SheetTrigger asChild>
           <button
             type="button"
-            className="flex flex-col items-center justify-center text-muted-foreground w-full h-full"
+            className="flex flex-col items-center justify-center text-muted-foreground w-full h-full relative"
             aria-label="Open full menu"
           >
             <Menu className="h-6 w-6" />
             <span className="text-xs">More</span>
+            {isClient && mounted && isPro && (
+              <div className="absolute -top-1 -right-1">
+                <Crown className="w-3 h-3 text-amber-500" />
+              </div>
+            )}
           </button>
         </SheetTrigger>
         <SheetContent side="left" className="w-3/4 p-0 flex flex-col">
@@ -102,9 +123,17 @@ export function MobileBottomNav() {
                 onClick={handleLinkClick}
                 >
                 <Flame className="w-8 h-8 text-primary" />
-                <span className="font-bold text-lg text-foreground">
-                    Florida Shield
-                </span>
+                <div className="flex flex-col">
+                  <span className="font-bold text-lg text-foreground">
+                      Florida Shield
+                  </span>
+                  {isClient && mounted && isPro && (
+                    <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs w-fit">
+                      <Crown className="w-3 h-3 mr-1" />
+                      Pro
+                    </Badge>
+                  )}
+                </div>
                 </Link>
             </SheetTitle>
             <SheetDescription className="sr-only">Main application menu</SheetDescription>
@@ -123,6 +152,7 @@ export function MobileBottomNav() {
           </div>
         </SheetContent>
       </Sheet>
+      </div>
     </div>
   )
 }

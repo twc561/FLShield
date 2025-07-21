@@ -18,13 +18,21 @@ import {
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import { menuItems } from "@/lib/menu-items"
+import { useSubscription } from "@/hooks/use-subscription"
+import { Badge } from "@/components/ui/badge"
+import * as LucideIcons from "lucide-react"
 
-export function AppMenuContent({ onLinkClick }: { onLinkClick?: () => void }) {
+interface AppMenuContentProps {
+  onLinkClick?: () => void
+}
+
+export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
   const pathname = usePathname()
-  const [mounted, setMounted] = useState(false)
+  const { isPro, mounted } = useSubscription()
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    setIsClient(true)
   }, [])
 
   const isActive = (href: string) => {
