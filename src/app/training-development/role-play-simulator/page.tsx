@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -126,7 +125,7 @@ export default function RolePlaySimulatorPage() {
                     </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-r from-green-50 to-emerald-50">
+                <Card className="bg-gradient-to-r from-blue-50 to-indigo-50">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <TrendingUp className="h-5 w-5 text-green-600" />
@@ -166,7 +165,7 @@ export default function RolePlaySimulatorPage() {
                                 <p className="text-sm text-muted-foreground font-medium mb-1">Scenario:</p>
                                 <p className="text-sm">{persona.scenario}</p>
                             </div>
-                            
+
                             <div className="grid grid-cols-2 gap-4 text-sm">
                                 <div className="flex items-center gap-2">
                                     <Clock className="h-4 w-4 text-muted-foreground" />
