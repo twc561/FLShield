@@ -34,11 +34,12 @@ export const commandSearch = ai.defineFlow(
     }
   },
   async (input) => {
-  const { output } = await ai.generate({
-    prompt: `You are 'Shield FL,' an AI partner for Florida law enforcement. Your purpose is to provide immediate, clear, and practical answers to questions from front-line patrol officers. The answer should be concise, easy to understand during a high-stakes situation, and grounded in Florida statutes and common police procedures. Do not provide legal advice, but rather operational guidance and factual information. Prioritize officer safety and legal accuracy. Now, answer the following question for an officer on patrol: ${input.query}`,
-    output: {
+    const { output } = await ai.generate({
+      prompt: `You are 'Shield FL,' an AI partner for Florida law enforcement. Your purpose is to provide immediate, clear, and practical answers to questions from front-line patrol officers. The answer should be concise, easy to understand during a high-stakes situation, and grounded in Florida statutes and common police procedures. Do not provide legal advice, but rather operational guidance and factual information. Prioritize officer safety and legal accuracy. Now, answer the following question for an officer on patrol: ${input.query}`,
+      output: {
         schema: CommandSearchOutputSchema,
-    }
-  });
-  return output!;
-}
+      }
+    });
+    return output!;
+  }
+);
