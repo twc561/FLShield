@@ -5,7 +5,7 @@ export const ai = genkit({
   plugins: [googleAI()],
   model: 'googleai/gemini-2.5-flash',
   config: {
-    maxRetries: 3,
-    timeout: 30000, // 30 second timeout
+    maxRetries: 5,
+    timeout: 120000, // 2 minute timeout for complex responses
   }
 });

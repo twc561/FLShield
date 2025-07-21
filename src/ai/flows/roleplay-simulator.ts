@@ -192,20 +192,20 @@ const scenarioCharacters = {
   }
 };
 
-// Dynamic conversation context builder with stricter limits
-function buildConversationContext(history: any[], maxTokens: number = 300): string {
+// Dynamic conversation context builder with massive token limits
+function buildConversationContext(history: any[], maxTokens: number = 8000): string {
   let context = '';
   let tokenCount = 0;
 
-  // Only use last 3 exchanges maximum
-  const recentHistory = history.slice(-6);
+  // Use much more history - last 20 exchanges
+  const recentHistory = history.slice(-40);
 
   for (let i = recentHistory.length - 1; i >= 0; i--) {
     const entry = recentHistory[i];
-    const entryText = `${entry.role === 'user' ? 'Officer' : 'You'}: "${entry.parts[0].text.substring(0, 100)}"`;
+    const entryText = `${entry.role === 'user' ? 'Officer' : 'You'}: "${entry.parts[0].text}"`;
 
-    // Rough token estimation (3 chars = 1 token for safety)
-    const entryTokens = entryText.length / 3;
+    // More generous token estimation
+    const entryTokens = entryText.length / 2;
 
     if (tokenCount + entryTokens > maxTokens) break;
 
@@ -216,7 +216,7 @@ function buildConversationContext(history: any[], maxTokens: number = 300): stri
   return context.trim();
 }
 
-// Optimized prompt builder for better Gemini responses
+// Detailed prompt builder for much richer Gemini responses
 function buildGeminiPrompt(
   character: any,
   conversationHistory: any[],
@@ -224,14 +224,38 @@ function buildGeminiPrompt(
   stressLevel: number,
   officerApproach: string
 ): string {
-  const stressCategory = stressLevel <= 3 ? 'calm' : stressLevel <= 6 ? 'stressed' : 'very stressed';
+  const stressCategory = stressLevel <= 3 ? 'calm' : stressLevel <= 6 ? 'moderately stressed' : 'highly stressed';
+  const approachType = determineApproachType(currentAction);
   
-  // Very concise prompt to save tokens
-  return `You are a ${character.basePersonality} person who is ${stressCategory}. 
+  // Build full conversation context
+  const conversationContext = buildConversationContext(conversationHistory, 6000);
+  
+  // Much more detailed prompt with full context
+  return `You are roleplaying as: ${character.name}
 
-Officer: "${currentAction}"
+CHARACTER PROFILE:
+- Personality: ${character.basePersonality}
+- Current stress level: ${stressLevel}/10 (${stressCategory})
+- Reaction to ${approachType} approach: ${character.responsePatterns[approachType]}
+- Current state: ${character.stressReactions[stressCategory]}
 
-You respond naturally:`;
+CONVERSATION HISTORY:
+${conversationContext}
+
+CURRENT SITUATION:
+The officer just said: "${currentAction}"
+
+ROLEPLAY INSTRUCTIONS:
+- Stay completely in character as ${character.name}
+- Respond naturally based on your personality and stress level
+- React authentically to the officer's approach and tone
+- Show realistic human emotions and reactions
+- Be specific and detailed in your response
+- Include body language, tone, and emotional state in your response
+- Remember everything that has happened in this conversation
+- Your response should be 2-4 sentences and feel completely natural
+
+Your response as ${character.name}:`;
 }
 
 // Analyze officer's approach for character response
@@ -265,47 +289,54 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
       currentStressLevel
     });
 
-    // Validate inputs
-    if (!conversationHistory || conversationHistory.length === 0) {
-      throw new Error('Conversation history is required');
+    // Improved validation - allow empty history for initial messages
+    if (!conversationHistory) {
+      conversationHistory = [];
     }
 
-    const lastMessage = conversationHistory[conversationHistory.length - 1];
-    if (!lastMessage?.parts?.[0]?.text?.trim()) {
-      throw new Error('Last message is empty or invalid');
+    // If no history, create initial context
+    let currentAction = '';
+    if (conversationHistory.length === 0) {
+      currentAction = systemPrompt || 'Initial officer contact';
+    } else {
+      const lastMessage = conversationHistory[conversationHistory.length - 1];
+      if (!lastMessage?.parts?.[0]?.text?.trim()) {
+        throw new Error('Last message is empty or invalid');
+      }
+      currentAction = lastMessage.parts[0].text.trim();
     }
-
-    const currentAction = lastMessage.parts[0].text.trim();
 
     // Get character configuration
     const character = scenarioCharacters[scenarioType as keyof typeof scenarioCharacters] || {
       name: 'Individual',
-      basePersonality: 'neutral demeanor',
+      basePersonality: 'neutral demeanor, responsive to officer communication',
       responsePatterns: {
-        professional: 'maintains polite interaction',
-        aggressive: 'becomes guarded',
-        empathetic: 'opens up slightly'
+        professional: 'maintains polite interaction and cooperates',
+        aggressive: 'becomes guarded and defensive',
+        empathetic: 'opens up and shows vulnerability'
       },
       stressReactions: {
         low: 'calm and collected',
-        medium: 'showing some stress',
-        high: 'visibly stressed'
+        medium: 'showing some stress and nervousness',
+        high: 'visibly stressed and emotionally reactive'
       }
     };
 
-    // Build optimized Gemini prompt
+    // Build detailed Gemini prompt with full context
     const geminiPrompt = buildGeminiPrompt(character, conversationHistory, currentAction, currentStressLevel, currentAction);
 
-    console.log('Making Gemini AI call...');
+    console.log('Making Gemini AI call with enhanced context...');
+    console.log('Prompt length:', geminiPrompt.length);
 
-    // Use Gemini with much higher token limits for detailed roleplay responses
+    // Use Gemini with MASSIVE token limits for detailed roleplay responses
     const aiResponse = await ai.generate({
       prompt: geminiPrompt,
       config: {
-        temperature: 0.9,  // Higher creativity for more varied responses
-        maxOutputTokens: 2048,  // Significantly increased token limit
-        topP: 0.95,
-        topK: 50
+        temperature: 0.95,  // Maximum creativity for varied responses
+        maxOutputTokens: 8192,  // Massive token limit increase
+        topP: 0.98,
+        topK: 100,
+        candidateCount: 1
       }
     });
 
