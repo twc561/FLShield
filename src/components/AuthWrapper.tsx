@@ -1,30 +1,35 @@
-
 'use client'
 
-import { useState, useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { onAuthStateChanged, type User } from 'firebase/auth';
-import { auth, isFirebaseConfigured } from '@/lib/firebase';
-import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { auth } from '@/lib/firebase'
+import { Loader2 } from 'lucide-react'
 
 const LoadingScreen = () => (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
     </div>
-);
+)
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, isLoading] = useAuthState(auth);
+    const [clientMounted, setClientMounted] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState(true);
-    const [clientMounted, setClientMounted] = useState(false);
 
     const publicPages = [
-        "/", "/login", "/features", "/agency-intelligence",
-        "/cjis-compliance", "/support", "/request-demo",
-        "/terms-of-use", "/privacy-policy", "/security",
-        "/for-officers"
+        "/",
+        "/login",
+        "/features",
+        "/agency-intelligence",
+        "/cjis-compliance",
+        "/support",
+        "/request-demo",
+        "/terms-of-use",
+        "/privacy-policy",
+        "/security",
+        "/for-officers",
     ];
 
     const isPublicPage = publicPages.includes(pathname);
@@ -34,27 +39,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     }, []);
 
     useEffect(() => {
-        if (!isFirebaseConfigured) {
-            console.warn("Firebase is not configured. Authentication will be skipped.");
-            setIsLoading(false);
-            if (!isPublicPage) {
-                router.push('/login');
-            }
-            return;
-        }
-
-        const unsubscribe = onAuthStateChanged(auth!, (user) => {
-            setUser(user);
-            setIsLoading(false);
-        });
-
-        return () => unsubscribe();
-    }, [isPublicPage, router]);
-
-    useEffect(() => {
-        if (isLoading) {
-            return; // Don't do anything while auth state is being determined
-        }
+        if (!clientMounted || isLoading) return;
 
         // If not authenticated and trying to access a protected page, redirect
         if (!user && !isPublicPage) {
@@ -65,21 +50,25 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         if (user && (pathname === '/' || pathname === '/login')) {
             router.push('/dashboard');
         }
-    }, [user, isLoading, isPublicPage, pathname, router]);
+    }, [user, isLoading, isPublicPage, pathname, router, clientMounted]);
 
     // Prevent hydration issues by not rendering anything during initial load
-    if (!clientMounted || isLoading) {
-        return null;
+    if (!clientMounted) {
+        return <LoadingScreen />;
     }
-    
+
+    if (isLoading) {
+        return <LoadingScreen />;
+    }
+
     // While redirecting, show a loading screen to prevent flashing content
     if (!user && !isPublicPage) {
         return <LoadingScreen />;
     }
-    
+
     if (user && (pathname === '/' || pathname === '/login')) {
-      return <LoadingScreen />;
+        return <LoadingScreen />;
     }
-    
+
     return <>{children}</>;
 }

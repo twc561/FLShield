@@ -18,6 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
 
   const publicPages = [
     "/",
@@ -32,6 +33,10 @@ export default function RootLayout({
     "/security",
     "/for-officers",
   ];
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const isPublicPage = publicPages.includes(pathname);
 
@@ -50,12 +55,12 @@ export default function RootLayout({
       </head>
       <body className={cn("antialiased min-h-screen")} suppressHydrationWarning={true}>
           <AuthWrapper>
-            {isPublicPage ? (
+            {mounted && isPublicPage ? (
                 <>
                     {children}
                     <Toaster />
                 </>
-            ) : (
+            ) : mounted ? (
                 <SidebarProvider>
                     <SubscriptionGate>
                     <div className="flex min-h-screen">
@@ -69,7 +74,7 @@ export default function RootLayout({
                     <MobileBottomNav />
                     <Toaster />
                 </SidebarProvider>
-            )}
+            ) : null}
           </AuthWrapper>
       </body>
     </html>
