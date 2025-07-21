@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -162,7 +161,7 @@ export default function RolePlaySimulatorPage() {
 
             {/* Performance Tracking Cards */}
             <div className="grid gap-6 md:grid-cols-2">
-                <Card className="border-0 bg-gradient-to-br from-blue-50 via-blue-50 to-indigo-100 shadow-lg">
+                <Card className="border-0 bg-gradient-to-br from-blue-50 via-blue-50 to-blue-100 shadow-lg">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-blue-900">
                             <Target className="h-5 w-5 text-blue-600" />
@@ -252,7 +251,7 @@ export default function RolePlaySimulatorPage() {
                                         </Badge>
                                     </div>
                                 </CardHeader>
-                                
+
                                 <CardContent className="space-y-4">
                                     <div className="p-4 bg-slate-50 rounded-lg border-l-4 border-l-blue-500">
                                         <p className="text-sm font-medium text-slate-700 mb-1">Scenario Context:</p>
@@ -293,7 +292,7 @@ export default function RolePlaySimulatorPage() {
                                         </div>
                                     </div>
                                 </CardContent>
-                                
+
                                 <CardFooter className="pt-0">
                                     <Button asChild className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
                                         <Link href={persona.href}>
