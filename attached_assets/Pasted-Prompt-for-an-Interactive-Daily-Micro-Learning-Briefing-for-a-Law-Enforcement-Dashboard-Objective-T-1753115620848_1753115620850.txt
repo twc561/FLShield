@@ -1,0 +1,91 @@
+Prompt for an Interactive Daily Micro-Learning Briefing for a Law Enforcement Dashboard
+Objective:
+To design and implement a "Daily Roll Call" section on the dashboard homepage of a Florida law enforcement guide. This feature will deliver a daily, interactive micro-learning module focused on practical, job-critical information. The goal is to enhance officer knowledge, reinforce correct procedure, improve legal acumen, and increase safety through consistent, bite-sized training.
+
+Part 1: Core Concept & User Persona
+Feature Name: "Daily Roll Call" or "Today's Briefing"
+
+Target User: A sworn Florida Law Enforcement Officer (LEO) using this guide as a trusted field resource. They are time-constrained, operate in a high-stakes environment, and require information that is accurate, immediately applicable, and easy to digest. The content must be vetted, credible, and directly relevant to their duties in Florida.
+
+Location on Page: The "Daily Roll Call" module should be a primary focal point on the homepage, located directly below the main header. It should be visually distinct to draw the user's attention upon login.
+
+Part 2: The Content Engine & Daily Rotation
+Content Generation: The system will draw from a large, curated library of micro-learning modules. This content must be created and/or vetted by Subject Matter Experts (SMEs), such as Florida P.R.I.D.E. instructors, Field Training Officers (FTOs), or legal advisors specializing in Florida law.
+
+Daily Rotation Logic:
+
+A new module must be presented to the user every 24 hours. The content should update automatically at a set time (e.g., 04:00 AM EST) to ensure freshness for all shifts.
+
+The system should track which modules a user has completed to avoid repetition. It should prioritize showing new, unseen content to each officer.
+
+Content Categories: The micro-learning modules should be categorized to ensure a well-rounded experience. The daily rotation should pull from categories such as:
+
+⚖️ Florida Legal Update: New case law (Florida or 11th Circuit), recent legislative changes to Florida Statutes, or new Attorney General opinions.
+
+🧠 Procedural Refresher: Quick reviews of high-liability, low-frequency tasks (e.g., criteria for a Baker Act, steps for a photo lineup, sovereign citizen indicators).
+
+Scenario-Based Training (SBT): A "What Would You Do?" interactive scenario.
+
+🛑 Case Law Spotlight: A breakdown of a landmark case (Graham v. Connor, Terry v. Ohio, State v. Jardines) with a focus on "What this means on the street."
+
+🛡️ Officer Safety & Tactics: A quick tip on topics like weapon concealment indicators, de-escalation phrases, or ambush awareness.
+
+Part 3: The Immersive & Interactive User Flow
+The core of this feature is its interactive flow. It should not be a static block of text. Here is the required step-by-step user experience for each daily module:
+
+Step 1: The Hook (Initial View)
+
+The module presents a compelling question, a brief scenario, or a "True or False" statement.
+
+Example: "You stop a car for speeding. You smell burnt cannabis coming from inside. Can you legally search the entire vehicle under the Carroll Doctrine in Florida based on the smell alone?"
+
+Step 2: The Interaction (User Action)
+
+The user must actively engage with the content. Provide clear, simple interactive elements:
+
+Multiple-choice answers (A, B, C, D).
+
+True/False buttons.
+
+"Legal" / "Not Legal" selection.
+
+Once the user selects an answer, the module transitions to the next step.
+
+Step 3: The Reveal & Rationale (Immediate Feedback)
+
+The module immediately reveals the correct answer.
+
+Crucially, it provides a concise, plain-language rationale explaining why the answer is correct. This explanation must cite the specific Florida Statute or controlling case law.
+
+Example: "B is Correct. As of 2024 in Florida, the smell of burnt cannabis alone is no longer sufficient probable cause for a vehicle search due to the legality of hemp. You need 'smell-plus'—additional evidence suggesting illegal activity. (See State v. Harris)."
+
+Step 4: The Deeper Dive (Contextual Flow)
+
+This is the most important part for creating an intuitive, valuable guide. After the rationale, the module must provide contextual links that allow the user to explore the topic further within the guide.
+
+These "Deeper Dive" links should be dynamic based on the module's content and could include:
+
+🔗 "Read the full text of Florida Statute 316.193"
+
+🔗 "View our detailed guide on Vehicle Searches"
+
+🔗 "Review the case brief for State v. Jardines"
+
+🔗 "Watch a 3-minute training video on articulable suspicion"
+
+Part 4: Functionality & Technical Requirements
+UI/UX:
+
+The design should be clean, professional, and authoritative. Avoid overly "game-like" aesthetics. Think digital bulletin board or official memo.
+
+The interface must be highly responsive and optimized for use on a mobile device in a patrol car.
+
+User Feedback & Tracking:
+
+Include a simple, non-intrusive "Was this briefing helpful? (👍/👎)" feedback mechanism to help refine content.
+
+Once completed, the daily module should visually change to a "completed" state (e.g., a green checkmark).
+
+Archive: Provide a link to a "Briefing Archive" where officers can review past Daily Roll Call modules they have completed, searchable by category or keyword. This turns daily content into a permanent, valuable study resource.
+
+Content Database: A robust backend database is required to store and manage the library of micro-learning modules, including the questions, answers, rationales, deep-dive links, and SME attribution.
