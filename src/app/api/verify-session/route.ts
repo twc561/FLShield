@@ -1,6 +1,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { adminDb } from '@/lib/firebase-admin'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-12-18.acacia',
@@ -8,15 +9,27 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(request: NextRequest) {
   try {
-    const { sessionId } = await request.json()
+    const { sessionId, userId } = await request.json()
 
-    const session = await stripe.checkout.sessions.retrieve(sessionId)
+    const session = await stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ['subscription']
+    })
 
-    if (session.payment_status === 'paid') {
-      // Here you would typically:
-      // 1. Update user's subscription status in your database
-      // 2. Grant access to pro features
-      // 3. Send confirmation email
+    if (session.payment_status === 'paid' && session.subscription) {
+      const subscription = session.subscription as Stripe.Subscription
+      
+      // Store subscription data in Firebase
+      await adminDb.collection('users').doc(userId).set({
+        subscription: {
+          id: subscription.id,
+          customerId: session.customer,
+          status: subscription.status,
+          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+          priceId: subscription.items.data[0].price.id,
+          plan: 'pro'
+        },
+        updatedAt: new Date()
+      }, { merge: true })
       
       return NextResponse.json({ 
         success: true, 
