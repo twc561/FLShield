@@ -1,10 +1,16 @@
+
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { PageHeader } from '@/components/PageHeader';
-import { ArrowLeft, MessageSquare, ShieldAlert, Clock, Target, TrendingUp, Users, Brain, Zap, Award, CheckCircle2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ArrowLeft, MessageSquare, ShieldAlert, Clock, Target, TrendingUp, Users, Brain, Zap, Award, CheckCircle2, Search } from 'lucide-react';
 
 const personas = [
     { 
@@ -24,7 +30,8 @@ const personas = [
         href: '/training-development/role-play-simulator/calm-cooperative',
         icon: MessageSquare,
         color: 'from-green-500/10 to-emerald-500/10',
-        iconColor: 'text-green-600'
+        iconColor: 'text-green-600',
+        category: 'basic'
     },
     { 
         id: 'agitated_uncooperative', 
@@ -43,7 +50,8 @@ const personas = [
         href: '/training-development/role-play-simulator/agitated-uncooperative',
         icon: Zap,
         color: 'from-amber-500/10 to-orange-500/10',
-        iconColor: 'text-amber-600'
+        iconColor: 'text-amber-600',
+        category: 'intermediate'
     },
     { 
         id: 'emotionally_distraught', 
@@ -62,7 +70,8 @@ const personas = [
         href: '/training-development/role-play-simulator/emotionally-distraught',
         icon: Users,
         color: 'from-blue-500/10 to-cyan-500/10',
-        iconColor: 'text-blue-600'
+        iconColor: 'text-blue-600',
+        category: 'intermediate'
     },
     { 
         id: 'deceptive_evasive', 
@@ -81,7 +90,8 @@ const personas = [
         href: '/training-development/role-play-simulator/deceptive-evasive',
         icon: Brain,
         color: 'from-purple-500/10 to-indigo-500/10',
-        iconColor: 'text-purple-600'
+        iconColor: 'text-purple-600',
+        category: 'advanced'
     },
 ];
 
@@ -94,34 +104,36 @@ const getDifficultyColor = (difficulty: string) => {
     }
 };
 
-const features = [
-    {
-        icon: Brain,
-        title: 'AI-Powered Characters',
-        description: 'Interact with realistic AI personas that adapt to your communication style and respond dynamically to your approach.'
-    },
-    {
-        icon: Target,
-        title: 'Real-Time Analytics',
-        description: 'Get instant feedback on your empathy, professionalism, and communication effectiveness with detailed performance metrics.'
-    },
-    {
-        icon: TrendingUp,
-        title: 'Progressive Learning',
-        description: 'Scenarios adapt in complexity based on your performance, ensuring continuous skill development and growth.'
-    },
-    {
-        icon: Award,
-        title: 'Skill Certification',
-        description: 'Earn digital badges and certificates as you master different communication techniques and de-escalation skills.'
-    }
+const categoryColors = {
+    'basic': 'bg-green-100 text-green-800 border-green-200',
+    'intermediate': 'bg-amber-100 text-amber-800 border-amber-200',
+    'advanced': 'bg-red-100 text-red-800 border-red-200'
+};
+
+const categories = [
+    { id: 'all', name: 'All Scenarios', icon: '🎯' },
+    { id: 'basic', name: 'Basic Training', icon: '📚' },
+    { id: 'intermediate', name: 'Intermediate', icon: '⚡' },
+    { id: 'advanced', name: 'Advanced', icon: '🧠' }
 ];
 
 export default function RolePlaySimulatorPage() {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
+    const filteredPersonas = personas.filter(persona => {
+        const matchesSearch = persona.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                             persona.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                             persona.scenario.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchesCategory = selectedCategory === 'all' || persona.category === selectedCategory;
+
+        return matchesSearch && matchesCategory;
+    });
+
     return (
-        <div className="animate-fade-in-up space-y-8">
-            {/* Header Section */}
-            <div className="flex justify-between items-start gap-4">
+        <div className="animate-fade-in-up">
+            <div className="flex justify-between items-start gap-4 mb-6">
                 <PageHeader
                     title="AI Role-Play Simulator"
                     description="Master communication and de-escalation skills through realistic, adaptive AI-powered scenarios. Each character responds dynamically to your approach."
@@ -135,7 +147,7 @@ export default function RolePlaySimulatorPage() {
             </div>
 
             {/* Alert */}
-            <Alert className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <Alert className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 mb-6">
                 <ShieldAlert className="h-4 w-4 text-blue-600" />
                 <AlertTitle className="text-blue-900">Advanced Training Environment</AlertTitle>
                 <AlertDescription className="text-blue-800">
@@ -144,92 +156,46 @@ export default function RolePlaySimulatorPage() {
                 </AlertDescription>
             </Alert>
 
-            {/* Hero Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {features.map((feature, index) => (
-                    <Card key={index} className="relative overflow-hidden border-0 bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-lg transition-all duration-300 hover:scale-105">
-                        <CardContent className="p-6 text-center">
-                            <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-                                <feature.icon className="h-6 w-6 text-white" />
-                            </div>
-                            <h3 className="font-semibold mb-2 text-blue-900">{feature.title}</h3>
-                            <p className="text-sm text-blue-700 leading-relaxed">{feature.description}</p>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
-
-            {/* Performance Tracking Cards */}
-            <div className="grid gap-6 md:grid-cols-2">
-                <Card className="border-0 bg-gradient-to-br from-blue-50 via-blue-50 to-blue-100 shadow-lg">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-blue-900">
-                            <Target className="h-5 w-5 text-blue-600" />
-                            Real-Time Performance Analytics
-                        </CardTitle>
-                        <CardDescription className="text-blue-700">
-                            Advanced AI analysis of your communication patterns
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-3">
-                            {[
-                                'Dynamic empathy and professionalism scoring',
-                                'Stress level impact monitoring',
-                                'Communication technique identification',
-                                'Response timing and effectiveness analysis'
-                            ].map((item, index) => (
-                                <div key={index} className="flex items-center gap-2 text-blue-800">
-                                    <CheckCircle2 className="h-4 w-4 text-blue-600" />
-                                    <span className="text-sm">{item}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-0 bg-gradient-to-br from-purple-50 via-purple-50 to-indigo-100 shadow-lg">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-purple-900">
-                            <Brain className="h-5 w-5 text-purple-600" />
-                            Adaptive AI Characters
-                        </CardTitle>
-                        <CardDescription className="text-purple-700">
-                            Intelligent personas that evolve with your interactions
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-3">
-                            {[
-                                'Characters react authentically to your approach',
-                                'Dynamic stress and emotional state changes',
-                                'Realistic speech patterns and behavioral responses',
-                                'Progressive scenario complexity adjustment'
-                            ].map((item, index) => (
-                                <div key={index} className="flex items-center gap-2 text-purple-800">
-                                    <CheckCircle2 className="h-4 w-4 text-purple-600" />
-                                    <span className="text-sm">{item}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Scenarios Section */}
-            <div>
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-blue-900 mb-4">Training Scenarios</h2>
-                    <p className="text-lg text-blue-700 max-w-2xl mx-auto">
-                        Choose from carefully crafted scenarios designed to challenge and improve your communication skills
-                    </p>
+            {/* Search Bar */}
+            <div className="mb-6">
+                <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                    <Input
+                        type="text"
+                        placeholder="Search scenarios by title, description, or learning objectives..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
+                    />
                 </div>
+            </div>
 
-                <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
-                    {personas.map(persona => {
+            {/* Category Filter Tabs */}
+            <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
+                <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 mb-6">
+                    {categories.map((category) => (
+                        <TabsTrigger key={category.id} value={category.id} className="text-xs">
+                            <span className="mr-1">{category.icon}</span>
+                            <span className="hidden sm:inline">{category.name}</span>
+                        </TabsTrigger>
+                    ))}
+                </TabsList>
+            </Tabs>
+
+            {/* Results Count */}
+            <div className="mb-4">
+                <p className="text-sm text-muted-foreground">
+                    Showing {filteredPersonas.length} of {personas.length} training scenarios
+                </p>
+            </div>
+
+            {/* Scenarios Grid */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {filteredPersonas.length > 0 ? (
+                    filteredPersonas.map(persona => {
                         const IconComponent = persona.icon;
                         return (
-                            <Card key={persona.id} className="group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden">
+                            <Card key={persona.id} className="group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden h-fit">
                                 <div className={`h-2 bg-gradient-to-r ${persona.color.replace('/10', '')}`} />
                                 <CardHeader className="pb-4">
                                     <div className="flex items-start justify-between mb-3">
@@ -237,11 +203,11 @@ export default function RolePlaySimulatorPage() {
                                             <div className={`p-3 rounded-xl bg-gradient-to-br ${persona.color}`}>
                                                 <IconComponent className={`h-6 w-6 ${persona.iconColor}`} />
                                             </div>
-                                            <div>
-                                                <CardTitle className="text-xl text-blue-900 group-hover:text-blue-700 transition-colors">
+                                            <div className="flex-1">
+                                                <CardTitle className="text-lg text-blue-900 group-hover:text-blue-700 transition-colors line-clamp-1">
                                                     {persona.title}
                                                 </CardTitle>
-                                                <CardDescription className="mt-1 text-blue-700">
+                                                <CardDescription className="mt-1 text-blue-700 line-clamp-2">
                                                     {persona.description}
                                                 </CardDescription>
                                             </div>
@@ -253,11 +219,6 @@ export default function RolePlaySimulatorPage() {
                                 </CardHeader>
 
                                 <CardContent className="space-y-4">
-                                    <div className="p-4 bg-blue-100 rounded-lg border-l-4 border-l-blue-500">
-                                        <p className="text-sm font-medium text-blue-800 mb-1">Scenario Context:</p>
-                                        <p className="text-sm text-blue-700">{persona.scenario}</p>
-                                    </div>
-
                                     <div className="grid grid-cols-2 gap-4 text-sm">
                                         <div className="flex items-center gap-2 text-blue-700">
                                             <Clock className="h-4 w-4" />
@@ -265,30 +226,23 @@ export default function RolePlaySimulatorPage() {
                                         </div>
                                         <div className="flex items-center gap-2 text-blue-700">
                                             <Users className="h-4 w-4" />
-                                            <span>1-on-1 Interaction</span>
+                                            <span>1-on-1</span>
                                         </div>
                                     </div>
 
                                     <div>
-                                        <p className="text-sm font-medium mb-2 text-blue-800">Key Skills Practiced:</p>
+                                        <p className="text-sm font-medium mb-2 text-blue-800">Key Skills:</p>
                                         <div className="flex flex-wrap gap-1">
-                                            {persona.skills.map((skill, index) => (
+                                            {persona.skills.slice(0, 2).map((skill, index) => (
                                                 <Badge key={index} variant="secondary" className="text-xs bg-blue-100 text-blue-800 hover:bg-blue-200">
                                                     {skill}
                                                 </Badge>
                                             ))}
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-sm font-medium mb-2 text-blue-800">Learning Objectives:</p>
-                                        <div className="space-y-1">
-                                            {persona.learningObjectives.map((objective, index) => (
-                                                <div key={index} className="flex items-start gap-2">
-                                                    <CheckCircle2 className="h-3 w-3 text-green-600 mt-0.5 flex-shrink-0" />
-                                                    <span className="text-xs text-blue-700">{objective}</span>
-                                                </div>
-                                            ))}
+                                            {persona.skills.length > 2 && (
+                                                <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800">
+                                                    +{persona.skills.length - 2} more
+                                                </Badge>
+                                            )}
                                         </div>
                                     </div>
                                 </CardContent>
@@ -296,52 +250,71 @@ export default function RolePlaySimulatorPage() {
                                 <CardFooter className="pt-0">
                                     <Button asChild className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
                                         <Link href={persona.href}>
-                                            Begin Training Scenario
+                                            Begin Training
                                         </Link>
                                     </Button>
                                 </CardFooter>
                             </Card>
                         );
-                    })}
-                </div>
+                    })
+                ) : (
+                    <div className="col-span-full flex flex-col items-center justify-center py-12 text-center">
+                        <Brain className="h-12 w-12 text-muted-foreground mb-4" />
+                        <h3 className="text-lg font-semibold mb-2">No scenarios found</h3>
+                        <p className="text-muted-foreground mb-4">
+                            Try adjusting your search terms or category filter
+                        </p>
+                        <Button variant="outline" onClick={() => { setSearchTerm(''); setSelectedCategory('all'); }}>
+                            Clear Filters
+                        </Button>
+                    </div>
+                )}
             </div>
 
-            {/* Training Tips Section */}
-            <Card className="border-0 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 shadow-lg">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-amber-900">
-                        <Target className="h-5 w-5 text-amber-700" />
-                        Professional Communication Mastery Tips
-                    </CardTitle>
-                    <CardDescription className="text-amber-800">
-                        Essential techniques for successful law enforcement interactions
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid md:grid-cols-2 gap-6">
-                        <div className="space-y-4">
-                            <div className="p-4 bg-gradient-to-br from-amber-100/80 to-orange-100/80 rounded-lg border border-amber-200/50">
-                                <h4 className="font-semibold text-amber-900 mb-2">Empathy Building</h4>
-                                <p className="text-sm text-amber-800">Use phrases like "I understand this is difficult" and "Help me understand your perspective" to build rapport and trust.</p>
-                            </div>
-                            <div className="p-4 bg-gradient-to-br from-amber-100/80 to-orange-100/80 rounded-lg border border-amber-200/50">
-                                <h4 className="font-semibold text-amber-900 mb-2">De-escalation Techniques</h4>
-                                <p className="text-sm text-amber-800">Speak calmly, avoid commands, validate emotions first, then address facts. Lower your voice to encourage others to do the same.</p>
-                            </div>
-                        </div>
-                        <div className="space-y-4">
-                            <div className="p-4 bg-gradient-to-br from-amber-100/80 to-orange-100/80 rounded-lg border border-amber-200/50">
-                                <h4 className="font-semibold text-amber-900 mb-2">Active Listening</h4>
-                                <p className="text-sm text-amber-800">Ask open-ended questions, repeat back key information, and confirm understanding before moving forward.</p>
-                            </div>
-                            <div className="p-4 bg-gradient-to-br from-amber-100/80 to-orange-100/80 rounded-lg border border-amber-200/50">
-                                <h4 className="font-semibold text-amber-900 mb-2">Professional Language</h4>
-                                <p className="text-sm text-amber-800">Avoid jargon, speak clearly and respectfully, maintain consistent tone throughout the interaction.</p>
-                            </div>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
+            {/* Features Section */}
+            <div className="mt-12">
+                <div className="text-center mb-8">
+                    <h2 className="text-3xl font-bold text-blue-900 mb-4">Training Features</h2>
+                    <p className="text-lg text-blue-700 max-w-2xl mx-auto">
+                        Advanced AI technology delivers realistic, adaptive training experiences
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[
+                        {
+                            icon: Brain,
+                            title: 'AI-Powered Characters',
+                            description: 'Realistic personas that adapt to your approach'
+                        },
+                        {
+                            icon: Target,
+                            title: 'Real-Time Analytics',
+                            description: 'Instant feedback on communication effectiveness'
+                        },
+                        {
+                            icon: TrendingUp,
+                            title: 'Progressive Learning',
+                            description: 'Scenarios adapt based on your performance'
+                        },
+                        {
+                            icon: Award,
+                            title: 'Skill Certification',
+                            description: 'Earn badges as you master techniques'
+                        }
+                    ].map((feature, index) => (
+                        <Card key={index} className="relative overflow-hidden border-0 bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-lg transition-all duration-300">
+                            <CardContent className="p-6 text-center">
+                                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                                    <feature.icon className="h-6 w-6 text-white" />
+                                </div>
+                                <h3 className="font-semibold mb-2 text-blue-900">{feature.title}</h3>
+                                <p className="text-sm text-blue-700 leading-relaxed">{feature.description}</p>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 }
