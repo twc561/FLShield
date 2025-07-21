@@ -147,10 +147,10 @@ export default function RolePlaySimulatorPage() {
             </div>
 
             {/* Alert */}
-            <Alert className="border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 mb-6">
-                <ShieldAlert className="h-4 w-4 text-blue-600" />
-                <AlertTitle className="text-blue-900">Advanced Training Environment</AlertTitle>
-                <AlertDescription className="text-blue-800">
+            <Alert className="border-primary/20 bg-card mb-6">
+                <ShieldAlert className="h-4 w-4 text-primary" />
+                <AlertTitle className="text-card-foreground">Advanced Training Environment</AlertTitle>
+                <AlertDescription className="text-muted-foreground">
                     Experience realistic interactions with AI characters that adapt to your communication style. 
                     Get instant feedback and track your progress across multiple scenarios.
                 </AlertDescription>
@@ -195,65 +195,49 @@ export default function RolePlaySimulatorPage() {
                     filteredPersonas.map(persona => {
                         const IconComponent = persona.icon;
                         return (
-                            <Card key={persona.id} className="group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden h-fit">
-                                <div className={`h-2 bg-gradient-to-r ${persona.color.replace('/10', '')}`} />
+                            <Card key={persona.id} className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20">
                                 <CardHeader className="pb-4">
-                                    <div className="flex items-start justify-between mb-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className={`p-3 rounded-xl bg-gradient-to-br ${persona.color}`}>
-                                                <IconComponent className={`h-6 w-6 ${persona.iconColor}`} />
-                                            </div>
-                                            <div className="flex-1">
-                                                <CardTitle className="text-lg text-blue-900 group-hover:text-blue-700 transition-colors line-clamp-1">
-                                                    {persona.title}
-                                                </CardTitle>
-                                                <CardDescription className="mt-1 text-blue-700 line-clamp-2">
-                                                    {persona.description}
-                                                </CardDescription>
-                                            </div>
+                                    <div className="flex items-start justify-between mb-2">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-lg">
+                                                <IconComponent className={`h-5 w-5 ${persona.iconColor}`} />
+                                            </span>
+                                            <Badge className={getDifficultyColor(persona.difficulty)}>
+                                                {persona.difficulty}
+                                            </Badge>
                                         </div>
-                                        <Badge className={getDifficultyColor(persona.difficulty)}>
-                                            {persona.difficulty}
-                                        </Badge>
+                                        <div className="flex items-center gap-1">
+                                            <Clock className="h-3 w-3 text-muted-foreground" />
+                                            <span className="text-xs text-muted-foreground">{persona.duration}</span>
+                                        </div>
                                     </div>
+                                    <CardTitle className="text-lg leading-tight">{persona.title}</CardTitle>
                                 </CardHeader>
 
                                 <CardContent className="space-y-4">
-                                    <div className="grid grid-cols-2 gap-4 text-sm">
-                                        <div className="flex items-center gap-2 text-blue-700">
-                                            <Clock className="h-4 w-4" />
-                                            <span>{persona.duration}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-blue-700">
-                                            <Users className="h-4 w-4" />
-                                            <span>1-on-1</span>
-                                        </div>
-                                    </div>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">{persona.description}</p>
 
                                     <div>
-                                        <p className="text-sm font-medium mb-2 text-blue-800">Key Skills:</p>
+                                        <p className="text-sm font-medium mb-2 text-card-foreground">Key Skills:</p>
                                         <div className="flex flex-wrap gap-1">
                                             {persona.skills.slice(0, 2).map((skill, index) => (
-                                                <Badge key={index} variant="secondary" className="text-xs bg-blue-100 text-blue-800 hover:bg-blue-200">
+                                                <Badge key={index} variant="secondary" className="text-xs">
                                                     {skill}
                                                 </Badge>
                                             ))}
                                             {persona.skills.length > 2 && (
-                                                <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800">
+                                                <Badge variant="secondary" className="text-xs">
                                                     +{persona.skills.length - 2} more
                                                 </Badge>
                                             )}
                                         </div>
                                     </div>
-                                </CardContent>
 
-                                <CardFooter className="pt-0">
-                                    <Button asChild className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                                        <Link href={persona.href}>
-                                            Begin Training
-                                        </Link>
+                                    <Button variant="outline" size="sm" className="w-full mt-4">
+                                        <Target className="h-4 w-4 mr-2" />
+                                        Begin Training
                                     </Button>
-                                </CardFooter>
+                                </CardContent>
                             </Card>
                         );
                     })
@@ -274,8 +258,8 @@ export default function RolePlaySimulatorPage() {
             {/* Features Section */}
             <div className="mt-12">
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-blue-900 mb-4">Training Features</h2>
-                    <p className="text-lg text-blue-700 max-w-2xl mx-auto">
+                    <h2 className="text-3xl font-bold text-card-foreground mb-4">Training Features</h2>
+                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                         Advanced AI technology delivers realistic, adaptive training experiences
                     </p>
                 </div>
@@ -303,13 +287,13 @@ export default function RolePlaySimulatorPage() {
                             description: 'Earn badges as you master techniques'
                         }
                     ].map((feature, index) => (
-                        <Card key={index} className="relative overflow-hidden border-0 bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-lg transition-all duration-300">
+                        <Card key={index} className="hover:shadow-lg transition-all duration-300">
                             <CardContent className="p-6 text-center">
-                                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-                                    <feature.icon className="h-6 w-6 text-white" />
+                                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                                    <feature.icon className="h-6 w-6 text-primary" />
                                 </div>
-                                <h3 className="font-semibold mb-2 text-blue-900">{feature.title}</h3>
-                                <p className="text-sm text-blue-700 leading-relaxed">{feature.description}</p>
+                                <h3 className="font-semibold mb-2 text-card-foreground">{feature.title}</h3>
+                                <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
                             </CardContent>
                         </Card>
                     ))}
