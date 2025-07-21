@@ -18,6 +18,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
+    const [clientMounted, setClientMounted] = useState(false);
 
     const publicPages = [
         "/", "/login", "/features", "/agency-intelligence",
@@ -27,6 +28,10 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     ];
 
     const isPublicPage = publicPages.includes(pathname);
+
+    useEffect(() => {
+        setClientMounted(true);
+    }, []);
 
     useEffect(() => {
         if (!isFirebaseConfigured) {
@@ -63,7 +68,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     }, [user, isLoading, isPublicPage, pathname, router]);
 
     // Prevent hydration issues by not rendering anything during initial load
-    if (isLoading) {
+    if (!clientMounted || isLoading) {
         return null;
     }
     

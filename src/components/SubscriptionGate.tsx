@@ -1,8 +1,9 @@
 
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { useSubscription } from '@/hooks/use-subscription'
 import { Loader2, Crown, Lock } from 'lucide-react'
 import { Button } from './ui/button'
@@ -49,13 +50,18 @@ const SubscriptionRequired = () => (
   </div>
 )
 
-export function SubscriptionGate({ children }: { children: React.ReactNode }) {
+function SubscriptionGateInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { isPro, loading, mounted, requiresSubscription } = useSubscription()
+  const [clientMounted, setClientMounted] = useState(false)
 
-  // Prevent hydration issues by not rendering anything until mounted
-  if (!mounted) {
-    return null
+  useEffect(() => {
+    setClientMounted(true)
+  }, [])
+
+  // Prevent hydration issues by not rendering anything until fully mounted
+  if (!clientMounted || !mounted) {
+    return <>{children}</>
   }
 
   if (loading) {
@@ -68,4 +74,8 @@ export function SubscriptionGate({ children }: { children: React.ReactNode }) {
   }
 
   return <>{children}</>
+}
+
+export function SubscriptionGate({ children }: { children: React.ReactNode }) {
+  return <SubscriptionGateInner>{children}</SubscriptionGateInner>
 }

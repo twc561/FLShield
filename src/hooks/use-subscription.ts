@@ -21,6 +21,7 @@ export function useSubscription() {
   const [loading, setLoading] = useState(true)
   const [mounted, setMounted] = useState(false)
 
+  // Prevent hydration mismatch by only setting mounted on client
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -84,7 +85,9 @@ export function useSubscription() {
   }
 
   const requiresSubscription = (path: string) => {
-    return !isFeatureFree(path) && mounted && user
+    // Only check subscription requirements after mounting to avoid hydration issues
+    if (!mounted) return false
+    return !isFeatureFree(path) && !!user
   }
   
   return { subscription, loading, isPro, mounted, isFeatureFree, requiresSubscription }
