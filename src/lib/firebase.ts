@@ -27,7 +27,7 @@ export const isFirebaseConfigured =
 
 if (isFirebaseConfigured) {
     // Initialize Firebase
-    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+    app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
     auth = getAuth(app);
     db = getFirestore(app);
 }
