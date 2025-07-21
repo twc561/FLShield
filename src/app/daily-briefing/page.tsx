@@ -72,7 +72,14 @@ export default function DailyBriefingPage() {
 
         {/* Category Filter Tabs */}
         <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-</TabsList>
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 mb-6">
+            {categories.map((category) => (
+              <TabsTrigger key={category.id} value={category.id} className="text-xs">
+                <span className="mr-1">{category.icon}</span>
+                <span className="hidden sm:inline">{category.name}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
         </Tabs>
       </div>
 
@@ -93,7 +100,7 @@ export default function DailyBriefingPage() {
                   </div>
                 )}
 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {filteredModules
                     .filter(module => selectedCategory === 'all' || module.category === category.id)
                     .map((module) => {
