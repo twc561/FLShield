@@ -333,13 +333,15 @@ Remember: You are playing a character, not providing training feedback. Stay in 
       throw new Error('AI service returned invalid response format');
     }
 
-    if (response.text.trim().length === 0) {
+    // Ensure we have a valid string before calling trim()
+    const responseText = response.text || '';
+    if (responseText.trim().length === 0) {
       console.error('AI response text is empty');
       throw new Error('AI service returned empty response');
     }
 
     console.log('AI response received successfully');
-    return response.text.trim();
+    return responseText.trim();
 
   } catch (error) {
     console.error('AI Role-Play Error:', error);

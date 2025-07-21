@@ -192,9 +192,14 @@ export function ScenarioClient({
                 officerApproach: userInput
             });
 
+            // Ensure response is a valid string
+            const safeResponse = (typeof response === 'string' && response.trim()) 
+                ? response.trim() 
+                : "I'm having trouble responding right now. Could you try rephrasing your message?";
+
               setMessages(prev =>
                 prev.map(msg =>
-                    msg.id === modelMessageId ? { ...msg, content: response } : msg
+                    msg.id === modelMessageId ? { ...msg, content: safeResponse } : msg
                 )
             );
 
