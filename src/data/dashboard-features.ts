@@ -41,6 +41,7 @@ import {
   Search,
   MapPin,
   Lock,
+  CreditCard,
 } from "lucide-react"
 
 export type FeatureGroup = {
@@ -487,6 +488,20 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         targetPage: "/restraint-techniques/handcuffing-procedures",
         category: "Restraint Techniques",
        },
+    ],
+  },
+  {
+    category: "Account & Billing",
+    icon: CreditCard,
+    features: [
+      {
+        id: "upgrade-to-pro",
+        title: "Upgrade to Pro",
+        summary: "Get unlimited AI queries, advanced tools, and priority support for $9.99/month.",
+        icon: "CreditCard",
+        targetPage: "/subscription",
+        category: "Account & Billing",
+      },
     ],
   },
 ]
