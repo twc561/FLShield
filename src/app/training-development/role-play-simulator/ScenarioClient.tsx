@@ -267,7 +267,7 @@ export function ScenarioClient({
                         exit={{ opacity: 0, height: 0 }}
                         className="mb-4"
                     >
-                        <Card>
+                        <Card className="bg-background border-border">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Target className="h-5 w-5" />
@@ -326,10 +326,10 @@ export function ScenarioClient({
                 )}
             </AnimatePresence>
 
-            <Card className="flex flex-col flex-1">
+            <Card className="flex flex-col flex-1 bg-background border-border">
                 <CardContent className="flex-1 p-0">
-                    <ScrollArea className="h-[calc(100vh-27rem)]" ref={scrollAreaRef as any}>
-                        <div className="p-6 space-y-4">
+                    <ScrollArea className="h-[calc(100vh-27rem)] bg-background" ref={scrollAreaRef as any}>
+                        <div className="p-6 space-y-4 bg-background">
                             {messages.map(message => (
                                 <motion.div
                                     key={message.id}
@@ -339,7 +339,7 @@ export function ScenarioClient({
                                 >
                                     {message.role === 'model' && <div className="p-2 bg-primary/10 rounded-full"><Bot className="w-5 h-5 text-primary" /></div>}
                                     <div className={cn("max-w-xs md:max-w-md lg:max-w-lg", message.role === 'user' ? '' : '')}>
-                                        <div className={cn("p-3 rounded-lg flex items-center gap-2", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
+                                        <div className={cn("p-3 rounded-lg flex items-center gap-2", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted/50')}>
                                             {message.content ? <p className="whitespace-pre-wrap">{message.content}</p> : <Loader2 className="w-5 h-5 animate-spin" />}
                                         </div>
                                         {message.analysis && (
@@ -364,14 +364,14 @@ export function ScenarioClient({
                         </div>
                     </ScrollArea>
                 </CardContent>
-                <CardFooter className="p-4 border-t flex-col items-start gap-4">
+                <CardFooter className="p-4 border-t border-border bg-background flex-col items-start gap-4">
                     <div className="flex w-full items-center gap-2">
                         <Textarea
                             placeholder="Type your response here..."
                             value={userInput}
                             onChange={(e) => setUserInput(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            className="flex-1 resize-none"
+                            className="flex-1 resize-none bg-muted/30 border-border"
                             rows={2}
                             disabled={isLoading}
                         />
