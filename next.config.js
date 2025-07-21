@@ -10,6 +10,7 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
+  allowedDevOrigins: ['64f9135f-4c2c-455c-a9b7-9e326d59f291-00-11gv1x3f7z16.spock.replit.dev'],
   async headers() {
     return [
       {
