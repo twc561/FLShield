@@ -316,30 +316,57 @@ Remember: You are playing a character, not providing training feedback. Stay in 
       }
     });
 
-    // Handle the stream response properly
+    // Handle the stream response with better error handling
+    let streamProcessed = false;
+    let accumulatedText = '';
+    
     try {
-      for await (const chunk of stream) {
-        if (chunk.text) {
-          yield chunk.text;
+      // Check if stream is actually async iterable
+      if (stream && typeof stream[Symbol.asyncIterator] === 'function') {
+        for await (const chunk of stream) {
+          if (chunk && chunk.text) {
+            accumulatedText += chunk.text;
+            yield chunk.text;
+            streamProcessed = true;
+          }
         }
+      } else {
+        console.log('Stream is not async iterable, using fallback');
+        throw new Error('Stream is not async iterable');
       }
+      
+      // If no text was yielded from stream, try fallback
+      if (!streamProcessed || accumulatedText.length === 0) {
+        console.log('No text from stream, using fallback');
+        throw new Error('No text from stream');
+      }
+      
     } catch (streamError) {
       console.error('Stream processing error:', streamError);
-      // If streaming fails, try to get the full response
-      const response = await ai.generate({
-        system: enhancedPrompt,
-        history: conversationHistory,
-        prompt: lastOfficerMessage,
-        config: {
-          temperature: 0.8,
-          maxOutputTokens: 200,
-        }
-      });
+      console.log('Attempting fallback to standard generation...');
       
-      if (response.text) {
-        yield response.text;
-      } else {
-        throw new Error('No response generated from AI model');
+      try {
+        // If streaming fails, try to get the full response
+        const response = await ai.generate({
+          system: enhancedPrompt,
+          history: conversationHistory,
+          prompt: lastOfficerMessage,
+          config: {
+            temperature: 0.8,
+            maxOutputTokens: 200,
+          }
+        });
+        
+        if (response && response.text && response.text.trim().length > 0) {
+          console.log('Fallback successful, yielding response');
+          yield response.text;
+        } else {
+          console.error('Fallback also failed - no response text');
+          throw new Error('No response generated from AI model in fallback');
+        }
+      } catch (fallbackError) {
+        console.error('Fallback generation also failed:', fallbackError);
+        throw new Error('Both streaming and fallback generation failed');
       }
     }
   } catch (error) {

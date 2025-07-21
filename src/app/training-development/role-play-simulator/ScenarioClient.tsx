@@ -203,17 +203,21 @@ export function ScenarioClient({
                 console.error("Error details:", error.message);
                 console.error("Error stack:", error.stack);
                 
-                if (error.message.includes('stream is not async iterable')) {
-                    errorMessage = "[Streaming Error: Retrying with standard response...]";
-                    // Try to continue without streaming
+                // If it's a streaming error that should have been handled by fallback
+                if (error.message.includes('stream') || error.message.includes('async iterable')) {
+                    errorMessage = "[Temporary issue with response streaming. Please try your message again.]";
+                } else if (error.message.includes('Both streaming and fallback generation failed')) {
+                    errorMessage = "[AI service temporarily unavailable. Please wait a moment and try again.]";
                 } else if (error.message.includes('network') || error.message.includes('fetch')) {
                     errorMessage = "[Network Error: Please check your connection and try again.]";
                 } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
                     errorMessage = "[Service Busy: Please wait a moment and try again.]";
                 } else if (error.message.includes('timeout')) {
                     errorMessage = "[Timeout Error: The response took too long. Please try again.]";
-                } else if (error.message.includes('Firebase')) {
+                } else if (error.message.includes('Firebase') || error.message.includes('auth')) {
                     errorMessage = "[Authentication Error: Please refresh the page and try again.]";
+                } else {
+                    errorMessage = "[Unexpected error occurred. Please try again or refresh the page.]";
                 }
             }
             
