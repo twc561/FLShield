@@ -1,6 +1,7 @@
 {
   "name": "flshield",
   "version": "0.5.1",
+  "type": "module",
   "private": true,
   "description": "The essential digital partner for the modern Florida officer.",
   "scripts": {
