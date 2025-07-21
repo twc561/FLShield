@@ -230,7 +230,7 @@ export default function RolePlaySimulatorPage() {
                     {personas.map(persona => {
                         const IconComponent = persona.icon;
                         return (
-                            <Card key={persona.id} className="group hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden">
+                            <Card key={persona.id} className="group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
                                 <div className={`h-2 bg-gradient-to-r ${persona.color.replace('/10', '')}`} />
                                 <CardHeader className="pb-4">
                                     <div className="flex items-start justify-between mb-3">
@@ -321,21 +321,21 @@ export default function RolePlaySimulatorPage() {
                 <CardContent>
                     <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-4">
-                            <div className="p-4 bg-white/70 rounded-lg">
+                            <div className="p-4 bg-gradient-to-br from-amber-100/80 to-orange-100/80 rounded-lg border border-amber-200/50">
                                 <h4 className="font-semibold text-amber-900 mb-2">Empathy Building</h4>
                                 <p className="text-sm text-amber-800">Use phrases like "I understand this is difficult" and "Help me understand your perspective" to build rapport and trust.</p>
                             </div>
-                            <div className="p-4 bg-white/70 rounded-lg">
+                            <div className="p-4 bg-gradient-to-br from-amber-100/80 to-orange-100/80 rounded-lg border border-amber-200/50">
                                 <h4 className="font-semibold text-amber-900 mb-2">De-escalation Techniques</h4>
                                 <p className="text-sm text-amber-800">Speak calmly, avoid commands, validate emotions first, then address facts. Lower your voice to encourage others to do the same.</p>
                             </div>
                         </div>
                         <div className="space-y-4">
-                            <div className="p-4 bg-white/70 rounded-lg">
+                            <div className="p-4 bg-gradient-to-br from-amber-100/80 to-orange-100/80 rounded-lg border border-amber-200/50">
                                 <h4 className="font-semibold text-amber-900 mb-2">Active Listening</h4>
                                 <p className="text-sm text-amber-800">Ask open-ended questions, repeat back key information, and confirm understanding before moving forward.</p>
                             </div>
-                            <div className="p-4 bg-white/70 rounded-lg">
+                            <div className="p-4 bg-gradient-to-br from-amber-100/80 to-orange-100/80 rounded-lg border border-amber-200/50">
                                 <h4 className="font-semibold text-amber-900 mb-2">Professional Language</h4>
                                 <p className="text-sm text-amber-800">Avoid jargon, speak clearly and respectfully, maintain consistent tone throughout the interaction.</p>
                             </div>
