@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(request: NextRequest) {
   try {
-    const { priceId } = await request.json()
+    const { priceId, userId } = await request.json()
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/subscription`,
       metadata: {
-        userId: 'user_placeholder', // Replace with actual user ID from auth
+        userId: userId,
       },
     })
 

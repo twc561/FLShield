@@ -2,6 +2,8 @@
 'use client'
 
 import { useState } from 'react'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { auth } from '@/lib/firebase'
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -12,8 +14,18 @@ import { useToast } from "@/hooks/use-toast"
 export default function SubscriptionPage() {
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
+  const [user] = useAuthState(auth)
 
   const handleSubscribe = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to subscribe.",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsLoading(true)
     try {
       const response = await fetch('/api/create-checkout-session', {
@@ -23,6 +35,7 @@ export default function SubscriptionPage() {
         },
         body: JSON.stringify({
           priceId: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID,
+          userId: user.uid,
         }),
       })
 
