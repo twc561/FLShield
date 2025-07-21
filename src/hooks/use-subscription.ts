@@ -91,6 +91,7 @@ export function useSubscription() {
     '/for-officers',
     '/agency-intelligence',
     '/cjis-compliance',
+    '/cjis-compliance',
     '/request-demo'
   ]
 
