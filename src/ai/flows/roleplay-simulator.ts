@@ -1,9 +1,6 @@
 'use server';
-/**
- * @fileOverview Enhanced conversational AI agent for realistic role-playing scenarios.
- * Fully optimized for Gemini AI with robust character interactions and dynamic responses.
- */
-import { ai } from '@/ai/genkit';
+
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { z } from 'zod';
 
 const RolePlayInputSchema = z.object({
@@ -20,171 +17,114 @@ const RolePlayInputSchema = z.object({
 });
 export type RolePlayInput = z.infer<typeof RolePlayInputSchema>;
 
-// Enhanced character configurations with personality matrices
+// Initialize Gemini directly
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY || '');
+
+// Enhanced character configurations
 const scenarioCharacters = {
   'calm_cooperative': {
-    name: 'Cooperative Witness',
-    basePersonality: 'helpful, honest, slightly nervous',
-    responsePatterns: {
-      professional: 'becomes more comfortable and detailed',
-      aggressive: 'becomes worried but still tries to help',
-      empathetic: 'opens up more, provides better information'
-    },
-    stressReactions: {
+    name: 'Alex',
+    basePersonality: 'respectful, helpful, and straightforward',
+    stressResponses: {
       low: 'relaxed and conversational',
-      medium: 'slightly nervous but cooperative',
+      medium: 'slightly nervous but cooperative', 
       high: 'anxious but still trying to help'
     }
   },
   'agitated_uncooperative': {
-    name: 'Agitated Individual',
+    name: 'Jordan',
     basePersonality: 'frustrated, defensive, having a bad day',
-    responsePatterns: {
-      professional: 'gradually calms down with consistent respect',
-      aggressive: 'becomes more defensive and argumentative',
-      empathetic: 'slowly opens up about underlying issues'
-    },
-    stressReactions: {
+    stressResponses: {
       low: 'mildly irritated but manageable',
       medium: 'clearly frustrated and short-tempered',
-      high: 'very agitated, raising voice, gesturing'
+      high: 'very agitated, raising voice'
     }
   },
   'emotionally_distraught': {
-    name: 'Distraught Victim',
+    name: 'Sam',
     basePersonality: 'overwhelmed, traumatized, seeking help',
-    responsePatterns: {
-      professional: 'appreciates the structure and clarity',
-      aggressive: 'becomes more upset and withdrawn',
-      empathetic: 'feels heard and gradually shares more'
-    },
-    stressReactions: {
+    stressResponses: {
       low: 'tearful but able to communicate',
       medium: 'struggling to speak coherently',
       high: 'sobbing, barely able to respond'
     }
   },
   'deceptive_evasive': {
-    name: 'Evasive Suspect',
+    name: 'Casey',
     basePersonality: 'trying to avoid trouble, calculating responses',
-    responsePatterns: {
-      professional: 'maintains facade but gets nervous',
-      aggressive: 'becomes more defensive and evasive',
-      empathetic: 'might slip up or show genuine emotion'
-    },
-    stressReactions: {
+    stressResponses: {
       low: 'smooth and evasive',
       medium: 'starting to show cracks in story',
       high: 'making mistakes, contradicting themselves'
     }
   },
   'nervous_citizen': {
-    name: 'Nervous Citizen',
+    name: 'Taylor',
     basePersonality: 'law-abiding but anxious around authority',
-    responsePatterns: {
-      professional: 'gradually relaxes and becomes helpful',
-      aggressive: 'becomes more nervous and tongue-tied',
-      empathetic: 'feels reassured and opens up'
-    },
-    stressReactions: {
+    stressResponses: {
       low: 'slightly nervous but functional',
       medium: 'visibly anxious, fidgeting',
-      high: 'very nervous, stuttering, shaking'
+      high: 'very nervous, stuttering'
     }
   },
   'language_barrier': {
-    name: 'Non-English Speaker',
+    name: 'Maria',
     basePersonality: 'confused by language barrier, wants to help',
-    responsePatterns: {
-      professional: 'appreciates patience and clear communication',
-      aggressive: 'becomes more confused and scared',
-      empathetic: 'feels more comfortable, tries harder'
-    },
-    stressReactions: {
+    stressResponses: {
       low: 'struggling but trying',
       medium: 'frustrated with communication',
       high: 'overwhelmed, mixing languages'
     }
   },
   'domestic_dispute': {
-    name: 'Dispute Participant',
+    name: 'Riley',
     basePersonality: 'defensive about privacy, downplaying issues',
-    responsePatterns: {
-      professional: 'maintains boundaries but cooperates',
-      aggressive: 'becomes more defensive and hostile',
-      empathetic: 'might reveal more about the situation'
-    },
-    stressReactions: {
+    stressResponses: {
       low: 'guarded but polite',
       medium: 'clearly defensive and protective',
-      high: 'very upset about outside interference'
+      high: 'very upset about interference'
     }
   },
   'mental_health_crisis': {
-    name: 'Person in Crisis',
+    name: 'Morgan',
     basePersonality: 'confused, scared, experiencing mental health emergency',
-    responsePatterns: {
-      professional: 'responds to calm, clear direction',
-      aggressive: 'becomes more agitated and fearful',
-      empathetic: 'shows moments of clarity and connection'
-    },
-    stressReactions: {
+    stressResponses: {
       low: 'confused but somewhat coherent',
-      medium: 'struggling with reality, paranoid thoughts',
-      high: 'very disoriented, potential for panic'
+      medium: 'struggling with reality',
+      high: 'very disoriented, potential panic'
     }
   },
   'hostile_intoxicated': {
-    name: 'Intoxicated Person',
+    name: 'Dakota',
     basePersonality: 'impaired judgment, mood swings, argumentative',
-    responsePatterns: {
-      professional: 'responds to firm but fair treatment',
-      aggressive: 'becomes more belligerent and challenging',
-      empathetic: 'has moments of clarity and remorse'
-    },
-    stressReactions: {
+    stressResponses: {
       low: 'mildly intoxicated but manageable',
       medium: 'clearly impaired, mood swings',
-      high: 'very intoxicated, unpredictable behavior'
+      high: 'very intoxicated, unpredictable'
     }
   },
   'juvenile_contact': {
-    name: 'Teenager',
+    name: 'Jamie',
     basePersonality: 'scared about consequences, worried about parents',
-    responsePatterns: {
-      professional: 'respects authority but stays guarded',
-      aggressive: 'becomes more defiant or shuts down',
-      empathetic: 'opens up and shows vulnerability'
-    },
-    stressReactions: {
+    stressResponses: {
       low: 'nervous but trying to act tough',
       medium: 'clearly worried about consequences',
-      high: 'very scared, might break down or lash out'
+      high: 'very scared, might break down'
     }
   },
   'elderly_confused': {
-    name: 'Elderly Person',
+    name: 'Margaret',
     basePersonality: 'possibly experiencing memory issues, easily confused',
-    responsePatterns: {
-      professional: 'appreciates clear, patient communication',
-      aggressive: 'becomes more confused and distressed',
-      empathetic: 'feels comfortable and tries to help'
-    },
-    stressReactions: {
+    stressResponses: {
       low: 'mildly confused but functional',
       medium: 'clearly struggling with comprehension',
       high: 'very disoriented, possibly agitated'
     }
   },
   'business_complaint': {
-    name: 'Business Owner',
+    name: 'Chris',
     basePersonality: 'frustrated with ongoing problems, seeking solutions',
-    responsePatterns: {
-      professional: 'appreciates action-oriented approach',
-      aggressive: 'becomes more frustrated and demanding',
-      empathetic: 'feels heard and becomes collaborative'
-    },
-    stressReactions: {
+    stressResponses: {
       low: 'concerned but professional',
       medium: 'clearly frustrated and impatient',
       high: 'very upset about business impact'
@@ -192,325 +132,198 @@ const scenarioCharacters = {
   }
 };
 
-// Dynamic conversation context builder with massive token limits
-function buildConversationContext(history: any[], maxTokens: number = 8000): string {
-  let context = '';
-  let tokenCount = 0;
-
-  // Use much more history - last 20 exchanges
-  const recentHistory = history.slice(-40);
-
-  for (let i = recentHistory.length - 1; i >= 0; i--) {
-    const entry = recentHistory[i];
-    const entryText = `${entry.role === 'user' ? 'Officer' : 'You'}: "${entry.parts[0].text}"`;
-
-    // More generous token estimation
-    const entryTokens = entryText.length / 2;
-
-    if (tokenCount + entryTokens > maxTokens) break;
-
-    context = entryText + '\n' + context;
-    tokenCount += entryTokens;
-  }
-
-  return context.trim();
+function getStressCategory(level: number): 'low' | 'medium' | 'high' {
+  if (level <= 3) return 'low';
+  if (level <= 6) return 'medium';
+  return 'high';
 }
 
-// Detailed prompt builder for much richer Gemini responses
-function buildGeminiPrompt(
+function analyzeOfficerTone(message: string): 'professional' | 'aggressive' | 'empathetic' {
+  const lower = message.toLowerCase();
+
+  if (lower.includes('understand') || lower.includes('help') || 
+      lower.includes('listen') || lower.includes('sorry') || 
+      lower.includes('concerned')) {
+    return 'empathetic';
+  }
+
+  if (lower.includes('!') || lower.includes('need to') || 
+      lower.includes('must') || lower.includes('calm down') || 
+      lower.includes('stop')) {
+    return 'aggressive';
+  }
+
+  return 'professional';
+}
+
+function buildConversationContext(history: any[]): string {
+  const recentHistory = history.slice(-10); // Last 10 exchanges
+  return recentHistory.map(entry => {
+    const speaker = entry.role === 'user' ? 'Officer' : 'You';
+    return `${speaker}: "${entry.parts[0].text}"`;
+  }).join('\n');
+}
+
+function createDetailedPrompt(
   character: any,
   conversationHistory: any[],
-  currentAction: string,
-  stressLevel: number,
-  officerApproach: string
+  officerMessage: string,
+  stressLevel: number
 ): string {
-  const stressCategory = stressLevel <= 3 ? 'calm' : stressLevel <= 6 ? 'moderately stressed' : 'highly stressed';
-  const approachType = determineApproachType(currentAction);
-  
-  // Build full conversation context
-  const conversationContext = buildConversationContext(conversationHistory, 6000);
-  
-  // Much more detailed prompt with full context
-  return `You are roleplaying as: ${character.name}
+  const stressCategory = getStressCategory(stressLevel);
+  const officerTone = analyzeOfficerTone(officerMessage);
+  const conversationContext = buildConversationContext(conversationHistory);
+
+  return `You are roleplaying as ${character.name}, a realistic person in a police interaction.
 
 CHARACTER PROFILE:
+- Name: ${character.name}
 - Personality: ${character.basePersonality}
 - Current stress level: ${stressLevel}/10 (${stressCategory})
-- Reaction to ${approachType} approach: ${character.responsePatterns[approachType]}
-- Current state: ${character.stressReactions[stressCategory]}
+- Current state: ${character.stressResponses[stressCategory]}
 
-CONVERSATION HISTORY:
+CONVERSATION SO FAR:
 ${conversationContext}
 
 CURRENT SITUATION:
-The officer just said: "${currentAction}"
+The officer just said: "${officerMessage}"
+The officer's tone seems: ${officerTone}
 
 ROLEPLAY INSTRUCTIONS:
-- Stay completely in character as ${character.name}
-- Respond naturally based on your personality and stress level
-- React authentically to the officer's approach and tone
-- Show realistic human emotions and reactions
-- Be specific and detailed in your response
-- Include body language, tone, and emotional state in your response
+- Respond ONLY as ${character.name}
+- Stay completely in character based on your personality and stress level
+- React naturally to the officer's tone and approach
+- Keep responses realistic (1-3 sentences)
+- Show appropriate emotions and reactions
 - Remember everything that has happened in this conversation
-- Your response should be 2-4 sentences and feel completely natural
+- DO NOT break character or narrate actions
 
 Your response as ${character.name}:`;
 }
 
-// Analyze officer's approach for character response
-function determineApproachType(message: string): 'professional' | 'aggressive' | 'empathetic' {
-  const lower = message.toLowerCase();
-
-  // Empathetic indicators
-  if (lower.includes('understand') || lower.includes('help') || lower.includes('listen') || 
-      lower.includes('sorry') || lower.includes('concerned') || lower.includes('care')) {
-    return 'empathetic';
-  }
-
-  // Aggressive indicators
-  if (lower.includes('!') || lower.includes('need to') || lower.includes('must') ||
-      lower.includes('calm down') || lower.includes('stop') || lower.length < 15) {
-    return 'aggressive';
-  }
-
-  // Default to professional
-  return 'professional';
-}
-
-// Main roleplay function optimized for Gemini
 export async function generateRolePlayResponse(input: RolePlayInput): Promise<string> {
-  const { systemPrompt, conversationHistory, scenarioType = 'general', currentStressLevel = 5, officerApproach } = input;
+  const { 
+    systemPrompt, 
+    conversationHistory = [], 
+    scenarioType = 'general', 
+    currentStressLevel = 5, 
+    officerApproach = '' 
+  } = input;
 
   try {
-    console.log('Gemini RolePlay Input:', {
+    console.log('Direct Gemini roleplay call:', {
       scenarioType,
-      historyLength: conversationHistory?.length || 0,
-      currentStressLevel
+      historyLength: conversationHistory.length,
+      stressLevel: currentStressLevel
     });
 
-    // Improved validation - allow empty history for initial messages
-    if (!conversationHistory) {
-      conversationHistory = [];
-    }
-
-    // If no history, create initial context
-    let currentAction = '';
-    if (conversationHistory.length === 0) {
-      currentAction = systemPrompt || 'Initial officer contact';
-    } else {
-      const lastMessage = conversationHistory[conversationHistory.length - 1];
-      if (!lastMessage?.parts?.[0]?.text?.trim()) {
-        throw new Error('Last message is empty or invalid');
-      }
-      currentAction = lastMessage.parts[0].text.trim();
-    }
-
-    // Get character configuration
+    // Get character or create default
     const character = scenarioCharacters[scenarioType as keyof typeof scenarioCharacters] || {
       name: 'Individual',
-      basePersonality: 'neutral demeanor, responsive to officer communication',
-      responsePatterns: {
-        professional: 'maintains polite interaction and cooperates',
-        aggressive: 'becomes guarded and defensive',
-        empathetic: 'opens up and shows vulnerability'
-      },
-      stressReactions: {
+      basePersonality: 'neutral person in a police interaction',
+      stressResponses: {
         low: 'calm and collected',
-        medium: 'showing some stress and nervousness',
-        high: 'visibly stressed and emotionally reactive'
+        medium: 'showing some stress',
+        high: 'visibly stressed'
       }
     };
 
-    // Build detailed Gemini prompt with full context
-    const geminiPrompt = buildGeminiPrompt(character, conversationHistory, currentAction, currentStressLevel, currentAction);
-
-    console.log('Making Gemini AI call with enhanced context...');
-    console.log('Prompt length:', geminiPrompt.length);
-
-    // Use Gemini with MASSIVE token limits for detailed roleplay responses
-    const aiResponse = await ai.generate({
-      prompt: geminiPrompt,
-      config: {
-        temperature: 0.95,  // Maximum creativity for varied responses
-        maxOutputTokens: 8192,  // Massive token limit increase
-        topP: 0.98,
-        topK: 100,
-        candidateCount: 1
+    // Get the last officer message
+    let officerMessage = officerApproach;
+    if (!officerMessage && conversationHistory.length > 0) {
+      const lastMessage = conversationHistory[conversationHistory.length - 1];
+      if (lastMessage?.parts?.[0]?.text) {
+        officerMessage = lastMessage.parts[0].text;
       }
-    });
-
-    console.log('Raw Gemini Response:', aiResponse);
-
-    // Improved response extraction for Gemini
-    let responseText = '';
-    try {
-      // Try the text() function first (most reliable for Gemini)
-      if (typeof aiResponse.text === 'function') {
-        responseText = aiResponse.text()?.trim() || '';
-      }
-
-      // If no response from text(), try raw candidates
-      if (!responseText && aiResponse.raw?.candidates?.[0]?.content?.parts?.[0]?.text) {
-        responseText = aiResponse.raw.candidates[0].content.parts[0].text.trim();
-      }
-
-      console.log('Extracted response length:', responseText.length);
-      console.log('Response preview:', responseText.substring(0, 100));
-    } catch (textError) {
-      console.error('Error extracting Gemini response:', textError);
-      responseText = '';
+    }
+    if (!officerMessage) {
+      officerMessage = "Hello, I'm Officer Smith. How are you doing today?";
     }
 
-    // If we got a response, clean and return it
-    if (responseText && responseText.length > 0) {
-      let cleanResponse = responseText;
+    // Create detailed prompt
+    const prompt = createDetailedPrompt(character, conversationHistory, officerMessage, currentStressLevel);
 
-      // Remove any unwanted prefixes
+    // Call Gemini directly with maximum context
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      generationConfig: {
+        temperature: 0.9,
+        topP: 0.95,
+        topK: 64,
+        maxOutputTokens: 2048,
+      },
+    });
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    console.log('Direct Gemini response:', text.substring(0, 100));
+
+    if (text && text.trim()) {
+      let cleanResponse = text.trim();
+
+      // Remove any unwanted prefixes or suffixes
       cleanResponse = cleanResponse.replace(/^(You:|Character:|Response:|[A-Za-z\s]+:)\s*/i, '');
-
-      // Remove markdown formatting
       cleanResponse = cleanResponse.replace(/\*\*(.*?)\*\*/g, '$1');
 
-      // Ensure proper dialogue formatting
-      if (!cleanResponse.startsWith('"') && !cleanResponse.startsWith('*') && !cleanResponse.includes(':')) {
+      // Ensure it's a natural response
+      if (!cleanResponse.startsWith('"') && !cleanResponse.startsWith('*')) {
         cleanResponse = `"${cleanResponse}"`;
       }
 
       return cleanResponse;
     }
 
-    // Enhanced contextual fallback based on character and situation
-    return generateSmartFallback(character, currentStressLevel, currentAction, scenarioType);
-
-  } catch (error) {
-    console.error('Gemini RolePlay Error:', error);
-
-    // Get character for error fallback
-    const character = scenarioCharacters[scenarioType as keyof typeof scenarioCharacters] || {
-      name: 'Individual',
-      basePersonality: 'neutral'
+    // Enhanced fallback responses based on character and scenario
+    const fallbackResponses = {
+      'calm_cooperative': `"Of course, officer. I'm happy to help with whatever you need."`,
+      'agitated_uncooperative': `"Look, I'm having a really bad day. What exactly do you need from me?"`,
+      'emotionally_distraught': `*wiping tears* "I'm sorry, I'm just really shaken up right now."`,
+      'mental_health_crisis': `*looking confused* "I... I'm not sure what's happening. Everything feels so strange."`,
+      'hostile_intoxicated': `*swaying slightly* "What? I didn't do anything wrong, officer."`,
+      'juvenile_contact': `*nervously* "Am I in trouble? Are you going to call my parents?"`,
+      'elderly_confused': `*looking puzzled* "I'm sorry dear, I'm having trouble understanding. Could you repeat that?"`,
+      'language_barrier': `*struggling with English* "Sorry, my English no so good. You speak slow please?"`,
+      'domestic_dispute': `*defensive* "Look, this is just a private matter between me and my partner."`,
+      'nervous_citizen': `*anxiously* "I'm sorry officer, I'm just really nervous. What did you need to know?"`,
+      'business_complaint': `*frustrated* "Officer, I really need help with this ongoing situation at my business."`,
+      'deceptive_evasive': `*hesitating* "I'm not really sure what you're asking about, officer."`
     };
 
-    return generateErrorFallback(character, currentStressLevel, scenarioType);
+    return fallbackResponses[scenarioType as keyof typeof fallbackResponses] || 
+           `"I'm here, officer. What did you need to talk to me about?"`;
+
+  } catch (error: any) {
+    console.error('Direct Gemini error:', error);
+
+    // Character-specific error responses
+    const errorResponses = {
+      'mental_health_crisis': `*becoming agitated* "I can't... I can't think straight right now."`,
+      'hostile_intoxicated': `*confused* "What the hell... I can't understand what you're saying."`,
+      'emotionally_distraught': `*breaking down* "I'm sorry, I just can't handle any more right now."`,
+      'elderly_confused': `*very confused* "I'm sorry dear, I don't understand what's happening."`,
+      'language_barrier': `*frustrated* "No comprendo... sorry, no understand good."`
+    };
+
+    const character = scenarioCharacters[scenarioType as keyof typeof scenarioCharacters];
+    return errorResponses[scenarioType as keyof typeof errorResponses] || 
+           `${character?.name || 'Individual'}: "I'm sorry, could you repeat that? I'm having trouble understanding."`;
   }
 }
 
-// Smart fallback with immediate character responses
-function generateSmartFallback(character: any, stressLevel: number, currentAction: string, scenarioType: string): string {
-  const stressCategory = stressLevel <= 3 ? 'low' : stressLevel <= 6 ? 'medium' : 'high';
-  const approachType = determineApproachType(currentAction);
-
-  // Quick character responses for common scenarios
-  const quickResponses = {
-    'Cooperative Witness': {
-      low: {
-        professional: "Of course, officer. I want to help however I can with this situation.",
-        aggressive: "Oh... okay, I'll try to answer your questions as best I can.",
-        empathetic: "Thank you for being so understanding. This has been really difficult for me."
-      },
-      medium: {
-        professional: "I'm trying to remember everything correctly, officer. It happened so fast.",
-        aggressive: "I'm sorry, I'm just a little shaken up. Could you repeat that?",
-        empathetic: "I really appreciate your patience. I saw what happened and I want to help."
-      },
-      high: {
-        professional: "*nervously* I'll do my best to tell you what I saw, but I'm still pretty shaken up.",
-        aggressive: "*voice trembling* I'm sorry, I'm just really nervous. I've never been through anything like this.",
-        empathetic: "*relaxing slightly* Thank you for understanding. I really want to help you figure this out."
-      }
-    },
-    'Agitated Individual': {
-      low: {
-        professional: "Look, I get that you have a job to do. What do you need to know?",
-        aggressive: "Great, just great. What now?",
-        empathetic: "*sighs* Sorry, I'm just having a really rough day. What can I tell you?"
-      },
-      medium: {
-        professional: "*frustrated* Fine, fine. I'll cooperate. But this whole thing is ridiculous.",
-        aggressive: "Why is everyone hassling me today? I didn't do anything wrong!",
-        empathetic: "Look, I know you're just trying to help. I'm just really frustrated right now."
-      },
-      high: {
-        professional: "*agitated* This is insane! But whatever, ask your questions.",
-        aggressive: "*raising voice* I'm sick of this! Everyone's treating me like some kind of criminal!",
-        empathetic: "*voice breaking* I'm sorry for yelling. I'm just... everything's falling apart today."
-      }
-    },
-    'Person in Crisis': {
-      low: {
-        professional: "*confused but trying* I... I'll try to answer. Everything feels so strange right now.",
-        aggressive: "*backing away slightly* Please don't yell at me. I don't understand what's happening.",
-        empathetic: "*tearful* Thank you for being kind. I'm so scared and confused right now."
-      },
-      medium: {
-        professional: "*disoriented* The voices... they keep telling me... what was your question?",
-        aggressive: "*becoming agitated* No, no, no! You're one of them too, aren't you?",
-        empathetic: "*grasping for connection* You seem nice. Can you help me? I don't know what's real anymore."
-      },
-      high: {
-        professional: "*very distressed* I can't... the thoughts won't stop... what do you want from me?",
-        aggressive: "*panicking* Stay away! I know what you're trying to do!",
-        empathetic: "*sobbing* Please help me. I don't know what's happening to my mind."
-      }
-    }
-  };
-
-  // Get response or use generic fallback
-  const characterResponses = quickResponses[character.name as keyof typeof quickResponses];
-  if (characterResponses && characterResponses[stressCategory] && characterResponses[stressCategory][approachType]) {
-    return characterResponses[stressCategory][approachType];
-  }
-
-  // Scenario-specific quick responses
-  const scenarioQuickResponses: Record<string, string> = {
-    'mental_health_crisis': "*confused* I'm sorry, what did you ask?",
-    'hostile_intoxicated': "*swaying* What? Say that again?", 
-    'emotionally_distraught': "*crying* I'm sorry, could you repeat that?",
-    'juvenile_contact': "*nervously* I didn't hear you, officer.",
-    'elderly_confused': "*confused* What was that, dear?",
-    'language_barrier': "*struggling* Sorry, no understand. Again please?",
-    'agitated_uncooperative': "*frustrated* What now?",
-    'domestic_dispute': "*defensive* What exactly are you asking?",
-    'calm_cooperative': "I'm sorry, I didn't catch that. Could you repeat it?",
-    'nervous_citizen': "*anxiously* Sorry, I'm just nervous. What did you say?",
-    'business_complaint': "*impatiently* Could you repeat your question?",
-    'deceptive_evasive': "*hesitating* I'm not sure what you're asking."
-  };
-
-  return scenarioQuickResponses[scenarioType] || 
-         `"Sorry, could you repeat that? I want to make sure I understand what you're asking."`;
-}
-
-// Error fallback with character awareness
-function generateErrorFallback(character: any, stressLevel: number, scenarioType: string): string {
-  const errorResponses = {
-    'mental_health_crisis': "*looking confused and distressed* I'm sorry, I'm having trouble focusing right now. What did you ask?",
-    'hostile_intoxicated': "*swaying slightly* What? I can't... what are you trying to say?",
-    'emotionally_distraught': "*wiping tears* I'm sorry, I'm just so overwhelmed. Could you repeat that?",
-    'juvenile_contact': "*nervously* I'm sorry, I'm really confused right now. Are you going to call my parents?",
-    'elderly_confused': "*looking puzzled* I'm sorry dear, my mind isn't as sharp as it used to be. What was that?",
-    'language_barrier': "*struggling with English* Sorry, sorry... no understand good. You speak slow please?",
-    'agitated_uncooperative': "*frustrated* This whole day has been a disaster. What exactly do you want from me?",
-    'domestic_dispute': "*defensive* Look, can we just handle this quietly? I don't want the whole neighborhood involved."
-  };
-
-  return errorResponses[scenarioType as keyof typeof errorResponses] || 
-         `${character.name}: "I apologize, I'm having difficulty processing right now. Could you try asking again?"`;
-}
-
-// Deprecated streaming function - kept for backwards compatibility
+// Streaming wrapper for compatibility
 export async function* streamRolePlay(input: RolePlayInput) {
   try {
     const response = await generateRolePlayResponse(input);
     yield response;
   } catch (error) {
-    console.error('Streaming wrapper error:', error);
+    console.error('Stream error:', error);
     yield "I'm having difficulty responding right now. Could you please try again?";
   }
 }
 
-// Helper function to analyze officer's approach
+// Helper function for analysis
 export async function analyzeOfficerApproach(message: string): Promise<{
   tone: 'professional' | 'aggressive' | 'empathetic' | 'rushed';
   techniques: string[];
@@ -519,36 +332,21 @@ export async function analyzeOfficerApproach(message: string): Promise<{
   let tone: 'professional' | 'aggressive' | 'empathetic' | 'rushed' = 'professional';
   const techniques: string[] = [];
 
-  // Empathy detection
   if (lowerMessage.includes('understand') || lowerMessage.includes('help') || 
       lowerMessage.includes('listen') || lowerMessage.includes('sorry')) {
     tone = 'empathetic';
     techniques.push('Empathetic language', 'Active listening');
-  }
-
-  // Aggression detection
-  if (lowerMessage.includes('!') || lowerMessage.includes('need to') || 
-      lowerMessage.includes('must') || lowerMessage.includes('calm down')) {
+  } else if (lowerMessage.includes('!') || lowerMessage.includes('need to') || 
+             lowerMessage.includes('must')) {
     tone = 'aggressive';
     techniques.push('Commanding tone', 'Direct orders');
-  }
-
-  // Professional techniques
-  if (lowerMessage.includes('can you') || lowerMessage.includes('would you') || 
-      lowerMessage.includes('please')) {
-    techniques.push('Polite requests', 'Professional courtesy');
-  }
-
-  // Rushed detection
-  if (lowerMessage.length < 20 && !lowerMessage.includes('?')) {
+  } else if (lowerMessage.length < 20) {
     tone = 'rushed';
     techniques.push('Brief communication');
   }
 
-  // De-escalation techniques
-  if (lowerMessage.includes('safe') || lowerMessage.includes('calm') || 
-      lowerMessage.includes('okay')) {
-    techniques.push('De-escalation', 'Reassurance');
+  if (lowerMessage.includes('please') || lowerMessage.includes('can you')) {
+    techniques.push('Polite requests');
   }
 
   return { tone, techniques };

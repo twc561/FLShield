@@ -159,55 +159,24 @@ export function ScenarioClient({
                 parts: [{ text: msg.content }], // Keep full content without truncation
             }));
 
-            // Import the enhanced roleplay simulator
+            // Import the roleplay simulator
             const { generateRolePlayResponse } = await import('@/ai/flows/roleplay-simulator');
             
-            console.log('Sending to enhanced Gemini AI:', {
+            console.log('Calling roleplay AI:', {
                 scenarioType,
                 stressLevel: newStressLevel,
-                historyLength: historyForAI.length,
-                lastMessage: userInput.substring(0, 50) + '...'
+                historyLength: historyForAI.length
             });
 
             const response = await generateRolePlayResponse({
-                systemPrompt: systemPrompt,
+                systemPrompt,
                 conversationHistory: historyForAI,
-                scenarioType: scenarioType,
+                scenarioType,
                 currentStressLevel: newStressLevel,
                 officerApproach: userInput
             });
 
-            // Enhanced response processing
-            let finalResponse = '';
-            
-            if (typeof response === 'string' && response.trim()) {
-                finalResponse = response.trim();
-                
-                // Add character name prefix if not present
-                if (!finalResponse.includes(':') && !finalResponse.startsWith('*')) {
-                    const scenarioName = scenarioType?.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Character';
-                    finalResponse = `${scenarioName}: "${finalResponse}"`;
-                }
-            } else {
-                // Enhanced fallback based on scenario
-                const fallbacks = {
-                    'mental_health_crisis': "*looking confused and distressed* I'm sorry, I'm having trouble focusing right now. What did you ask?",
-                    'hostile_intoxicated': "*swaying slightly* What? I didn't catch that... what are you trying to say?",
-                    'emotionally_distraught': "*wiping tears* I'm sorry, I'm just so overwhelmed. Could you repeat that?",
-                    'juvenile_contact': "*nervously fidgeting* I'm sorry, I'm really confused right now. Are you going to call my parents?",
-                    'elderly_confused': "*looking puzzled* I'm sorry dear, my mind isn't as sharp as it used to be. What was that?",
-                    'language_barrier': "*struggling with English* Sorry, sorry... no understand good. You speak slow please?",
-                    'agitated_uncooperative': "*frustrated* This whole day has been a disaster. What exactly do you want from me?",
-                    'domestic_dispute': "*defensive* Look, can we just handle this quietly? I don't want the whole neighborhood involved.",
-                    'calm_cooperative': "I'm sorry, I got a bit distracted. Could you repeat your question?",
-                    'nervous_citizen': "*anxiously* I'm sorry, I'm just really nervous. What did you need to know?",
-                    'business_complaint': "*impatiently* Sorry, I'm just frustrated with this whole situation. What were you asking?",
-                    'deceptive_evasive': "*hesitating* Uh... I'm not sure I understand what you're asking exactly."
-                };
-                
-                finalResponse = fallbacks[scenarioType as keyof typeof fallbacks] || 
-                               "I'm here. What did you need to talk to me about?";
-            }
+            const finalResponse = response || `"I'm sorry, could you repeat that?"`;
 
             setMessages(prev =>
                 prev.map(msg =>

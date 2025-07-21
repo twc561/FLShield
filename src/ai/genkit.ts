@@ -1,11 +1,11 @@
-import {genkit} from 'genkit';
-import {googleAI} from '@genkit-ai/googleai';
+import { gemini15Flash, googleAI } from '@genkit-ai/googleai';
+import { genkit, z } from 'genkit';
 
-export const ai = genkit({
-  plugins: [googleAI()],
-  model: 'googleai/gemini-2.5-flash',
-  config: {
-    maxRetries: 5,
-    timeout: 120000, // 2 minute timeout for complex responses
-  }
+const ai = genkit({
+  plugins: [
+    googleAI({
+      apiKey: process.env.GOOGLE_GENAI_API_KEY,
+    }),
+  ],
+  model: gemini15Flash,
 });
