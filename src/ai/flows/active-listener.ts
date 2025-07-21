@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview A confidential, AI-powered active listening chatbot for wellness support.
@@ -29,7 +28,21 @@ const ActiveListenerOutputSchema = z.object({
 });
 export type ActiveListenerOutput = z.infer<typeof ActiveListenerOutputSchema>;
 
-export async function getActiveListeningResponse(input: ActiveListenerInput): Promise<ActiveListenerOutput> {
+export const activeListener = ai.defineFlow(
+  {
+    name: 'activeListener', 
+    inputSchema: ActiveListenerInputSchema,
+    config: {
+      model: 'gemini-1.5-pro',
+      generationConfig: {
+        maxOutputTokens: 8192,
+        temperature: 0.7,
+        topP: 0.95,
+        topK: 50,
+      }
+    }
+  },
+  async (input) => {
   const prompt = ai.definePrompt({
     name: 'activeListenerPrompt',
     input: { schema: ActiveListenerInputSchema },
@@ -38,5 +51,10 @@ export async function getActiveListeningResponse(input: ActiveListenerInput): Pr
   });
 
   const { output } = await prompt(input);
+  return output!;
+}
+);
+export async function getActiveListeningResponse(input: ActiveListenerInput): Promise<ActiveListenerOutput> {
+  const { output } = await activeListener(input);
   return output!;
 }

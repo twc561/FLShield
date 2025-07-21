@@ -39,8 +39,15 @@ Generate a brief, supportive, and conversational response.
 
   try {
     const { stream } = await ai.generateStream({
+      model: 'gemini-1.5-pro',
       prompt: prompt,
       history: input.conversationHistory.slice(0, -1), // Pass history excluding the latest prompt
+      config: {
+        maxOutputTokens: 8192,
+        temperature: 0.7,
+        topP: 0.95,
+        topK: 50,
+      }
     });
 
     // Yield each chunk of text as it comes in from the stream

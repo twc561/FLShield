@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview A flow to handle general AI queries from the command search bar.
@@ -20,7 +19,21 @@ const CommandSearchOutputSchema = z.object({
 });
 export type CommandSearchOutput = z.infer<typeof CommandSearchOutputSchema>;
 
-export async function commandSearch(input: CommandSearchInput): Promise<CommandSearchOutput> {
+export const commandSearch = ai.defineFlow(
+  {
+    name: 'commandSearch',
+    inputSchema: CommandSearchInputSchema,
+    config: {
+      model: 'gemini-1.5-pro',
+      generationConfig: {
+        maxOutputTokens: 8192,
+        temperature: 0.4,
+        topP: 0.95,
+        topK: 40,
+      }
+    }
+  },
+  async (input) => {
   const { output } = await ai.generate({
     prompt: `You are 'Shield FL,' an AI partner for Florida law enforcement. Your purpose is to provide immediate, clear, and practical answers to questions from front-line patrol officers. The answer should be concise, easy to understand during a high-stakes situation, and grounded in Florida statutes and common police procedures. Do not provide legal advice, but rather operational guidance and factual information. Prioritize officer safety and legal accuracy. Now, answer the following question for an officer on patrol: ${input.query}`,
     output: {

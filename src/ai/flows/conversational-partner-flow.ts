@@ -22,11 +22,25 @@ const ConversationalPartnerOutputSchema = z.object({
 });
 export type ConversationalPartnerOutput = z.infer<typeof ConversationalPartnerOutputSchema>;
 
-export async function getConversationalResponse(input: ConversationalPartnerInput): Promise<ConversationalPartnerOutput> {
+export const conversationalPartner = ai.defineFlow(
+  {
+    name: 'conversationalPartner',
+    inputSchema: ConversationalPartnerInputSchema,
+    config: {
+      model: 'gemini-1.5-pro',
+      generationConfig: {
+        maxOutputTokens: 8192,
+        temperature: 0.8,
+        topP: 0.95,
+        topK: 50,
+      }
+    }
+  },
+  async (input) => {
   const { output } = await ai.generate({
     model: 'googleai/gemini-2.5-flash',
     system: `You are 'Shield FL,' an AI partner for Florida law enforcement, operating in a hands-free, voice-to-voice mode. Your purpose is to provide immediate, clear, and practical answers to questions from an officer.
-    
+
 CRITICAL INSTRUCTION: When the user asks for information about a specific statute, case law, procedure, or guide, you MUST use the 'searchAppContent' tool first to find the relevant information within the app's knowledge base. Summarize the findings from the tool in your response. If the tool returns no results, then you may answer from your general knowledge. For general conversation, you do not need to use the tool.
 
 Keep your responses concise and conversational. Do not provide legal advice, but rather operational guidance and factual information. Now, answer the user's latest query based on the conversation so far.`,
@@ -37,5 +51,10 @@ Keep your responses concise and conversational. Do not provide legal advice, but
         schema: ConversationalPartnerOutputSchema,
     }
   });
+  return output!;
+}
+)
+export async function getConversationalResponse(input: ConversationalPartnerInput): Promise<ConversationalPartnerOutput> {
+  const { output } = await conversationalPartner(input);
   return output!;
 }

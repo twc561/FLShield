@@ -28,7 +28,21 @@ const AnalyzeOrdinanceOutputSchema = z.object({
 export type AnalyzeOrdinanceOutput = z.infer<typeof AnalyzeOrdinanceOutputSchema>;
 
 
-export async function analyzeOrdinance(input: AnalyzeOrdinanceInput): Promise<AnalyzeOrdinanceOutput> {
+export const analyzeOrdinance = ai.defineFlow(
+  {
+    name: 'analyzeOrdinance',
+    inputSchema: AnalyzeOrdinanceInputSchema,
+    config: {
+      model: 'gemini-1.5-pro',
+      generationConfig: {
+        maxOutputTokens: 8192,
+        temperature: 0.3,
+        topP: 0.95,
+        topK: 40,
+      }
+    }
+  },
+  async (input) => {
   try {
     const { output } = await ai.generate({
       model: 'gemini-1.5-pro',
@@ -77,3 +91,4 @@ Remember: You must return valid JSON that matches the schema exactly. If you can
     };
   }
 }
+);

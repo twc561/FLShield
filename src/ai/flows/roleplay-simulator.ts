@@ -313,9 +313,41 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
 }
 
 // Streaming wrapper for compatibility
+const MAX_OUTPUT_TOKENS = 4096;
+const MAX_TOKEN_CONFIG = {
+    maxOutputTokens: MAX_OUTPUT_TOKENS,
+    temperature: 0.8,
+    topP: 0.95,
+};
 export async function* streamRolePlay(input: RolePlayInput) {
   try {
-    const response = await generateRolePlayResponse(input);
+    // Use Gemini 1.5 Pro with maximum token limits for robust scenarios
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-pro",
+      generationConfig: MAX_TOKEN_CONFIG
+    });
+
+    const prompt = createDetailedPrompt(
+        {
+            name: 'Individual',
+            basePersonality: 'neutral person in a police interaction',
+            stressResponses: {
+              low: 'calm and collected',
+              medium: 'showing some stress',
+              high: 'visibly stressed'
+            }
+          },
+        input.conversationHistory || [],
+        input.officerApproach || "Hello, I'm Officer Smith. How are you doing today?",
+        input.currentStressLevel || 5
+    );
+    const result = await model.generateContent(prompt);
+
+    if (!result || !result.response || !result.response.text) {
+        throw new Error("Failed to generate content.");
+    }
+
+    const response = result.response.text();
     yield response;
   } catch (error) {
     console.error('Stream error:', error);

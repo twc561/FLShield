@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -72,6 +71,15 @@ CRITICAL RULE: Every key in the required JSON schema MUST be present in your res
     output: {
       schema: FindStatuteOutputSchema,
     },
+    config: {
+      model: 'gemini-1.5-pro',
+      generationConfig: {
+        maxOutputTokens: 8192,
+        temperature: 0.3,
+        topP: 0.95,
+        topK: 40,
+      }
+    }
   });
   return output!;
 }
