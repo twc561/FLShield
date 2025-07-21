@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
+import { onAuthStateChanged, type User } from 'firebase/auth'
 import { auth, db } from '@/lib/firebase'
 import { doc, onSnapshot } from 'firebase/firestore'
 
@@ -16,7 +16,7 @@ export interface SubscriptionData {
 }
 
 export function useSubscription() {
-  const [user] = useAuthState(auth)
+  const [user, setUser] = useState<User | null>(null)
   const [subscription, setSubscription] = useState<SubscriptionData | null>(null)
   const [loading, setLoading] = useState(true)
   const [mounted, setMounted] = useState(false)
@@ -26,14 +26,23 @@ export function useSubscription() {
     setMounted(true)
   }, [])
 
+  // Handle auth state changes
   useEffect(() => {
     if (!mounted) return
     
-    if (!user) {
-      setSubscription(null)
-      setLoading(false)
-      return
-    }
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser)
+      if (!currentUser) {
+        setSubscription(null)
+        setLoading(false)
+      }
+    })
+
+    return unsubscribeAuth
+  }, [mounted])
+
+  useEffect(() => {
+    if (!mounted || !user) return
 
     const unsubscribe = onSnapshot(
       doc(db, 'users', user.uid),
