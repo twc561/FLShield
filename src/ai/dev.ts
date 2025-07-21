@@ -41,4 +41,3 @@ import '@/ai/flows/identify-hazmat-placard.ts';
 import '@/ai/flows/identify-weapon.ts';
 import '@/ai/tools/pill-lookup-tool.ts';
 import '@/ai/flows/roleplay-simulator.ts';
-import '@/ai/flows/get-jurisdiction-info.ts';
