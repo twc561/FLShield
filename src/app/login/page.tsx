@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { GoogleAuthProvider, signInWithPopup, signInAnonymously, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
 import { FirebaseError } from 'firebase/app'
 
 import { auth, isFirebaseConfigured } from '@/lib/firebase'
@@ -36,7 +36,8 @@ const authSchema = z.object({
 })
 
 export default function LoginPage() {
-    const [isLoading, setIsLoading] = useState<"google" | "guest" | "email" | null>(null)
+    const [isLoading, setIsLoading] = useState<"google" | "email" | "reset" | null>(null)
+    const [showForgotPassword, setShowForgotPassword] = useState(false)
     const router = useRouter()
     const { toast } = useToast()
 
@@ -48,6 +49,11 @@ export default function LoginPage() {
     const signUpForm = useForm<z.infer<typeof authSchema>>({
         resolver: zodResolver(authSchema),
         defaultValues: { email: "", password: "" },
+    });
+
+    const resetForm = useForm<{ email: string }>({
+        resolver: zodResolver(z.object({ email: z.string().email() })),
+        defaultValues: { email: "" },
     });
 
     const handleAuthError = (error: any) => {
@@ -106,11 +112,16 @@ export default function LoginPage() {
         }
     }
 
-    const handleGuestSignIn = async () => {
-        setIsLoading("guest");
+    const handlePasswordReset = async (values: { email: string }) => {
+        setIsLoading("reset");
         try {
-            await signInAnonymously(auth!);
-            router.push('/dashboard');
+            await sendPasswordResetEmail(auth!, values.email);
+            toast({ 
+                title: "Password Reset Email Sent", 
+                description: "Check your email for instructions to reset your password." 
+            });
+            setShowForgotPassword(false);
+            resetForm.reset();
         } catch (error) {
             handleAuthError(error);
         } finally {
@@ -187,16 +198,10 @@ export default function LoginPage() {
                         </AlertDescription>
                     </Alert>
 
-                    <div className="grid grid-cols-2 gap-2">
-                         <Button onClick={handleGoogleSignIn} disabled={!!isLoading} variant="outline">
-                            {isLoading === 'google' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
-                            Google
-                        </Button>
-                        <Button onClick={handleGuestSignIn} disabled={!!isLoading} variant="secondary">
-                            {isLoading === 'guest' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <User className="mr-2 h-4 w-4" />}
-                            Guest
-                        </Button>
-                    </div>
+                    <Button onClick={handleGoogleSignIn} disabled={!!isLoading} variant="outline" className="w-full">
+                        {isLoading === 'google' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
+                        Sign in with Google
+                    </Button>
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t" />
@@ -211,28 +216,64 @@ export default function LoginPage() {
                             <TabsTrigger value="sign-up">Sign Up</TabsTrigger>
                         </TabsList>
                         <TabsContent value="sign-in">
-                            <Form {...signInForm}>
-                                <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-4 mt-4">
-                                    <FormField control={signInForm.control} name="email" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="sr-only">Email</FormLabel>
-                                            <FormControl><Input placeholder="email@example.com" {...field} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} />
-                                    <FormField control={signInForm.control} name="password" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="sr-only">Password</FormLabel>
-                                            <FormControl><Input type="password" placeholder="Password" {...field} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} />
-                                    <Button type="submit" className="w-full" disabled={!!isLoading}>
-                                        {isLoading === 'email' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                        Sign In
-                                    </Button>
-                                </form>
-                            </Form>
+                            {!showForgotPassword ? (
+                                <Form {...signInForm}>
+                                    <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-4 mt-4">
+                                        <FormField control={signInForm.control} name="email" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="sr-only">Email</FormLabel>
+                                                <FormControl><Input placeholder="email@example.com" {...field} /></FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )} />
+                                        <FormField control={signInForm.control} name="password" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="sr-only">Password</FormLabel>
+                                                <FormControl><Input type="password" placeholder="Password" {...field} /></FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )} />
+                                        <Button type="submit" className="w-full" disabled={!!isLoading}>
+                                            {isLoading === 'email' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                            Sign In
+                                        </Button>
+                                        <div className="text-center">
+                                            <button 
+                                                type="button"
+                                                onClick={() => setShowForgotPassword(true)}
+                                                className="text-sm text-muted-foreground hover:text-primary underline"
+                                            >
+                                                Forgot your password?
+                                            </button>
+                                        </div>
+                                    </form>
+                                </Form>
+                            ) : (
+                                <Form {...resetForm}>
+                                    <form onSubmit={resetForm.handleSubmit(handlePasswordReset)} className="space-y-4 mt-4">
+                                        <FormField control={resetForm.control} name="email" render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Email</FormLabel>
+                                                <FormControl><Input placeholder="email@example.com" {...field} /></FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )} />
+                                        <Button type="submit" className="w-full" disabled={!!isLoading}>
+                                            {isLoading === 'reset' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                            Send Reset Email
+                                        </Button>
+                                        <div className="text-center">
+                                            <button 
+                                                type="button"
+                                                onClick={() => setShowForgotPassword(false)}
+                                                className="text-sm text-muted-foreground hover:text-primary underline"
+                                            >
+                                                Back to sign in
+                                            </button>
+                                        </div>
+                                    </form>
+                                </Form>
+                            )}
                         </TabsContent>
                         <TabsContent value="sign-up">
                              <Form {...signUpForm}>
