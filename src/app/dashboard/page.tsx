@@ -15,6 +15,8 @@ import * as LucideIcons from "lucide-react"
 import { dashboardFeatureGroups } from "@/data/dashboard-features"
 import type { FeatureModule } from "@/data/dashboard-features"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { DailyRollCall } from "@/components/DailyRollCall"
+import { BriefingStats } from "@/components/BriefingStats"
 
 
 const containerVariants = {
@@ -172,6 +174,17 @@ export default function DashboardPage() {
       <motion.div variants={itemVariants}>
         <AICommandSearch />
       </motion.div>
+
+      {/* Daily Roll Call - Primary focal point */}
+        <div className="mb-6">
+          <DailyRollCall />
+        </div>
+
+        {/* Briefing Statistics */}
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold mb-4">Your Training Progress</h2>
+          <BriefingStats />
+        </div>
 
       <FeaturedTools />
 
