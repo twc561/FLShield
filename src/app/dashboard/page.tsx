@@ -1,4 +1,3 @@
-
 'use client'
 
 import React, { useState, useEffect } from "react"
@@ -165,7 +164,7 @@ const PinnedTools = () => {
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("")
   const [userName, setUserName] = useState<string | null>(null);
-  
+
   useEffect(() => {
     const getGreeting = () => {
       const hour = new Date().getHours()
@@ -195,10 +194,10 @@ export default function DashboardPage() {
             setUserName("Officer"); // Fallback for loading state
         }
     });
-    
+
     return () => unsubscribe();
   }, [])
-  
+
   return (
     <motion.div 
       className="space-y-8"
@@ -215,11 +214,11 @@ export default function DashboardPage() {
            <DailyBriefingSheet /> 
         </div>
       </div>
-      
+
       <motion.div variants={itemVariants}>
         <AICommandSearch />
       </motion.div>
-      
+
       <LocationTools />
 
       <FeaturedTools />
@@ -250,7 +249,7 @@ export default function DashboardPage() {
           })}
         </div>
       </motion.div>
-        
+
       <motion.div variants={itemVariants} className="pt-4">
         <Alert variant="destructive">
             <LucideIcons.ShieldAlert className="h-4 w-4" />

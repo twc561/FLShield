@@ -1,4 +1,3 @@
-
 'use client'
 
 import { usePathname } from "next/navigation"
@@ -11,6 +10,7 @@ import { ContextualPanel } from "@/components/ContextualPanel"
 import { Toaster } from "@/components/ui/toaster"
 import { MobileBottomNav } from "@/components/MobileBottomNav"
 import { AuthWrapper } from "@/components/AuthWrapper"
+import { SubscriptionGate } from "@/components/SubscriptionGate"
 
 export default function RootLayout({
   children,
@@ -57,6 +57,7 @@ export default function RootLayout({
                 </>
             ) : (
                 <SidebarProvider>
+                    <SubscriptionGate>
                     <div className="flex min-h-screen">
                         <AppSidebar />
                         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto pb-20 md:pb-6">
@@ -64,6 +65,7 @@ export default function RootLayout({
                         </main>
                         <ContextualPanel />
                     </div>
+                    </SubscriptionGate>
                     <MobileBottomNav />
                     <Toaster />
                 </SidebarProvider>

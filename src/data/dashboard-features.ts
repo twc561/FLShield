@@ -1,4 +1,3 @@
-
 import type { FeatureModule } from "@/types"
 import {
   Book,
@@ -63,6 +62,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Mic",
         targetPage: "/voice-assistant",
         category: "AI Assistant Tools",
+        isPremium: true,
       },
       {
         id: "ai-legal-advisor",
@@ -71,6 +71,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "ShieldQuestion",
         targetPage: "/ai-legal-advisor",
         category: "AI Assistant Tools",
+        isPremium: true,
       },
       {
         id: "visual-evidence-identifier",
@@ -79,6 +80,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Camera",
         targetPage: "/field-procedures/visual-evidence-identifier",
         category: "AI Assistant Tools",
+        isPremium: true,
       },
       {
         id: "ai-charge-assistant",
@@ -86,7 +88,8 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         summary: "Get AI-suggested charges based on your incident narrative.",
         icon: "Gavel",
         targetPage: "/reporting-development/ai-charge-assistant",
-        category: "AI Assistant Tools"
+        category: "AI Assistant Tools",
+        isPremium: true,
       },
       {
         id: "ai-report-writer",
@@ -94,7 +97,8 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         summary: "Transform your notes into a formal report narrative.",
         icon: "ClipboardEdit",
         targetPage: "/reporting-development/ai-report-writer",
-        category: "AI Assistant Tools"
+        category: "AI Assistant Tools",
+        isPremium: true,
       },
       {
         id: "role-play-simulator",
@@ -103,6 +107,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "MessageSquare",
         targetPage: "/training-development/role-play-simulator",
         category: "AI Assistant Tools",
+        isPremium: true,
       },
        {
         id: "report-proofreader",
@@ -111,6 +116,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "FileCheck",
         targetPage: "/training-development/report-proofreader",
         category: "AI Assistant Tools",
+        isPremium: true,
       },
     ],
   },
@@ -125,6 +131,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Scale",
         targetPage: "/legal-reference/statutes",
         category: "Legal Reference Library",
+        isPremium: false,
       },
       {
         id: "case-law-vault",
@@ -133,6 +140,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Gavel",
         targetPage: "/legal-reference/case-law",
         category: "Legal Reference Library",
+        isPremium: false,
       },
       {
         id: "constitutional-law-guide",
@@ -141,6 +149,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "ShieldAlert",
         targetPage: "/legal-reference/constitutional-law-guide",
         category: "Legal Reference Library",
+        isPremium: true,
       },
       {
         id: "rules-of-criminal-procedure",
@@ -149,6 +158,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "FileTextIcon",
         targetPage: "/legal-reference/rules-of-criminal-procedure",
         category: "Legal Reference Library",
+        isPremium: true,
       },
       {
         id: "jury-instructions-navigator",
@@ -157,6 +167,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Users",
         targetPage: "/legal-reference/jury-instructions-navigator",
         category: "Legal Reference Library",
+        isPremium: true,
       },
       {
         id: "local-ordinances-guide",
@@ -165,6 +176,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Home",
         targetPage: "/legal-reference/local-ordinances-guide",
         category: "Legal Reference Library",
+        isPremium: true,
       },
       {
         id: "tenant-rights-guide",
@@ -173,6 +185,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Home",
         targetPage: "/legal-reference/tenant-rights-guide",
         category: "Legal Reference Library",
+        isPremium: true,
       },
       {
         id: "asset-forfeiture-guide",
@@ -181,6 +194,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Scale",
         targetPage: "/legal-reference/asset-forfeiture-guide",
         category: "Legal Reference Library",
+        isPremium: true,
       },
     ],
   },
@@ -195,6 +209,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "ListChecks",
         targetPage: "/field-procedures/scenario-checklists",
         category: "Field Operations & Procedures",
+        isPremium: true,
       },
       {
         id: "field-interview-contact",
@@ -202,7 +217,8 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         summary: "Legal standards for encounters, detentions, and arrests.",
         icon: "Users",
         targetPage: "/field-procedures/field-interview-contact",
-        category: "Field Operations & Procedures"
+        category: "Field Operations & Procedures",
+        isPremium: true,
       },
       {
         id: "dui-investigation",
@@ -211,6 +227,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Car",
         targetPage: "/traffic-enforcement/dui-investigation",
         category: "Field Operations & Procedures",
+        isPremium: true,
       },
       {
         id: "dv-protocol",
@@ -219,6 +236,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "ShieldAlert",
         targetPage: "/field-procedures/domestic-violence-protocol",
         category: "Field Operations & Procedures",
+        isPremium: true,
       },
       {
         id: "evidence-management-guide",
@@ -227,6 +245,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "FileCheck",
         targetPage: "/field-procedures/evidence-management-guide",
         category: "Field Operations & Procedures",
+        isPremium: true,
       },
       {
         id: "crime-scene-management",
@@ -235,6 +254,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Wind",
         targetPage: "/field-procedures/crime-scene-management",
         category: "Field Operations & Procedures",
+        isPremium: true,
       },
       {
         id: "field-translation-guide",
@@ -243,6 +263,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Languages",
         targetPage: "/field-translation-guide",
         category: "Field Operations & Procedures",
+        isPremium: true,
       },
        {
         id: "jurisdiction-finder",
@@ -251,6 +272,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "MapPin",
         targetPage: "/field-procedures/jurisdiction-finder",
         category: "Field Operations & Procedures",
+        isPremium: true,
       },
     ],
   },
@@ -265,6 +287,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "AlertCircle",
         targetPage: "/emergency-response/alert-guides",
         category: "Emergency Response Protocols",
+        isPremium: true,
       },
       {
         id: "first-aid-guide",
@@ -273,6 +296,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "HeartPulse",
         targetPage: "/emergency-response/first-aid-guide",
         category: "Emergency Response Protocols",
+        isPremium: true,
       },
       {
         id: "hazmat-placard-guide",
@@ -281,6 +305,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Biohazard",
         targetPage: "/emergency-response/hazmat-guide",
         category: "Emergency Response Protocols",
+        isPremium: true,
       },
       {
         id: "baker-act-guide",
@@ -289,6 +314,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Heart",
         targetPage: "/emergency-response/baker-act-guide",
         category: "Emergency Response Protocols",
+        isPremium: true,
       },
       {
         id: "marchman-act-guide",
@@ -297,6 +323,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "FlaskConical",
         targetPage: "/emergency-response/marchman-act-guide",
         category: "Emergency Response Protocols",
+        isPremium: true,
       },
     ],
   },
@@ -311,6 +338,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "FlaskConical",
         targetPage: "/specialized-enforcement/controlled-substances-guide",
         category: "Specialized Enforcement",
+        isPremium: true,
       },
       {
         id: "k9-officer-guide",
@@ -319,6 +347,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Dog",
         targetPage: "/specialized-enforcement/k9-officer-guide",
         category: "Specialized Enforcement",
+        isPremium: true,
       },
       {
         id: "fwc-regulations-guide",
@@ -327,6 +356,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Fish",
         targetPage: "/specialized-enforcement/fwc-regulations-guide",
         category: "Specialized Enforcement",
+        isPremium: true,
       },
       {
         id: "commercial-vehicle-info",
@@ -335,6 +365,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Truck",
         targetPage: "/traffic-enforcement/commercial-vehicle-info",
         category: "Specialized Enforcement",
+        isPremium: true,
       },
       {
         id: "animal-cruelty-investigation",
@@ -343,6 +374,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Stethoscope",
         targetPage: "/specialized-enforcement/animal-cruelty-investigation",
         category: "Specialized Enforcement",
+        isPremium: true,
       },
     ],
   },
@@ -357,6 +389,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "FileTextIcon",
         targetPage: "/notes",
         category: "Reporting & Documentation",
+        isPremium: true,
       },
       {
         id: "use-of-force-wizard",
@@ -365,6 +398,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "ShieldCheck",
         targetPage: "/reporting-development/use-of-force-wizard",
         category: "Report Writing & Documentation",
+        isPremium: true,
       },
       {
         id: "shift-report-generator",
@@ -373,6 +407,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "ClipboardEdit",
         targetPage: "/reporting-development/shift-report-generator",
         category: "Report Writing & Documentation",
+        isPremium: true,
       },
       {
         id: "digital-evidence-guide",
@@ -381,6 +416,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Camera",
         targetPage: "/field-procedures/digital-evidence-field-guide",
         category: "Report Writing & Documentation",
+        isPremium: true,
       },
     ],
   },
@@ -395,6 +431,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "BrainCircuit",
         targetPage: "/reporting-development/knowledge-check",
         category: "Training & Professional Development",
+        isPremium: true,
       },
       {
         id: "common-misperceptions",
@@ -403,6 +440,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "ShieldAlert",
         targetPage: "/training-development/common-misperceptions",
         category: "Training & Professional Development",
+        isPremium: true,
       },
       {
         id: "court-testimony-guide",
@@ -411,6 +449,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Mic",
         targetPage: "/officer-wellness-rights/court-testimony-guide",
         category: "Training & Professional Development",
+        isPremium: true,
       },
       {
         id: "interview-techniques",
@@ -419,6 +458,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Users",
         targetPage: "/field-procedures/interview-techniques",
         category: "Training & Professional Development",
+        isPremium: true,
       },
     ],
   },
@@ -433,6 +473,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Heart",
         targetPage: "/wellness",
         category: "Officer Wellness & Rights",
+        isPremium: true,
       },
       {
         id: "pobr-guide",
@@ -441,6 +482,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "ShieldCheck",
         targetPage: "/officer-wellness-rights/police-officers-bill-of-rights",
         category: "Officer Wellness & Rights",
+        isPremium: true,
       },
       {
         id: "community-engagement-guide",
@@ -449,6 +491,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Users",
         targetPage: "/officer-wellness-rights/community-engagement-guide",
         category: "Officer Wellness & Rights",
+        isPremium: true,
       },
       {
         id: "daily-briefing",
@@ -457,6 +500,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Newspaper",
         targetPage: "/daily-briefing",
         category: "Officer Wellness & Rights",
+        isPremium: true,
       },
       {
         id: "active-listener",
@@ -465,6 +509,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Heart",
         targetPage: "/wellness/active-listener",
         category: "Officer Wellness & Rights",
+        isPremium: true,
       },
       {
         id: "live-debrief",
@@ -473,6 +518,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "MessageSquare",
         targetPage: "/wellness/live-debrief",
         category: "Officer Wellness & Rights",
+        isPremium: true,
       },
     ],
   },
@@ -487,6 +533,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Lock",
         targetPage: "/restraint-techniques/handcuffing-procedures",
         category: "Restraint Techniques",
+        isPremium: true,
        },
     ],
   },
@@ -501,6 +548,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "CreditCard",
         targetPage: "/subscription",
         category: "Account & Billing",
+        isPremium: false,
       },
     ],
   },

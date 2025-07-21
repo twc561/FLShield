@@ -58,6 +58,34 @@ export function useSubscription() {
   }, [user])
 
   const isPro = subscription?.status === 'active' && new Date() < subscription.currentPeriodEnd
+
+  // Define free features that don't require subscription
+  const freeFeatures = [
+    '/legal-reference/statutes',
+    '/legal-reference/case-law',
+    '/dashboard',
+    '/subscription',
+    '/subscription/success',
+    '/',
+    '/login',
+    '/features',
+    '/support',
+    '/terms-of-use',
+    '/privacy-policy',
+    '/security',
+    '/for-officers',
+    '/agency-intelligence',
+    '/cjis-compliance',
+    '/request-demo'
+  ]
+
+  const isFeatureFree = (path: string) => {
+    return freeFeatures.some(freePath => path.startsWith(freePath))
+  }
+
+  const requiresSubscription = (path: string) => {
+    return !isFeatureFree(path) && mounted && user
+  }
   
-  return { subscription, loading, isPro, mounted }
+  return { subscription, loading, isPro, mounted, isFeatureFree, requiresSubscription }
 }

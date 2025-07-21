@@ -8,12 +8,13 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import type { FeatureModule } from "@/types"
 import { ArrowRight } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Crown } from "lucide-react"
 
 type FeatureCardProps = {
   module: FeatureModule
