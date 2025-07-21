@@ -57,53 +57,7 @@ const ToolCard = ({ module }: { module: FeatureModule }) => {
   )
 }
 
-const locationTools: FeatureModule[] = [
-  {
-    id: 'jurisdiction-finder',
-    title: 'Jurisdiction Finder',
-    summary: 'Use GPS to identify your current jurisdiction and access local laws.',
-    icon: 'MapPin',
-    targetPage: '/field-procedures/jurisdiction-finder',
-    category: 'Field Operations & Procedures'
-  },
-  {
-    id: 'nearby-resources',
-    title: 'Nearby Resources',
-    summary: 'Find the closest hospitals, courthouses, and support centers.',
-    icon: 'Building',
-    targetPage: '/field-procedures/nearby-resources',
-    category: 'Field Operations & Procedures'
-  },
-];
 
-
-const LocationTools = () => (
-    <motion.div variants={itemVariants}>
-        <h2 className="text-lg font-bold tracking-tight mb-3 px-1">Location-Based Intelligence</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {locationTools.map(tool => {
-                const Icon = (LucideIcons as any)[tool.icon] || LucideIcons.HelpCircle;
-                return (
-                    <Link href={tool.targetPage} key={tool.id} className="group">
-                        <Card className="h-full hover:border-primary transition-colors">
-                            <CardHeader>
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-primary/10 rounded-lg">
-                                        <Icon className="w-5 h-5 text-primary"/>
-                                    </div>
-                                    <CardTitle className="text-base">{tool.title}</CardTitle>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">{tool.summary}</p>
-                            </CardContent>
-                        </Card>
-                    </Link>
-                )
-            })}
-        </div>
-    </motion.div>
-);
 
 
 const FeaturedTools = () => {
@@ -218,8 +172,6 @@ export default function DashboardPage() {
       <motion.div variants={itemVariants}>
         <AICommandSearch />
       </motion.div>
-
-      <LocationTools />
 
       <FeaturedTools />
 
