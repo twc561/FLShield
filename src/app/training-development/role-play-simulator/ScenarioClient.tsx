@@ -153,10 +153,10 @@ export function ScenarioClient({
         messageStartTime.current = new Date();
 
         try {
-            // Build minimal history for AI - only last 2 messages to reduce token usage
-            const historyForAI = newMessages.slice(-3, -1).map(msg => ({ 
+            // Build minimal history for AI - only last message to reduce token usage
+            const historyForAI = newMessages.slice(-1, -1).map(msg => ({ 
                 role: msg.role as 'user' | 'model',
-                parts: [{ text: msg.content.substring(0, 100) }], // Further truncate messages
+                parts: [{ text: msg.content.substring(0, 150) }], // Keep more context but still limit
             }));
 
             // Import the enhanced roleplay simulator

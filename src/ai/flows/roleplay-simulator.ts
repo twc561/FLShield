@@ -216,7 +216,7 @@ function buildConversationContext(history: any[], maxTokens: number = 300): stri
   return context.trim();
 }
 
-// Simplified prompt builder for better Gemini responses
+// Optimized prompt builder for better Gemini responses
 function buildGeminiPrompt(
   character: any,
   conversationHistory: any[],
@@ -224,20 +224,14 @@ function buildGeminiPrompt(
   stressLevel: number,
   officerApproach: string
 ): string {
-  // Get only the last exchange to minimize tokens
-  const lastContext = conversationHistory.length > 0 
-    ? `Previous: Officer said "${conversationHistory[conversationHistory.length - 1]?.parts[0]?.text?.substring(0, 50) || ''}"`
-    : '';
-
   const stressCategory = stressLevel <= 3 ? 'calm' : stressLevel <= 6 ? 'stressed' : 'very stressed';
+  
+  // Very concise prompt to save tokens
+  return `You are a ${character.basePersonality} person who is ${stressCategory}. 
 
-  return `You are ${character.name}: ${character.basePersonality}. You are ${stressCategory}.
+Officer: "${currentAction}"
 
-${lastContext}
-
-Officer just said: "${currentAction}"
-
-Respond as this character in 1-2 sentences:`;
+You respond naturally:`;
 }
 
 // Analyze officer's approach for character response
@@ -304,14 +298,14 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
 
     console.log('Making Gemini AI call...');
 
-    // Use Gemini with increased token limits for detailed roleplay responses
+    // Use Gemini with much higher token limits for detailed roleplay responses
     const aiResponse = await ai.generate({
       prompt: geminiPrompt,
       config: {
-        temperature: 0.8,  // More creativity for natural conversation
-        maxOutputTokens: 250,  // Increased for proper conversational responses
-        topP: 0.9,
-        topK: 40
+        temperature: 0.9,  // Higher creativity for more varied responses
+        maxOutputTokens: 2048,  // Significantly increased token limit
+        topP: 0.95,
+        topK: 50
       }
     });
 
