@@ -193,18 +193,20 @@ const scenarioCharacters = {
   }
 };
 
-// Dynamic conversation context builder
-function buildConversationContext(history: any[], maxTokens: number = 800): string {
+// Dynamic conversation context builder with stricter limits
+function buildConversationContext(history: any[], maxTokens: number = 300): string {
   let context = '';
   let tokenCount = 0;
   
-  // Start from most recent and work backwards
-  for (let i = history.length - 1; i >= 0; i--) {
-    const entry = history[i];
-    const entryText = `${entry.role === 'user' ? 'Officer' : 'Character'}: "${entry.parts[0].text}"`;
+  // Only use last 3 exchanges maximum
+  const recentHistory = history.slice(-6);
+  
+  for (let i = recentHistory.length - 1; i >= 0; i--) {
+    const entry = recentHistory[i];
+    const entryText = `${entry.role === 'user' ? 'Officer' : 'You'}: "${entry.parts[0].text.substring(0, 100)}"`;
     
-    // Rough token estimation (4 chars = 1 token)
-    const entryTokens = entryText.length / 4;
+    // Rough token estimation (3 chars = 1 token for safety)
+    const entryTokens = entryText.length / 3;
     
     if (tokenCount + entryTokens > maxTokens) break;
     
@@ -215,7 +217,7 @@ function buildConversationContext(history: any[], maxTokens: number = 800): stri
   return context.trim();
 }
 
-// Enhanced prompt builder for Gemini
+// Enhanced prompt builder for Gemini with token optimization
 function buildGeminiPrompt(
   character: any,
   conversationHistory: any[],
@@ -223,31 +225,22 @@ function buildGeminiPrompt(
   stressLevel: number,
   officerApproach: string
 ): string {
-  const conversationContext = buildConversationContext(conversationHistory);
+  // Get only last 2 exchanges to minimize tokens
+  const recentContext = conversationHistory.slice(-4).map(h => 
+    `${h.role === 'user' ? 'Officer' : 'You'}: "${h.parts[0].text}"`
+  ).join('\n');
+  
   const stressCategory = stressLevel <= 3 ? 'low' : stressLevel <= 6 ? 'medium' : 'high';
   const approachType = determineApproachType(currentAction);
   
-  return `You are ${character.name}, a realistic person in a law enforcement interaction. 
+  return `You are ${character.name}. ${character.basePersonality}. Stress: ${stressLevel}/10.
 
-PERSONALITY: ${character.basePersonality}
-CURRENT STRESS LEVEL: ${stressLevel}/10 (${stressCategory})
-RESPONSE TO OFFICER'S APPROACH: ${character.responsePatterns[approachType]}
-STRESS BEHAVIOR: ${character.stressReactions[stressCategory]}
+Context:
+${recentContext}
 
-RECENT CONVERSATION:
-${conversationContext}
+Officer: "${currentAction}"
 
-OFFICER'S CURRENT ACTION: "${currentAction}"
-
-Respond as ${character.name} would realistically respond. Consider:
-- Your stress level affects how you communicate
-- Your personality drives your basic reactions
-- The officer's approach influences your cooperation level
-- Stay in character throughout the response
-- Show realistic human emotions and reactions
-- Progress the conversation naturally
-
-Respond with ONLY your character's dialogue and actions. Keep it under 100 words.`;
+Your response (${character.responsePatterns[approachType]}):`;
 }
 
 // Analyze officer's approach for character response
@@ -314,14 +307,14 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
 
     console.log('Making Gemini AI call...');
 
-    // Use Gemini with optimized settings
+    // Use Gemini with strict token limits to prevent errors
     const aiResponse = await ai.generate({
       prompt: geminiPrompt,
       config: {
-        temperature: 0.8,  // Higher creativity for character interactions
-        maxOutputTokens: 200,  // Shorter responses to avoid token limits
-        topP: 0.9,
-        topK: 40
+        temperature: 0.7,  // Balanced creativity
+        maxOutputTokens: 100,  // Very short responses to prevent token errors
+        topP: 0.8,
+        topK: 30
       }
     });
 
@@ -346,11 +339,22 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
 
     // If we got a response, return it
     if (responseText && responseText.length > 0) {
-      return responseText;
+      // Clean up the response to ensure it's character dialogue
+      let cleanResponse = responseText;
+      
+      // Remove any "You:" or similar prefixes that might appear
+      cleanResponse = cleanResponse.replace(/^(You:|Character:|[A-Za-z\s]+:)\s*/i, '');
+      
+      // If response doesn't start with dialogue or action, format it
+      if (!cleanResponse.startsWith('"') && !cleanResponse.startsWith('*')) {
+        cleanResponse = `"${cleanResponse}"`;
+      }
+      
+      return cleanResponse;
     }
 
     // Enhanced contextual fallback based on character and situation
-    return generateEnhancedFallback(character, currentStressLevel, currentAction, conversationHistory.length);
+    return generateSmartFallback(character, currentStressLevel, currentAction, scenarioType);
 
   } catch (error) {
     console.error('Gemini RolePlay Error:', error);
@@ -365,13 +369,13 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
   }
 }
 
-// Enhanced fallback with character-specific responses
-function generateEnhancedFallback(character: any, stressLevel: number, currentAction: string, conversationTurn: number): string {
+// Smart fallback with immediate character responses
+function generateSmartFallback(character: any, stressLevel: number, currentAction: string, scenarioType: string): string {
   const stressCategory = stressLevel <= 3 ? 'low' : stressLevel <= 6 ? 'medium' : 'high';
   const approachType = determineApproachType(currentAction);
   
-  // Character-specific contextual responses based on stress and approach
-  const responses = {
+  // Quick character responses for common scenarios
+  const quickResponses = {
     'Cooperative Witness': {
       low: {
         professional: "Of course, officer. I want to help however I can with this situation.",
@@ -426,15 +430,29 @@ function generateEnhancedFallback(character: any, stressLevel: number, currentAc
   };
 
   // Get response or use generic fallback
-  const characterResponses = responses[character.name as keyof typeof responses];
-  if (characterResponses) {
-    return characterResponses[stressCategory][approachType] || 
-           `*${character.stressReactions[stressCategory]}* ${character.name}: "I'm listening. What did you need to know?"`;
+  const characterResponses = quickResponses[character.name as keyof typeof quickResponses];
+  if (characterResponses && characterResponses[stressCategory] && characterResponses[stressCategory][approachType]) {
+    return characterResponses[stressCategory][approachType];
   }
 
-  // Generic character-aware fallback
-  return `*${character.stressReactions[stressCategory]}* ${character.name}: "I'm here. What do you need to discuss?"`;
-}
+  // Scenario-specific quick responses
+  const scenarioQuickResponses: Record<string, string> = {
+    'mental_health_crisis': "*confused* I'm sorry, what did you ask?",
+    'hostile_intoxicated': "*swaying* What? Say that again?", 
+    'emotionally_distraught': "*crying* I'm sorry, could you repeat that?",
+    'juvenile_contact': "*nervously* I didn't hear you, officer.",
+    'elderly_confused': "*confused* What was that, dear?",
+    'language_barrier': "*struggling* Sorry, no understand. Again please?",
+    'agitated_uncooperative': "*frustrated* What now?",
+    'domestic_dispute': "*defensive* What exactly are you asking?",
+    'calm_cooperative': "I'm sorry, I didn't catch that. Could you repeat it?",
+    'nervous_citizen': "*anxiously* Sorry, I'm just nervous. What did you say?",
+    'business_complaint': "*impatiently* Could you repeat your question?",
+    'deceptive_evasive': "*hesitating* I'm not sure what you're asking."
+  };
+
+  return scenarioQuickResponses[scenarioType] || 
+         `"Sorry, could you repeat that? I want to make sure I understand what you're asking."`;
 
 // Error fallback with character awareness
 function generateErrorFallback(character: any, stressLevel: number, scenarioType: string): string {
