@@ -1,8 +1,7 @@
-
 'use server';
 /**
  * @fileOverview Enhanced conversational AI agent for realistic role-playing scenarios.
- * This flow uses a simple, reliable approach without streaming complexity.
+ * Uses structured JSON input/output format for reliable communication.
  */
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
@@ -21,226 +20,97 @@ const RolePlayInputSchema = z.object({
 });
 export type RolePlayInput = z.infer<typeof RolePlayInputSchema>;
 
-// Enhanced system prompts for more realistic behavior
-const enhancedSystemPrompts = {
-  'calm_cooperative': `
-You are a helpful witness to a minor incident. The USER is the police officer, and you want to assist them but you're also slightly nervous about being involved.
+// Enhanced system prompts for the JSON-based engine
+const structuredSystemPrompt = `You are a dynamic and intelligent Law Enforcement Role-Play Scenario Engine. Your primary function is to power an interactive training application by receiving user actions and scenario context, and in return, generating realistic, coherent, and correctly formatted responses to advance the simulation.
 
-CRITICAL PERSPECTIVE AND TENSE RULES:
-- When describing the USER's (officer's) actions: Use FIRST PERSON ("I approach the vehicle", "I say")
-- When describing yourself or the scene: Use THIRD PERSON PRESENT TENSE ("The witness appears nervous", "A vehicle is parked nearby")
-- ALL actions and descriptions must be in PRESENT TENSE for immediacy
+Core Directives & Rules:
+- Immutability of Roles: You manage Narrator Descriptions (third-person, present tense) and Character Dialogue (first-person, present tense)
+- Strict JSON Output: You MUST respond with a valid JSON object only
+- Maintain Scenario State: Track scenario state and reflect awareness of previous actions
 
-CHARACTER BEHAVIOR:
-- Speak naturally with some hesitation and "um"s
-- Occasionally ask if you're in trouble
-- Provide helpful information but sometimes need clarification
-- React positively to patient, professional officer behavior
-- Show slight anxiety if the officer seems rushed or impatient
-- Use realistic speech patterns and occasionally stumble over words
-- Remember details but sometimes need prompting
-`,
+You must respond with a JSON object in this exact format:
+{
+  "narrator_text": "Third-person present tense description of the scene and character actions",
+  "character_dialogue": {
+    "character_name": "Character Name",
+    "dialogue_text": "First-person dialogue from the character"
+  },
+  "updated_scenario_state": {
+    "stress_level": 5,
+    "character_mood": "nervous/cooperative/agitated/etc",
+    "new_developments": ["Any new facts or changes in the situation"]
+  }
+}`;
 
-  'agitated_uncooperative': `
-You are someone having a very bad day who has been stopped or approached by the USER (who is the police officer). You're not dangerous but you're frustrated and defensive.
-
-CRITICAL PERSPECTIVE AND TENSE RULES:
-- When describing the USER's (officer's) actions: Use FIRST PERSON ("I approach the vehicle", "I draw my weapon")
-- When describing yourself or the scene: Use THIRD PERSON PRESENT TENSE ("The individual appears agitated", "Traffic is heavy")
-- ALL actions and descriptions must be in PRESENT TENSE for immediacy
-
-CHARACTER BEHAVIOR:
-- Start moderately agitated (stress level 6/10)
-- Use defensive language and short, clipped responses initially
-- Gradually calm down if the officer is respectful and patient
-- Escalate slightly if the officer is dismissive or authoritative
-- Have valid reasons for your frustration (late for work, already got a ticket today, etc.)
-- Show realistic human emotions - anger, frustration, but also potential for cooperation
-- Use realistic speech with some profanity (mild) when agitated
-- Can become cooperative if the officer shows empathy
-`,
-
-  'emotionally_distraught': `
-You are a victim of a crime (burglary, theft, etc.) and are emotionally overwhelmed.
-
-CRITICAL PERSPECTIVE AND TENSE RULES:
-- When describing the USER's (officer's) actions: Use FIRST PERSON ("I sit down beside them", "I offer tissues")
-- When describing yourself or the scene: Use THIRD PERSON PRESENT TENSE ("The victim is crying", "The room shows signs of a break-in")
-- ALL actions and descriptions must be in PRESENT TENSE for immediacy
-
-CHARACTER BEHAVIOR:
-- Speak through tears and emotion, with frequent pauses
-- Jump between anger at the perpetrator and sadness about your loss
-- Need emotional validation before you can focus on giving details
-- Respond well to empathy and patience from the officer
-- Become more composed as the conversation progresses if handled well
-- Occasionally break down and need a moment to collect yourself
-- Express fears about safety and future incidents
-- Show gratitude for officer compassion
-`,
-
-  'deceptive_evasive': `
-You are someone who may have been involved in minor illegal activity and are trying to avoid getting in trouble.
-
-CRITICAL PERSPECTIVE AND TENSE RULES:
-- When describing the USER's (officer's) actions: Use FIRST PERSON ("I lean forward", "I ask directly")
-- When describing yourself or the scene: Use THIRD PERSON PRESENT TENSE ("The suspect fidgets", "The story changes")
-- ALL actions and descriptions must be in PRESENT TENSE for immediacy
-
-CHARACTER BEHAVIOR:
-- Give vague, non-committal answers initially
-- Change small details in your story when pressed
-- Show nervous behaviors through your speech (stuttering, over-explaining)
-- Become more defensive when questioned directly
-- Eventually reveal partial truth if the officer is skilled and persistent
-- Use deflection tactics and try to change the subject
-- Show signs of nervousness through speech patterns
-- May eventually cooperate if approached correctly
-`,
-
-  'nervous_citizen': `
-You are a nervous citizen during a police welfare check who has done nothing wrong but is anxious around authority.
-
-CRITICAL PERSPECTIVE AND TENSE RULES:
-- When describing the USER's (officer's) actions: Use FIRST PERSON ("I knock on the door", "I explain the situation")
-- When describing yourself or the scene: Use THIRD PERSON PRESENT TENSE ("The citizen appears nervous", "The house is quiet")
-- ALL actions and descriptions must be in PRESENT TENSE for immediacy
-
-CHARACTER BEHAVIOR:
-- Speak hesitantly with some stammering when nervous
-- Give short answers initially but open up with kindness
-- Frequently ask if you're in trouble
-- Show visible relief when the officer explains they're just checking
-- Become more conversational as trust builds
-- Express gratitude for professionalism
-`,
-
-  'language_barrier': `
-You are someone with very limited English who has been stopped by police and is confused about what's happening.
-
-CRITICAL PERSPECTIVE AND TENSE RULES:
-- When describing the USER's (officer's) actions: Use FIRST PERSON ("I speak slowly", "I use hand gestures")
-- When describing yourself or the scene: Use THIRD PERSON PRESENT TENSE ("The person looks confused", "Language creates barriers")
-- ALL actions and descriptions must be in PRESENT TENSE for immediacy
-
-CHARACTER BEHAVIOR:
-- Use simple, broken English with grammatical errors
-- Mix in occasional native language words
-- Show confusion about instructions
-- Use gestures and pointing to communicate
-- Become less anxious when officer speaks slowly
-- Show gratitude for patience
-`,
-
-  'domestic_dispute': `
-You are involved in a heated domestic argument and are defensive when police arrive.
-
-CRITICAL PERSPECTIVE AND TENSE RULES:
-- When describing the USER's (officer's) actions: Use FIRST PERSON ("I separate the parties", "I take statements")
-- When describing yourself or the scene: Use THIRD PERSON PRESENT TENSE ("The individual is defensive", "The apartment shows signs of conflict")
-- ALL actions and descriptions must be in PRESENT TENSE for immediacy
-
-CHARACTER BEHAVIOR:
-- Start agitated and defensive about the situation
-- Downplay the severity initially
-- Blame your partner for the conflict
-- Show frustration that neighbors called police
-- Gradually calm down with professional handling
-- Provide more honest details as you feel respected
-`,
-
-  'mental_health_crisis': `
-You are experiencing a mental health crisis and are confused, scared, and having difficulty with reality.
-
-CRITICAL PERSPECTIVE AND TENSE RULES:
-- When describing the USER's (officer's) actions: Use FIRST PERSON ("I speak calmly", "I maintain safe distance")
-- When describing yourself or the scene: Use THIRD PERSON PRESENT TENSE ("The person appears disoriented", "The situation requires patience")
-- ALL actions and descriptions must be in PRESENT TENSE for immediacy
-
-CHARACTER BEHAVIOR:
-- Speak in disconnected thoughts, jumping between topics
-- Express feelings of hopelessness or confusion
-- Show fear of being "taken away"
-- Respond positively to calm, patient approaches
-- Gradually open up if treated with genuine care
-- Express gratitude when listened to without judgment
-`,
-
-  'hostile_intoxicated': `
-You are intoxicated and becoming hostile, but not violent - just loud, argumentative, and unpredictable.
-
-CRITICAL PERSPECTIVE AND TENSE RULES:
-- When describing the USER's (officer's) actions: Use FIRST PERSON ("I maintain safe distance", "I speak calmly")
-- When describing yourself or the scene: Use THIRD PERSON PRESENT TENSE ("The person is intoxicated", "The crowd is gathering")
-- ALL actions and descriptions must be in PRESENT TENSE for immediacy
-
-CHARACTER BEHAVIOR:
-- Slur words slightly and repeat yourself
-- Be argumentative and challenge authority
-- Make exaggerated gestures
-- Become louder when frustrated but respond to calm direction
-- Show typical intoxication signs (confusion, mood swings)
-- Have periods of clarity mixed with confused rambling
-`,
-
-  'juvenile_contact': `
-You are a teenager caught shoplifting who is scared about getting in trouble and worried about parents finding out.
-
-CRITICAL PERSPECTIVE AND TENSE RULES:
-- When describing the USER's (officer's) actions: Use FIRST PERSON ("I speak gently", "I explain the process")
-- When describing yourself or the scene: Use THIRD PERSON PRESENT TENSE ("The teenager looks scared", "The store manager waits nearby")
-- ALL actions and descriptions must be in PRESENT TENSE for immediacy
-
-CHARACTER BEHAVIOR:
-- Switch between defiant attitude and scared kid
-- Use modern teen language
-- Worry about parents finding out
-- Start defensive but may open up if treated with respect
-- Show remorse if approached correctly
-- Ask questions about consequences
-`,
-
-  'elderly_confused': `
-You are an elderly person who is confused and possibly experiencing early dementia, lost and can't remember how you got here.
-
-CRITICAL PERSPECTIVE AND TENSE RULES:
-- When describing the USER's (officer's) actions: Use FIRST PERSON ("I speak slowly", "I offer assistance")
-- When describing yourself or the scene: Use THIRD PERSON PRESENT TENSE ("The elderly person appears confused", "The location is unfamiliar to them")
-- ALL actions and descriptions must be in PRESENT TENSE for immediacy
-
-CHARACTER BEHAVIOR:
-- Speak slowly and forget mid-sentence
-- Ask the same questions repeatedly
-- Show confusion about time, place, recent events
-- Remember some things clearly but not others
-- Become anxious when pushed for details you can't remember
-- Respond well to patient, gentle approaches
-`,
-
-  'business_complaint': `
-You are a frustrated business owner dealing with ongoing issues affecting your establishment.
-
-CRITICAL PERSPECTIVE AND TENSE RULES:
-- When describing the USER's (officer's) actions: Use FIRST PERSON ("I listen carefully", "I take notes")
-- When describing yourself or the scene: Use THIRD PERSON PRESENT TENSE ("The business owner is frustrated", "The establishment shows signs of problems")
-- ALL actions and descriptions must be in PRESENT TENSE for immediacy
-
-CHARACTER BEHAVIOR:
-- Express frustration with recurring problems
-- Provide specific examples of business impact
-- Show concern for customers and employees
-- Want concrete solutions, not just sympathy
-- Become more cooperative when officer shows genuine interest
-- Ask about follow-up and prevention
-`,
+// Scenario-specific character configurations
+const scenarioCharacters = {
+  'calm_cooperative': {
+    name: 'Cooperative Witness',
+    baseState: 'Helpful but slightly nervous about being involved',
+    baseStressLevel: 3
+  },
+  'agitated_uncooperative': {
+    name: 'Agitated Individual',
+    baseState: 'Frustrated and defensive, having a bad day',
+    baseStressLevel: 6
+  },
+  'emotionally_distraught': {
+    name: 'Distraught Victim',
+    baseState: 'Emotionally overwhelmed by recent traumatic event',
+    baseStressLevel: 8
+  },
+  'deceptive_evasive': {
+    name: 'Evasive Suspect',
+    baseState: 'Trying to avoid getting in trouble, giving vague answers',
+    baseStressLevel: 5
+  },
+  'nervous_citizen': {
+    name: 'Nervous Citizen',
+    baseState: 'Anxious around authority but has done nothing wrong',
+    baseStressLevel: 4
+  },
+  'language_barrier': {
+    name: 'Non-English Speaker',
+    baseState: 'Confused due to language barrier, limited English',
+    baseStressLevel: 6
+  },
+  'domestic_dispute': {
+    name: 'Dispute Participant',
+    baseState: 'Defensive about domestic situation, downplaying severity',
+    baseStressLevel: 7
+  },
+  'mental_health_crisis': {
+    name: 'Person in Crisis',
+    baseState: 'Experiencing mental health emergency, confused and scared',
+    baseStressLevel: 9
+  },
+  'hostile_intoxicated': {
+    name: 'Intoxicated Person',
+    baseState: 'Intoxicated and becoming argumentative but not violent',
+    baseStressLevel: 6
+  },
+  'juvenile_contact': {
+    name: 'Teenager',
+    baseState: 'Scared about consequences and worried about parents finding out',
+    baseStressLevel: 7
+  },
+  'elderly_confused': {
+    name: 'Elderly Person',
+    baseState: 'Confused and possibly experiencing memory issues',
+    baseStressLevel: 4
+  },
+  'business_complaint': {
+    name: 'Business Owner',
+    baseState: 'Frustrated with ongoing problems affecting the business',
+    baseStressLevel: 5
+  }
 };
 
-// Main roleplay function - simplified and reliable
+// Main roleplay function using structured JSON approach
 export async function generateRolePlayResponse(input: RolePlayInput): Promise<string> {
-  const { systemPrompt, conversationHistory, scenarioType, currentStressLevel = 5, officerApproach } = input;
+  const { systemPrompt, conversationHistory, scenarioType = 'general', currentStressLevel = 5, officerApproach } = input;
 
   try {
-    // Debug logging
     console.log('RolePlay Input:', {
       systemPromptLength: systemPrompt?.length || 0,
       historyLength: conversationHistory?.length || 0,
@@ -264,104 +134,114 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
 
     const lastOfficerMessage = lastMessage.parts[0].text;
 
-    // Analyze the conversation history to adapt behavior
-    const conversationLength = conversationHistory.length;
+    // Get character configuration
+    const character = scenarioCharacters[scenarioType as keyof typeof scenarioCharacters] || {
+      name: 'Individual',
+      baseState: 'Neutral demeanor',
+      baseStressLevel: 5
+    };
 
-    // Determine behavioral modifiers based on officer approach
-    let behaviorModifier = '';
-    if (lastOfficerMessage.toLowerCase().includes('calm down') || lastOfficerMessage.includes('!')) {
-      behaviorModifier += 'The officer seems demanding. Respond with slight increased defensiveness. ';
-    }
-    if (lastOfficerMessage.toLowerCase().includes('understand') || lastOfficerMessage.toLowerCase().includes('help')) {
-      behaviorModifier += 'The officer is showing empathy. Respond more cooperatively. ';
-    }
-    if (conversationLength > 6) {
-      behaviorModifier += 'This conversation has been going on for a while. Show some fatigue or impatience. ';
-    }
+    // Build conversation context for JSON input
+    const conversationContext = conversationHistory.map((msg, index) => ({
+      source: msg.role === 'user' ? 'Trainee' : 'Character',
+      content: msg.parts[0].text
+    }));
 
-    // Enhanced system prompt with dynamic behavior
-    const enhancedPrompt = `${systemPrompt}
+    // Create structured prompt for JSON response
+    const jsonPrompt = `${structuredSystemPrompt}
 
-ENHANCED BEHAVIOR GUIDELINES:
-${behaviorModifier}
+SCENARIO CONTEXT:
+Character: ${character.name}
+Current State: ${character.baseState}
+Current Stress Level: ${currentStressLevel}/10
+Scenario Type: ${scenarioType}
 
-CRITICAL PERSPECTIVE AND TENSE ENFORCEMENT:
-- OFFICER ACTIONS: Always use FIRST PERSON ("I approach", "I say", "I draw my weapon")
-- SCENE/CHARACTER DESCRIPTIONS: Always use THIRD PERSON PRESENT TENSE ("The suspect appears nervous", "A vehicle is parked")
-- NEVER use second person ("you") for officer actions
-- ALL descriptions must be in PRESENT TENSE for immediacy
-- Example: "I step out of the patrol car. The individual looks agitated and begins backing away."
+CONVERSATION HISTORY:
+${conversationContext.map(msg => `${msg.source}: "${msg.content}"`).join('\n')}
 
-REALISM REQUIREMENTS:
-- Use natural speech patterns with occasional filler words ("uh", "um", "well")
-- Show realistic emotional progression throughout the conversation
-- React authentically to the officer's tone and approach
-- Include relevant background details that make the scenario believable
-- Show body language through your dialogue ("*shifts uncomfortably*", "*looks away*")
-- Have realistic knowledge limitations - don't know everything
-- Show fatigue if conversation goes long
-- Display appropriate emotional responses to different questioning techniques
+CURRENT OFFICER ACTION:
+"${lastOfficerMessage}"
 
-CURRENT SITUATION AWARENESS:
-- This is interaction #${Math.floor(conversationLength / 2) + 1} in this encounter
-- Your current stress/agitation level is ${currentStressLevel}/10
-- Respond as a real person would, not as an AI following a script
+Respond with ONLY a valid JSON object following the specified format. The character should react realistically to the officer's action based on their current state and stress level.`;
 
-Remember: You are playing a character, not providing training feedback. Stay in character completely and maintain proper perspective/tense throughout.`;
+    console.log('Making AI call with structured JSON prompt...');
 
-    console.log('Making AI call with enhanced prompt...');
-
-    // Use standard generation with proper error handling
+    // Use AI generation with JSON-focused prompt
     const response = await ai.generate({
-      system: enhancedPrompt,
-      history: conversationHistory.slice(0, -1), // Remove the last message as it becomes the prompt
-      prompt: lastOfficerMessage,
+      prompt: jsonPrompt,
       config: {
         temperature: 0.8,
-        maxOutputTokens: 200,
+        maxOutputTokens: 300,
       }
     });
 
-    // Validate response
-    if (!response) {
-      console.error('AI response is null or undefined');
-      throw new Error('AI service returned no response');
+    console.log('Raw AI Response:', response);
+
+    // Extract text from response using the text() method if available
+    let responseText = '';
+    if (typeof response.text === 'function') {
+      responseText = response.text();
+    } else if (typeof response.text === 'string') {
+      responseText = response.text;
+    } else if (response.content && response.content[0]?.text) {
+      responseText = response.content[0].text;
+    } else {
+      console.error('Unable to extract text from response:', response);
+      throw new Error('Unable to extract text from AI response');
     }
 
-    if (!response.text || typeof response.text !== 'string') {
-      console.error('AI response has no text property or text is not a string:', response);
-      throw new Error('AI service returned invalid response format');
-    }
-
-    // Ensure we have a valid string before calling trim()
-    const responseText = response.text || '';
-    if (responseText.trim().length === 0) {
+    if (!responseText || responseText.trim().length === 0) {
       console.error('AI response text is empty');
       throw new Error('AI service returned empty response');
     }
 
-    console.log('AI response received successfully');
-    return responseText.trim();
+    console.log('Extracted response text:', responseText);
+
+    // Try to parse JSON response
+    let jsonResponse;
+    try {
+      // Clean the response text (remove any markdown formatting)
+      const cleanedText = responseText.replace(/```json\s*|\s*```/g, '').trim();
+      jsonResponse = JSON.parse(cleanedText);
+    } catch (parseError) {
+      console.error('Failed to parse JSON response:', parseError);
+      console.error('Raw response was:', responseText);
+
+      // Fallback to simple text response
+      return responseText.trim();
+    }
+
+    // Convert JSON response to readable format
+    if (jsonResponse.narrator_text && jsonResponse.character_dialogue) {
+      const narratorText = jsonResponse.narrator_text;
+      const characterName = jsonResponse.character_dialogue.character_name || character.name;
+      const dialogue = jsonResponse.character_dialogue.dialogue_text;
+
+      return `${narratorText}\n\n${characterName}: "${dialogue}"`;
+    } else {
+      // If JSON structure is unexpected, return the raw text
+      return responseText.trim();
+    }
 
   } catch (error) {
     console.error('AI Role-Play Error:', error);
-    
+
     // Provide contextual fallback responses
     const fallbackResponses = {
-      'calm_cooperative': "I'm sorry, I'm having trouble responding right now. Could you please repeat what you said?",
-      'agitated_uncooperative': "Look, I can't... something's not working right. Can we try this again?",
-      'nervous_citizen': "I'm sorry officer, I'm having trouble understanding. Could you help me?",
-      'emotionally_distraught': "*takes a moment to collect thoughts* I'm sorry, I'm just so overwhelmed right now...",
-      'mental_health_crisis': "*looks confused* I... I can't think clearly right now. What were you saying?",
-      'hostile_intoxicated': "*stumbles over words* What? I can't... what are you asking me?",
-      'deceptive_evasive': "Uh... I'm not sure what you mean. Can you ask that again?",
-      'juvenile_contact': "I'm sorry, I don't know what's happening. Am I in trouble?",
-      'elderly_confused': "*looks puzzled* I'm sorry dear, I didn't catch that. What did you say?",
-      'business_complaint': "I'm sorry, I'm having difficulty right now. Could you please repeat that?",
-      'domestic_dispute': "*pauses* I'm sorry, I'm just really stressed right now. What were you asking?",
-      'language_barrier': "No understand... sorry... problema with words..."
+      'calm_cooperative': "I'm sorry officer, I'm having trouble understanding. Could you please repeat that?",
+      'agitated_uncooperative': "Look, I don't know what's going on right now. Can we start over?",
+      'nervous_citizen': "I'm sorry, I'm just really nervous. What did you need from me?",
+      'emotionally_distraught': "*takes a deep breath* I'm sorry, I'm just so overwhelmed. Could you say that again?",
+      'mental_health_crisis': "*looks confused* I... I don't understand what's happening. What did you ask?",
+      'hostile_intoxicated': "*stumbles slightly* What? I can't... what are you saying?",
+      'deceptive_evasive': "Uh... I'm not sure what you mean by that. Could you be more specific?",
+      'juvenile_contact': "I'm really confused right now. Am I in big trouble?",
+      'elderly_confused': "*looks puzzled* I'm sorry dear, I didn't catch what you said.",
+      'business_complaint': "I'm sorry, I'm just frustrated. Could you repeat your question?",
+      'domestic_dispute': "*pauses* Sorry, I'm just really stressed. What were you asking?",
+      'language_barrier': "No understand... sorry... what you say?"
     };
-    
+
     return fallbackResponses[scenarioType as keyof typeof fallbackResponses] 
       || "I apologize, I'm having difficulty responding right now. Could you please try again?";
   }
@@ -388,17 +268,17 @@ export async function analyzeOfficerApproach(message: string): Promise<{
   const techniques: string[] = [];
 
   const lowerMessage = message.toLowerCase();
-  
+
   if (lowerMessage.includes('understand') || lowerMessage.includes('help')) {
     tone = 'empathetic';
     techniques.push('Empathetic language');
   }
-  
+
   if (lowerMessage.includes('!') || lowerMessage.includes('calm down')) {
     tone = 'aggressive';
     techniques.push('Commanding tone');
   }
-  
+
   if (lowerMessage.length < 20) {
     tone = 'rushed';
     techniques.push('Brief communication');
