@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -292,55 +291,41 @@ export default function RolePlaySimulatorPage() {
     });
 
     return (
-        <div className="animate-fade-in-up">
-            <div className="flex justify-between items-start gap-4 mb-6">
-                <PageHeader
-                    title="AI Role-Play Simulator"
-                    description="Master communication and de-escalation skills through realistic, adaptive AI-powered scenarios. Each character responds dynamically to your approach."
-                />
-                <Button asChild variant="outline">
-                    <Link href="/dashboard">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to Dashboard
-                    </Link>
-                </Button>
-            </div>
+        <div className="container mx-auto p-4 md:p-6">
+            <PageHeader 
+                title="Role-Play Simulator" 
+                description="Practice real-world scenarios with AI-powered interactive training"
+            />
 
-            {/* Alert */}
-            <Alert className="border-primary/20 bg-card mb-6">
-                <ShieldAlert className="h-4 w-4 text-primary" />
-                <AlertTitle className="text-card-foreground">Advanced Training Environment</AlertTitle>
-                <AlertDescription className="text-muted-foreground">
-                    Experience realistic interactions with AI characters that adapt to your communication style. 
-                    Get instant feedback and track your progress across multiple scenarios.
-                </AlertDescription>
-            </Alert>
-
-            {/* Search Bar */}
-            <div className="mb-6">
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input
-                        type="text"
-                        placeholder="Search scenarios by title, description, or learning objectives..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
-                    />
+            {/* Search and Filter Controls */}
+            <div className="mb-6 space-y-4">
+                <div className="w-full">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            type="text"
+                            placeholder="Search scenarios..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-10 w-full"
+                        />
+                    </div>
+                </div>
+                <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                    {categories.map((category) => (
+                        <Button
+                            key={category.id}
+                            variant={selectedCategory === category.id ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setSelectedCategory(category.id)}
+                            className="text-xs sm:text-sm whitespace-nowrap"
+                        >
+                            <span className="mr-1 sm:mr-2">{category.icon}</span>
+                            {category.name}
+                        </Button>
+                    ))}
                 </div>
             </div>
-
-            {/* Category Filter Tabs */}
-            <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-                <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 mb-6">
-                    {categories.map((category) => (
-                        <TabsTrigger key={category.id} value={category.id} className="text-xs">
-                            <span className="mr-1">{category.icon}</span>
-                            <span className="hidden sm:inline">{category.name}</span>
-                        </TabsTrigger>
-                    ))}
-                </TabsList>
-            </Tabs>
 
             {/* Results Count */}
             <div className="mb-4">

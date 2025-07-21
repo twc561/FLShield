@@ -167,7 +167,7 @@ Respond with ONLY a valid JSON object following the specified format. The charac
     console.log('Making AI call with structured JSON prompt...');
 
     // Use AI generation with JSON-focused prompt
-    const response = await ai.generate({
+    const aiResponse = await ai.generate({
       prompt: jsonPrompt,
       config: {
         temperature: 0.8,
@@ -175,27 +175,42 @@ Respond with ONLY a valid JSON object following the specified format. The charac
       }
     });
 
-    console.log('Raw AI Response:', response);
+    console.log('Raw AI Response:', aiResponse);
 
-    // Extract text from response using the text() method if available
+    // Extract response text with better error handling
     let responseText = '';
-    if (typeof response.text === 'function') {
-      responseText = response.text();
-    } else if (typeof response.text === 'string') {
-      responseText = response.text;
-    } else if (response.content && response.content[0]?.text) {
-      responseText = response.content[0].text;
-    } else {
-      console.error('Unable to extract text from response:', response);
-      throw new Error('Unable to extract text from AI response');
+    try {
+      responseText = aiResponse.text?.()?.trim() || '';
+      console.log('Raw response text:', responseText);
+    } catch (textError) {
+      console.error('Error extracting text from AI response:', textError);
+      responseText = '';
     }
 
     if (!responseText || responseText.trim().length === 0) {
-      console.error('AI response text is empty');
-      throw new Error('AI service returned empty response');
+      console.error('AI response text is empty, generating fallback response');
+
+      // Generate contextual fallback based on scenario type
+      const fallbacks = {
+        'elderly-confused': "I'm sorry, I'm feeling a bit confused right now. Could you please speak more slowly and clearly?",
+        'calm-cooperative': "I understand you're here to help. What would you like to know?",
+        'agitated-uncooperative': "Look, I don't want any trouble. Can we just get this over with?",
+        'mental-health-crisis': "I'm scared... I don't know what's happening to me.",
+        'domestic-dispute': "This isn't what it looks like, officer.",
+        'deceptive-evasive': "I don't know what you're talking about.",
+        'hostile-intoxicated': "What's the problem, officer? I wasn't doing anything wrong.",
+        'emotionally-distraught': "*sniffling* I can't believe this happened...",
+        'juvenile-contact': "Am I in trouble? Do I need to call my parents?",
+        'language-barrier': "No English... no understand...",
+        'business-complaint': "Thank you for coming, officer. I really need your help with this situation.",
+        'nervous-citizen': "Officer, I hope I'm not wasting your time, but I was worried...",
+        default: "I'm here. What did you need to talk to me about?"
+      };
+
+      responseText = fallbacks[scenarioType as keyof typeof fallbacks] || fallbacks.default;
     }
 
-    console.log('Extracted response text:', responseText);
+    console.log('Final response text:', responseText);
 
     // Try to parse JSON response
     let jsonResponse;

@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react';
@@ -10,7 +11,6 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Send, Bot, User, Loader2, RefreshCw, BarChart3, Clock, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { streamRolePlay } from '@/ai/flows/roleplay-simulator';
 import { analyzeOfficerApproach } from '@/lib/roleplay-utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -46,13 +46,12 @@ export function ScenarioClient({
     initialMessage: string;
     scenarioType?: string;
 }) {
+    // All hooks must be called in the same order every time
     const [mounted, setMounted] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [userInput, setUserInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [showPerformance, setShowPerformance] = useState(false);
-    const [stressLevel, setStressLevel] = useState(5);
-    const [startTime, setStartTime] = useState<Date | null>(null);
     const [currentStressLevel, setCurrentStressLevel] = useState(5);
     const [performanceMetrics, setPerformanceMetrics] = useState<PerformanceMetrics>({
         empathyScore: 0,
@@ -61,43 +60,15 @@ export function ScenarioClient({
         responseTime: [],
         techniqueVariety: new Set(),
     });
+
     const scrollAreaRef = useRef<HTMLDivElement>(null);
     const messageStartTime = useRef<Date | null>(null);
-
-    const scrollToBottom = useCallback(() => {
-        if (scrollAreaRef.current) {
-            scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
-        }
-    }, []);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    useEffect(() => {
-        // Add initial AI message only after mounting
-        if (mounted && initialMessage && messages.length === 0) {
-            const initialMsg: Message = {
-                id: 'init-1',
-                role: 'model',
-                content: initialMessage,
-                timestamp: new Date(),
-            };
-            setMessages([initialMsg]);
-            setStartTime(new Date());
-        }
-    }, [mounted, initialMessage, messages.length]);
-
-    useEffect(() => {
-        if (mounted) {
-            scrollToBottom();
-        }
-    }, [messages, mounted, scrollToBottom]);
+    const initializeRef = useRef(false);
 
     // Calculate stress level based on conversation
     const calculateStressLevel = useCallback((newMessages: Message[]) => {
         let stress = 5; // baseline
-        const recentMessages = newMessages.slice(-4); // last 2 exchanges
+        const recentMessages = newMessages.slice(-4);
 
         recentMessages.forEach(msg => {
             if (msg.role === 'user') {
@@ -118,13 +89,10 @@ export function ScenarioClient({
 
         setPerformanceMetrics(prev => {
             const newMetrics = { ...prev };
-
-            // Update technique variety
             analysis.techniques.forEach(technique => 
                 newMetrics.techniqueVariety.add(technique)
             );
 
-            // Update scores based on techniques used
             if (analysis.tone === 'empathetic') {
                 newMetrics.empathyScore = Math.min(100, newMetrics.empathyScore + 5);
             }
@@ -135,22 +103,28 @@ export function ScenarioClient({
                 newMetrics.effectivenessScore = Math.min(100, newMetrics.effectivenessScore + 3);
             }
 
-            // Track response times
             newMetrics.responseTime.push(responseTime);
-
             return newMetrics;
         });
     }, []);
 
+    const scrollToBottom = useCallback(() => {
+        if (scrollAreaRef.current) {
+            const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+            if (scrollElement) {
+                scrollElement.scrollTop = scrollElement.scrollHeight;
+            }
+        }
+    }, []);
+
     const handleSendMessage = useCallback(async () => {
-        if (!userInput.trim()) return;
+        if (!userInput.trim() || isLoading) return;
 
         const responseTime = messageStartTime.current 
             ? Date.now() - messageStartTime.current.getTime() 
             : 0;
 
         const analysis = analyzeOfficerApproach(userInput);
-
         const userMessage: Message = { 
             id: `user-${Date.now()}`, 
             role: 'user', 
@@ -170,16 +144,13 @@ export function ScenarioClient({
         const newMessages: Message[] = [...messages, userMessage, modelMessagePlaceholder];
         setMessages(newMessages);
 
-        // Update stress level based on interaction
         const newStressLevel = calculateStressLevel(newMessages);
         setCurrentStressLevel(newStressLevel);
-
-        // Update performance metrics
         updatePerformanceMetrics(userInput, responseTime);
 
         setUserInput('');
         setIsLoading(true);
-        messageStartTime.current = new Date(); // Start timing for next response
+        messageStartTime.current = new Date();
 
         try {
             const historyForAI = newMessages.slice(0, -1).map(msg => ({ 
@@ -187,12 +158,8 @@ export function ScenarioClient({
                 parts: [{ text: msg.content }],
             }));
 
-            try {
-            setIsLoading(true);
-
-
-            // Call the simple roleplay function
             const { generateRolePlayResponse } = await import('@/ai/flows/roleplay-simulator');
+            
             const response = await generateRolePlayResponse({
                 systemPrompt: systemPrompt,
                 conversationHistory: historyForAI,
@@ -201,61 +168,22 @@ export function ScenarioClient({
                 officerApproach: userInput
             });
 
-            // Ensure response is a valid string
             const safeResponse = (typeof response === 'string' && response.trim()) 
                 ? response.trim() 
                 : "I'm having trouble responding right now. Could you try rephrasing your message?";
 
-              setMessages(prev =>
+            setMessages(prev =>
                 prev.map(msg =>
                     msg.id === modelMessageId ? { ...msg, content: safeResponse } : msg
                 )
             );
-
 
         } catch (error: any) {
             console.error("AI Role-Play Error:", error);
 
             let errorMessage = "I'm having trouble responding right now. Could you try rephrasing your message?";
 
-            // Provide contextual error messages based on the error
             if (error instanceof Error) {
-                console.error("Error details:", error.message);
-
-                if (error.message.includes('network') || error.message.includes('fetch')) {
-                    errorMessage = "Connection issue detected. Please check your internet and try again.";
-                } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
-                    errorMessage = "Service is temporarily busy. Please wait a moment and try again.";
-                } else if (error.message.includes('timeout')) {
-                    errorMessage = "Request timed out. Please try with a shorter message.";
-                } else if (error.message.includes('Firebase') || error.message.includes('auth')) {
-                    errorMessage = "Authentication error. Please refresh the page and try again.";
-                } else if (error.message.includes('empty') || error.message.includes('invalid')) {
-                    errorMessage = "Please make sure your message isn't empty and try again.";
-                }
-            }
-
-             setMessages(prev =>
-                prev.map(msg =>
-                    msg.id === modelMessageId ? { 
-                        ...msg, 
-                        content: errorMessage
-                    } : msg
-                )
-            );
-        } finally {
-            setIsLoading(false);
-        }
-
-        } catch (error) {
-            console.error("AI Role-Play Error:", error);
-
-            let errorMessage = "I'm having trouble responding right now. Could you try rephrasing your message?";
-
-            // Provide contextual error messages based on the error
-            if (error instanceof Error) {
-                console.error("Error details:", error.message);
-
                 if (error.message.includes('network') || error.message.includes('fetch')) {
                     errorMessage = "Connection issue detected. Please check your internet and try again.";
                 } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
@@ -280,9 +208,11 @@ export function ScenarioClient({
         } finally {
             setIsLoading(false);
         }
-    }, [messages, userInput, systemPrompt, scenarioType, calculateStressLevel, updatePerformanceMetrics]);
+    }, [messages, userInput, systemPrompt, scenarioType, calculateStressLevel, updatePerformanceMetrics, isLoading]);
 
     const handleRestart = useCallback(() => {
+        if (!initialMessage) return;
+        
         const initialMsg: Message = {
             id: 'init-1',
             role: 'model',
@@ -292,7 +222,6 @@ export function ScenarioClient({
         setMessages([initialMsg]);
         setUserInput('');
         setCurrentStressLevel(5);
-        setStartTime(new Date());
         setPerformanceMetrics({
             empathyScore: 0,
             professionalismScore: 0,
@@ -316,11 +245,31 @@ export function ScenarioClient({
         return 'text-red-600';
     }, []);
 
-    const averageResponseTime = performanceMetrics.responseTime.length > 0
-        ? performanceMetrics.responseTime.reduce((a, b) => a + b, 0) / performanceMetrics.responseTime.length / 1000
-        : 0;
+    // Initialize only once after mount
+    useEffect(() => {
+        setMounted(true);
+        
+        if (!initializeRef.current && initialMessage) {
+            const initialMsg: Message = {
+                id: 'init-1',
+                role: 'model',
+                content: initialMessage,
+                timestamp: new Date(),
+            };
+            setMessages([initialMsg]);
+            initializeRef.current = true;
+        }
+    }, [initialMessage]);
 
-    // Prevent hydration issues - early return after all hooks
+    // Scroll to bottom when messages change
+    useEffect(() => {
+        if (mounted && messages.length > 0) {
+            // Use setTimeout to ensure DOM is updated
+            setTimeout(scrollToBottom, 100);
+        }
+    }, [messages, mounted, scrollToBottom]);
+
+    // Early return for SSR
     if (!mounted) {
         return (
             <div className="container mx-auto p-6">
@@ -332,6 +281,10 @@ export function ScenarioClient({
             </div>
         );
     }
+
+    const averageResponseTime = performanceMetrics.responseTime.length > 0
+        ? performanceMetrics.responseTime.reduce((a, b) => a + b, 0) / performanceMetrics.responseTime.length / 1000
+        : 0;
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col h-full">
@@ -349,7 +302,6 @@ export function ScenarioClient({
                 </div>
             </div>
 
-            {/* Performance Panel */}
             <AnimatePresence>
                 {showPerformance && (
                     <motion.div
@@ -419,7 +371,7 @@ export function ScenarioClient({
 
             <Card className="flex flex-col flex-1 bg-card border-border">
                 <CardContent className="flex-1 p-0">
-                    <ScrollArea className="h-[calc(100vh-27rem)] bg-card" ref={scrollAreaRef as any}>
+                    <ScrollArea className="h-[calc(100vh-27rem)] bg-card" ref={scrollAreaRef}>
                         <div className="p-6 space-y-4 bg-card">
                             {messages.map(message => (
                                 <motion.div
@@ -431,14 +383,14 @@ export function ScenarioClient({
                                     {message.role === 'model' && <div className="p-2 bg-primary/10 rounded-full"><Bot className="w-5 h-5 text-primary" /></div>}
                                     <div className={cn("max-w-xs md:max-w-md lg:max-w-lg", message.role === 'user' ? '' : '')}>
                                         <div className={cn("p-3 rounded-lg flex items-center gap-2", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground')}>
-                            {message.content ? (
-                                <p className={cn("whitespace-pre-wrap", message.role === 'user' ? 'text-primary-foreground' : 'text-foreground')}>
-                                    {message.content}
-                                </p>
-                            ) : (
-                                <Loader2 className="w-5 h-5 animate-spin text-foreground" />
-                            )}
-                        </div>
+                                            {message.content ? (
+                                                <p className={cn("whitespace-pre-wrap", message.role === 'user' ? 'text-primary-foreground' : 'text-foreground')}>
+                                                    {message.content}
+                                                </p>
+                                            ) : (
+                                                <Loader2 className="w-5 h-5 animate-spin text-foreground" />
+                                            )}
+                                        </div>
                                         {message.analysis && (
                                             <div className="mt-2 flex flex-wrap gap-1">
                                                 <Badge variant="outline" className="text-xs text-foreground border-foreground/20">

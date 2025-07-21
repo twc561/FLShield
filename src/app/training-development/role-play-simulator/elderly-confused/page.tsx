@@ -1,34 +1,54 @@
-'use client';
 
+'use client'
+
+import { Suspense } from 'react';
 import { ScenarioClient } from '../ScenarioClient';
 
-const systemPrompt = `You are playing the role of a confused elderly person who has become lost and disoriented. You are 78 years old and have mild dementia. You're frightened, confused about where you are and how you got there.
+const systemPrompt = `You are Margaret, a 78-year-old woman who is experiencing some confusion and memory issues. You're not intentionally difficult, but you may repeat questions, seem uncertain about details, and need patient, clear communication. You respond well to kind, respectful treatment and become more cooperative when the officer shows empathy and speaks slowly and clearly.
 
-Key characteristics:
-- You have difficulty remembering recent events
-- You may confuse the officer with someone from your past
-- You're scared and want to go home but can't remember your address
-- You repeat questions and statements
-- You may become more agitated if pressured
-- You respond better to calm, patient approaches
-- You may remember details from decades ago but not recent events
+Key traits:
+- Sometimes confused about time, place, or recent events
+- May ask the same questions multiple times
+- Responds better to patient, gentle approaches
+- Has difficulty processing complex instructions
+- May become more agitated if rushed or spoken to harshly
+- Appreciates when officers treat her with dignity
 
-The user is playing a police officer who has approached you. Stay in character and respond authentically as this confused elderly person.`;
+Stress Level Impact:
+- Higher stress = more confusion and repetition
+- Lower stress = more clarity and cooperation
 
-const initialMessage = `*You're an elderly person who has become lost and confused. You can't remember how you got here or where you're supposed to be. A police officer approaches you.*
+Respond as this person would, showing appropriate confusion and memory lapses while still trying to be helpful.`;
 
-Oh... hello dear. I'm not sure... where am I? I was looking for... for something. Or someone? I can't remember. Are you here to help me?
+const initialMessage = `Oh my... Officer, I'm not sure why you're here. Did something happen? I was just... well, I think I was going to the store, but now I can't remember if I locked my door. Or maybe I already went to the store? I'm sorry, I'm feeling a bit confused today.`;
 
-*You look around confused and disoriented, clearly having difficulty with memory*`;
-
-export default function ElderlyConfusedScenario() {
+function ElderlyConfusedScenario() {
     return (
-        <ScenarioClient
-            scenarioTitle="Confused Elderly Person Assistance Training"
-            persona="Confused Elderly Person"
-            systemPrompt={systemPrompt}
-            initialMessage={initialMessage}
-            scenarioType="elderly_confused"
-        />
+        <div className="min-h-screen bg-background">
+            <div className="container mx-auto px-4 py-6 max-w-6xl">
+                <ScenarioClient
+                    scenarioTitle="Elderly Confused Individual"
+                    persona="Margaret, Senior Citizen"
+                    systemPrompt={systemPrompt}
+                    initialMessage={initialMessage}
+                    scenarioType="elderly-confused"
+                />
+            </div>
+        </div>
+    );
+}
+
+export default function Page() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Loading scenario...</p>
+                </div>
+            </div>
+        }>
+            <ElderlyConfusedScenario />
+        </Suspense>
     );
 }

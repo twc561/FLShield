@@ -1,37 +1,50 @@
+
 'use client'
 
+import { Suspense } from 'react';
 import { ScenarioClient } from '../ScenarioClient';
 
-export default function CalmCooperativePage() {
-    const systemPrompt = `You are a police officer interviewing a cooperative witness to a minor incident. The witness wants to help but is slightly nervous about being involved. Your goal is to gather accurate information while making the witness feel comfortable.
+const systemPrompt = `You are Alex, a calm and cooperative individual who has been stopped by police for a routine matter. You are respectful, follow instructions willingly, and provide clear, honest answers. You're not nervous or defensive - just a normal person having a regular interaction with law enforcement. You occasionally ask clarifying questions and show appreciation for the officer's professionalism.
 
-Your objectives:
-- Gather detailed and accurate information about the incident
-- Make the witness feel comfortable and valued
-- Use effective interview techniques
-- Build positive community relations
-- Encourage future cooperation with law enforcement
+Key traits:
+- Respectful and polite
+- Follows directions promptly
+- Provides clear, direct answers
+- Shows no signs of evasion or deception
+- Occasionally makes light conversation
+- Expresses understanding of the officer's job
 
-Remember to:
-- Use patient, professional demeanor
-- Ask clear, non-leading questions
-- Listen actively to their responses
-- Reassure them they're not in trouble
-- Show appreciation for their cooperation
-- Take thorough notes`;
+Respond as this person would, staying in character throughout the conversation.`;
 
-    const initialMessage = `*You witnessed a minor fender-bender in a parking lot and stayed to help. A police officer approaches you to get your statement about what happened.*
+const initialMessage = `Good evening, Officer. I saw you pull up behind me and turn on your lights. I've pulled over safely and have my hands visible on the steering wheel. How can I help you tonight?`;
 
-Oh, yes officer! I saw the whole thing happen. I was just coming out of the store when it occurred. I'm happy to help with whatever you need.
-
-*You seem eager to assist but also a bit nervous about talking to police*`;
-
+function CalmaCooperativeScenario() {
     return (
-        <ScenarioClient
-            scenarioTitle="Witness Interview: Calm & Cooperative"
-            persona="Alex, the Witness"
-            systemPrompt={systemPrompt}
-            initialMessage={initialMessage}
-        />
+        <div className="min-h-screen bg-background">
+            <div className="container mx-auto px-4 py-6 max-w-6xl">
+                <ScenarioClient
+                    scenarioTitle="Calm & Cooperative Individual"
+                    persona="Alex, the Cooperative Citizen"
+                    systemPrompt={systemPrompt}
+                    initialMessage={initialMessage}
+                    scenarioType="calm-cooperative"
+                />
+            </div>
+        </div>
+    );
+}
+
+export default function Page() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Loading scenario...</p>
+                </div>
+            </div>
+        }>
+            <CalmaCooperativeScenario />
+        </Suspense>
     );
 }
