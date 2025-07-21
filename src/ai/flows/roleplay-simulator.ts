@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview Enhanced conversational AI agent for realistic role-playing scenarios.
@@ -74,12 +73,12 @@ You are someone who may have been involved in minor illegal activity and are try
 // This is an async generator function with enhanced realism
 export async function* streamRolePlay(input: RolePlayInput) {
   const { systemPrompt, conversationHistory, scenarioType, currentStressLevel = 5, officerApproach } = input;
-  
+
   try {
     // Analyze the conversation history to adapt behavior
     const conversationLength = conversationHistory.length;
     const lastOfficerMessage = conversationHistory[conversationHistory.length - 1]?.parts[0]?.text || '';
-    
+
     // Determine behavioral modifiers based on officer approach
     let behaviorModifier = '';
     if (lastOfficerMessage.toLowerCase().includes('calm down') || lastOfficerMessage.includes('!')) {
@@ -135,31 +134,4 @@ Remember: You are playing a character, not providing training feedback. Stay in 
     console.error('AI Role-Play Error:', error);
     yield 'Sorry, I encountered an error. Please try again.';
   }
-}
-
-// Helper function to analyze officer's approach
-export function analyzeOfficerApproach(message: string): {
-  tone: 'professional' | 'aggressive' | 'empathetic' | 'rushed';
-  techniques: string[];
-} {
-  const msg = message.toLowerCase();
-  let tone: 'professional' | 'aggressive' | 'empathetic' | 'rushed' = 'professional';
-  const techniques: string[] = [];
-
-  // Tone analysis
-  if (msg.includes('need to') || msg.includes('have to') || msg.includes('!')) {
-    tone = 'aggressive';
-  } else if (msg.includes('understand') || msg.includes('sorry') || msg.includes('help')) {
-    tone = 'empathetic';
-  } else if (msg.length < 20 || msg.includes('quick')) {
-    tone = 'rushed';
-  }
-
-  // Technique identification
-  if (msg.includes('what happened') || msg.includes('tell me')) techniques.push('open-ended questioning');
-  if (msg.includes('when') || msg.includes('where') || msg.includes('who')) techniques.push('specific questioning');
-  if (msg.includes('understand') || msg.includes('see')) techniques.push('empathy');
-  if (msg.includes('let me') || msg.includes('help')) techniques.push('assistance offering');
-
-  return { tone, techniques };
 }

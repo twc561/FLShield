@@ -11,7 +11,8 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Send, Bot, User, Loader2, RefreshCw, BarChart3, Clock, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { streamRolePlay, analyzeOfficerApproach } from '@/ai/flows/roleplay-simulator';
+import { streamRolePlay } from '@/ai/flows/roleplay-simulator';
+import { analyzeOfficerApproach } from '@/lib/roleplay-utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type Message = {
