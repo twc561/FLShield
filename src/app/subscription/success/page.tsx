@@ -3,6 +3,8 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { auth } from '@/lib/firebase'
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -13,16 +15,17 @@ export default function SubscriptionSuccessPage() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
   const [isVerified, setIsVerified] = useState(false)
+  const [user] = useAuthState(auth)
 
   useEffect(() => {
-    if (sessionId) {
+    if (sessionId && user) {
       // Verify the session with your backend
       fetch('/api/verify-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ sessionId }),
+        body: JSON.stringify({ sessionId, userId: user.uid }),
       })
       .then(response => response.json())
       .then(data => {
@@ -34,7 +37,7 @@ export default function SubscriptionSuccessPage() {
         console.error('Error verifying session:', error)
       })
     }
-  }, [sessionId])
+  }, [sessionId, user])
 
   return (
     <div className="animate-fade-in-up">

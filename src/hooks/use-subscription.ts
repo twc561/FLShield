@@ -19,8 +19,15 @@ export function useSubscription() {
   const [user] = useAuthState(auth)
   const [subscription, setSubscription] = useState<SubscriptionData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+    
     if (!user) {
       setSubscription(null)
       setLoading(false)
@@ -52,5 +59,5 @@ export function useSubscription() {
 
   const isPro = subscription?.status === 'active' && new Date() < subscription.currentPeriodEnd
   
-  return { subscription, loading, isPro }
+  return { subscription, loading, isPro, mounted }
 }
