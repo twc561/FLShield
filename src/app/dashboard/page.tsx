@@ -66,6 +66,8 @@ const ToolCard = ({ module }: { module: FeatureModule }) => {
 
 
 const FeaturedTools = () => {
+    const { isPro, mounted } = useSubscription()
+    
     // In a real AI-driven app, this logic would be powered by a model
     // analyzing context (time, location, user history).
     // Here, we simulate it by selecting a few key tools.
@@ -77,11 +79,27 @@ const FeaturedTools = () => {
 
     return (
         <motion.div variants={itemVariants}>
-            <h2 className="text-lg font-bold tracking-tight mb-3 px-1">Smart Suggestions</h2>
+            <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-bold tracking-tight px-1">Smart Suggestions</h2>
+                {mounted && isPro && (
+                    <Badge variant="outline" className="text-amber-600 border-amber-300">
+                        <Crown className="w-3 h-3 mr-1" />
+                        Pro Features
+                    </Badge>
+                )}
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {featured.map(tool => (
                      <Link href={tool.targetPage} key={tool.id} className="group">
-                        <Card className="h-full hover:border-primary transition-colors">
+                        <Card className="h-full hover:border-primary transition-colors relative">
+                            {mounted && isPro && tool.isPremium && (
+                                <div className="absolute top-2 right-2">
+                                    <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs">
+                                        <Crown className="w-3 h-3 mr-1" />
+                                        Pro
+                                    </Badge>
+                                </div>
+                            )}
                             <CardHeader>
                                 <div className="flex items-center gap-3">
                                     <div className="p-2 bg-primary/10 rounded-lg">
@@ -170,19 +188,52 @@ export default function DashboardPage() {
           <div className="flex items-center gap-3">
             {`${greeting}, ${userName || "Officer"}.`}
             {mounted && isPro && (
-              <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 shadow-lg">
-                <Crown className="w-3 h-3 mr-1" />
-                Pro
+              <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 shadow-lg text-sm px-3 py-1">
+                <Crown className="w-4 h-4 mr-2" />
+                Shield FL Pro
               </Badge>
             )}
           </div>
         }
-        description="Welcome to your Mission Hub. How can I help?"
+        description={
+          mounted && isPro ? (
+            <div className="flex items-center gap-2 text-amber-600">
+              <Crown className="w-4 h-4" />
+              <span>Pro Member - All premium features unlocked</span>
+            </div>
+          ) : (
+            "Welcome to your Mission Hub. How can I help?"
+          )
+        }
       />
 
       <motion.div variants={itemVariants}>
         <AICommandSearch />
       </motion.div>
+
+      {/* Pro Status Card */}
+      {mounted && isPro && (
+        <motion.div variants={itemVariants}>
+          <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full">
+                    <Crown className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-amber-900">Shield FL Pro Active</h3>
+                    <p className="text-sm text-amber-700">Access to all premium AI tools and features</p>
+                  </div>
+                </div>
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0">
+                  Premium
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Daily Roll Call - Primary focal point */}
         <div className="mb-6">
