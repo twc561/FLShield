@@ -180,7 +180,7 @@ export function ScenarioClient({
 
             try {
             setIsLoading(true);
-            
+
 
             // Call the simple roleplay function
             const { generateRolePlayResponse } = await import('@/ai/flows/roleplay-simulator');
@@ -198,7 +198,7 @@ export function ScenarioClient({
                 )
             );
 
-            
+
         } catch (error: any) {
             console.error("AI Role-Play Error:", error);
 
@@ -232,7 +232,7 @@ export function ScenarioClient({
         } finally {
             setIsLoading(false);
         }
-        
+
         } catch (error) {
             console.error("AI Role-Play Error:", error);
 

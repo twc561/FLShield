@@ -2,7 +2,7 @@
 'use server';
 /**
  * @fileOverview Enhanced conversational AI agent for realistic role-playing scenarios.
- * This flow uses a simple, reliable approach without streaming for consistent performance.
+ * This flow uses a simple, reliable approach without streaming complexity.
  */
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
@@ -235,7 +235,7 @@ CHARACTER BEHAVIOR:
 `,
 };
 
-// Simple function that returns a complete response immediately
+// Main roleplay function - simplified and reliable
 export async function generateRolePlayResponse(input: RolePlayInput): Promise<string> {
   const { systemPrompt, conversationHistory, scenarioType, currentStressLevel = 5, officerApproach } = input;
 
@@ -248,9 +248,24 @@ export async function generateRolePlayResponse(input: RolePlayInput): Promise<st
       currentStressLevel
     });
 
+    // Validate inputs
+    if (!systemPrompt?.trim()) {
+      throw new Error('System prompt is required');
+    }
+
+    if (!conversationHistory || conversationHistory.length === 0) {
+      throw new Error('Conversation history is required');
+    }
+
+    const lastMessage = conversationHistory[conversationHistory.length - 1];
+    if (!lastMessage?.parts?.[0]?.text?.trim()) {
+      throw new Error('Last message is empty or invalid');
+    }
+
+    const lastOfficerMessage = lastMessage.parts[0].text;
+
     // Analyze the conversation history to adapt behavior
     const conversationLength = conversationHistory.length;
-    const lastOfficerMessage = conversationHistory[conversationHistory.length - 1]?.parts[0]?.text || '';
 
     // Determine behavioral modifiers based on officer approach
     let behaviorModifier = '';
@@ -294,24 +309,12 @@ CURRENT SITUATION AWARENESS:
 
 Remember: You are playing a character, not providing training feedback. Stay in character completely and maintain proper perspective/tense throughout.`;
 
-    // Validate inputs before making AI call
-    if (!enhancedPrompt || enhancedPrompt.trim().length === 0) {
-      throw new Error('System prompt is empty or invalid');
-    }
-    
-    if (!lastOfficerMessage || lastOfficerMessage.trim().length === 0) {
-      throw new Error('User message is empty or invalid');
-    }
+    console.log('Making AI call with enhanced prompt...');
 
-    console.log('Making AI call with:', {
-      prompt: lastOfficerMessage.substring(0, 100) + '...',
-      historyCount: conversationHistory.length
-    });
-
-    // Use simple generation without any streaming
+    // Use standard generation with proper error handling
     const response = await ai.generate({
       system: enhancedPrompt,
-      history: conversationHistory,
+      history: conversationHistory.slice(0, -1), // Remove the last message as it becomes the prompt
       prompt: lastOfficerMessage,
       config: {
         temperature: 0.8,
@@ -319,23 +322,29 @@ Remember: You are playing a character, not providing training feedback. Stay in 
       }
     });
 
-    if (!response?.text || response.text.trim().length === 0) {
-      throw new Error('No response generated from AI model');
+    // Validate response
+    if (!response) {
+      console.error('AI response is null or undefined');
+      throw new Error('AI service returned no response');
+    }
+
+    if (!response.text || typeof response.text !== 'string') {
+      console.error('AI response has no text property or text is not a string:', response);
+      throw new Error('AI service returned invalid response format');
+    }
+
+    if (response.text.trim().length === 0) {
+      console.error('AI response text is empty');
+      throw new Error('AI service returned empty response');
     }
 
     console.log('AI response received successfully');
-    return response.text;
+    return response.text.trim();
 
   } catch (error) {
     console.error('AI Role-Play Error:', error);
     
-    // Provide more specific error messages based on error type
-    if (error instanceof Error) {
-      console.error('Error details:', error.message);
-      console.error('Error stack:', error.stack);
-    }
-    
-    // Fallback response based on scenario type
+    // Provide contextual fallback responses
     const fallbackResponses = {
       'calm_cooperative': "I'm sorry, I'm having trouble responding right now. Could you please repeat what you said?",
       'agitated_uncooperative': "Look, I can't... something's not working right. Can we try this again?",
@@ -351,17 +360,20 @@ Remember: You are playing a character, not providing training feedback. Stay in 
       'language_barrier': "No understand... sorry... problema with words..."
     };
     
-    const fallback = fallbackResponses[scenarioType as keyof typeof fallbackResponses] 
+    return fallbackResponses[scenarioType as keyof typeof fallbackResponses] 
       || "I apologize, I'm having difficulty responding right now. Could you please try again?";
-    
-    return fallback;
   }
 }
 
-// Legacy function for backward compatibility (now calls the simple function)
+// Deprecated streaming function - kept for backwards compatibility
 export async function* streamRolePlay(input: RolePlayInput) {
-  const response = await generateRolePlayResponse(input);
-  yield response;
+  try {
+    const response = await generateRolePlayResponse(input);
+    yield response;
+  } catch (error) {
+    console.error('Streaming wrapper error:', error);
+    yield "I'm having difficulty responding right now. Could you please try again?";
+  }
 }
 
 // Helper function to analyze officer's approach
@@ -369,10 +381,26 @@ export async function analyzeOfficerApproach(message: string): Promise<{
   tone: 'professional' | 'aggressive' | 'empathetic' | 'rushed';
   techniques: string[];
 }> {
-  // Implement your logic here to analyze the officer's message
-  // and determine their tone and techniques
-  return {
-    tone: 'professional', // Replace with actual analysis
-    techniques: [], // Replace with actual analysis
-  };
+  // Simple analysis based on message content
+  let tone: 'professional' | 'aggressive' | 'empathetic' | 'rushed' = 'professional';
+  const techniques: string[] = [];
+
+  const lowerMessage = message.toLowerCase();
+  
+  if (lowerMessage.includes('understand') || lowerMessage.includes('help')) {
+    tone = 'empathetic';
+    techniques.push('Empathetic language');
+  }
+  
+  if (lowerMessage.includes('!') || lowerMessage.includes('calm down')) {
+    tone = 'aggressive';
+    techniques.push('Commanding tone');
+  }
+  
+  if (lowerMessage.length < 20) {
+    tone = 'rushed';
+    techniques.push('Brief communication');
+  }
+
+  return { tone, techniques };
 }
