@@ -62,8 +62,9 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         }
     }, [user, isLoading, isPublicPage, pathname, router]);
 
+    // Prevent hydration issues by not rendering anything during initial load
     if (isLoading) {
-        return <LoadingScreen />;
+        return null;
     }
     
     // While redirecting, show a loading screen to prevent flashing content

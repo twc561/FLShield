@@ -53,7 +53,12 @@ export function SubscriptionGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { isPro, loading, mounted, requiresSubscription } = useSubscription()
 
-  if (!mounted || loading) {
+  // Prevent hydration issues by not rendering anything until mounted
+  if (!mounted) {
+    return null
+  }
+
+  if (loading) {
     return <LoadingScreen />
   }
 
