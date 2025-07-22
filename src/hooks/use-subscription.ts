@@ -43,11 +43,13 @@ export const useSubscription = () => {
     }
 
     if (!user) {
+      console.log('No authenticated user, setting subscription to null');
       setLoading(false);
       setSubscription(null);
       return;
     }
 
+    console.log('Checking subscription for user:', user.uid);
     setLoading(true);
 
     const unsubscribe = onSnapshot(
@@ -56,8 +58,11 @@ export const useSubscription = () => {
         try {
           if (doc.exists()) {
             const data = doc.data();
-            setSubscription(data.subscription || null);
+            const subscriptionData = data.subscription || null;
+            console.log('User subscription data:', subscriptionData);
+            setSubscription(subscriptionData);
           } else {
+            console.log('User document does not exist, creating free user status');
             setSubscription(null);
           }
         } catch (error) {
@@ -88,6 +93,16 @@ export const useSubscription = () => {
   };
 
   const requiresSubscription = mounted && !isPro && !isFeatureFree(pathname);
+
+  // Debug logging
+  console.log('Subscription status:', {
+    isPro,
+    subscriptionStatus: subscription?.status,
+    pathname,
+    isFeatureFree: isFeatureFree(pathname),
+    requiresSubscription,
+    mounted
+  });
 
   return { 
     subscription, 

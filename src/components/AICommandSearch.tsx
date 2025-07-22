@@ -47,17 +47,27 @@ export default function AICommandSearch() {
     try {
       // Use streaming command search for better responsiveness
       const { streamCommandSearch } = await import('@/ai/flows/commandSearch');
+      
+      if (!streamCommandSearch) {
+        throw new Error('Command search function not available');
+      }
+
       const stream = streamCommandSearch({ query });
       
       let hasReceivedContent = false;
       let accumulatedContent = "";
 
-      for await (const chunk of stream) {
-        if (chunk && chunk.trim()) {
-          hasReceivedContent = true;
-          accumulatedContent += chunk;
-          setResult(accumulatedContent);
+      try {
+        for await (const chunk of stream) {
+          if (chunk && typeof chunk === 'string' && chunk.trim()) {
+            hasReceivedContent = true;
+            accumulatedContent += chunk;
+            setResult(accumulatedContent);
+          }
         }
+      } catch (streamError) {
+        console.error('Stream processing error:', streamError);
+        throw streamError;
       }
 
       // If no content was received, show fallback message

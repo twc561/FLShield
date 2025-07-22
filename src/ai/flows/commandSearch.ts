@@ -36,12 +36,27 @@ Your comprehensive response as Shield FL:`;
 
 export async function* streamCommandSearch(input: CommandSearchInput) {
   try {
+    // Validate input
+    if (!input || !input.query || typeof input.query !== 'string') {
+      yield "Please provide a valid question.";
+      return;
+    }
+
+    if (input.query.trim().length === 0) {
+      yield "Please enter a question to search.";
+      return;
+    }
+
     console.log('Command Search streaming call:', {
       queryLength: input.query.length,
       timestamp: new Date().toISOString()
     });
 
     const prompt = createCommandSearchPrompt(input.query);
+
+    if (!genAI) {
+      throw new Error('AI service not initialized');
+    }
 
     // Use Gemini Pro with increased token limits for comprehensive responses
     const model = genAI.getGenerativeModel({
