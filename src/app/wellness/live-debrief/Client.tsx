@@ -26,6 +26,9 @@ export function LiveDebriefClient() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [stressLevel, setStressLevel] = useState(5);
+  const [incidentType, setIncidentType] = useState("");
+  const [sessionStarted, setSessionStarted] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -65,7 +68,14 @@ export function LiveDebriefClient() {
           parts: [{ text: msg.content }],
       }));
 
-      const stream = streamDebrief({ conversationHistory: historyForAI });
+      const stream = streamDebrief({ 
+        conversationHistory: historyForAI,
+        officerStressLevel: stressLevel,
+        incidentType: incidentType,
+        sessionProgress: messages.length <= 4 ? 'opening' : 
+                        messages.length <= 12 ? 'exploration' :
+                        messages.length <= 20 ? 'processing' : 'closure'
+      });
 
       for await (const chunk of stream) {
         setMessages(prev =>
@@ -97,15 +107,82 @@ export function LiveDebriefClient() {
     }
   }
 
+  if (!sessionStarted) {
+    return (
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>Confidential Wellness Session</CardTitle>
+          <CardDescription>
+            This is a private, confidential space. Your conversation is not recorded or saved.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <label className="text-sm font-medium">Current stress level (1-10):</label>
+            <div className="flex items-center gap-2 mt-2">
+              <span className="text-sm">1</span>
+              <input
+                type="range"
+                min="1"
+                max="10"
+                value={stressLevel}
+                onChange={(e) => setStressLevel(Number(e.target.value))}
+                className="flex-1"
+              />
+              <span className="text-sm">10</span>
+              <span className="ml-2 font-medium">{stressLevel}</span>
+            </div>
+          </div>
+          <div>
+            <label className="text-sm font-medium">Type of incident (optional):</label>
+            <select
+              value={incidentType}
+              onChange={(e) => setIncidentType(e.target.value)}
+              className="w-full mt-2 p-2 border rounded-md"
+            >
+              <option value="">General debrief</option>
+              <option value="use_of_force">Use of Force</option>
+              <option value="traumatic_incident">Traumatic Incident</option>
+              <option value="officer_involved_shooting">Officer Involved Shooting</option>
+              <option value="death_investigation">Death Investigation</option>
+              <option value="child_abuse">Child Abuse Case</option>
+              <option value="domestic_violence">Domestic Violence</option>
+              <option value="workplace_stress">Workplace Stress</option>
+              <option value="critical_incident">Critical Incident</option>
+            </select>
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button onClick={() => setSessionStarted(true)} className="w-full">
+            Begin Confidential Session
+          </Button>
+        </CardFooter>
+      </Card>
+    );
+  }
+
   return (
     <Card className="flex flex-col flex-1 h-full">
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-lg">Confidential Wellness Partner</CardTitle>
+            <CardDescription className="text-sm">
+              Stress Level: {stressLevel}/10 • {incidentType || 'General debrief'}
+            </CardDescription>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            Not recorded • Confidential
+          </div>
+        </div>
+      </CardHeader>
       <CardContent className="flex-1 p-0">
         <ScrollArea className="h-[calc(100vh-27rem)]" ref={scrollAreaRef as any}>
             <div className="p-6 space-y-4">
                 {messages.length === 0 && (
                     <div className="text-center text-muted-foreground p-8">
-                        <p>You can start the conversation.</p>
-                        <p className="text-sm">This chat is not saved.</p>
+                        <p>I'm here to listen and support you.</p>
+                        <p className="text-sm">Take your time - this is your space.</p>
                     </div>
                 )}
                 {messages.map((message) => {
