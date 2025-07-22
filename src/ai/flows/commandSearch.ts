@@ -18,23 +18,24 @@ const CommandSearchOutputSchema = z.object({
 export type CommandSearchOutput = z.infer<typeof CommandSearchOutputSchema>;
 
 function createCommandSearchPrompt(query: string): string {
-  return `You are 'Shield FL,' an advanced AI partner for Florida law enforcement. Your purpose is to provide immediate, comprehensive, and practical answers to questions from front-line patrol officers.
+  return `You are 'Shield FL,' a focused AI assistant for Florida law enforcement. Answer the officer's specific question directly and practically.
 
-RESPONSE GUIDELINES:
-- Provide thorough, well-structured, and digestible information
-- Use clear sections with headers (Overview, Key Points, Legal Framework, Procedures, Examples, etc.)
-- Ground all answers in Florida statutes, case law, and established police procedures
-- Focus on operational guidance while maintaining legal accuracy
-- Prioritize officer safety and constitutional compliance in all recommendations
-- Include specific statute numbers, case citations, and procedural references
-- Provide multiple practical examples and scenarios when relevant
-- Address potential complications or edge cases
-- Include step-by-step procedures where applicable
-- Keep responses comprehensive but concise (under 3000 characters)
+ANSWER FORMAT:
+1. **Direct Answer** - Address their exact question in 1-2 sentences
+2. **Key Points** - List 3-4 most important facts they need to know
+3. **Practical Example** - Give ONE realistic scenario showing how this applies in the field
+4. **Quick Reference** - Include relevant statute numbers or key procedures
+
+RESPONSE RULES:
+- Stay laser-focused on their specific question - don't add tangential information
+- Use simple, clear language without legal jargon unless necessary  
+- Give ONE concrete example that an officer would actually encounter
+- Keep response under 2000 characters total
+- If the question is vague, interpret it from a patrol officer's perspective
 
 OFFICER'S QUESTION: "${query}"
 
-Your comprehensive response as Shield FL:`;
+Your focused, practical response:`;
 }
 
 export async function getCommandSearchResponse(input: CommandSearchInput): Promise<string> {
@@ -71,12 +72,12 @@ export async function getCommandSearchResponse(input: CommandSearchInput): Promi
       return text.trim();
     }
 
-    // Enhanced fallback responses
+    // Focused fallback responses with examples
     const fallbackResponses = {
-      'dui': "**DUI Investigation Overview**\n\nFor DUI investigations in Florida, follow these key steps:\n1. Establish reasonable suspicion for the stop\n2. Observe signs of impairment\n3. Conduct Field Sobriety Tests if appropriate\n4. Consider breath/blood testing per F.S. 316.193\n\nRefer to your department's DUI investigation procedures for specific protocols.",
-      'miranda': "**Miranda Warning Requirements**\n\nMiranda warnings are required when:\n1. The person is in custody AND\n2. You intend to interrogate them\n\nThe warning must include the right to remain silent, that statements can be used against them, right to an attorney, and right to appointed counsel if indigent.",
-      'traffic': "**Traffic Stop Procedures**\n\nKey steps for traffic stops:\n1. Signal your intent and find a safe location\n2. Approach with officer safety in mind\n3. Identify yourself and state the reason for the stop\n4. Request license, registration, and insurance\n5. Explain any citation or warning given",
-      'force': "**Use of Force Guidelines**\n\nUse of force must be:\n1. Objectively reasonable\n2. Necessary under the circumstances\n3. Proportional to the threat\n\nDocument all use of force incidents thoroughly and notify supervisors as required by policy."
+      'dui': "**DUI Investigation**\n\nYou need reasonable suspicion for the stop and probable cause for arrest.\n\n**Key Steps:** 1) Initial observations (odor, bloodshot eyes, slurred speech) 2) Field sobriety tests 3) Breath test consideration\n\n**Example:** Driver weaving, smells of alcohol, fails HGN test - you have probable cause under F.S. 316.193\n\n**Reference:** F.S. 316.193 (DUI statute)",
+      'miranda': "**Miranda Requirements**\n\nRequired only when suspect is in custody AND you're interrogating them.\n\n**Key Points:** 1) Must be in custody (not free to leave) 2) Must be interrogating (not spontaneous statements) 3) Must be complete warning\n\n**Example:** Suspect in patrol car, cuffed, you ask \"Why did you hit him?\" - Miranda required first\n\n**Reference:** Miranda v. Arizona (1966)",
+      'traffic': "**Traffic Stop Procedure**\n\nPriority is officer safety and clear communication of violation.\n\n**Key Steps:** 1) Safe positioning 2) Approach from rear 3) Identify yourself and reason 4) Request documents\n\n**Example:** \"Good evening, I'm Officer Smith with [Agency]. I stopped you for speeding 45 in a 25 zone. License and registration please.\"\n\n**Reference:** F.S. 316.650 (traffic stops)",
+      'force': "**Use of Force**\n\nMust be objectively reasonable based on totality of circumstances.\n\n**Key Test:** 1) Immediate threat level 2) Severity of crime 3) Risk of escape 4) Officer/public safety\n\n**Example:** Subject advancing with knife, ignoring commands - deadly force may be justified under Graham standard\n\n**Reference:** Graham v. Connor (1989), F.S. 776.05"
     };
 
     // Check for keyword matches in query
