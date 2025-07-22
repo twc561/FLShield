@@ -50,21 +50,31 @@ export default function AICommandSearch() {
       const stream = streamCommandSearch({ query });
       
       let hasReceivedContent = false;
+      let accumulatedContent = "";
 
       for await (const chunk of stream) {
         if (chunk && chunk.trim()) {
           hasReceivedContent = true;
-          setResult(prev => prev + chunk);
+          accumulatedContent += chunk;
+          setResult(accumulatedContent);
         }
       }
 
       // If no content was received, show fallback message
-      if (!hasReceivedContent) {
+      if (!hasReceivedContent || accumulatedContent.trim().length === 0) {
         setResult("I'm having difficulty processing that question right now. Please try rephrasing it or check back in a moment.");
       }
-    } catch (error) {
-      console.error("Search failed:", error)
-      setResult("I encountered an error while processing your request. Please try again or rephrase your question.")
+    } catch (error: any) {
+      console.error("Search failed:", error);
+      
+      // Provide more specific error messages
+      if (error.message?.includes('fetch')) {
+        setResult("Connection issue detected. Please check your internet connection and try again.");
+      } else if (error.message?.includes('timeout')) {
+        setResult("The request timed out. Please try a shorter, more specific question.");
+      } else {
+        setResult("I encountered an error while processing your request. Please try again or rephrase your question.");
+      }
     } finally {
       setIsLoading(false)
     }

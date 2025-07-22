@@ -54,33 +54,48 @@ export async function* streamCommandSearch(input: CommandSearchInput) {
       },
     });
 
-    // Add timeout wrapper
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Request timeout')), 30000); // 30 second timeout
-    });
-
-    const streamPromise = model.generateContentStream(prompt);
-    
-    const result = await Promise.race([streamPromise, timeoutPromise]) as any;
+    const result = await model.generateContentStream(prompt);
 
     let chunkCount = 0;
-    for await (const chunk of result.stream) {
-      const chunkText = chunk.text();
-      if (chunkText && chunkText.trim()) {
-        chunkCount++;
-        yield chunkText;
+    let totalContent = '';
+    
+    try {
+      for await (const chunk of result.stream) {
+        const chunkText = chunk.text();
+        if (chunkText && chunkText.trim()) {
+          chunkCount++;
+          totalContent += chunkText;
+          yield chunkText;
+        }
       }
+    } catch (streamError: any) {
+      console.error('Stream interrupted:', streamError);
+      
+      // If we got some content before the interruption, that's okay
+      if (totalContent.length > 0) {
+        console.log('Stream was interrupted but partial content was delivered:', { 
+          chunkCount, 
+          contentLength: totalContent.length 
+        });
+        return; // Don't yield error message if we got partial content
+      }
+      
+      // Only yield error if we got no content at all
+      throw streamError;
     }
 
-    console.log('Command Search completed:', { chunkCount });
+    console.log('Command Search completed successfully:', { chunkCount, contentLength: totalContent.length });
 
   } catch (error: any) {
     console.error('Command Search streaming error:', error);
     
-    if (error.message === 'Request timeout') {
+    // Handle specific error types
+    if (error.message?.includes('timeout') || error.code === 'DEADLINE_EXCEEDED') {
       yield "The request is taking longer than expected. Please try a more specific question or try again in a moment.";
-    } else if (error.message?.includes('quota') || error.message?.includes('limit')) {
+    } else if (error.message?.includes('quota') || error.message?.includes('limit') || error.code === 'RESOURCE_EXHAUSTED') {
       yield "I'm experiencing high demand right now. Please try again in a few moments.";
+    } else if (error.name === 'ResponseAborted' || error.message?.includes('aborted')) {
+      yield "The connection was interrupted. Please try your question again.";
     } else {
       yield "I'm having difficulty processing that command right now. Please try again or rephrase your question.";
     }
