@@ -26,10 +26,12 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={cn("antialiased min-h-screen")} suppressHydrationWarning={true}>
-        <ClientLayout>
-          {children}
-        </ClientLayout>
+      <body className={cn("antialiased min-h-screen")} suppressHydrationWarning>
+        <div suppressHydrationWarning>
+          <ClientLayout>
+            {children}
+          </ClientLayout>
+        </div>
       </body>
     </html>
   )
