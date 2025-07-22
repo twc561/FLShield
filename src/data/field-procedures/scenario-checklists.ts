@@ -658,7 +658,35 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
     icon: 'Home',
     goal: 'Safely respond to domestic violence incidents, ensure victim safety, gather evidence, and take appropriate enforcement action.',
     keyStatutes: ['F.S. §741.28 (Domestic violence)', 'F.S. §741.29 (Dating violence)'],
-    steps: [
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Response',
+        title: 'Receiving the Domestic Violence Call',
+        content: 'You are dispatched to a domestic violence incident.',
+        aiTip: 'Approach with caution - domestic calls are among the highest risk for officer safety.',
+        choices: [
+          { text: "Arrive on scene and begin response", nextStepId: "scene_assessment" }
+        ]
+      },
+      'scene_assessment': {
+        phase: 'Scene Assessment',
+        title: 'Initial Scene Assessment',
+        content: 'Assess the scene for immediate safety concerns and separate the parties.',
+        aiTip: 'Separate all parties immediately to prevent further violence and contamination of statements.',
+        choices: [
+          { text: "Parties are separated. Begin investigation.", nextStepId: "investigation" }
+        ]
+      },
+      'investigation': {
+        phase: 'Investigation',
+        title: 'Evidence Collection and Documentation',
+        content: 'Document injuries, collect evidence, and determine the primary aggressor.',
+        aiLegalNote: 'Florida has a pro-arrest policy for domestic violence. If probable cause exists, you SHALL arrest.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
       {
         section: 'Scene Safety & Initial Response',
         icon: 'Shield',
@@ -709,11 +737,47 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
     id: 'mental-health-crisis',
     name: 'Mental Health Crisis Response',
     subtitle: 'Baker Act - F.S. §394.463',
-    category: 'Specialized Response',
+    category: 'Emergency Response',
     icon: 'Brain',
     goal: 'De-escalate mental health crisis situations and determine appropriate intervention under the Baker Act.',
     keyStatutes: ['F.S. §394.463 (Baker Act)', 'F.S. §394.463(2)(a) (Involuntary examination)'],
-    steps: [
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Response',
+        title: 'Mental Health Crisis Call',
+        content: 'You are responding to a mental health crisis situation.',
+        aiTip: 'Approach calmly and be prepared to de-escalate. Remove weapons from the area if possible.',
+        choices: [
+          { text: "Begin assessment and de-escalation", nextStepId: "assessment" }
+        ]
+      },
+      'assessment': {
+        phase: 'Assessment',
+        title: 'Baker Act Criteria Evaluation',
+        content: 'Assess if the person meets Baker Act criteria for involuntary examination.',
+        aiLegalNote: 'Baker Act requires: mental illness + danger to self/others OR inability to care for self + refusal of voluntary examination.',
+        choices: [
+          { text: "Criteria met - initiate Baker Act", nextStepId: "baker_act" },
+          { text: "Criteria not met - alternative resolution", nextStepId: "alternative" }
+        ]
+      },
+      'baker_act': {
+        phase: 'Baker Act Implementation',
+        title: 'Baker Act Transportation',
+        content: 'Transport the individual to a designated receiving facility.',
+        aiTip: 'Use least restrictive means of transport and complete all required documentation.',
+        isEnd: true
+      },
+      'alternative': {
+        phase: 'Alternative Resolution',
+        title: 'Non-Baker Act Resolution',
+        content: 'Work with the individual and family to find alternative resources.',
+        aiTip: 'Consider mobile crisis teams, family support, or voluntary services.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
       {
         section: 'Initial Assessment & De-escalation',
         icon: 'UserCheck',
@@ -753,11 +817,48 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
     id: 'drug-investigation',
     name: 'Drug Investigation & Search',
     subtitle: 'F.S. Chapter 893',
-    category: 'Criminal Investigation',
+    category: 'General Investigations',
     icon: 'Pill',
     goal: 'Conduct thorough drug investigations while maintaining constitutional protections and evidence integrity.',
     keyStatutes: ['F.S. §893.13 (Prohibited acts)', 'F.S. §893.135 (Trafficking)'],
-    steps: [
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Contact',
+        title: 'Drug Investigation Initiated',
+        content: 'You have developed reasonable suspicion or probable cause for a drug investigation.',
+        aiTip: 'Ensure you have proper legal justification before proceeding with any search.',
+        choices: [
+          { text: "Proceed with constitutional search", nextStepId: "search_authority" }
+        ]
+      },
+      'search_authority': {
+        phase: 'Legal Authority',
+        title: 'Establishing Search Authority',
+        content: 'Determine your legal authority to search for drugs.',
+        aiLegalNote: 'You need either: consent, search warrant, search incident to arrest, plain view, or exigent circumstances.',
+        choices: [
+          { text: "Authority established - conduct search", nextStepId: "evidence_collection" }
+        ]
+      },
+      'evidence_collection': {
+        phase: 'Evidence Collection',
+        title: 'Collecting and Testing Evidence',
+        content: 'Properly collect, test, and document all drug evidence.',
+        aiTip: 'Field test all suspected controlled substances and photograph everything before collection.',
+        choices: [
+          { text: "Evidence collected - determine charges", nextStepId: "charges" }
+        ]
+      },
+      'charges': {
+        phase: 'Charging Decision',
+        title: 'Determining Appropriate Charges',
+        content: 'Analyze the evidence to determine the appropriate charges under F.S. Chapter 893.',
+        aiLegalNote: 'Weight determines possession vs trafficking. Review F.S. §893.135 for trafficking thresholds.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
       {
         section: 'Constitutional Considerations',
         icon: 'Scale',
