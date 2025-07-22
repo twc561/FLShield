@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -37,9 +38,5 @@ export function useIsMobile() {
   return !!isMobile
 }
 
-// Export as useMobile for compatibility
-export const useMobile = useIsMobile
-
-// Export as default and named export for full compatibility
-export { useIsMobile }
-export default useIsMobile
+// Default export
+export default useMobile
