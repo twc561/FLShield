@@ -16,3 +16,6 @@ export function useIsMobile() {
 
   return isMobile
 }
+
+// Export as useMobile for compatibility
+export const useMobile = useIsMobile

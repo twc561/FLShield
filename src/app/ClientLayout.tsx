@@ -12,7 +12,7 @@ import { useState, useEffect } from "react"
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '@/lib/firebase'
 
-export default function ClientLayout({
+export function ClientLayout({
   children,
 }: {
   children: React.ReactNode
@@ -76,3 +76,5 @@ export default function ClientLayout({
     </AuthWrapper>
   )
 }
+
+export default ClientLayout
