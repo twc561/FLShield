@@ -1,13 +1,13 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Clock, ThumbsUp, ThumbsDown, ExternalLink, Archive, Calendar, BookOpen } from 'lucide-react';
+import { CheckCircle, ThumbsUp, ThumbsDown, ExternalLink, Archive, Calendar, BookOpen, Crown } from 'lucide-react';
 import { DailyRollCallModule, getTodaysModule } from '@/data/daily-roll-call';
 import Link from 'next/link';
+import { useSubscription } from "@/hooks/use-subscription"
 
 interface DailyRollCallProps {
   className?: string;
@@ -16,6 +16,7 @@ interface DailyRollCallProps {
 type CompletionState = 'not-started' | 'answered' | 'completed';
 
 export function DailyRollCall({ className }: DailyRollCallProps) {
+  const { isPro } = useSubscription()
   const [module, setModule] = useState<DailyRollCallModule | null>(null);
   const [completionState, setCompletionState] = useState<CompletionState>('not-started');
   const [selectedAnswer, setSelectedAnswer] = useState<string | number | null>(null);
@@ -40,9 +41,9 @@ export function DailyRollCall({ className }: DailyRollCallProps) {
 
   const handleComplete = () => {
     if (!module) return;
-    
+
     setCompletionState('completed');
-    
+
     // Store completion in localStorage
     const completionKey = `daily-roll-call-${module.id}`;
     localStorage.setItem(completionKey, JSON.stringify({
@@ -56,6 +57,23 @@ export function DailyRollCall({ className }: DailyRollCallProps) {
   const handleFeedback = (isHelpful: boolean) => {
     setFeedback(isHelpful ? 'helpful' : 'not-helpful');
   };
+
+  if (!isPro) {
+    return (
+      <Card className="max-w-2xl mx-auto">
+        <CardContent className="text-center py-8">
+          <Crown className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">Pro Feature Required</h3>
+          <p className="text-muted-foreground mb-4">
+            Daily Roll Call briefings are available with Shield FL Pro
+          </p>
+          <Button asChild>
+            <Link href="/subscription">Upgrade to Pro</Link>
+          </Button>
+        </CardContent>
+      </Card>
+    )
+  }
 
   if (!module) {
     return (

@@ -63,8 +63,8 @@ function SubscriptionGateInner({ children }: { children: React.ReactNode }) {
     return <LoadingScreen />
   }
 
-  // If this feature requires a subscription and user doesn't have one
-  if (requiresSubscription(pathname) && !isPro) {
+  // Block access if subscription is required and user doesn't have pro access
+  if (requiresSubscription(pathname)) {
     return <SubscriptionRequired />
   }
 

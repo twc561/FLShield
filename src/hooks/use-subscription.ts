@@ -78,10 +78,8 @@ export function useSubscription() {
   
   const isPro = hasHardcodedAccess || (subscription?.status === 'active' && new Date() < subscription.currentPeriodEnd)
 
-  // Define free features that don't require subscription
+  // Define ONLY the specific free features that don't require subscription
   const freeFeatures = [
-    '/legal-reference/statutes',
-    '/legal-reference/case-law',
     '/dashboard',
     '/subscription',
     '/subscription/success',
@@ -95,18 +93,54 @@ export function useSubscription() {
     '/for-officers',
     '/agency-intelligence',
     '/cjis-compliance',
-    '/cjis-compliance',
     '/request-demo'
   ]
 
+  // All premium features that require subscription
+  const premiumFeatures = [
+    '/legal-reference',
+    '/daily-briefing',
+    '/ai-tools',
+    '/ai-legal-advisor',
+    '/emergency-response',
+    '/field-procedures',
+    '/field-translation-guide',
+    '/flowcharts',
+    '/officer-wellness-rights',
+    '/reporting-development',
+    '/reports',
+    '/restraint-techniques',
+    '/specialized-enforcement',
+    '/traffic-enforcement',
+    '/training-development',
+    '/voice-assistant',
+    '/wellness',
+    '/notes',
+    '/favorites',
+    '/install'
+  ]
+
   const isFeatureFree = (path: string) => {
-    return freeFeatures.some(freePath => path.startsWith(freePath))
+    // Exact match only for free features
+    return freeFeatures.some(freePath => path === freePath || (freePath !== '/' && path.startsWith(freePath + '/')))
+  }
+
+  const isPremiumFeature = (path: string) => {
+    return premiumFeatures.some(premiumPath => path.startsWith(premiumPath))
   }
 
   const requiresSubscription = (path: string) => {
     // Only check subscription requirements after mounting to avoid hydration issues
     if (!mounted) return false
-    return !isFeatureFree(path) && !!user
+    
+    // If user is not logged in, only allow public marketing pages
+    if (!user) {
+      const publicPages = ['/', '/features', '/support', '/terms-of-use', '/privacy-policy', '/security', '/for-officers', '/agency-intelligence', '/cjis-compliance', '/request-demo', '/login']
+      return !publicPages.includes(path)
+    }
+    
+    // If user is logged in, check if it's a premium feature and user doesn't have pro access
+    return isPremiumFeature(path) && !isPro
   }
 
   return { subscription, loading, isPro, mounted, isFeatureFree, requiresSubscription }

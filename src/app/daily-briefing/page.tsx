@@ -1,18 +1,55 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { PageHeader } from "@/components/PageHeader";
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Calendar, BookOpen, CheckCircle, Clock } from 'lucide-react';
-import { dailyRollCallModules, DailyRollCallModule } from '@/data/daily-roll-call';
+import { useState, useMemo } from 'react'
+import { PageHeader } from "@/components/PageHeader"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { BriefingStats } from "@/components/BriefingStats"
+import Link from 'next/link'
+import { Search, Calendar, Clock, Target, CheckCircle2, PlayCircle, BookOpen, Crown } from 'lucide-react'
+import { dailyRollCallModules } from "@/data/daily-roll-call"
+import { categories } from "@/data/daily-briefing"
+import { useSubscription } from "@/hooks/use-subscription"
 
 export default function DailyBriefingPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const { isPro } = useSubscription()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('all')
+
+  // Block access for non-pro users
+  if (!isPro) {
+    return (
+      <div className="container mx-auto px-4 py-16 max-w-2xl">
+        <Card className="text-center">
+          <CardHeader className="pb-4">
+            <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <Crown className="h-8 w-8 text-white" />
+            </div>
+            <CardTitle className="text-2xl">Premium Feature</CardTitle>
+            <CardDescription>
+              Daily Briefing Archive requires a Shield FL Pro subscription to access.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button asChild>
+                <Link href="/subscription">
+                  Upgrade to Pro - $9.99/month
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/dashboard">
+                  Back to Dashboard
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   const filteredModules = dailyRollCallModules.filter(module => {
     const matchesSearch = module.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
