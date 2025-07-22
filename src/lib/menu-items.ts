@@ -405,22 +405,7 @@ export const menuSections: MenuSection[] = [
         priority: 'high',
         category: 'daily',
         items: [
-          { 
-            href: "/wellness/active-listener", 
-            label: "Confidential Support Chat", 
-            icon: Heart,
-            isPremium: true,
-            isNew: true,
-            tags: ["wellness", "support", "confidential", "chat"]
-          },
-          { 
-            href: "/wellness/live-debrief", 
-            label: "Incident Debrief Tool", 
-            icon: MessageSquare,
-            isPremium: true,
-            isNew: true,
-            tags: ["debrief", "incident", "wellness"]
-          },
+          
           { 
             href: "/officer-wellness-rights/police-officers-bill-of-rights", 
             label: "Police Officer's Bill of Rights", 
