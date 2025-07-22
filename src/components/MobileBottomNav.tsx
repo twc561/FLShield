@@ -6,6 +6,7 @@ import { Home, Search, Heart, MoreHorizontal, X } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { AppMenuContent } from "./AppMenuContent"
 
 export function MobileBottomNav() {
@@ -114,8 +115,17 @@ export function MobileBottomNav() {
               <span className="text-xs font-medium">More</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="h-[80vh]">
-            <AppMenuContent onNavigate={() => setIsOpen(false)} />
+          <SheetContent side="bottom" className="h-[80vh] flex flex-col">
+            <div className="flex-shrink-0 pb-4">
+              <h2 className="text-lg font-semibold">Menu</h2>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <ScrollArea className="h-full">
+                <div className="pr-4">
+                  <AppMenuContent onNavigate={() => setIsOpen(false)} />
+                </div>
+              </ScrollArea>
+            </div>
           </SheetContent>
         </Sheet>
       </nav>
