@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from "react";
@@ -66,13 +65,13 @@ export function CommunityEngagementClient({ data }: CommunityEngagementClientPro
                       ))}
                     </ul>
                   </div>
-                  
+
                   <Alert>
                     <Lightbulb className="h-4 w-4" />
                     <AlertTitle>Real-World Application</AlertTitle>
                     <AlertDescription>{principle.realWorldApplication}</AlertDescription>
                   </Alert>
-                  
+
                   <div>
                     <h4 className="font-semibold text-sm mb-2">Measurable Outcomes:</h4>
                     <div className="flex flex-wrap gap-2">
@@ -163,13 +162,13 @@ export function CommunityEngagementClient({ data }: CommunityEngagementClientPro
                       ))}
                     </ol>
                   </div>
-                  
+
                   <Alert>
                     <Target className="h-4 w-4" />
                     <AlertTitle>Expected Outcome</AlertTitle>
                     <AlertDescription>{technique.expectedOutcome}</AlertDescription>
                   </Alert>
-                  
+
                   <div>
                     <h4 className="font-semibold text-sm mb-2">Follow-up Actions:</h4>
                     <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
@@ -218,7 +217,7 @@ export function CommunityEngagementClient({ data }: CommunityEngagementClientPro
                     ))}
                   </ul>
                 </div>
-                
+
                 <div>
                   <h4 className="font-semibold text-sm mb-2 text-red-700 flex items-center gap-1">
                     <AlertCircle className="h-4 w-4" />
@@ -252,7 +251,7 @@ export function CommunityEngagementClient({ data }: CommunityEngagementClientPro
                     ))}
                   </div>
                 </div>
-                
+
                 <div>
                   <h4 className="font-semibold text-sm mb-2">Sample Survey Questions:</h4>
                   <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">

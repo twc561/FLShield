@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from "react";
@@ -123,7 +122,7 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
     setIsCustomSearching(true);
     setCustomSearchResult(null);
     setCustomSearchError(null);
-    
+
     try {
       console.log('Starting AI ordinance analysis...', { jurisdiction: customJurisdiction, query: customQuery });
       const result = await analyzeOrdinance({
@@ -132,7 +131,7 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
       });
       console.log('AI ordinance analysis result:', result);
       setCustomSearchResult(result);
-      
+
       if (result.ordinanceNumber === "Not Found") {
         setCustomSearchError("No specific ordinance found for your query. Please try a different search term or check the jurisdiction spelling.");
       }

@@ -38,14 +38,24 @@ Generate a brief, supportive, and conversational response.
 
   try {
     const { stream } = await ai.generateStream({
-      model: 'gemini-1.5-pro',
+      model: 'gemini-1.5-flash',
       prompt: prompt,
       history: input.conversationHistory.slice(0, -1), // Pass history excluding the latest prompt
       config: {
-        maxOutputTokens: 8192,
+        maxOutputTokens: 4096,
         temperature: 0.7,
         topP: 0.95,
-        topK: 50,
+        topK: 40,
+        safetySettings: [
+          {
+            category: 'HARM_CATEGORY_HARASSMENT',
+            threshold: 'BLOCK_NONE'
+          },
+          {
+            category: 'HARM_CATEGORY_HATE_SPEECH', 
+            threshold: 'BLOCK_NONE'
+          }
+        ]
       }
     });
 

@@ -138,7 +138,12 @@ export default function DailyBriefingPage() {
                                   </Badge>
                                 </div>
 
-                                <Button variant="outline" size="sm" className="w-full mt-4">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm" 
+                                  className="w-full mt-4"
+                                  onClick={() => window.location.href = `/daily-briefing/${module.id}`}
+                                >
                                   <BookOpen className="h-4 w-4 mr-2" />
                                   {completionStatus === 'completed' ? 'Review Module' : 'Start Module'}
                                 </Button>

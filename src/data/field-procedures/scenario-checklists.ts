@@ -650,6 +650,149 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
       },
     ]
   },
+  'domestic-violence-response': {
+    id: 'domestic-violence-response',
+    name: 'Domestic Violence Response',
+    subtitle: 'F.S. §741.28, §741.29',
+    category: 'Patrol Operations',
+    icon: 'Home',
+    goal: 'Safely respond to domestic violence incidents, ensure victim safety, gather evidence, and take appropriate enforcement action.',
+    keyStatutes: ['F.S. §741.28 (Domestic violence)', 'F.S. §741.29 (Dating violence)'],
+    steps: [
+      {
+        section: 'Scene Safety & Initial Response',
+        icon: 'Shield',
+        items: [
+          'Approach with caution - domestic calls are high-risk for officers',
+          'Request backup if not already en route',
+          'Park strategically to maintain escape route and visibility',
+          'Listen for sounds of ongoing violence or distress',
+          'Separate parties immediately upon arrival'
+        ]
+      },
+      {
+        section: 'Victim Safety & Assessment',
+        icon: 'Heart',
+        items: [
+          'Assess victim for visible injuries and document with photos',
+          'Check for signs of strangulation (red flag indicator)',
+          'Determine immediate safety needs and threats',
+          'Provide victim with domestic violence resources and hotline numbers',
+          'Explain legal options including restraining orders'
+        ]
+      },
+      {
+        section: 'Evidence Collection',
+        icon: 'Camera',
+        items: [
+          'Photograph all injuries, property damage, and scene',
+          'Collect any weapons used or threatened to be used',
+          'Document statements from both parties separately',
+          'Identify and interview witnesses',
+          'Look for corroborating evidence (torn clothing, overturned furniture)'
+        ]
+      },
+      {
+        section: 'Legal Determination & Action',
+        icon: 'Gavel',
+        items: [
+          'Determine if probable cause exists for arrest',
+          'Consider mandatory arrest requirements under F.S. §741.29',
+          'Complete domestic violence report form',
+          'Ensure victim receives copy of incident report number',
+          'Coordinate with victim advocates if available'
+        ]
+      }
+    ]
+  },
+  'mental-health-crisis': {
+    id: 'mental-health-crisis',
+    name: 'Mental Health Crisis Response',
+    subtitle: 'Baker Act - F.S. §394.463',
+    category: 'Specialized Response',
+    icon: 'Brain',
+    goal: 'De-escalate mental health crisis situations and determine appropriate intervention under the Baker Act.',
+    keyStatutes: ['F.S. §394.463 (Baker Act)', 'F.S. §394.463(2)(a) (Involuntary examination)'],
+    steps: [
+      {
+        section: 'Initial Assessment & De-escalation',
+        icon: 'UserCheck',
+        items: [
+          'Maintain safe distance and calm demeanor',
+          'Speak slowly and clearly in non-threatening tone',
+          'Remove or secure any potential weapons from area',
+          'Ask open-ended questions to assess mental state',
+          'Avoid sudden movements or loud commands'
+        ]
+      },
+      {
+        section: 'Baker Act Criteria Evaluation',
+        icon: 'ClipboardCheck',
+        items: [
+          'Determine if person appears to have mental illness',
+          'Assess if person is danger to self or others',
+          'Evaluate if person is incapable of self-care',
+          'Consider if person refuses voluntary examination',
+          'Document specific behaviors and statements supporting criteria'
+        ]
+      },
+      {
+        section: 'Transport & Documentation',
+        icon: 'Ambulance',
+        items: [
+          'Contact designated receiving facility before transport',
+          'Use least restrictive means of transportation',
+          'Complete Baker Act form with detailed observations',
+          'Ensure person arrives at facility within timeframe',
+          'Coordinate with mental health professionals'
+        ]
+      }
+    ]
+  },
+  'drug-investigation': {
+    id: 'drug-investigation',
+    name: 'Drug Investigation & Search',
+    subtitle: 'F.S. Chapter 893',
+    category: 'Criminal Investigation',
+    icon: 'Pill',
+    goal: 'Conduct thorough drug investigations while maintaining constitutional protections and evidence integrity.',
+    keyStatutes: ['F.S. §893.13 (Prohibited acts)', 'F.S. §893.135 (Trafficking)'],
+    steps: [
+      {
+        section: 'Constitutional Considerations',
+        icon: 'Scale',
+        items: [
+          'Establish reasonable suspicion or probable cause',
+          'Determine if search warrant is required',
+          'Consider plain view doctrine applicability',
+          'Evaluate consent search opportunities',
+          'Assess exigent circumstances if present'
+        ]
+      },
+      {
+        section: 'Evidence Collection & Testing',
+        icon: 'TestTube',
+        items: [
+          'Photograph all evidence in original location',
+          'Use appropriate collection methods for substance type',
+          'Maintain proper chain of custody documentation',
+          'Field test substances using approved kits',
+          'Package and label evidence according to protocol'
+        ]
+      },
+      {
+        section: 'Determination of Charges',
+        icon: 'FileText',
+        items: [
+          'Weigh substances to determine charge level',
+          'Identify specific controlled substance type',
+          'Consider trafficking thresholds under F.S. §893.135',
+          'Evaluate additional charges (paraphernalia, intent to sell)',
+          'Complete detailed narrative explaining probable cause'
+        ]
+      }
+    ]
+  },
   'traffic-crash-investigation': {
     id: 'traffic-crash-investigation',
     name: 'Traffic Crash Investigation',

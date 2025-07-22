@@ -37,7 +37,17 @@ export type AnalyzeConstitutionOutput = z.infer<typeof AnalyzeConstitutionOutput
 
 export async function analyzeConstitution(input: AnalyzeConstitutionInput): Promise<AnalyzeConstitutionOutput> {
    const { output } = await ai.generate({
-    prompt: `You are a Constitutional Law Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific constitutional provision. For the given ID, retrieve the full text and leading case law, then parse this information into a structured format for a patrol officer. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema.
+    prompt: `You are a Constitutional Law Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific constitutional provision with practical application for patrol officers.
+
+For the given ID, provide:
+1. The complete constitutional text
+2. Plain language explanation of what it means for officers
+3. A practical test/standard officers can apply in the field
+4. Key landmark cases that define its application
+
+Focus on actionable guidance that helps officers understand when and how this constitutional provision applies during their duties. Include specific examples of what officers can and cannot do under this provision.
+
+Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema.
 
 Provision ID: ${input.provisionId}`,
     output: {

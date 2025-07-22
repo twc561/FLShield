@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -63,7 +62,7 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
     phraseId: string
   ) => {
     const audioId = `${phraseId}-${language}`;
-    
+
     if (audioId === activeAudioId && isPlaying) {
       stopAudio();
       setActiveAudioId(null);
@@ -86,7 +85,7 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
         text, 
         voiceName: voiceMap[language] 
       });
-      
+
       if (response && response.media) {
         playAudio(response.media);
       }
@@ -155,7 +154,7 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
         {categoryOrder.map(category => {
           const phrasesInCategory = groupedPhrases[category];
           if (!phrasesInCategory || phrasesInCategory.length === 0) return null;
-          
+
           return (
             <div key={category}>
               <h2 className="text-lg font-bold tracking-tight my-4 px-1 flex items-center gap-3">

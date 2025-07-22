@@ -208,6 +208,100 @@ const allTrafficViolations: TrafficViolation[] = [
     Points: "0",
     OfficerNotes: "A driver must provide proof of valid, current Florida insurance. If they cannot, but they are confirmed to have it via a database check, a citation is not typically issued. This citation can lead to a license suspension if not addressed.",
   },
+  // --- Additional Moving Violations ---
+  {
+    StatuteNumber: "316.074(1)",
+    StatuteTitle: "Obedience to and required traffic control devices.",
+    CommonName: "Failure to Stop at Stop Sign",
+    ViolationType: "Moving",
+    InfractionType: "Civil",
+    Category: "Core Moving Violations",
+    Elements: [
+      "The defendant operated a motor vehicle.",
+      "The defendant approached a stop sign.",
+      "The defendant failed to stop at the clearly marked stop line, or if none, before entering the crosswalk or intersection."
+    ],
+    BaseFine: "166",
+    Points: "3",
+    OfficerNotes: "Must come to a complete stop. Rolling stops are violations. Note the vehicle's position when you observed the violation and whether there was a marked stop line.",
+  },
+  {
+    StatuteNumber: "316.085",
+    StatuteTitle: "Limitations on overtaking, passing, changing lanes and changing course.",
+    CommonName: "Improper Lane Change",
+    ViolationType: "Moving", 
+    InfractionType: "Civil",
+    Category: "Core Moving Violations",
+    Elements: [
+      "The defendant operated a motor vehicle.",
+      "The defendant changed lanes or course without ensuring the movement could be made safely.",
+      "Or, the defendant failed to give an appropriate signal before changing lanes."
+    ],
+    BaseFine: "166",
+    Points: "3",
+    OfficerNotes: "Look for failure to signal, cutting off other vehicles, or changing lanes when unsafe. Document the traffic conditions and proximity to other vehicles.",
+  },
+  {
+    StatuteNumber: "316.172",
+    StatuteTitle: "Persons upon bicycles.",
+    CommonName: "Bicycle on Sidewalk Violation", 
+    ViolationType: "Non-Moving",
+    InfractionType: "Civil",
+    Category: "Equipment & Non-Moving Violations",
+    Elements: [
+      "The defendant rode a bicycle upon a sidewalk.",
+      "The defendant was in a business district or where prohibited by local ordinance."
+    ],
+    BaseFine: "60",
+    Points: "0",
+    OfficerNotes: "Check local ordinances as many municipalities prohibit sidewalk cycling in business districts. This is typically a warning situation unless creating a hazard.",
+  },
+  {
+    StatuteNumber: "316.194",
+    StatuteTitle: "Careless or negligent operation of motor vehicle resulting in injury or death.",
+    CommonName: "Vehicular Homicide",
+    ViolationType: "Criminal",
+    InfractionType: "Criminal", 
+    Category: "Serious Bodily Injury / Fatality Violations",
+    Elements: [
+      "The defendant operated a motor vehicle in a careless or negligent manner.",
+      "The defendant's operation caused or contributed to the death of another person."
+    ],
+    BaseFine: "Varies (Criminal)",
+    Points: "Varies",
+    OfficerNotes: "This is a second-degree felony. Requires proof that careless/negligent driving was the cause of death. Conduct thorough crash investigation and consult with Traffic Homicide Unit.",
+  },
+  {
+    StatuteNumber: "322.15",
+    StatuteTitle: "Unlawful use of license.",
+    CommonName: "Lending License to Another",
+    ViolationType: "Criminal",
+    InfractionType: "Criminal",
+    Category: "License, Registration & Insurance Violations", 
+    Elements: [
+      "The defendant lent their driver license to another person.",
+      "Or, the defendant knowingly permitted another to use their license.",
+      "Or, the defendant used a license not issued to them."
+    ],
+    BaseFine: "Varies (Criminal)",
+    Points: "0",
+    OfficerNotes: "This is a second-degree misdemeanor. Often discovered during traffic stops when the license doesn't match the driver's appearance or when multiple people claim the same license.",
+  },
+  {
+    StatuteNumber: "316.302",
+    StatuteTitle: "Commercial motor vehicles; safety regulations.",
+    CommonName: "Commercial Vehicle Safety Violation",
+    ViolationType: "Moving",
+    InfractionType: "Civil",
+    Category: "Equipment & Non-Moving Violations",
+    Elements: [
+      "The defendant operated a commercial motor vehicle.",
+      "The vehicle or its operation violated federal or state safety regulations."
+    ],
+    BaseFine: "Varies",
+    Points: "Varies",
+    OfficerNotes: "Requires knowledge of CDL regulations and DOT requirements. Common violations include logbook violations, weight limits, and equipment failures. May require vehicle inspection.",
+  },
   // --- Serious Bodily Injury / Fatality Violations ---
   {
     StatuteNumber: "316.027(2)(c)",
