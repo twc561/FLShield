@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { 
   Shield, 
@@ -26,24 +25,7 @@ import {
   Smartphone,
   Download,
   ShieldQuestion,
-  MessageSquare,
-  FileCheck,
-  Siren,
-  AlertCircle,
-  HeartPulse,
-  Biohazard,
-  FlaskConical,
-  Wind,
-  ListChecks,
-  Languages,
-  Building,
-  Newspaper,
-  Activity,
-  CreditCard,
-  Lock,
-  Stethoscope,
-  Truck,
-  Dog
+  MessageSquare
 } from "lucide-react"
 
 type SubMenuItem = {
