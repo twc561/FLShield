@@ -24,7 +24,25 @@ import {
   Crown,
   Smartphone,
   Download,
-  ShieldQuestion
+  ShieldQuestion,
+  MessageSquare,
+  FileCheck,
+  Siren,
+  AlertCircle,
+  HeartPulse,
+  Biohazard,
+  FlaskConical,
+  Wind,
+  ListChecks,
+  Languages,
+  Building,
+  Newspaper,
+  Activity,
+  CreditCard,
+  Lock,
+  Stethoscope,
+  Truck,
+  Dog
 } from "lucide-react"
 
 type SubMenuItem = {
