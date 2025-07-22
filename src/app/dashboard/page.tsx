@@ -64,23 +64,23 @@ const QuickActionCard = ({ module }: { module: FeatureModule }) => {
         className="group h-full"
       >
         <Card className="h-full bg-gradient-to-br from-background to-muted/10 border border-border/40 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
-          <CardContent className="p-3">
-            <div className="flex items-start justify-between mb-2">
-              <div className="p-2 bg-primary/8 rounded-lg shrink-0">
-                <Icon className="h-4 w-4 text-primary" />
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-2 bg-primary/10 rounded-lg shrink-0">
+                <Icon className="h-5 w-5 text-primary" />
               </div>
               {isClient && mounted && isPro && module.isPremium && (
-                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs px-1.5 py-0.5 shrink-0">
-                  <Crown className="w-2.5 h-2.5 mr-1" />
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs px-2 py-1 shrink-0">
+                  <Crown className="w-3 h-3 mr-1" />
                   Pro
                 </Badge>
               )}
             </div>
-            <h3 className="font-semibold text-sm leading-tight mb-1.5 line-clamp-2">{module.title}</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed mb-2.5 line-clamp-2">{module.summary}</p>
+            <h3 className="font-semibold text-base leading-tight mb-2 line-clamp-2">{module.title}</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3 line-clamp-2">{module.summary}</p>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-primary font-medium">Tap to open</span>
-              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+              <span className="text-sm text-primary font-medium">Tap to open</span>
+              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
             </div>
           </CardContent>
         </Card>
@@ -216,30 +216,30 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/5 pb-20">
-      <div className="px-3 pt-4 max-w-md mx-auto w-full">
+      <div className="px-4 pt-6 max-w-md mx-auto w-full">
         
         {/* Header Section */}
         <motion.div 
           variants={itemVariants}
           initial="hidden" 
           animate="show"
-          className="text-center mb-4"
+          className="text-center mb-6"
         >
-          <h1 className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text mb-1">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text mb-2">
             {greeting}, {userName}
           </h1>
           {isClient && mounted && isPro ? (
-            <div className="flex items-center justify-center gap-1.5 text-amber-400">
-              <Crown className="w-3.5 h-3.5" />
-              <span className="text-xs font-medium">Shield FL Pro Active</span>
+            <div className="flex items-center justify-center gap-2 text-amber-400">
+              <Crown className="w-4 h-4" />
+              <span className="text-sm font-medium">Shield FL Pro Active</span>
             </div>
           ) : (
-            <p className="text-muted-foreground text-xs">Your command center awaits</p>
+            <p className="text-muted-foreground text-sm">Your command center awaits</p>
           )}
         </motion.div>
 
         <motion.div 
-          className="space-y-4"
+          className="space-y-6"
           variants={containerVariants}
           initial="hidden"
           animate="show"
@@ -251,7 +251,7 @@ export default function DashboardPage() {
 
           {/* Quick Stats Row */}
           <motion.div variants={itemVariants}>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <StatsCard 
                 title="Tools Available" 
                 value={`${dashboardFeatureGroups.reduce((acc, group) => acc + group.features.length, 0)}`}
@@ -266,30 +266,30 @@ export default function DashboardPage() {
           </motion.div>
 
           {/* Daily Roll Call */}
-          <motion.div variants={itemVariants} className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <div className="p-1 bg-primary/8 rounded-lg">
-                <BookOpen className="h-3.5 w-3.5 text-primary" />
+          <motion.div variants={itemVariants} className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <BookOpen className="h-4 w-4 text-primary" />
               </div>
-              <h2 className="font-semibold text-base">Today's Briefing</h2>
+              <h2 className="font-semibold text-lg">Today's Briefing</h2>
             </div>
             <DailyRollCall />
           </motion.div>
 
           {/* Featured Tools */}
-          <motion.div variants={itemVariants} className="space-y-3">
+          <motion.div variants={itemVariants} className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="p-1 bg-amber-500/8 rounded-lg">
-                  <Star className="h-3.5 w-3.5 text-amber-500" />
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-amber-500/10 rounded-lg">
+                  <Star className="h-4 w-4 text-amber-500" />
                 </div>
-                <h2 className="font-semibold text-base">Quick Access</h2>
+                <h2 className="font-semibold text-lg">Quick Access</h2>
               </div>
-              <Button variant="ghost" size="sm" asChild className="h-7 px-2 text-xs">
+              <Button variant="ghost" size="sm" asChild className="h-8 px-3 text-sm">
                 <Link href="/favorites">View All</Link>
               </Button>
             </div>
-            <div className="grid grid-cols-1 gap-2">
+            <div className="grid grid-cols-1 gap-3">
               {featuredTools.map((tool) => (
                 <QuickActionCard key={tool.id} module={tool} />
               ))}
@@ -297,29 +297,29 @@ export default function DashboardPage() {
           </motion.div>
 
           {/* Training Progress */}
-          <motion.div variants={itemVariants} className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <div className="p-1 bg-green-500/8 rounded-lg">
-                <TrendingUp className="h-3.5 w-3.5 text-green-500" />
+          <motion.div variants={itemVariants} className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-green-500/10 rounded-lg">
+                <TrendingUp className="h-4 w-4 text-green-500" />
               </div>
-              <h2 className="font-semibold text-base">Your Progress</h2>
+              <h2 className="font-semibold text-lg">Your Progress</h2>
             </div>
             <Card className="bg-gradient-to-br from-background to-muted/10 border border-border/40">
-              <CardContent className="p-3">
+              <CardContent className="p-4">
                 <BriefingStats />
               </CardContent>
             </Card>
           </motion.div>
 
           {/* All Categories */}
-          <motion.div variants={itemVariants} className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <div className="p-1 bg-blue-500/8 rounded-lg">
-                <Briefcase className="h-3.5 w-3.5 text-blue-500" />
+          <motion.div variants={itemVariants} className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-500/10 rounded-lg">
+                <Briefcase className="h-4 w-4 text-blue-500" />
               </div>
-              <h2 className="font-semibold text-base">All Tools</h2>
+              <h2 className="font-semibold text-lg">All Tools</h2>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {dashboardFeatureGroups.map((group, index) => (
                 <CategorySection key={group.category} group={group} index={index} />
               ))}
