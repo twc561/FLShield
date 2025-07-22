@@ -3,30 +3,61 @@
   "name": "Shield FL - Law Enforcement Assistant",
   "short_name": "Shield FL",
   "description": "AI-powered law enforcement assistant for Florida officers",
-  "start_url": "/",
+  "start_url": "/dashboard",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#3A4A5A",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "background_color": "#020817",
   "theme_color": "#3B82F6",
-  "orientation": "portrait-primary",
-  "categories": ["productivity", "utilities"],
+  "orientation": "any",
+  "categories": ["productivity", "utilities", "education"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icons/icon-512x512.png",
       "sizes": "512x512", 
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512", 
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/logo.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Go to main dashboard",
+      "url": "/dashboard",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "AI Legal Advisor",
+      "short_name": "Legal AI",
+      "description": "Get legal guidance",
+      "url": "/ai-legal-advisor",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     }
   ],
   "screenshots": [

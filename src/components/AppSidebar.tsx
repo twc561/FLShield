@@ -39,13 +39,24 @@ export function AppSidebar() {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault()
       setDeferredPrompt(e)
+      console.log('Install prompt intercepted')
     }
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
 
     const handleAppInstalled = () => {
       setDeferredPrompt(null)
+      localStorage.setItem('shield-fl-installed', 'true')
     }
     window.addEventListener('appinstalled', handleAppInstalled)
+
+    // Check if already installed
+    const isInstalled = localStorage.getItem('shield-fl-installed') === 'true'
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+    const isFullscreen = window.matchMedia('(display-mode: fullscreen)').matches
+    
+    if (isInstalled || isStandalone || isFullscreen) {
+      setDeferredPrompt(null)
+    }
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)

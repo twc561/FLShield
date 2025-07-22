@@ -99,13 +99,13 @@ const FeaturedTools = ({ isClient }: { isClient: boolean }) => {
 
     return (
         <motion.div variants={itemVariants}>
-            <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-foreground mb-4">Smart Suggestions</h2>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <div className="text-center mb-6 sm:mb-8 px-2">
+                <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3 sm:mb-4">Smart Suggestions</h2>
+                <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
                     AI-powered tool recommendations based on your current shift context
                 </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {featured.map(tool => (
                     <ToolCard key={tool.id} module={tool} />
                 ))}
@@ -117,9 +117,9 @@ const FeaturedTools = ({ isClient }: { isClient: boolean }) => {
 const PinnedTools = ({ isClient }: { isClient: boolean }) => {
   return (
     <motion.div variants={itemVariants}>
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-foreground mb-4">Pinned Tools</h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+      <div className="text-center mb-6 sm:mb-8 px-2">
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3 sm:mb-4">Pinned Tools</h2>
+        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           Quick access to your most frequently used tools
         </p>
       </div>
@@ -170,14 +170,14 @@ export default function DashboardPage() {
   }, [])
 
   return (
-    <div className="container mx-auto p-4 md:p-6 bg-background text-foreground">
+    <div className="container mx-auto p-3 sm:p-4 md:p-6 bg-background text-foreground">
       <PageHeader 
         title={`${greeting}, ${userName || "Officer"}.`}
         description={
           isClient && mounted && isPro ? (
-            <div className="flex items-center gap-2 text-amber-400">
+            <div className="flex items-center gap-2 text-amber-400 text-sm sm:text-base">
               <Crown className="w-4 h-4" />
-              <span>Pro Member - All premium features unlocked</span>
+              <span className="break-words">Pro Member - All premium features unlocked</span>
             </div>
           ) : (
             "Welcome to your Mission Hub. How can I help?"
@@ -186,7 +186,7 @@ export default function DashboardPage() {
       />
 
       <motion.div 
-        className="space-y-12"
+        className="space-y-6 sm:space-y-8 md:space-y-12"
         variants={containerVariants}
         initial="hidden"
         animate="show"
