@@ -13,9 +13,14 @@ import { useSidebar } from "@/components/ui/sidebar"
 export function MobileBottomNav() {
   const pathname = usePathname()
   const { setOpen } = useSidebar()
+  const [isMoreOpen, setIsMoreOpen] = useState(false)
 
   const handleLinkClick = () => {
     setOpen(false)
+  }
+
+  const handleMoreNavigate = () => {
+    setIsMoreOpen(false)
   }
 
   return (
@@ -53,7 +58,7 @@ export function MobileBottomNav() {
           </Button>
         </Link>
 
-        <Sheet open={false} onOpenChange={() => {}}>
+        <Sheet open={isMoreOpen} onOpenChange={setIsMoreOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2">
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +74,7 @@ export function MobileBottomNav() {
             <div className="flex-1 overflow-hidden">
               <ScrollArea className="h-full">
                 <div className="pr-4">
-                  <AppMenuContent onNavigate={() => {}} />
+                  <AppMenuContent onNavigate={handleMoreNavigate} />
                 </div>
               </ScrollArea>
             </div>
