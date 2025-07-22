@@ -72,7 +72,11 @@ export function useSubscription() {
     return unsubscribe
   }, [user])
 
-  const isPro = subscription?.status === 'active' && new Date() < subscription.currentPeriodEnd
+  // Hardcoded pro access for specific users
+  const hardcodedProEmails = ['osorioecat@gmail.com', 'rdc561@gmail.com']
+  const hasHardcodedAccess = user?.email && hardcodedProEmails.includes(user.email)
+  
+  const isPro = hasHardcodedAccess || (subscription?.status === 'active' && new Date() < subscription.currentPeriodEnd)
 
   // Define free features that don't require subscription
   const freeFeatures = [
