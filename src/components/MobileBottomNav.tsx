@@ -6,14 +6,26 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { AppMenuContent } from "./AppMenuContent"
+import { usePathname } from "next/navigation"
+import { Flame, Home, Search, User, Shield } from "lucide-react"
+import { useSidebar } from "@/components/ui/sidebar"
 
 export function MobileBottomNav() {
-  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
+  const { setOpen } = useSidebar()
+
+  const handleLinkClick = () => {
+    setOpen(false)
+  }
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
       <nav className="flex h-16 items-center justify-around border-t bg-background px-4">
-        <Link href="/dashboard">
+        <Link
+          href="/dashboard"
+          onClick={handleLinkClick}
+          className="flex flex-col items-center gap-1 h-auto py-2"
+        >
           <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2">
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
@@ -41,7 +53,7 @@ export function MobileBottomNav() {
           </Button>
         </Link>
 
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <Sheet open={false} onOpenChange={() => {}}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2">
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,7 +69,7 @@ export function MobileBottomNav() {
             <div className="flex-1 overflow-hidden">
               <ScrollArea className="h-full">
                 <div className="pr-4">
-                  <AppMenuContent onNavigate={() => setIsOpen(false)} />
+                  <AppMenuContent onNavigate={() => {}} />
                 </div>
               </ScrollArea>
             </div>

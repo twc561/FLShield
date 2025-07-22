@@ -21,6 +21,8 @@ import { menuItems } from "@/lib/menu-items"
 import { useSubscription } from "@/hooks/use-subscription"
 import { Badge } from "@/components/ui/badge"
 import * as LucideIcons from "lucide-react"
+import { useSidebar } from "@/components/ui/sidebar"
+import { useMobile } from "@/hooks/use-mobile"
 
 interface AppMenuContentProps {
   onLinkClick?: () => void
@@ -30,6 +32,14 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
   const pathname = usePathname()
   const { isPro, mounted } = useSubscription()
   const [isClient, setIsClient] = useState(false)
+  const { setOpen } = useSidebar()
+  const isMobile = useMobile()
+
+  const handleMenuItemClick = () => {
+    if (isMobile) {
+      setOpen(false)
+    }
+  }
 
   useEffect(() => {
     setIsClient(true)
@@ -93,7 +103,7 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
                   <SidebarMenuSubItem key={subItem.label}>
                     <Link
                       href={subItem.href}
-                      onClick={onLinkClick}
+                      onClick={handleMenuItemClick}
                       className={cn(
                         "flex h-full w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-sidebar-foreground/80 outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2",
                         isActive(subItem.href) &&
@@ -118,7 +128,7 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
                 pathname === item.href &&
                   "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary"
               )}
-              onClick={onLinkClick}
+              onClick={handleMenuItemClick}
             >
               <Link href={item.href!}>
                 <item.icon className="size-5" />
