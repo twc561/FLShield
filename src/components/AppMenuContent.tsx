@@ -76,6 +76,13 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
     }
   };
 
+  const toggleSection = (label: string) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [label]: !prev[label]
+    }));
+  };
+
   // Prevent hydration mismatch by not rendering interactive elements until mounted
   if (!mounted) {
     return (
@@ -103,7 +110,7 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
           <Collapsible
             key={item.label}
             open={openSections[item.label] ?? false}
-            onOpenChange={(open) => setOpenSections(prev => ({ ...prev, [item.label]: open }))}
+            onOpenChange={() => toggleSection(item.label)}
             className="w-full"
           >
             <SidebarMenuItem>
