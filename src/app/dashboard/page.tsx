@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useState, useEffect } from "react"
-import { motion } from "framer-motion"
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { BrainCircuit, Users, AlertTriangle, BookOpen, Shield, Zap, Clock, TrendingUp, MapPin, MessageSquare, FileText, Briefcase, Target, Eye, GraduationCap, Heart, Search, Headphones, Crown } from "lucide-react"
+import { motion } from "framer-motion"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { DailyRollCall } from "@/components/DailyRollCall"
 import { BriefingStats } from "@/components/BriefingStats"
@@ -281,7 +281,7 @@ export default function DashboardPage() {
 
           {/* Quick Action Tools */}
           <div className="space-y-6">
-        
+
       {/* The "All Tools" Library */}
       <motion.div variants={itemVariants}>
         <h2 className="text-lg font-bold tracking-tight mb-3 px-1">All Tools Library</h2>
