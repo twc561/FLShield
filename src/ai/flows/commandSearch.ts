@@ -46,14 +46,14 @@ export async function* streamCommandSearch(input: CommandSearchInput) {
 
     const prompt = createCommandSearchPrompt(input.query);
 
-    // Use Gemini Pro with reduced token limits to prevent errors
+    // Use Gemini 2.5 Flash for better performance and reliability
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash", // Use Flash for better reliability
+      model: "gemini-2.5-flash", // Updated to 2.5 Flash
       generationConfig: {
         temperature: 0.4,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 2048, // Reduced from 4096
+        maxOutputTokens: 2048,
       },
     });
 
@@ -101,12 +101,12 @@ export async function getCommandSearchResponse(input: CommandSearchInput): Promi
     const prompt = createCommandSearchPrompt(input.query);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash", // Use Flash for better reliability
+      model: "gemini-2.5-flash", // Updated to 2.5 Flash
       generationConfig: {
         temperature: 0.4,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 2048, // Reduced from 4096
+        maxOutputTokens: 2048,
       },
     });
 
