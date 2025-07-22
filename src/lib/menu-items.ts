@@ -39,7 +39,16 @@ import {
   FileBadge,
   TrafficCone,
   ShieldAlert,
-  KeyRound
+  KeyRound,
+  Gavel,
+  ClipboardEdit,
+  Camera,
+  ShieldCheck,
+  Scale,
+  Fish,
+  GraduationCap,
+  Mic,
+  BrainCircuit
 } from "lucide-react"
 
 type SubMenuItem = {
