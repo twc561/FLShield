@@ -27,7 +27,22 @@ import {
   ShieldQuestion,
   MessageSquare,
   FileCheck,
-  Siren
+  Siren,
+  AlertCircle,
+  HeartPulse,
+  Biohazard,
+  FlaskConical,
+  Wind,
+  ListChecks,
+  Languages,
+  Building,
+  Newspaper,
+  Activity,
+  CreditCard,
+  Lock,
+  Truck,
+  Dog,
+  Stethoscope
 } from "lucide-react"
 
 type SubMenuItem = {
