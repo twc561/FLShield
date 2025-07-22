@@ -11,7 +11,6 @@ import { useSubscription } from "@/hooks/use-subscription"
 import type { FeatureModule } from "@/types"
 import { ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
 
 type FeatureCardProps = {
   module: FeatureModule
@@ -56,20 +55,15 @@ export const FeatureCard = memo(function FeatureCard({ module, showPinButton = t
         <CardContent className="flex-grow">
           <CardDescription>{module.summary}</CardDescription>
         </CardContent>
-        <CardFooter className="pt-4">
-            <div className="flex items-center justify-between w-full">
-              <Button variant="link" asChild className="p-0 h-auto text-sm">
-                <Link href={module.targetPage} className="flex items-center gap-1">
-                  Learn More <ArrowRight className="ml-1 h-3 w-3" />
-                </Link>
-              </Button>
-              {showPinButton && (
-                <div className="flex items-center gap-1">
-                  <PinButton module={module} variant="ghost" size="sm" />
-                </div>
-              )}
-            </div>
-          </CardFooter>
+        <CardFooter>
+          <Link
+            href={module.targetPage}
+            className="w-full text-sm font-medium text-primary flex items-center justify-center gap-2 py-2 px-4 rounded-md border border-primary/20 hover:bg-primary/5 transition-colors group"
+          >
+            Open
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </CardFooter>
       </Card>
     </motion.div>
   )

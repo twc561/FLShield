@@ -1,11 +1,4 @@
-import React from "react"
-import { motion } from "framer-motion"
-import { PageHeader } from "@/components/PageHeader"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ArrowRight, Brain, BrainCircuit, MessageSquare, ListChecks, ShieldCheck, Scale, Gavel, Users, Target, Award, TrendingUp, Languages, Car, Wrench, Siren, Briefcase, GraduationCap, Heart, Fish, Biohazard, FileCheck, ShieldAlert, Camera, ClipboardEdit, Mic, BookOpen, AlertTriangle, CheckCircle, Clock, User, Star, Info } from "lucide-react"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import Link from "next/link"
+
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Scale, ListChecks, MessageSquare, Gavel, Fish, Biohazard, BrainCircuit, ShieldCheck, Languages, Truck, ArrowRight } from "lucide-react"
@@ -56,18 +49,7 @@ export default function FeaturesPage() {
             title="Core Features"
             description="A deep dive into the tools that make Florida Shield indispensable for in-field decision-making."
           />
-
-          {/* Pinning Tip */}
-          <Alert className="max-w-4xl mx-auto border-primary/20 bg-gradient-to-r from-green-50 to-emerald-50">
-            <Star className="h-4 w-4 text-amber-500" />
-            <AlertDescription className="text-sm">
-              <strong>Personalize your dashboard:</strong> Use the <Star className="w-3 h-3 mx-1 inline text-amber-500" /> 
-              star icon on any tool to pin your favorites to the dashboard for instant access. Perfect for tools you use daily!
-            </AlertDescription>
-          </Alert>
-
-          <div className="max-w-4xl mx-auto space-y-12"></div>
-
+          
           <FeatureSection 
             title="AI-Powered Field Intelligence" 
             description="Leverage cutting-edge AI to get answers faster and more accurately than ever before."
@@ -91,7 +73,7 @@ export default function FeaturesPage() {
               href="/reporting-development/ai-charge-assistant"
             />
           </FeatureSection>
-
+          
           <FeatureSection 
             title="Interactive Guides & Checklists"
             description="Standardize complex procedures and ensure every step is followed correctly, every time."
@@ -115,7 +97,7 @@ export default function FeaturesPage() {
               href="/field-translation-guide"
             />
           </FeatureSection>
-
+          
           <FeatureSection 
             title="Training & Development Tools"
             description="Sharpen your skills and stay current with dynamic, interactive training modules."
@@ -139,7 +121,7 @@ export default function FeaturesPage() {
               href="/reporting-development/knowledge-check"
             />
           </FeatureSection>
-
+          
           <FeatureSection 
             title="Specialized Enforcement Libraries"
             description="Quick-reference databases for specific, complex enforcement areas."

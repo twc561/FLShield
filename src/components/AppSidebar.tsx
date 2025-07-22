@@ -19,10 +19,9 @@ import {
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import { AppMenuContent } from "./AppMenuContent"
-import { ChevronUp, User2, Settings, Menu, Crown } from "lucide-react"
+import { ChevronUp, User2, Settings, LogOut, Menu, Crown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useSubscription } from "@/hooks/use-subscription"
-import { motion } from "framer-motion";
 
 export function AppSidebar() {
   const { isPro, mounted } = useSubscription()
