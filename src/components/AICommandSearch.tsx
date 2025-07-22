@@ -39,12 +39,25 @@ export default function AICommandSearch() {
   }, []);
 
   const handleSearch = async () => {
-    // Placeholder for actual search logic
-    setIsLoading(true);
-    setTimeout(() => {
-      setResult("This is a dummy result for: " + query);
-      setIsLoading(false);
-    }, 1500);
+    if (!query.trim()) return
+
+    setIsLoading(true)
+    setResult("")
+
+    try {
+      // Use streaming command search for better responsiveness
+      const { streamCommandSearch } = await import('@/ai/flows/commandSearch');
+      const stream = streamCommandSearch({ query });
+
+      for await (const chunk of stream) {
+        setResult(prev => prev + chunk);
+      }
+    } catch (error) {
+      console.error("Search failed:", error)
+      setResult("I encountered an error while processing your request. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
   };
 
   const quickActions = [

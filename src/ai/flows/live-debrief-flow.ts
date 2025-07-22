@@ -179,14 +179,14 @@ export async function* streamDebrief(input: LiveDebriefInput) {
       incidentType
     );
 
-    // Use Gemini Pro for more sophisticated responses
+    // Use Gemini Pro for more sophisticated responses with increased token limits
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-pro",
       generationConfig: {
         temperature: 0.7,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 2048,
+        maxOutputTokens: 4096,
       },
     });
 
