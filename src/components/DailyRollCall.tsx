@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Clock, ThumbsUp, ThumbsDown, ExternalLink, Archive } from 'lucide-react';
+import { CheckCircle, Clock, ThumbsUp, ThumbsDown, ExternalLink, Archive, Calendar, BookOpen } from 'lucide-react';
 import { DailyRollCallModule, getTodaysModule } from '@/data/daily-roll-call';
 import Link from 'next/link';
 
