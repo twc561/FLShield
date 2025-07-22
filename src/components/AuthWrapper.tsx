@@ -13,8 +13,9 @@ const LoadingScreen = () => (
 )
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
-    const [user, isLoading] = useAuthState(auth);
+    const [user, isLoading, error] = useAuthState(auth);
     const [clientMounted, setClientMounted] = useState(false);
+    const [isRedirecting, setIsRedirecting] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
 
@@ -39,25 +40,57 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     }, []);
 
     useEffect(() => {
-        if (!clientMounted || isLoading) return;
+        if (!clientMounted || isLoading || isRedirecting) return;
 
-        // If not authenticated and trying to access a protected page, redirect
-        if (!user && !isPublicPage) {
-            router.push('/login');
-        }
+        const handleRedirect = async () => {
+            setIsRedirecting(true);
+            
+            try {
+                // If not authenticated and trying to access a protected page, redirect
+                if (!user && !isPublicPage) {
+                    await router.push('/login');
+                    return;
+                }
 
-        // If authenticated and trying to access the marketing homepage or login page, redirect to dashboard
-        if (user && (pathname === '/' || pathname === '/login')) {
-            router.push('/dashboard');
-        }
-    }, [user, isLoading, isPublicPage, pathname, router, clientMounted]);
+                // If authenticated and trying to access the marketing homepage or login page, redirect to dashboard
+                if (user && (pathname === '/' || pathname === '/login')) {
+                    await router.push('/dashboard');
+                    return;
+                }
+            } catch (error) {
+                console.error('Redirect error:', error);
+            } finally {
+                setIsRedirecting(false);
+            }
+        };
+
+        handleRedirect();
+    }, [user, isLoading, isPublicPage, pathname, router, clientMounted, isRedirecting]);
+
+    // Handle Firebase auth errors
+    if (error) {
+        console.error('Firebase auth error:', error);
+        return (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background">
+                <div className="text-center">
+                    <p className="text-destructive mb-4">Authentication Error</p>
+                    <button 
+                        onClick={() => window.location.reload()} 
+                        className="px-4 py-2 bg-primary text-white rounded"
+                    >
+                        Reload Page
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     // Prevent hydration issues by not rendering anything during initial load
     if (!clientMounted) {
         return <LoadingScreen />;
     }
 
-    if (isLoading) {
+    if (isLoading || isRedirecting) {
         return <LoadingScreen />;
     }
 

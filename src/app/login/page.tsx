@@ -100,13 +100,14 @@ export default function LoginPage() {
             console.log('Google sign-in successful, redirecting...');
             const userCredential = result;
             console.log('User details:', userCredential.user?.email);
-            router.push('/dashboard');
+            
+            // Let AuthWrapper handle the redirect instead of doing it here
+            // router.push('/dashboard');
         } catch (error: any) {
             console.error("Google Auth Failed:", error);
             console.error("Error Code:", error.code);
             console.error("Error Message:", error.message);
             handleAuthError(error);
-        } finally {
             setIsLoading(null);
         }
     }
@@ -132,10 +133,9 @@ export default function LoginPage() {
         setIsLoading("email");
         try {
             await signInWithEmailAndPassword(auth!, values.email, values.password);
-            router.push('/dashboard');
+            // Let AuthWrapper handle the redirect
         } catch (error) {
             handleAuthError(error);
-        } finally {
             setIsLoading(null);
         }
     }
@@ -145,10 +145,9 @@ export default function LoginPage() {
         try {
             await createUserWithEmailAndPassword(auth!, values.email, values.password);
             toast({ title: "Account Created", description: "You have been successfully signed in." });
-            router.push('/dashboard');
+            // Let AuthWrapper handle the redirect
         } catch (error) {
             handleAuthError(error);
-        } finally {
             setIsLoading(null);
         }
     }
