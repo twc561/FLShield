@@ -192,6 +192,22 @@ export default function DashboardPage() {
     return () => unsubscribe();
   }, [])
 
+  // Prevent hydration mismatch by not rendering dynamic content until client-side
+  if (!isClient || !mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/5 pb-20">
+        <div className="px-3 pt-4 max-w-md mx-auto w-full">
+          <div className="text-center mb-4">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text mb-1">
+              Good day, Officer
+            </h1>
+            <p className="text-muted-foreground text-xs">Your command center awaits</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const featuredTools = [
     dashboardFeatureGroups.find(g => g.category === "AI Assistant Tools")?.features.slice(0, 3),
     dashboardFeatureGroups.find(g => g.category === "Field Operations & Procedures")?.features.slice(0, 2),
