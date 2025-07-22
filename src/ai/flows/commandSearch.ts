@@ -1,3 +1,4 @@
+
 'use server';
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -50,6 +51,72 @@ OFFICER'S QUESTION: "${query}"
 Your comprehensive, detailed response as Shield FL:`;
 }
 
+export async function getCommandSearchResponse(input: CommandSearchInput): Promise<string> {
+  try {
+    console.log('Direct Gemini command search call:', {
+      queryLength: input.query.length,
+      timestamp: new Date().toISOString()
+    });
+
+    const prompt = createCommandSearchPrompt(input.query);
+
+    if (!genAI) {
+      throw new Error('AI service not initialized');
+    }
+
+    // Use same model configuration as roleplay simulator for consistency
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-pro",
+      generationConfig: {
+        temperature: 0.3,
+        topP: 0.95,
+        topK: 40,
+        maxOutputTokens: 4096, // Use proven working token limit
+      },
+    });
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    console.log('Direct Gemini command search response:', text.substring(0, 100));
+
+    if (text && text.trim()) {
+      return text.trim();
+    }
+
+    // Enhanced fallback responses based on query type
+    const fallbackResponses = {
+      'dui': "**DUI Investigation Overview**\n\nFor DUI investigations in Florida, follow these key steps:\n1. Establish reasonable suspicion for the stop\n2. Observe signs of impairment\n3. Conduct Field Sobriety Tests if appropriate\n4. Consider breath/blood testing per F.S. 316.193\n\nRefer to your department's DUI investigation procedures for specific protocols.",
+      'miranda': "**Miranda Warning Requirements**\n\nMiranda warnings are required when:\n1. The person is in custody AND\n2. You intend to interrogate them\n\nThe warning must include the right to remain silent, that statements can be used against them, right to an attorney, and right to appointed counsel if indigent.",
+      'traffic': "**Traffic Stop Procedures**\n\nKey steps for traffic stops:\n1. Signal your intent and find a safe location\n2. Approach with officer safety in mind\n3. Identify yourself and state the reason for the stop\n4. Request license, registration, and insurance\n5. Explain any citation or warning given",
+      'force': "**Use of Force Guidelines**\n\nUse of force must be:\n1. Objectively reasonable\n2. Necessary under the circumstances\n3. Proportional to the threat\n\nDocument all use of force incidents thoroughly and notify supervisors as required by policy."
+    };
+
+    // Check for keyword matches in query
+    const queryLower = input.query.toLowerCase();
+    for (const [keyword, response] of Object.entries(fallbackResponses)) {
+      if (queryLower.includes(keyword)) {
+        return response;
+      }
+    }
+
+    return "I understand you're looking for information about law enforcement procedures. Could you please rephrase your question or be more specific about what you need help with?";
+
+  } catch (error: any) {
+    console.error('Direct Gemini command search error:', error);
+
+    // Character-specific error responses like roleplay simulator
+    const errorResponses = [
+      "I'm having some technical difficulties right now. Please try asking your question in a different way.",
+      "I'm experiencing a temporary issue. Could you rephrase your question or try again in a moment?",
+      "There's a brief technical problem. Please try your question again or contact support if it persists."
+    ];
+
+    return errorResponses[Math.floor(Math.random() * errorResponses.length)];
+  }
+}
+
 export async function* streamCommandSearch(input: CommandSearchInput) {
   try {
     // Validate input
@@ -68,126 +135,52 @@ export async function* streamCommandSearch(input: CommandSearchInput) {
       timestamp: new Date().toISOString()
     });
 
-    const prompt = createCommandSearchPrompt(input.query);
-
-    if (!genAI) {
-      throw new Error('AI service not initialized');
-    }
-
-    // Use latest Gemini Pro with supported token limits for comprehensive responses
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-pro-002",
-      generationConfig: {
-        temperature: 0.3,
-        topP: 0.95,
-        topK: 40,
-        maxOutputTokens: 8192, // Use supported token limit
-      },
-    });
-
-    const result = await model.generateContentStream(prompt);
-
-    let chunkCount = 0;
-    let totalContent = '';
-    
-    // Set up a timeout for the stream
-    const streamTimeout = setTimeout(() => {
-      console.log('Stream timeout reached, but may continue processing...');
-    }, 30000); // 30 second timeout
-
+    // Try streaming first, but with robust fallback like roleplay simulator
     try {
+      const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-pro",
+        generationConfig: {
+          temperature: 0.3,
+          topP: 0.95,
+          topK: 40,
+          maxOutputTokens: 4096, // Use proven working token limit
+        },
+      });
+
+      const result = await model.generateContentStream(createCommandSearchPrompt(input.query));
+      
+      let chunkCount = 0;
+      let totalContent = '';
+      
       for await (const chunk of result.stream) {
         const chunkText = chunk.text();
         if (chunkText && chunkText.trim()) {
           chunkCount++;
           totalContent += chunkText;
           yield chunkText;
-          
-          // Reset timeout on each successful chunk
-          clearTimeout(streamTimeout);
         }
       }
-      clearTimeout(streamTimeout);
-    } catch (streamError: any) {
-      clearTimeout(streamTimeout);
-      console.error('Stream interrupted:', streamError);
-      
-      // If we got substantial content before the interruption, that's okay
-      if (totalContent.length > 200) {
-        console.log('Stream was interrupted but substantial content was delivered:', { 
-          chunkCount, 
-          contentLength: totalContent.length 
-        });
-        return; // Don't yield error message if we got substantial content
-      }
-      
-      // For minimal content, try to provide what we have
-      if (totalContent.length > 50) {
-        console.log('Stream interrupted with partial content:', { 
-          contentLength: totalContent.length 
-        });
-        yield "\n\n[Response was interrupted, but partial content above may still be helpful]";
-        return;
-      }
-      
-      // Only throw error if we got virtually no content
-      console.error('Stream failed with minimal content:', { 
-        contentLength: totalContent.length,
-        error: streamError.message 
-      });
-      throw streamError;
-    }
 
-    console.log('Command Search completed successfully:', { chunkCount, contentLength: totalContent.length });
+      console.log('Command Search streaming completed successfully:', { chunkCount, contentLength: totalContent.length });
+
+    } catch (streamError: any) {
+      console.error('Streaming failed, falling back to direct response:', streamError);
+      
+      // Fall back to non-streaming response like roleplay simulator
+      const directResponse = await getCommandSearchResponse(input);
+      yield directResponse;
+    }
 
   } catch (error: any) {
-    console.error('Command Search streaming error:', error);
-    
-    // Handle specific error types with more helpful messages
-    if (error.message?.includes('timeout') || error.code === 'DEADLINE_EXCEEDED') {
-      yield "The request is taking longer than expected. Please try a more specific question or try again in a moment.";
-    } else if (error.message?.includes('quota') || error.message?.includes('limit') || error.code === 'RESOURCE_EXHAUSTED') {
-      yield "I'm experiencing high demand right now. Please try again in a few moments.";
-    } else if (error.name === 'ResponseAborted' || error.message?.includes('aborted')) {
-      yield "The connection was interrupted. Please try your question again.";
-    } else if (error.message?.includes('API key')) {
-      yield "There's an issue with the AI service configuration. Please contact support.";
-    } else {
-      yield "I'm experiencing technical difficulties. Please try rephrasing your question or try again in a moment.";
-    }
-  }
-}
-
-export async function getCommandSearchResponse(input: CommandSearchInput): Promise<CommandSearchOutput> {
-  try {
-    const prompt = createCommandSearchPrompt(input.query);
-
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-pro-002",
-      generationConfig: {
-        temperature: 0.3,
-        topP: 0.95,
-        topK: 40,
-        maxOutputTokens: 8192, // Use supported token limit
-      },
-    });
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    if (text && text.trim()) {
-      return { answer: text.trim() };
-    }
-
-    return { answer: "I'm having difficulty processing that question right now. Please try rephrasing it." };
-
-  } catch (error) {
     console.error('Command Search error:', error);
-    return { answer: "I'm experiencing technical difficulties. Please try your question again." };
+    
+    // Use same robust error handling as roleplay simulator
+    const fallbackResponse = "I'm experiencing technical difficulties. Please try rephrasing your question or try again in a moment.";
+    yield fallbackResponse;
   }
 }
 
 export const commandSearch = async (input: CommandSearchInput) => {
-  return await getCommandSearchResponse(input);
+  const response = await getCommandSearchResponse(input);
+  return { answer: response };
 };
