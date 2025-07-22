@@ -25,7 +25,8 @@ import {
   Smartphone,
   Download,
   ShieldQuestion,
-  MessageSquare
+  MessageSquare,
+  FileCheck
 } from "lucide-react"
 
 type SubMenuItem = {
