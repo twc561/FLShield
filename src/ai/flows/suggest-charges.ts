@@ -1,49 +1,82 @@
 
 'use server';
-/**
- * @fileOverview Suggests appropriate Florida Statutes based on a narrative.
- *
- * - suggestCharges - A function that analyzes a narrative and suggests charges.
- * - SuggestChargesInput - The input type for the function.
- * - SuggestChargesOutput - The return type for the function.
- */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 const SuggestChargesInputSchema = z.object({
-  narrative: z.string().describe('A factual narrative of a potential crime.'),
+  narrative: z.string().describe('The incident narrative describing the facts and circumstances'),
 });
 export type SuggestChargesInput = z.infer<typeof SuggestChargesInputSchema>;
 
 const ChargeSuggestionSchema = z.object({
-    statuteNumber: z.string().describe('The specific Florida Statute number (e.g., "810.02").'),
-    statuteTitle: z.string().describe('The official title of the statute.'),
-    justification: z.string().describe('A brief explanation of which facts from the narrative support this charge.'),
+  statuteNumber: z.string().describe('The Florida Statute number, e.g., "812.014"'),
+  statuteTitle: z.string().describe('The title of the statute, e.g., "Theft"'),
+  justification: z.string().describe('Detailed explanation of why this charge applies based on the narrative facts'),
 });
 
 const SuggestChargesOutputSchema = z.object({
-  suggestions: z.array(ChargeSuggestionSchema).describe('An array of suggested charges.'),
+  suggestions: z.array(ChargeSuggestionSchema).describe('Array of suggested charges with justifications'),
 });
 export type SuggestChargesOutput = z.infer<typeof SuggestChargesOutputSchema>;
 
-export async function suggestCharges(
-  input: SuggestChargesInput
-): Promise<SuggestChargesOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are an expert AI paralegal with a specialization in Florida's criminal code, specifically assisting law enforcement officers in the field. Your task is to analyze an incident narrative and identify only the specific, chargeable Florida Statutes that a patrol officer would use.
+export const suggestCharges = ai.defineFlow(
+  {
+    name: 'suggestCharges',
+    inputSchema: SuggestChargesInputSchema,
+    outputSchema: SuggestChargesOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are an expert Florida law enforcement legal analyst specializing in criminal charge recommendations. Your task is to analyze the provided incident narrative and suggest appropriate Florida criminal charges based on the facts presented.
 
-Your focus must be on chargeable criminal and traffic offenses. Exclude administrative statutes, definitional chapters, or rules of procedure unless they represent a directly chargeable crime.
+INSTRUCTIONS:
+1. Carefully analyze the narrative for criminal elements
+2. Match facts to specific Florida Statutes
+3. Only suggest charges where there is clear evidence in the narrative
+4. Provide detailed justifications linking narrative facts to statutory elements
+5. Focus on the most appropriate and prosecutable charges
+6. If no clear criminal activity is described, return an empty suggestions array
 
-For each suggestion, provide the statute number, its official title, and a brief justification explaining which facts from the narrative support the charge. Return the output as a JSON object containing an array of suggestions.
+INCIDENT NARRATIVE:
+${input.narrative}
 
-CRITICAL RULE: If no charges seem appropriate from the narrative, you MUST return an empty array for the 'suggestions' key.
+Analyze this narrative and suggest appropriate Florida criminal charges. Be thorough but only suggest charges that are clearly supported by the facts presented.`,
+      output: {
+        schema: SuggestChargesOutputSchema,
+      },
+      config: {
+        maxOutputTokens: 8192, // Increased token limit significantly
+        temperature: 0.3, // Lower temperature for more consistent legal analysis
+        safetySettings: [
+          {
+            category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+            threshold: 'BLOCK_NONE',
+          },
+          {
+            category: 'HARM_CATEGORY_HARASSMENT',
+            threshold: 'BLOCK_NONE',
+          },
+          {
+            category: 'HARM_CATEGORY_HATE_SPEECH',
+            threshold: 'BLOCK_NONE',
+          },
+          {
+            category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+            threshold: 'BLOCK_NONE',
+          },
+        ],
+        stopSequences: [], // Remove any stop sequences that might truncate output
+      },
+    });
 
-Narrative:
-${input.narrative}`,
-    output: {
-      schema: SuggestChargesOutputSchema,
-    },
-  });
-  return output!;
-}
+    // Validate output and provide fallback
+    if (!output || !output.suggestions) {
+      return {
+        suggestions: []
+      };
+    }
+
+    return output;
+  }
+);

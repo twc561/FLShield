@@ -1,95 +1,157 @@
 
 'use server';
-/**
- * @fileOverview An AI flow to identify a pill from an image.
- * This uses a multi-step process: first, describe the pill's visual
- * characteristics from an image, then use a dedicated tool to search
- * for the pill's identity based on those characteristics.
- */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { lookupPill } from '@/ai/tools/pill-lookup-tool';
 
-// Input for the entire flow
 const IdentifyPillInputSchema = z.object({
-  imageDataUri: z
-    .string()
-    .describe(
-      "A photo of a pill, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
-    ),
+  imageBase64: z.string().describe('Base64 encoded image of the pill/substance'),
+  additionalContext: z.string().optional().describe('Any additional context about where/how the pill was found'),
 });
 export type IdentifyPillInput = z.infer<typeof IdentifyPillInputSchema>;
 
-// Output for the entire flow
+const PillIdentificationSchema = z.object({
+  primaryIdentification: z.object({
+    substanceName: z.string().describe('Most likely substance name'),
+    confidence: z.enum(['High', 'Medium', 'Low']).describe('Confidence level in identification'),
+    reasoning: z.string().describe('Detailed explanation of identification reasoning'),
+  }),
+  alternativeIdentifications: z.array(z.object({
+    substanceName: z.string(),
+    confidence: z.enum(['High', 'Medium', 'Low']),
+    reasoning: z.string(),
+  })).describe('Other possible identifications in order of likelihood'),
+  physicalCharacteristics: z.object({
+    shape: z.string().describe('Detailed shape description'),
+    color: z.string().describe('Detailed color description'),
+    size: z.string().describe('Estimated size'),
+    markings: z.string().describe('Any visible markings, imprints, or scores'),
+    texture: z.string().describe('Surface texture observations'),
+  }),
+  legalClassification: z.object({
+    controlledSubstance: z.boolean().describe('Whether this appears to be a controlled substance'),
+    schedule: z.string().optional().describe('DEA/Florida schedule if controlled'),
+    flStatute: z.string().optional().describe('Relevant Florida statute number'),
+  }),
+  fieldSafetyNotes: z.array(z.string()).describe('Critical safety considerations for officers'),
+  recommendedActions: z.array(z.string()).describe('Recommended next steps for the officer'),
+  testingRecommendations: z.object({
+    fieldTest: z.string().optional().describe('Recommended field test if available'),
+    labAnalysis: z.boolean().describe('Whether lab analysis is recommended'),
+    preservationInstructions: z.string().describe('How to properly preserve the evidence'),
+  }),
+  warningFlags: z.array(z.string()).describe('Any red flags or special concerns (fentanyl, etc.)'),
+});
+
 const IdentifyPillOutputSchema = z.object({
-  drugName: z.string().describe("The common brand name or generic name of the identified drug. If unknown, return 'Unknown'."),
-  visualDescription: z.string().describe("A summary of the visual characteristics used for identification (e.g., 'White, round, imprint E 7')."),
-  primaryUse: z.string().describe("A brief, one-sentence description of what the drug is primarily used for. If unknown, state 'Information not available.'"),
-  keyWarnings: z.string().describe("A brief summary of the most critical warnings or potential side effects associated with the drug. If unknown, state 'Information not available.'"),
+  identification: PillIdentificationSchema,
+  disclaimer: z.string().default('This AI identification is for investigative purposes only. Definitive identification requires laboratory analysis. Always follow proper evidence handling procedures.'),
 });
 export type IdentifyPillOutput = z.infer<typeof IdentifyPillOutputSchema>;
 
-// Intermediate schema for the first AI call (describing the image)
-const PillVisualsSchema = z.object({
-    imprint: z.string().describe("The letters and/or numbers imprinted on the pill. If not legible, state 'illegible'."),
-    color: z.string().describe("The primary color of the pill."),
-    shape: z.string().describe("The shape of the pill (e.g., round, oval, capsule).")
-});
+export const identifyPill = ai.defineFlow(
+  {
+    name: 'identifyPill',
+    inputSchema: IdentifyPillInputSchema,
+    outputSchema: IdentifyPillOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are an expert forensic pharmacologist and narcotics identification specialist for Florida law enforcement. Your task is to analyze the provided image of a pill or substance and provide a comprehensive identification assessment.
 
-export async function identifyPillFromImage(input: IdentifyPillInput): Promise<IdentifyPillOutput> {
-  // Try analysis up to 2 times if the first attempt yields "illegible" results
-  for (let attempt = 1; attempt <= 2; attempt++) {
-    console.log(`[Pill Identification] Attempt ${attempt}/2`);
-    
-    // Step 1: Analyze the image to get visual characteristics
-    const { output: visualAnalysis } = await ai.generate({
-    prompt: `You are a forensic pharmaceutical analyst specializing in pill identification. Analyze this pill image with extreme precision:
+ANALYSIS REQUIREMENTS:
+1. Examine all visible physical characteristics (shape, color, size, markings, texture)
+2. Compare against known pharmaceutical and illicit substance databases
+3. Consider common street drugs, prescription medications, and counterfeit pills
+4. Pay special attention to fentanyl-pressed pills and dangerous substances
+5. Provide multiple identification possibilities ranked by likelihood
+6. Include detailed safety warnings and handling instructions
+7. Reference relevant Florida statutes and controlled substance schedules
 
-CRITICAL INSTRUCTIONS:
-1. IMPRINT: Look carefully for ANY text, numbers, or symbols on the pill. Common formats include:
-   - Letters and numbers (e.g., "M 30", "XANAX 1.0", "OC 80")
-   - Single letters (e.g., "V", "E")
-   - Numbers only (e.g., "833", "484")
-   - Brand names (e.g., "ADDERALL", "SYNTHROID")
-   If you cannot clearly read the imprint, state "illegible" - do not guess.
+CRITICAL FOCUS AREAS:
+- Fentanyl-pressed counterfeit pills (extremely dangerous)
+- Common prescription medications (Oxycodone, Alprazolam, etc.)
+- Street drugs and their common forms
+- Pill press characteristics that indicate illicit manufacturing
+- Size, shape, color, and imprint analysis
+- Safety considerations for officer exposure
 
-2. COLOR: Identify the PRIMARY color. Common colors: White, Blue, Yellow, Green, Pink, Orange, Purple, Brown, Gray.
+ADDITIONAL CONTEXT: ${input.additionalContext || 'No additional context provided'}
 
-3. SHAPE: Be precise about shape. Common shapes: Round, Oval, Capsule-shape, Square, Diamond, Triangle.
+Provide a thorough, detailed analysis that prioritizes officer safety while delivering actionable intelligence for the investigation.`,
+      media: {
+        url: `data:image/jpeg;base64,${input.imageBase64}`,
+      },
+      output: {
+        schema: IdentifyPillOutputSchema,
+      },
+      config: {
+        maxOutputTokens: 12288, // Significantly increased token limit
+        temperature: 0.2, // Low temperature for consistent analysis
+        safetySettings: [
+          {
+            category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+            threshold: 'BLOCK_NONE',
+          },
+          {
+            category: 'HARM_CATEGORY_HARASSMENT',
+            threshold: 'BLOCK_NONE',
+          },
+          {
+            category: 'HARM_CATEGORY_HATE_SPEECH',
+            threshold: 'BLOCK_NONE',
+          },
+          {
+            category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+            threshold: 'BLOCK_NONE',
+          },
+        ],
+      },
+    });
 
-Look at the pill from multiple angles if visible. Pay special attention to lighting and shadows that might obscure details.
-
-Image: {{media url=imageDataUri}}`,
-    input: { imageDataUri: input.imageDataUri },
-    output: {
-      schema: PillVisualsSchema,
-    },
-  });
-
-  if (!visualAnalysis) {
-      if (attempt === 2) {
-        throw new Error("AI failed to analyze the pill image after multiple attempts.");
-      }
-      continue;
+    if (!output || !output.identification) {
+      // Provide a safe fallback response
+      return {
+        identification: {
+          primaryIdentification: {
+            substanceName: "Unable to identify - requires lab analysis",
+            confidence: "Low" as const,
+            reasoning: "AI analysis was unable to provide reliable identification from the provided image."
+          },
+          alternativeIdentifications: [],
+          physicalCharacteristics: {
+            shape: "Analysis incomplete",
+            color: "Analysis incomplete", 
+            size: "Analysis incomplete",
+            markings: "Analysis incomplete",
+            texture: "Analysis incomplete"
+          },
+          legalClassification: {
+            controlledSubstance: false,
+            schedule: undefined,
+            flStatute: undefined
+          },
+          fieldSafetyNotes: [
+            "Treat all unknown substances as potentially dangerous",
+            "Use proper PPE when handling",
+            "Avoid direct contact or inhalation"
+          ],
+          recommendedActions: [
+            "Secure evidence properly",
+            "Submit for laboratory analysis",
+            "Document findings thoroughly"
+          ],
+          testingRecommendations: {
+            fieldTest: "Consult department protocols",
+            labAnalysis: true,
+            preservationInstructions: "Store in appropriate evidence container, maintain chain of custody"
+          },
+          warningFlags: ["Unknown substance - exercise extreme caution"]
+        },
+        disclaimer: "This AI identification is for investigative purposes only. Definitive identification requires laboratory analysis. Always follow proper evidence handling procedures."
+      };
     }
 
-    // If imprint is illegible and this is the first attempt, try once more
-    if (visualAnalysis.imprint === "illegible" && attempt === 1) {
-      console.log("[Pill Identification] Imprint illegible, retrying with enhanced analysis");
-      continue;
-    }
-
-    const visualDescriptionText = `${visualAnalysis.color}, ${visualAnalysis.shape}, imprint ${visualAnalysis.imprint}`;
-
-    // Step 2: Use the local database lookup tool to get a definitive answer.
-    const identificationResult = await lookupPill(visualAnalysis);
-    
-    return {
-      ...identificationResult,
-      visualDescription: visualDescriptionText
-    };
+    return output;
   }
-  
-  throw new Error("Failed to analyze pill image after multiple attempts.");
-}
+);
