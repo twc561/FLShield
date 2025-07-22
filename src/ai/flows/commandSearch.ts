@@ -31,7 +31,7 @@ OFFICER'S QUESTION: "${query}"
 Your response as Shield FL:`;
 }
 
-export async function* streamCommandSearch(input: CommandSearchInput) {
+export async function* streamCommandSearch(input: CommandSearchInput): AsyncGenerator<string, void, unknown> {
   try {
     console.log('Command Search streaming call:', {
       queryLength: input.query.length
@@ -60,11 +60,29 @@ export async function* streamCommandSearch(input: CommandSearchInput) {
     const result = await model.generateContentStream(prompt);
 
     let hasContent = false;
-    for await (const chunk of result.stream) {
-      const chunkText = chunk.text();
-      if (chunkText && chunkText.trim()) {
-        hasContent = true;
-        yield chunkText;
+    try {
+      for await (const chunk of result.stream) {
+        const chunkText = chunk.text();
+        if (chunkText && chunkText.trim()) {
+          hasContent = true;
+          yield chunkText;
+        }
+      }
+    } catch (streamingError) {
+      console.error('Error during streaming:', streamingError);
+      if (!hasContent) {
+        // Fall back to non-streaming if streaming fails
+        try {
+          const fallbackResult = await model.generateContent(prompt);
+          const fallbackResponse = await fallbackResult.response;
+          const fallbackText = fallbackResponse.text();
+          if (fallbackText && fallbackText.trim()) {
+            yield fallbackText.trim();
+            hasContent = true;
+          }
+        } catch (fallbackError) {
+          console.error('Fallback also failed:', fallbackError);
+        }
       }
     }
 

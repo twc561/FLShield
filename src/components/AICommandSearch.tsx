@@ -48,12 +48,38 @@ export default function AICommandSearch() {
       // Add timeout to prevent hanging
       const searchPromise = (async () => {
         const { streamCommandSearch } = await import('@/ai/flows/commandSearch');
-        const stream = streamCommandSearch({ query });
-
+        
         let hasReceivedContent = false;
-        for await (const chunk of stream) {
-          hasReceivedContent = true;
-          setResult(prev => prev + chunk);
+        try {
+          // Ensure we're properly handling the async generator
+          const streamGenerator = streamCommandSearch({ query });
+          
+          // Check if it's actually iterable
+          if (streamGenerator && typeof streamGenerator[Symbol.asyncIterator] === 'function') {
+            for await (const chunk of streamGenerator) {
+              if (chunk && typeof chunk === 'string') {
+                hasReceivedContent = true;
+                setResult(prev => (prev || '') + chunk);
+              }
+            }
+          } else {
+            // Fallback if streaming doesn't work
+            const { getCommandSearchResponse } = await import('@/ai/flows/commandSearch');
+            const response = await getCommandSearchResponse({ query });
+            if (response.answer) {
+              hasReceivedContent = true;
+              setResult(response.answer);
+            }
+          }
+        } catch (streamError) {
+          console.error('Streaming error, falling back to non-streaming:', streamError);
+          // Fallback to non-streaming
+          const { getCommandSearchResponse } = await import('@/ai/flows/commandSearch');
+          const response = await getCommandSearchResponse({ query });
+          if (response.answer) {
+            hasReceivedContent = true;
+            setResult(response.answer);
+          }
         }
 
         // If no content was received, show a fallback message
