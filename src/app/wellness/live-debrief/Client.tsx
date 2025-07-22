@@ -48,7 +48,7 @@ export function LiveDebriefClient() {
     if (!userInput.trim()) return;
 
     const userMessage: Message = { id: `user-${Date.now()}`, role: "user", content: userInput };
-    
+
     // Create a placeholder for the AI's response immediately
     const modelMessageId = `model-${Date.now()}`;
     const modelMessagePlaceholder: Message = { id: modelMessageId, role: "model", content: "" };
@@ -61,44 +61,79 @@ export function LiveDebriefClient() {
     setIsLoading(true);
 
     try {
-      const historyForAI = newMessages
-        .filter(msg => msg.role !== 'system') // Assuming no system messages for now
+      const conversationHistory = newMessages
+        .filter(msg => msg.role !== "model" || msg.content.trim())
         .map(msg => ({
-          role: msg.role as 'user' | 'model',
-          parts: [{ text: msg.content }],
-      }));
+          role: msg.role,
+          parts: [{ text: msg.content }]
+        }));
 
-      const stream = streamDebrief({ 
-        conversationHistory: historyForAI,
-        officerStressLevel: stressLevel,
-        incidentType: incidentType,
-        sessionProgress: messages.length <= 4 ? 'opening' : 
-                        messages.length <= 12 ? 'exploration' :
-                        messages.length <= 20 ? 'processing' : 'closure'
+      console.log('Sending debrief request with:', {
+        historyLength: conversationHistory.length,
+        stressLevel,
+        incidentType
       });
 
+      const stream = streamDebrief({
+        conversationHistory,
+        officerStressLevel: stressLevel,
+        incidentType,
+        sessionProgress: "exploration"
+      });
+
+      let responseContent = "";
+      let chunkCount = 0;
+
       for await (const chunk of stream) {
-        setMessages(prev =>
-          prev.map(msg =>
-            msg.id === modelMessageId
-              ? { ...msg, content: msg.content + chunk }
+        chunkCount++;
+        responseContent += chunk;
+        setMessages(prevMessages => 
+          prevMessages.map(msg => 
+            msg.id === modelMessageId 
+              ? { ...msg, content: responseContent }
               : msg
           )
         );
       }
+
+      console.log(`Received ${chunkCount} chunks, total content length: ${responseContent.length}`);
+
+      if (!responseContent.trim()) {
+        console.warn('No content received from stream');
+        setMessages(prevMessages => 
+          prevMessages.map(msg => 
+            msg.id === modelMessageId 
+              ? { ...msg, content: "I'm here to listen and support you. Please feel free to share what's on your mind - this is a safe space for you to process your experiences." }
+              : msg
+          )
+        );
+      }
+
     } catch (error) {
-      console.error("Failed to get AI response:", error);
-      setMessages(prev =>
-        prev.map(msg =>
-          msg.id === modelMessageId
-            ? { ...msg, content: "[Error: Could not get a response. The model may be unavailable.]" }
+      console.error("Error in debrief:", error);
+
+      // More specific error handling
+      let errorMessage = "I'm experiencing technical difficulties, but I want you to know that your wellbeing matters. ";
+
+      if (error.message?.includes('API key') || error.message?.includes('authentication')) {
+        errorMessage += "There's an authentication issue with the system. ";
+      } else if (error.message?.includes('quota') || error.message?.includes('rate limit')) {
+        errorMessage += "The system is temporarily overloaded. ";
+      }
+
+      errorMessage += "Please consider reaching out to your Employee Assistance Program or call 988 for the Suicide & Crisis Lifeline if you need immediate support.";
+
+      setMessages(prevMessages => 
+        prevMessages.map(msg => 
+          msg.id === modelMessageId 
+            ? { ...msg, content: errorMessage }
             : msg
         )
       );
     } finally {
       setIsLoading(false);
     }
-  }, [messages, userInput]);
+  }, [messages, userInput, stressLevel, incidentType]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {

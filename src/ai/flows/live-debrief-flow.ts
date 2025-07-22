@@ -154,6 +154,13 @@ export async function* streamDebrief(input: LiveDebriefInput) {
     sessionProgress = 'exploration'
   } = input;
 
+  // Check API key first
+  if (!process.env.GOOGLE_GENAI_API_KEY) {
+    console.error('Gemini API key not found');
+    yield "I apologize, but I'm experiencing technical difficulties. Please know that your well-being is important. If you need immediate support, please reach out to your Employee Assistance Program or call 988 for the Suicide & Crisis Lifeline.";
+    return;
+  }
+
   try {
     console.log('Enhanced wellness debrief call:', {
       stressLevel: officerStressLevel,
@@ -179,35 +186,86 @@ export async function* streamDebrief(input: LiveDebriefInput) {
       incidentType
     );
 
-    // Use Gemini Pro for more sophisticated responses with increased token limits
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-pro",
-      generationConfig: {
-        temperature: 0.7,
-        topP: 0.95,
-        topK: 40,
-        maxOutputTokens: 4096,
-      },
-    });
+    // Try Gemini Pro first, then fall back to Gemini Flash
+    let model;
+    try {
+      model = genAI.getGenerativeModel({
+        model: "gemini-1.5-pro",
+        generationConfig: {
+          temperature: 0.7,
+          topP: 0.95,
+          topK: 40,
+          maxOutputTokens: 2048,
+        },
+      });
 
-    const result = await model.generateContentStream(prompt);
+      const result = await model.generateContentStream(prompt);
+      
+      let hasContent = false;
+      for await (const chunk of result.stream) {
+        const chunkText = chunk.text();
+        if (chunkText) {
+          hasContent = true;
+          yield chunkText;
+        }
+      }
 
-    for await (const chunk of result.stream) {
-      const chunkText = chunk.text();
-      if (chunkText) {
-        yield chunkText;
+      if (!hasContent) {
+        throw new Error("No content generated from Gemini Pro");
+      }
+
+    } catch (proError) {
+      console.log('Gemini Pro failed, trying Gemini Flash:', proError);
+      
+      // Fallback to Gemini Flash
+      model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash",
+        generationConfig: {
+          temperature: 0.7,
+          topP: 0.9,
+          topK: 20,
+          maxOutputTokens: 1024,
+        },
+      });
+
+      const fallbackResult = await model.generateContentStream(prompt);
+      
+      let hasContent = false;
+      for await (const chunk of fallbackResult.stream) {
+        const chunkText = chunk.text();
+        if (chunkText) {
+          hasContent = true;
+          yield chunkText;
+        }
+      }
+
+      if (!hasContent) {
+        throw new Error("No content generated from Gemini Flash either");
       }
     }
 
   } catch (error: any) {
     console.error('Enhanced Wellness Debrief Error:', error);
     
-    // Provide appropriate crisis response based on context
+    // Provide contextual fallback responses based on stress level and conversation history
     const stressCategory = getStressCategory(input.officerStressLevel || 5);
+    const messageCount = conversationHistory.length;
+    
     if (stressCategory === 'highStress') {
-      yield "I can hear this is really difficult for you right now. Your feelings are completely valid. If you're in immediate crisis, please reach out to the Employee Assistance Program or call 988 for the Suicide & Crisis Lifeline.";
+      yield "I can hear this is really weighing on you. Your feelings are completely valid, and it takes courage to reach out. If you're in immediate crisis, please don't hesitate to contact your Employee Assistance Program or call 988 for the Suicide & Crisis Lifeline. You don't have to go through this alone.";
+    } else if (messageCount === 0) {
+      yield "Welcome to this confidential space. I'm here to listen without judgment and help you process whatever you're experiencing. Take your time - this conversation is completely private and designed for your wellness.";
     } else {
-      yield "I'm here to listen and support you through this. Take your time - this is your space to process whatever you're experiencing.";
+      // Analyze the last user message for contextual response
+      const lastUserMessage = conversationHistory.find(msg => msg.role === 'user')?.parts?.[0]?.text || '';
+      
+      if (lastUserMessage.toLowerCase().includes('difficult') || lastUserMessage.toLowerCase().includes('hard')) {
+        yield "I hear that this situation has been difficult for you. That's a completely normal response to challenging circumstances. Your willingness to talk about it shows real strength.";
+      } else if (lastUserMessage.toLowerCase().includes('stress') || lastUserMessage.toLowerCase().includes('overwhelm')) {
+        yield "Stress is a natural response to the demands of law enforcement work. Recognizing it and seeking support, like you're doing now, is a sign of wisdom and self-care.";
+      } else {
+        yield "I'm here to support you through whatever you're experiencing. This is your space to share openly and process your thoughts and feelings at your own pace.";
+      }
     }
   }
 }
