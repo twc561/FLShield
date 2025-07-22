@@ -14,19 +14,11 @@ import {
   Bot,
   Crown,
   MapPin,
+  X,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-  SheetTrigger,
-} from "@/components/ui/sheet"
 import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
-import { AppMenuContent } from "./AppMenuContent"
 import { useSubscription } from "@/hooks/use-subscription"
 import { Badge } from "@/components/ui/badge"
 
@@ -41,41 +33,254 @@ const mainNavItems = [
   },
 ]
 
-export const MobileBottomNav = memo(function MobileBottomNav() {
-  const pathname = usePathname()
+// Simple overlay menu without Sheet component to avoid hydration issues
+function MobileMenu({ 
+  isOpen, 
+  onClose, 
+  isPro 
+}: { 
+  isOpen: boolean
+  onClose: () => void
+  isPro: boolean
+}) {
   const router = useRouter()
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const [showNavHint, setShowNavHint] = useState(false)
-  const { isPro, mounted: subscriptionMounted } = useSubscription()
-
-  useEffect(() => {
-    setMounted(true)
-    
-    // Show navigation hint for new users
-    const hasSeenNavHint = localStorage.getItem('hasSeenMobileNavHint')
-    if (!hasSeenNavHint) {
-      const timer = setTimeout(() => {
-        setShowNavHint(true)
-        setTimeout(() => {
-          setShowNavHint(false)
-          localStorage.setItem('hasSeenMobileNavHint', 'true')
-        }, 3000)
-      }, 2000)
-      
-      return () => clearTimeout(timer)
-    }
-  }, [])
-
+  
   const handleSignOut = useCallback(async () => {
     try {
       await signOut(auth)
-      setIsSheetOpen(false)
+      onClose()
       router.push('/')
     } catch (error) {
       console.error("Error signing out: ", error)
     }
-  }, [router])
+  }, [router, onClose])
+
+  const handleLinkClick = useCallback(() => {
+    onClose()
+  }, [onClose])
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-[100] md:hidden">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/80" 
+        onClick={onClose}
+      />
+      
+      {/* Menu Panel */}
+      <div className="absolute left-0 top-0 bottom-0 w-3/4 bg-background border-r shadow-xl flex flex-col">
+        {/* Header */}
+        <div className="p-4 border-b flex items-center justify-between">
+          <Link
+            href="/"
+            className="flex items-center gap-2.5"
+            onClick={handleLinkClick}
+          >
+            <Flame className="w-8 h-8 text-primary" />
+            <div className="flex flex-col">
+              <span className="font-bold text-lg text-foreground">
+                Florida Shield
+              </span>
+              {isPro && (
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs w-fit">
+                  <Crown className="w-3 h-3 mr-1" />
+                  Pro
+                </Badge>
+              )}
+            </div>
+          </Link>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-md hover:bg-accent"
+            aria-label="Close menu"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        
+        {/* Menu Content */}
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="space-y-6">
+            {/* AI Assistant Tools */}
+            <div>
+              <h3 className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-foreground/80 bg-muted/30 rounded-md mb-2">
+                <Bot className="h-4 w-4" />
+                AI Assistant Tools
+              </h3>
+              <div className="space-y-1 ml-2">
+                <Link
+                  href="/reporting-development/ai-charge-assistant"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  AI Charge Assistant
+                </Link>
+                <Link
+                  href="/ai-legal-advisor"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  AI Legal Advisor
+                </Link>
+                <Link
+                  href="/reporting-development/ai-report-writer"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  AI Report Assistant
+                </Link>
+              </div>
+            </div>
+
+            {/* Emergency Response */}
+            <div>
+              <h3 className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-foreground/80 bg-muted/30 rounded-md mb-2">
+                Emergency Response
+              </h3>
+              <div className="space-y-1 ml-2">
+                <Link
+                  href="/emergency-response/baker-act-guide"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  Baker Act Procedures
+                </Link>
+                <Link
+                  href="/emergency-response/first-aid-guide"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  Field First Aid Guide
+                </Link>
+                <Link
+                  href="/emergency-response/hazmat-guide"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  HAZMAT Response Guide
+                </Link>
+              </div>
+            </div>
+
+            {/* Field Operations */}
+            <div>
+              <h3 className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-foreground/80 bg-muted/30 rounded-md mb-2">
+                Field Operations
+              </h3>
+              <div className="space-y-1 ml-2">
+                <Link
+                  href="/field-procedures/crime-scene-management"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  Crime Scene Management
+                </Link>
+                <Link
+                  href="/field-procedures/domestic-violence-protocol"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  Domestic Violence Protocol
+                </Link>
+                <Link
+                  href="/field-procedures/evidence-management-guide"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  Evidence Management
+                </Link>
+              </div>
+            </div>
+
+            {/* Legal Reference */}
+            <div>
+              <h3 className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-foreground/80 bg-muted/30 rounded-md mb-2">
+                <Scale className="h-4 w-4" />
+                Legal Reference
+              </h3>
+              <div className="space-y-1 ml-2">
+                <Link
+                  href="/legal-reference/statutes"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  Florida Statutes
+                </Link>
+                <Link
+                  href="/legal-reference/case-law"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  Case Law Database
+                </Link>
+                <Link
+                  href="/legal-reference/constitutional-law-guide"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  Constitutional Law
+                </Link>
+              </div>
+            </div>
+
+            {/* Quick Tools */}
+            <div>
+              <h3 className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-foreground/80 bg-muted/30 rounded-md mb-2">
+                Quick Tools
+              </h3>
+              <div className="space-y-1 ml-2">
+                <Link
+                  href="/notes"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  Digital Field Notes
+                </Link>
+                <Link
+                  href="/field-translation-guide"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  Field Translator
+                </Link>
+                <Link
+                  href="/wellness"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
+                >
+                  Wellness Resources
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Footer */}
+        <div className="p-4 border-t">
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-3 p-3 rounded-md text-foreground hover:bg-muted w-full transition-colors"
+          >
+            <LogOut className="h-5 w-5" />
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export const MobileBottomNav = memo(function MobileBottomNav() {
+  const pathname = usePathname()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const { isPro, mounted: subscriptionMounted } = useSubscription()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const isActive = useCallback((href: string) => {
     if (!mounted) return false
@@ -84,13 +289,26 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
     return pathname.startsWith(href)
   }, [mounted, pathname])
 
-  const handleLinkClick = useCallback(() => {
-    setIsSheetOpen(false)
+  const handleMenuToggle = useCallback(() => {
+    setIsMenuOpen(!isMenuOpen)
+  }, [isMenuOpen])
+
+  const handleMenuClose = useCallback(() => {
+    setIsMenuOpen(false)
   }, [])
 
-  const handleSheetOpenChange = useCallback((open: boolean) => {
-    setIsSheetOpen(open)
-  }, [])
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isMenuOpen])
 
   // Don't render until mounted to prevent hydration issues
   if (!mounted) {
@@ -116,117 +334,64 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
   }
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t z-50 shadow-lg">
-      {/* Pro Status Bar */}
-      {subscriptionMounted && isPro && (
-        <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-1">
-          <div className="flex items-center justify-center gap-2 text-white text-xs font-medium">
-            <Crown className="w-3 h-3" />
-            <span>Shield FL Pro Active</span>
+    <>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t z-50 shadow-lg">
+        {/* Pro Status Bar */}
+        {subscriptionMounted && isPro && (
+          <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-1">
+            <div className="flex items-center justify-center gap-2 text-white text-xs font-medium">
+              <Crown className="w-3 h-3" />
+              <span>Shield FL Pro Active</span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Navigation Bar */}
-      <div className="h-16 flex justify-around items-center">
-        {mainNavItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              "flex flex-col items-center justify-center text-muted-foreground w-full h-full transition-all duration-200 active:scale-95 active:bg-accent/20 rounded-lg",
-              isActive(item.href) && "text-primary bg-primary/5"
-            )}
-          >
-            <item.icon className={cn(
-              "h-6 w-6 transition-all duration-200",
-              isActive(item.href) && "scale-110"
-            )} />
-            <span className={cn(
-              "text-xs transition-all duration-200",
-              isActive(item.href) && "font-medium"
-            )}>{item.label}</span>
-          </Link>
-        ))}
-        
-        {/* More Menu Sheet */}
-        <Sheet open={isSheetOpen} onOpenChange={handleSheetOpenChange}>
-          <SheetTrigger asChild>
-            <button
-              type="button"
+        {/* Navigation Bar */}
+        <div className="h-16 flex justify-around items-center">
+          {mainNavItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center text-muted-foreground w-full h-full relative transition-all duration-300",
-                showNavHint && "animate-pulse bg-primary/10 text-primary rounded-lg"
+                "flex flex-col items-center justify-center text-muted-foreground w-full h-full transition-all duration-200 active:scale-95 active:bg-accent/20 rounded-lg",
+                isActive(item.href) && "text-primary bg-primary/5"
               )}
-              aria-label="Open full menu"
             >
-              <Menu className={cn(
-                "h-6 w-6 transition-all duration-300",
-                showNavHint && "scale-110"
+              <item.icon className={cn(
+                "h-6 w-6 transition-all duration-200",
+                isActive(item.href) && "scale-110"
               )} />
               <span className={cn(
-                "text-xs transition-all duration-300",
-                showNavHint && "font-medium"
-              )}>More</span>
-              {subscriptionMounted && isPro && (
-                <div className="absolute -top-1 -right-1">
-                  <Crown className="w-3 h-3 text-amber-500" />
-                </div>
-              )}
-              {showNavHint && (
-                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-md whitespace-nowrap animate-bounce">
-                  Tap for more tools!
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-t-4 border-transparent border-t-primary"></div>
-                </div>
-              )}
-            </button>
-          </SheetTrigger>
-          <SheetContent 
-            side="left" 
-            className="w-3/4 p-0 flex flex-col max-h-screen bg-background border-r"
+                "text-xs transition-all duration-200",
+                isActive(item.href) && "font-medium"
+              )}>{item.label}</span>
+            </Link>
+          ))}
+          
+          {/* More Menu Button */}
+          <button
+            type="button"
+            onClick={handleMenuToggle}
+            className="flex flex-col items-center justify-center text-muted-foreground w-full h-full relative transition-all duration-300"
+            aria-label="Open full menu"
           >
-            <SheetHeader className="p-4 border-b flex-shrink-0">
-              <SheetTitle asChild>
-                <Link
-                  href="/"
-                  className="flex items-center gap-2.5"
-                  onClick={handleLinkClick}
-                >
-                  <Flame className="w-8 h-8 text-primary" />
-                  <div className="flex flex-col">
-                    <span className="font-bold text-lg text-foreground">
-                      Florida Shield
-                    </span>
-                    {subscriptionMounted && isPro && (
-                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs w-fit">
-                        <Crown className="w-3 h-3 mr-1" />
-                        Pro
-                      </Badge>
-                    )}
-                  </div>
-                </Link>
-              </SheetTitle>
-              <SheetDescription className="sr-only">
-                Main application menu
-              </SheetDescription>
-            </SheetHeader>
-            
-            <div className="flex-1 overflow-y-auto min-h-0">
-              <AppMenuContent onLinkClick={handleLinkClick} />
-            </div>
-            
-            <div className="p-4 border-t flex-shrink-0">
-              <button
-                onClick={handleSignOut}
-                className="flex items-center gap-3 p-3 rounded-md text-foreground hover:bg-muted w-full transition-colors"
-              >
-                <LogOut className="h-5 w-5" />
-                <span>Sign Out</span>
-              </button>
-            </div>
-          </SheetContent>
-        </Sheet>
+            <Menu className="h-6 w-6 transition-all duration-300" />
+            <span className="text-xs transition-all duration-300">More</span>
+            {subscriptionMounted && isPro && (
+              <div className="absolute -top-1 -right-1">
+                <Crown className="w-3 h-3 text-amber-500" />
+              </div>
+            )}
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* Mobile Menu */}
+      <MobileMenu 
+        isOpen={isMenuOpen} 
+        onClose={handleMenuClose} 
+        isPro={subscriptionMounted && isPro} 
+      />
+    </>
   )
 })
