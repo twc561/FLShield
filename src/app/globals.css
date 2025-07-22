@@ -73,6 +73,19 @@
   body {
     @apply bg-background text-foreground font-body;
   }
+  
+  /* Mobile scrolling fixes */
+  @media (max-width: 768px) {
+    html, body {
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    main {
+      min-height: 100vh;
+      position: relative;
+    }
+  }
 }
 
 @layer utilities {

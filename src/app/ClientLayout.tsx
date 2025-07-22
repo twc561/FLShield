@@ -56,7 +56,7 @@ export function ClientLayout({
               <div className="flex h-screen w-full">
                 <AppSidebar />
                 <main className="flex-1 flex flex-col overflow-hidden">
-                  <div className="flex-1 overflow-y-auto">
+                  <div className={`flex-1 overflow-y-auto ${isMobile ? 'pb-16' : ''}`}>
                     {children}
                   </div>
                   {isMobile && <MobileBottomNav />}
