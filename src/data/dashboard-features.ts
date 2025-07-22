@@ -143,7 +143,8 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "FileCheck",
         targetPage: "/training-development/report-proofreader",
         category: "AI Assistant Tools",
-
+        isPremium: true,
+      },
       {
         id: "offline-references",
         title: "Offline Reference Pack",
@@ -151,9 +152,6 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Download",
         targetPage: "/tools/offline-pack",
         category: "Field Operations & Procedures",
-        isPremium: true,
-      },
-
         isPremium: true,
       },
     ],
