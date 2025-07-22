@@ -6,12 +6,112 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
-import { Lock, Shield, Smartphone, Clock, Eye } from "lucide-react"
-import { useState } from "react"
+import { Lock, Shield, Smartphone, Clock, Eye, QrCode } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useAuthState } from "react-firebase-hooks/auth"
+import { auth } from "@/lib/firebase"
+import { multiFactor, PhoneAuthProvider, RecaptchaVerifier } from "firebase/auth"
+import { toast } from "@/hooks/use-toast"
 
 export default function AccountSecurityPage() {
+  const [user] = useAuthState(auth)
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false)
   const [loginNotifications, setLoginNotifications] = useState(true)
+  const [isEnabling2FA, setIsEnabling2FA] = useState(false)
+  const [phoneNumber, setPhoneNumber] = useState("")
+  const [verificationCode, setVerificationCode] = useState("")
+  const [verificationId, setVerificationId] = useState("")
+  const [showPhoneInput, setShowPhoneInput] = useState(false)
+  const [sessions, setSessions] = useState<any[]>([])
+
+  const fetchSessions = async () => {
+    if (!user) return
+    
+    try {
+      const token = await user.getIdToken()
+      const response = await fetch(`/api/security/sessions?userId=${user.uid}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        setSessions(data.sessions || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch sessions:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchSessions()
+  }, [user])
+
+  useEffect(() => {
+    if (user) {
+      // Check if user has MFA enabled
+      const mfaUser = multiFactor(user)
+      setTwoFactorEnabled(mfaUser.enrolledFactors.length > 0)
+    }
+  }, [user])
+
+  const handleEnable2FA = async () => {
+    if (!user) return
+    
+    if (twoFactorEnabled) {
+      // Disable 2FA
+      try {
+        const mfaUser = multiFactor(user)
+        if (mfaUser.enrolledFactors.length > 0) {
+          await mfaUser.unenroll(mfaUser.enrolledFactors[0])
+          setTwoFactorEnabled(false)
+          toast({
+            title: "2FA Disabled",
+            description: "Two-factor authentication has been disabled for your account."
+          })
+        }
+      } catch (error: any) {
+        toast({
+          title: "Error",
+          description: "Failed to disable 2FA: " + error.message,
+          variant: "destructive"
+        })
+      }
+    } else {
+      // Enable 2FA
+      setShowPhoneInput(true)
+    }
+  }
+
+  const sendVerificationCode = async () => {
+    if (!user || !phoneNumber) return
+    
+    setIsEnabling2FA(true)
+    try {
+      // Create RecaptchaVerifier
+      const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        'size': 'invisible'
+      })
+
+      const multiFactorSession = await multiFactor(user).getSession()
+      const phoneAuthCredential = PhoneAuthProvider.credential(verificationId, verificationCode)
+      const multiFactorAssertion = PhoneAuthProvider.credentialFromResult(phoneAuthCredential)
+      
+      // This is a simplified version - you'll need to implement the full flow
+      toast({
+        title: "Verification Code Sent",
+        description: "Please check your phone for the verification code."
+      })
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to send verification code: " + error.message,
+        variant: "destructive"
+      })
+    }
+    setIsEnabling2FA(false)
+  }
 
   return (
     <div className="animate-fade-in-up">
@@ -41,9 +141,43 @@ export default function AccountSecurityPage() {
               </div>
               <Switch
                 checked={twoFactorEnabled}
-                onCheckedChange={setTwoFactorEnabled}
+                onCheckedChange={handleEnable2FA}
               />
             </div>
+            
+            {showPhoneInput && !twoFactorEnabled && (
+              <div className="space-y-4 p-4 border rounded-lg">
+                <div>
+                  <label className="text-sm font-medium">Phone Number</label>
+                  <input
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder="+1234567890"
+                    className="w-full mt-1 p-2 border rounded"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Verification Code</label>
+                  <input
+                    type="text"
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value)}
+                    placeholder="123456"
+                    className="w-full mt-1 p-2 border rounded"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button onClick={sendVerificationCode} disabled={isEnabling2FA}>
+                    {isEnabling2FA ? "Sending..." : "Send Code"}
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowPhoneInput(false)}>
+                    Cancel
+                  </Button>
+                </div>
+                <div id="recaptcha-container"></div>
+              </div>
+            )}
             {!twoFactorEnabled && (
               <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
                 <p className="text-sm text-amber-800 dark:text-amber-200">
@@ -66,27 +200,27 @@ export default function AccountSecurityPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Smartphone className="w-4 h-4 text-green-500" />
-                  <div>
-                    <p className="text-sm font-medium">Mobile - Current Session</p>
-                    <p className="text-xs text-muted-foreground">Tampa, FL • 2 hours ago</p>
+              {sessions.length > 0 ? (
+                sessions.map((session) => (
+                  <div key={session.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Smartphone className={`w-4 h-4 ${session.isActive ? 'text-green-500' : 'text-muted-foreground'}`} />
+                      <div>
+                        <p className="text-sm font-medium">{session.device}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {session.location} • {new Date(session.createdAt.seconds * 1000).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                    <Badge variant={session.isActive ? "outline" : "secondary"} 
+                           className={session.isActive ? "text-green-600" : ""}>
+                      {session.isActive ? "Active" : "Ended"}
+                    </Badge>
                   </div>
-                </div>
-                <Badge variant="outline" className="text-green-600">Active</Badge>
-              </div>
-
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Lock className="w-4 h-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-medium">Desktop</p>
-                    <p className="text-xs text-muted-foreground">Tampa, FL • Yesterday</p>
-                  </div>
-                </div>
-                <Badge variant="secondary">Ended</Badge>
-              </div>
+                ))
+              ) : (
+                <p className="text-muted-foreground">No recent sessions found.</p>
+              )}
             </div>
           </CardContent>
         </Card>

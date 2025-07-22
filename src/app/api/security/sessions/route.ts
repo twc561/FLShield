@@ -5,7 +5,8 @@ import { headers } from 'next/headers'
 
 export async function GET(request: NextRequest) {
   try {
-    const authHeader = headers().get('authorization')
+    const headersList = await headers()
+    const authHeader = headersList.get('authorization')
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -38,7 +39,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authHeader = headers().get('authorization')
+    const headersList = await headers()
+    const authHeader = headersList.get('authorization')
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -79,7 +81,8 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const authHeader = headers().get('authorization')
+    const headersList = await headers()
+    const authHeader = headersList.get('authorization')
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
