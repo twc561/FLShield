@@ -26,8 +26,8 @@ export const enhancedAI = genkit({
 export const highCapacityConfig = {
   model: gemini15Pro,
   config: {
-    maxOutputTokens: 8192,
-    temperature: 0.7,
+    maxOutputTokens: 32768, // Increased to maximum available
+    temperature: 0.3, // Slightly lower for more focused responses
     topP: 0.95,
     topK: 40,
     candidateCount: 1,
@@ -49,5 +49,17 @@ export const highCapacityConfig = {
         threshold: 'BLOCK_MEDIUM_AND_ABOVE'
       }
     ]
+  }
+};
+
+// Enhanced configuration specifically for command search with maximum capabilities
+export const commandSearchConfig = {
+  model: "gemini-1.5-pro-002", // Latest and most capable model
+  config: {
+    maxOutputTokens: 32768, // Maximum token output for comprehensive responses
+    temperature: 0.3, // Lower temperature for more accurate, focused responses
+    topP: 0.95,
+    topK: 40,
+    candidateCount: 1,
   }
 };

@@ -17,21 +17,37 @@ const CommandSearchOutputSchema = z.object({
 export type CommandSearchOutput = z.infer<typeof CommandSearchOutputSchema>;
 
 function createCommandSearchPrompt(query: string): string {
-  return `You are 'Shield FL,' an AI partner for Florida law enforcement. Your purpose is to provide immediate, clear, and practical answers to questions from front-line patrol officers.
+  return `You are 'Shield FL,' an advanced AI partner for Florida law enforcement. Your purpose is to provide immediate, comprehensive, and practical answers to questions from front-line patrol officers.
 
 RESPONSE GUIDELINES:
-- Provide comprehensive but digestible information
-- Structure responses with clear sections when appropriate (Overview, Key Points, Procedures, etc.)
-- Ground answers in Florida statutes and established police procedures
-- Focus on operational guidance and factual information
-- Prioritize officer safety and legal accuracy
-- Include relevant statute numbers or case law when applicable
-- Provide practical examples when helpful
-- Note when something is NOT legal advice, but operational guidance
+- Provide thorough, well-structured, and digestible information
+- Use clear sections with headers (Overview, Key Points, Legal Framework, Procedures, Examples, etc.)
+- Ground all answers in Florida statutes, case law, and established police procedures
+- Focus on operational guidance while maintaining legal accuracy
+- Prioritize officer safety and constitutional compliance in all recommendations
+- Include specific statute numbers, case citations, and procedural references
+- Provide multiple practical examples and scenarios when relevant
+- Address potential complications or edge cases
+- Include step-by-step procedures where applicable
+- Note when something is operational guidance vs. legal advice
+- Provide context about why certain procedures exist
+- Include relevant department policy considerations
+- Address both immediate tactical needs and long-term case building
+
+ENHANCED CAPABILITIES:
+With increased response capacity, provide:
+- Detailed explanations of legal principles
+- Multiple scenario applications
+- Comprehensive procedure walkthroughs  
+- Related statute cross-references
+- Best practice recommendations
+- Common pitfalls to avoid
+- Documentation requirements
+- Follow-up considerations
 
 OFFICER'S QUESTION: "${query}"
 
-Your comprehensive response as Shield FL:`;
+Your comprehensive, detailed response as Shield FL:`;
 }
 
 export async function* streamCommandSearch(input: CommandSearchInput) {
@@ -58,14 +74,14 @@ export async function* streamCommandSearch(input: CommandSearchInput) {
       throw new Error('AI service not initialized');
     }
 
-    // Use Gemini Pro with increased token limits for comprehensive responses
+    // Use latest Gemini Pro with maximum token limits for comprehensive responses
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-pro",
+      model: "gemini-1.5-pro-002",
       generationConfig: {
-        temperature: 0.4,
+        temperature: 0.3,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 8192,
+        maxOutputTokens: 32768, // Increased to maximum available
       },
     });
 
@@ -128,12 +144,12 @@ export async function getCommandSearchResponse(input: CommandSearchInput): Promi
     const prompt = createCommandSearchPrompt(input.query);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-pro",
+      model: "gemini-1.5-pro-002",
       generationConfig: {
-        temperature: 0.4,
+        temperature: 0.3,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 8192,
+        maxOutputTokens: 32768, // Increased to maximum available
       },
     });
 
