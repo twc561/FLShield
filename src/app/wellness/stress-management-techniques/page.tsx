@@ -246,9 +246,9 @@ export default function StressManagementTechniquesPage() {
       />
 
       {/* Emergency Resources */}
-      <Alert className="mb-6 border-red-200 bg-red-50">
-        <AlertTriangle className="h-4 w-4" />
-        <AlertDescription>
+      <Alert className="mb-6 border-red-500 bg-red-900/20 text-red-100">
+        <AlertTriangle className="h-4 w-4 text-red-400" />
+        <AlertDescription className="text-red-100">
           <strong>Crisis Resources:</strong> If you're experiencing thoughts of self-harm, call 988 (Suicide & Crisis Lifeline) 
           or contact your Employee Assistance Program immediately. You're not alone, and help is available 24/7.
         </AlertDescription>
