@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -15,6 +16,17 @@ import {
   MapPin,
   X,
   ChevronRight,
+  Heart,
+  HeartPulse,
+  Shield,
+  Siren,
+  ShieldCheck,
+  ClipboardEdit,
+  Lock,
+  Search,
+  GraduationCap,
+  Download,
+  CreditCard,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { signOut } from "firebase/auth"
@@ -33,57 +45,57 @@ const mainNavItems = [
   },
 ]
 
-// Menu sections data
-const menuSections = [
+// Hardcoded menu sections to avoid hydration issues
+const mobileMenuSections = [
   {
     label: "AI Assistant Tools",
     icon: Bot,
     items: [
-      { href: "/reporting-development/ai-charge-assistant", label: "AI Charge Assistant" },
-      { href: "/ai-legal-advisor", label: "AI Legal Advisor" },
-      { href: "/reporting-development/ai-report-writer", label: "AI Report Assistant" },
+      { href: "/reporting-development/ai-charge-assistant", label: "AI Charge Assistant", icon: Shield },
+      { href: "/ai-legal-advisor", label: "AI Legal Advisor", icon: Shield },
+      { href: "/reporting-development/ai-report-writer", label: "AI Report Assistant", icon: ClipboardEdit },
     ]
   },
   {
     label: "Emergency Response",
-    icon: Bot,
+    icon: Siren,
     items: [
-      { href: "/emergency-response/baker-act-guide", label: "Baker Act Procedures" },
-      { href: "/emergency-response/first-aid-guide", label: "Field First Aid Guide" },
-      { href: "/emergency-response/hazmat-guide", label: "HAZMAT Response Guide" },
+      { href: "/emergency-response/baker-act-guide", label: "Baker Act Procedures", icon: Heart },
+      { href: "/emergency-response/first-aid-guide", label: "Field First Aid Guide", icon: HeartPulse },
+      { href: "/emergency-response/hazmat-guide", label: "HAZMAT Response Guide", icon: Shield },
     ]
   },
   {
     label: "Field Operations",
-    icon: Bot,
+    icon: ShieldCheck,
     items: [
-      { href: "/field-procedures/crime-scene-management", label: "Crime Scene Management" },
-      { href: "/field-procedures/domestic-violence-protocol", label: "Domestic Violence Protocol" },
-      { href: "/field-procedures/evidence-management-guide", label: "Evidence Management" },
+      { href: "/field-procedures/crime-scene-management", label: "Crime Scene Management", icon: Shield },
+      { href: "/field-procedures/domestic-violence-protocol", label: "Domestic Violence Protocol", icon: Shield },
+      { href: "/field-procedures/evidence-management-guide", label: "Evidence Management", icon: ClipboardEdit },
     ]
   },
   {
     label: "Legal Reference",
     icon: Scale,
     items: [
-      { href: "/legal-reference/statutes", label: "Florida Statutes" },
-      { href: "/legal-reference/case-law", label: "Case Law Database" },
-      { href: "/legal-reference/constitutional-law-guide", label: "Constitutional Law" },
+      { href: "/legal-reference/statutes", label: "Florida Statutes", icon: Scale },
+      { href: "/legal-reference/case-law", label: "Case Law Database", icon: Scale },
+      { href: "/legal-reference/constitutional-law-guide", label: "Constitutional Law", icon: Shield },
     ]
   },
   {
     label: "Quick Tools",
-    icon: Bot,
+    icon: Search,
     items: [
-      { href: "/notes", label: "Digital Field Notes" },
-      { href: "/field-translation-guide", label: "Field Translator" },
-      { href: "/wellness", label: "Wellness Resources" },
+      { href: "/notes", label: "Digital Field Notes", icon: ClipboardEdit },
+      { href: "/field-translation-guide", label: "Field Translator", icon: Bot },
+      { href: "/wellness", label: "Wellness Resources", icon: Heart },
     ]
   }
 ]
 
-// Simple overlay menu without Sheet component to avoid hydration issues
-function MobileMenu({ 
+// Simple mobile menu component
+function MobileMenuDrawer({ 
   isOpen, 
   onClose, 
   isPro 
@@ -111,29 +123,29 @@ function MobileMenu({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[100] md:hidden">
+    <>
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/80" 
+        className="fixed inset-0 bg-black/60 z-[100] md:hidden"
         onClick={onClose}
       />
 
-      {/* Menu Panel */}
-      <div className="absolute left-0 top-0 bottom-0 w-3/4 bg-background border-r shadow-xl flex flex-col">
+      {/* Drawer */}
+      <div className="fixed left-0 top-0 bottom-0 w-80 max-w-[85vw] bg-background border-r shadow-2xl z-[101] flex flex-col md:hidden">
         {/* Header */}
-        <div className="p-4 border-b flex items-center justify-between bg-background">
+        <div className="flex items-center justify-between p-4 border-b bg-background">
           <Link
             href="/"
-            className="flex items-center gap-2.5"
+            className="flex items-center gap-2"
             onClick={handleLinkClick}
           >
-            <Flame className="w-8 h-8 text-primary" />
+            <Flame className="w-6 h-6 text-primary" />
             <div className="flex flex-col">
-              <span className="font-bold text-lg text-foreground">
+              <span className="font-bold text-base text-foreground">
                 Florida Shield
               </span>
               {isPro && (
-                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs w-fit">
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs w-fit mt-1">
                   <Crown className="w-3 h-3 mr-1" />
                   Pro
                 </Badge>
@@ -142,19 +154,18 @@ function MobileMenu({
           </Link>
           <button
             onClick={onClose}
-            className="p-2 rounded-md hover:bg-accent"
-            aria-label="Close menu"
+            className="p-2 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Menu Content - Scrollable */}
+        {/* Menu Content */}
         <div className="flex-1 overflow-y-auto bg-background">
           <div className="p-4 space-y-6">
-            {menuSections.map((section) => (
-              <div key={section.label}>
-                <h3 className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-foreground/80 bg-muted/30 rounded-md mb-3">
+            {mobileMenuSections.map((section) => (
+              <div key={section.label} className="space-y-2">
+                <h3 className="flex items-center gap-2 px-2 py-1 text-sm font-semibold text-muted-foreground">
                   <section.icon className="h-4 w-4" />
                   {section.label}
                 </h3>
@@ -164,30 +175,52 @@ function MobileMenu({
                       key={item.href}
                       href={item.href}
                       onClick={handleLinkClick}
-                      className="flex items-center gap-3 px-4 py-3 text-sm rounded-md transition-colors hover:bg-accent text-foreground group"
+                      className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors hover:bg-accent text-foreground group"
                     >
+                      <item.icon className="h-4 w-4 text-muted-foreground" />
                       <span className="flex-1">{item.label}</span>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground/60 group-hover:text-foreground/80" />
+                      <ChevronRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground" />
                     </Link>
                   ))}
                 </div>
               </div>
             ))}
+
+            {/* Subscription Section */}
+            {!isPro && (
+              <div className="space-y-2">
+                <h3 className="flex items-center gap-2 px-2 py-1 text-sm font-semibold text-muted-foreground">
+                  <CreditCard className="h-4 w-4" />
+                  Account
+                </h3>
+                <div className="space-y-1">
+                  <Link
+                    href="/subscription"
+                    onClick={handleLinkClick}
+                    className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors hover:bg-accent text-foreground group"
+                  >
+                    <Crown className="h-4 w-4 text-amber-500" />
+                    <span className="flex-1">Upgrade to Pro</span>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground" />
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t bg-background flex-shrink-0">
+        <div className="p-4 border-t bg-background">
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-3 p-3 rounded-md text-foreground hover:bg-muted w-full transition-colors"
+            className="flex items-center gap-3 w-full p-3 rounded-lg text-foreground hover:bg-muted transition-colors"
           >
             <LogOut className="h-5 w-5" />
             <span>Sign Out</span>
           </button>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
@@ -209,8 +242,8 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
   }, [mounted, pathname])
 
   const handleMenuToggle = useCallback(() => {
-    setIsMenuOpen(!isMenuOpen)
-  }, [isMenuOpen])
+    setIsMenuOpen(prev => !prev)
+  }, [])
 
   const handleMenuClose = useCallback(() => {
     setIsMenuOpen(false)
@@ -221,32 +254,25 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden'
     } else {
-      document.body.style.overflow = 'unset'
+      document.body.style.overflow = ''
     }
 
     return () => {
-      document.body.style.overflow = 'unset'
+      document.body.style.overflow = ''
     }
   }, [isMenuOpen])
 
-  // Don't render until mounted to prevent hydration issues
+  // Show loading state until mounted
   if (!mounted) {
     return (
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t z-50 shadow-lg">
-        <div className="h-16 flex justify-around items-center">
-          {mainNavItems.map((item) => (
-            <div
-              key={item.href}
-              className="flex flex-col items-center justify-center text-muted-foreground w-full h-full"
-            >
-              <item.icon className="h-6 w-6" />
-              <span className="text-xs">{item.label}</span>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t z-50">
+        <div className="h-16 flex justify-around items-center animate-pulse">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex flex-col items-center justify-center w-full h-full">
+              <div className="w-6 h-6 bg-muted rounded" />
+              <div className="w-8 h-3 bg-muted rounded mt-1" />
             </div>
           ))}
-          <div className="flex flex-col items-center justify-center text-muted-foreground w-full h-full">
-            <Menu className="h-6 w-6" />
-            <span className="text-xs">More</span>
-          </div>
         </div>
       </div>
     )
@@ -254,7 +280,7 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
 
   return (
     <>
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t z-50 shadow-lg">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t z-50">
         {/* Pro Status Bar */}
         {subscriptionMounted && isPro && (
           <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-1">
@@ -266,36 +292,29 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
         )}
 
         {/* Navigation Bar */}
-        <div className="h-16 flex justify-around items-center">
+        <div className="h-16 flex justify-around items-center bg-background">
           {mainNavItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center text-muted-foreground w-full h-full transition-all duration-200 active:scale-95 active:bg-accent/20 rounded-lg",
-                isActive(item.href) && "text-primary bg-primary/5"
+                "flex flex-col items-center justify-center text-muted-foreground w-full h-full transition-colors",
+                isActive(item.href) && "text-primary"
               )}
             >
-              <item.icon className={cn(
-                "h-6 w-6 transition-all duration-200",
-                isActive(item.href) && "scale-110"
-              )} />
-              <span className={cn(
-                "text-xs transition-all duration-200",
-                isActive(item.href) && "font-medium"
-              )}>{item.label}</span>
+              <item.icon className="h-6 w-6" />
+              <span className="text-xs mt-1">{item.label}</span>
             </Link>
           ))}
 
-          {/* More Menu Button */}
+          {/* More Button */}
           <button
             type="button"
             onClick={handleMenuToggle}
-            className="flex flex-col items-center justify-center text-muted-foreground w-full h-full relative transition-all duration-300"
-            aria-label="Open full menu"
+            className="flex flex-col items-center justify-center text-muted-foreground w-full h-full transition-colors relative"
           >
-            <Menu className="h-6 w-6 transition-all duration-300" />
-            <span className="text-xs transition-all duration-300">More</span>
+            <Menu className="h-6 w-6" />
+            <span className="text-xs mt-1">More</span>
             {subscriptionMounted && isPro && (
               <div className="absolute -top-1 -right-1">
                 <Crown className="w-3 h-3 text-amber-500" />
@@ -306,7 +325,7 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
       </div>
 
       {/* Mobile Menu */}
-      <MobileMenu 
+      <MobileMenuDrawer 
         isOpen={isMenuOpen} 
         onClose={handleMenuClose} 
         isPro={subscriptionMounted && isPro} 
