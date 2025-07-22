@@ -26,6 +26,7 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
   categoryOrder: string[]
 }) {
   const [searchTerm, setSearchTerm] = React.useState("")
+  const [selectedScenario, setSelectedScenario] = React.useState<Scenario | null>(null);
 
   const filteredScenarios = React.useMemo(() => {
     if (!searchTerm) {

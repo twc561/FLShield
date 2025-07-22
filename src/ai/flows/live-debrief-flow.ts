@@ -14,8 +14,7 @@ const LiveDebriefInputSchema = z.object({
       parts: z.array(z.object({ text: z.string() })),
     })
   ),
-});
-
+}) as const;
 export type LiveDebriefInput = z.infer<typeof LiveDebriefInputSchema>;
 
 // This is an async generator function, which is what allows streaming.

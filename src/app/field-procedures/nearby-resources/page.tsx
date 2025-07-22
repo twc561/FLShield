@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -120,7 +119,7 @@ export default function NearbyResourcesPage() {
 
     return <p>Use the button above to start a search.</p>;
   };
-  
+
   return (
     <div className="animate-fade-in-up space-y-6">
       <PageHeader

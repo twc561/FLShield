@@ -79,7 +79,7 @@ export default function FieldNotesPage() {
         value={content}
         onChange={handleChange}
         className="flex-1 w-full text-base resize-none focus:scale-[1.01] transition-transform duration-200"
-        placeholder="Start typing your general reference notes here..."
+        placeholder="What&apos;s on your mind? Take notes, jot down observations, or record important details from your shift..."
       />
     </motion.div>
   )

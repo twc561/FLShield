@@ -155,3 +155,14 @@ Provide a thorough, detailed analysis that prioritizes officer safety while deli
     return output;
   }
 );
+
+// Wrapper function that matches the expected interface
+export async function identifyPillFromImage(params: { imageDataUri: string }) {
+  // Convert data URI to base64
+  const base64 = params.imageDataUri.split(',')[1] || params.imageDataUri;
+  
+  return await identifyPill({
+    imageBase64: base64,
+    additionalContext: undefined
+  });
+}

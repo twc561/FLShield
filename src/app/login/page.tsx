@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useState } from 'react'
@@ -17,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, User, AlertTriangle } from 'lucide-react'
+import { Loader2, AlertTriangle } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 const GoogleIcon = () => (
@@ -92,15 +91,15 @@ export default function LoginPage() {
         toast({ variant: "destructive", title, description });
     }
 
-    const handleGoogleSignIn = async () => {
+    const handleGoogleSignIn = async (e: React.FormEvent) => {
         setIsLoading("google");
         const provider = new GoogleAuthProvider();
         try {
             const result = await signInWithPopup(auth!, provider);
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential?.accessToken;
-            const user = result.user;
-            console.log("Success! User:", user);
+
+            console.log('Google sign-in successful, redirecting...');
+            const userCredential = result;
+            console.log('User details:', userCredential.user?.email);
             router.push('/dashboard');
         } catch (error: any) {
             console.error("Google Auth Failed:", error);
@@ -153,7 +152,7 @@ export default function LoginPage() {
             setIsLoading(null);
         }
     }
-    
+
     if (!isFirebaseConfigured) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-muted/50 p-4">

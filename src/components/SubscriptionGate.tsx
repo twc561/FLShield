@@ -1,9 +1,8 @@
-
 'use client'
 
 import { useEffect, useState } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
-import dynamic from 'next/dynamic'
+import { usePathname } from 'next/navigation'
+// Removed unused imports
 import { useSubscription } from '@/hooks/use-subscription'
 import { Loader2, Crown, Lock } from 'lucide-react'
 import { Button } from './ui/button'

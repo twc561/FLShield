@@ -23,7 +23,7 @@ import {
 
 const QueryFwcRegulationsInputSchema = z.object({
   question: z.string().describe('The user\'s question about FWC regulations.'),
-});
+}) as const;
 export type QueryFwcRegulationsInput = z.infer<typeof QueryFwcRegulationsInputSchema>;
 
 const QueryFwcRegulationsOutputSchema = z.object({

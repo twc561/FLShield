@@ -13,7 +13,7 @@ const IdentifyWeaponInputSchema = z.object({
     .describe(
       "A photo of a weapon, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
-});
+}) as const;
 export type IdentifyWeaponInput = z.infer<typeof IdentifyWeaponInputSchema>;
 
 const StatuteLinkSchema = z.object({

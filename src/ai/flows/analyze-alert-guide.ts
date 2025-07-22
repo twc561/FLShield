@@ -11,7 +11,7 @@ import { z } from 'zod';
 
 const AnalyzeAlertGuideInputSchema = z.object({
   alertId: z.string().describe('The unique ID of the alert to analyze, e.g., "ER_AMBER_ALERT" or "ER_SILVER_ALERT".'),
-});
+}) as const;
 export type AnalyzeAlertGuideInput = z.infer<typeof AnalyzeAlertGuideInputSchema>;
 
 const AnalyzeAlertGuideOutputSchema = z.object({

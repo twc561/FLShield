@@ -1,4 +1,3 @@
-
 export type JuryInstructionIndexItem = {
   id: string; // e.g., "FL_JI_CRIM_8_1"
   instructionNumber: string; // e.g., "8.1"

@@ -1,4 +1,3 @@
-
 'use client'
 
 import React, { useState } from 'react'
@@ -54,7 +53,7 @@ const PinnedToolCard = ({
               </Badge>
             </div>
           )}
-          
+
           {isEditMode && (
             <>
               <div className="absolute top-2 left-2 opacity-60">
@@ -74,7 +73,7 @@ const PinnedToolCard = ({
               </Button>
             </>
           )}
-          
+
           <CardHeader className={isEditMode ? 'pt-8' : ''}>
             <div className="flex items-center gap-3">
               <div className="p-2 bg-primary/10 rounded-lg">
@@ -163,7 +162,7 @@ export function PinnedToolsGrid({ isClient }: PinnedToolsGridProps) {
           {isEditMode ? 'Done' : 'Edit'}
         </Button>
       </div>
-      
+
       {isEditMode && (
         <div className="text-sm text-muted-foreground px-1">
           Drag to reorder • Click X to remove • Maximum 6 tools

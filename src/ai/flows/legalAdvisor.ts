@@ -11,7 +11,7 @@ import { z } from 'zod';
 
 const AdvisorInputSchema = z.object({
   scenario: z.string().describe("The user's natural language scenario or question."),
-});
+}) as const;
 export type AdvisorInput = z.infer<typeof AdvisorInputSchema>;
 
 const AdvisorOutputItemSchema = z.object({
