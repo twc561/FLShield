@@ -89,12 +89,18 @@ export function MobileBottomNav() {
           key={item.href}
           href={item.href}
           className={cn(
-            "flex flex-col items-center justify-center text-muted-foreground w-full h-full transition-colors",
-            isActive(item.href) && "text-primary"
+            "flex flex-col items-center justify-center text-muted-foreground w-full h-full transition-all duration-200 active:scale-95 active:bg-accent/20 rounded-lg",
+            isActive(item.href) && "text-primary bg-primary/5"
           )}
         >
-          <item.icon className="h-6 w-6" />
-          <span className="text-xs">{item.label}</span>
+          <item.icon className={cn(
+            "h-6 w-6 transition-all duration-200",
+            isActive(item.href) && "scale-110"
+          )} />
+          <span className={cn(
+            "text-xs transition-all duration-200",
+            isActive(item.href) && "font-medium"
+          )}>{item.label}</span>
         </Link>
       ))}
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>

@@ -1,182 +1,146 @@
-
 "use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { ArrowRight, Loader, Sparkles, AlertTriangle, FileText, Search as SearchIcon } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { commandSearch } from '@/ai/flows/commandSearch';
-import { localSearch, type SearchResult } from '@/lib/local-search';
-import { Badge } from './ui/badge';
-import { Button } from './ui/button';
+import React, { useState, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { SearchIcon, Loader2, Sparkles, Command, Keyboard } from "lucide-react";
 
-const AICommandSearch = () => {
-  const [query, setQuery] = useState('');
-  const [aiResult, setAiResult] = useState<string | null>(null);
-  const [localResults, setLocalResults] = useState<SearchResult[]>([]);
+export default function AICommandSearch() {
+  const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [searchedQuery, setSearchedQuery] = useState('');
+  const [result, setResult] = useState<string | null>(null);
+  const [isShortcutPressed, setIsShortcutPressed] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!query.trim()) return;
-
-    setSearchedQuery(query);
-    setLocalResults([]);
-    setAiResult(null);
-    setError(null);
-    setIsLoading(true);
-
-    // Step 1: Perform local search first
-    const localMatches = localSearch(query);
-
-    if (localMatches.length > 0) {
-      setLocalResults(localMatches.slice(0, 5)); // Show top 5 local results
-      setIsLoading(false);
-      return;
-    }
-
-    // Step 2: If no local results, fall back to AI search
-    try {
-      const result = await commandSearch({ query });
-      if (result?.answer) {
-        setAiResult(result.answer);
-      } else {
-        throw new Error("AI returned an empty response.");
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Cmd+K or Ctrl+K to focus search
+      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+        event.preventDefault();
+        inputRef.current?.focus();
+        setIsShortcutPressed(true);
+        setTimeout(() => setIsShortcutPressed(false), 200);
       }
-    } catch (err) {
-      console.error(err);
-      setError("The local search found no matches, and the AI network appears to be unavailable. Please check your connection and try again.");
-    } finally {
+
+      // ESC to clear search
+      if (event.key === 'Escape') {
+        setQuery("");
+        setResult(null);
+        inputRef.current?.blur();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleSearch = async () => {
+    // Placeholder for actual search logic
+    setIsLoading(true);
+    setTimeout(() => {
+      setResult("This is a dummy result for: " + query);
       setIsLoading(false);
-    }
+    }, 1500);
   };
 
-  const handleReset = () => {
-    setQuery('');
-    setLocalResults([]);
-    setAiResult(null);
-    setError(null);
-    setSearchedQuery('');
-  }
-
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <form onSubmit={handleSearch}>
-        <div className="relative">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search statutes, case law, procedures, or ask the AI..."
-            className="w-full h-14 pl-6 pr-16 text-lg bg-card/50 border-2 border-border focus:border-primary focus:ring-0 rounded-full outline-none transition-colors"
-          />
-          <button
-            type="submit"
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground hover:bg-primary/80 transition-transform active:scale-90 disabled:opacity-50"
-            disabled={isLoading || !query.trim()}
-          >
-            {isLoading ? <Loader className="w-5 h-5 animate-spin" /> : <SearchIcon className="w-5 h-5" />}
-          </button>
+    <Card className={`w-full max-w-4xl mx-auto bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 transition-all duration-200 ${isShortcutPressed ? 'ring-2 ring-blue-400 scale-[1.02]' : ''}`}>
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Sparkles className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-blue-900">AI Command Search</h3>
+              <p className="text-sm text-blue-700">Ask me anything about Florida law, procedures, or get quick tool recommendations.</p>
+            </div>
+          </div>
+          <div className="hidden sm:flex items-center gap-1 text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
+            <Keyboard className="w-3 h-3" />
+            <Command className="w-3 h-3" />
+            <span>K</span>
+          </div>
         </div>
-      </form>
-       <p className="text-xs text-muted-foreground mt-2 text-center max-w-lg mx-auto">
-        This is a hybrid search. It checks local guides first, then asks the AI. For Public Records Only.
-      </p>
 
-      <div className="mt-6">
-        <AnimatePresence>
-          {isLoading && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="flex flex-col items-center justify-center text-center text-muted-foreground py-8"
-            >
-              <Loader className="w-8 h-8 animate-spin text-primary" />
-              <p className="mt-2 text-sm">Searching all sources...</p>
-            </motion.div>
-          )}
-
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="p-4 bg-destructive/10 border border-destructive/50 rounded-lg text-destructive flex flex-col items-center gap-3"
-            >
-                <div className="flex items-center gap-3"><AlertTriangle className="w-5 h-5" /> <p className="font-semibold">Search Error</p></div>
-                <p className='text-center'>{error}</p>
-                <Button variant="destructive" onClick={handleReset}>Clear Search</Button>
-            </motion.div>
-          )}
-
-          {localResults.length > 0 && !isLoading && (
-             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-               <div className="p-4 bg-card/80 border border-border rounded-lg shadow-lg">
-                <h3 className="font-semibold text-lg text-foreground mb-4">Top Local Results for: <span className="italic">"{searchedQuery}"</span></h3>
-                <div className='space-y-3'>
-                    {localResults.map(item => (
-                        <Link href={item.href} key={item.id}>
-                             <div className="p-3 border rounded-md hover:bg-muted/50 hover:border-primary/50 transition-colors cursor-pointer flex items-center justify-between">
-                                <div>
-                                    <p className="font-medium text-foreground/90">{item.title}</p>
-                                    <p className="text-sm text-muted-foreground">{item.description}</p>
-                                </div>
-                                <Badge variant="secondary">{item.category}</Badge>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-                 <div className='text-center mt-4'>
-                    <Button variant="ghost" onClick={handleReset}>Clear Search</Button>
-                 </div>
-              </div>
-            </motion.div>
-          )}
-
-          {aiResult && !isLoading && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <div className="p-6 bg-card/80 border border-border rounded-lg shadow-lg">
-                <div className="flex items-start gap-3 mb-3">
-                  <Sparkles className="w-5 h-5 text-accent flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-semibold text-lg text-foreground">AI Briefing for: <span className="italic">"{searchedQuery}"</span></h3>
-                    <p className='text-xs text-muted-foreground'>No local results found. This answer was generated by AI.</p>
-                  </div>
-                </div>
-                <p className="text-foreground/90 leading-relaxed whitespace-pre-wrap">{aiResult}</p>
-                <div className='text-center mt-4'>
-                    <Button variant="ghost" onClick={handleReset}>Clear Search</Button>
-                 </div>
-              </div>
-            </motion.div>
-          )}
-
-          {!isLoading && localResults.length === 0 && !aiResult && searchedQuery && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-4 bg-muted/50 border rounded-lg text-muted-foreground flex flex-col items-center gap-3 text-center"
+        <div className="flex gap-2 mb-4">
+          <div className="flex-1 relative">
+            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              ref={inputRef}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="e.g., 'What are the elements of battery?' or 'Show me DUI procedures'"
+              className="pl-10 bg-white/80 border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
+              onKeyDown={(e) => e.key === 'Enter' && !isLoading && query.trim() && handleSearch()}
+            />
+            {query && (
+              <button
+                onClick={() => {setQuery(""); setResult(null)}}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                  <FileText className="w-8 h-8" />
-                  <p className="font-semibold">No results found for "{searchedQuery}"</p>
-                  <p className="text-sm">Please try a different search term.</p>
-                  <Button variant="ghost" onClick={handleReset}>Clear Search</Button>
-              </motion.div>
-          )}
+                ✕
+              </button>
+            )}
+          </div>
+          <Button
+            onClick={handleSearch}
+            disabled={isLoading || !query.trim()}
+            className="bg-blue-600 hover:bg-blue-700 transition-all duration-200"
+            size="default"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Thinking...
+              </>
+            ) : (
+              <>
+                <SearchIcon className="h-4 w-4 mr-2" />
+                Search
+              </>
+            )}
+          </Button>
+        </div>
 
-        </AnimatePresence>
-      </div>
-    </div>
+        {/* Quick suggestions with better categorization */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-blue-700">Quick Actions:</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { text: "DUI procedures", category: "Field" },
+              { text: "Use of force policy", category: "Legal" },
+              { text: "Miranda rights", category: "Legal" },
+              { text: "Traffic stop checklist", category: "Field" },
+              { text: "Baker Act requirements", category: "Emergency" }
+            ].map((suggestion) => (
+              <Badge
+                key={suggestion.text}
+                variant="secondary"
+                className="cursor-pointer hover:bg-blue-100 hover:scale-105 transition-all duration-200 flex items-center gap-1"
+                onClick={() => setQuery(suggestion.text)}
+              >
+                <span className="text-xs opacity-70">{suggestion.category}</span>
+                <span>•</span>
+                <span>{suggestion.text}</span>
+              </Badge>
+            ))}
+          </div>
+          <div className="text-xs text-blue-600 opacity-75">
+            💡 Try: "What tools do I need for..." or "Show me procedures for..."
+          </div>
+        </div>
+
+        {result && (
+          <div className="mt-4 p-4 rounded-md bg-blue-50 border border-blue-100 text-blue-800">
+            {result}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
-};
-
-export default AICommandSearch;
+}

@@ -237,40 +237,72 @@ export default function DashboardPage() {
       )}
 
       {/* Daily Roll Call - Primary focal point */}
-        <div className="mb-6">
+      <motion.div variants={itemVariants} className="mb-8">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
           <DailyRollCall />
         </div>
+      </motion.div>
 
-        {/* Briefing Statistics */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-4">Your Training Progress</h2>
+      {/* Training Progress Section */}
+      <motion.div variants={itemVariants} className="mb-8">
+        <div className="bg-card/30 border rounded-lg p-6">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-primary" />
+            Your Training Progress
+          </h2>
           <BriefingStats />
         </div>
+      </motion.div>
 
-      <FeaturedTools isClient={isClient} />
+      {/* Featured Tools Section */}
+      <div className="mb-8 bg-card/20 border rounded-lg p-6">
+        <FeaturedTools isClient={isClient} />
+      </div>
 
-      <PinnedTools isClient={isClient} />
+      {/* Pinned Tools Section */}
+      <div className="mb-8 bg-gradient-to-r from-amber-50/50 to-orange-50/50 border border-amber-200/50 rounded-lg p-6">
+        <PinnedTools isClient={isClient} />
+      </div>
 
       {/* The "All Tools" Library */}
-      <motion.div variants={itemVariants}>
-        <h2 className="text-lg font-bold tracking-tight mb-3 px-1">All Tools Library</h2>
-        <div className="space-y-6">
-          {Array.isArray(dashboardFeatureGroups) && dashboardFeatureGroups.map((group) => {
+      <motion.div variants={itemVariants} className="bg-card/10 border rounded-lg p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold tracking-tight flex items-center gap-3">
+            <BookOpen className="w-6 h-6 text-primary" />
+            Complete Tools Library
+          </h2>
+          <Badge variant="outline" className="text-sm">
+            {dashboardFeatureGroups.reduce((acc, group) => acc + group.features.length, 0)} Tools
+          </Badge>
+        </div>
+        <div className="space-y-8">
+          {Array.isArray(dashboardFeatureGroups) && dashboardFeatureGroups.map((group, index) => {
             const GroupIcon = (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle
             return (
-              <Card key={group.category} className="bg-card/50">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-3">
+              <motion.div
+                key={group.category}
+                variants={itemVariants}
+                transition={{ delay: index * 0.05 }}
+              >
+                <Card className="bg-card/60 border-2 hover:border-primary/20 transition-colors">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-3 text-lg">
+                      <div className="p-2 bg-primary/10 rounded-lg">
                         <GroupIcon className="w-5 h-5 text-primary"/>
-                        {group.category}
+                      </div>
+                      {group.category}
+                      <Badge variant="secondary" className="ml-auto">
+                        {group.features.length} {group.features.length === 1 ? 'tool' : 'tools'}
+                      </Badge>
                     </CardTitle>
-                </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {group.features.map((feature) => (
-                    <ToolCard key={feature.id} module={feature} />
-                  ))}
-                </CardContent>
-              </Card>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {group.features.map((feature) => (
+                      <ToolCard key={feature.id} module={feature} />
+                    ))}
+                  </CardContent>
+                </Card>
+              </motion.div>
             )
           })}
         </div>

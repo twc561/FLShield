@@ -21,6 +21,30 @@ export const FeatureCard = memo(function FeatureCard({ module, showPinButton = t
   const { isPro, mounted } = useSubscription()
   const Icon = (LucideIcons as any)[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle
 
+  if (!mounted) {
+    return (
+      <Card className="h-full flex flex-col animate-pulse">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gray-200 rounded-lg w-9 h-9"></div>
+              <div className="h-4 bg-gray-200 rounded w-32"></div>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="flex-grow">
+          <div className="space-y-2">
+            <div className="h-3 bg-gray-200 rounded w-full"></div>
+            <div className="h-3 bg-gray-200 rounded w-4/5"></div>
+          </div>
+        </CardContent>
+        <CardFooter>
+          <div className="h-10 bg-gray-200 rounded w-full"></div>
+        </CardFooter>
+      </Card>
+    )
+  }
+
   return (
     <motion.div
       whileHover={{ y: -4, boxShadow: "0 10px 20px hsla(var(--primary), 0.1)" }}
