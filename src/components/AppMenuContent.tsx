@@ -36,6 +36,17 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
   const { setOpen } = useSidebar()
   const isMobile = useMobile()
 
+  // Initialize sections based on active routes
+  useEffect(() => {
+    const initialState: Record<string, boolean> = {}
+    menuItems.forEach(item => {
+      if (item.items) {
+        initialState[item.label] = item.items.some((subItem) => isActive(subItem.href))
+      }
+    })
+    setOpenSections(initialState)
+  }, [pathname])
+
   const handleMenuItemClick = () => {
     if (isMobile) {
       setOpen(false)
@@ -90,7 +101,7 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
         item.items ? (
           <Collapsible
             key={item.label}
-            open={openSections[item.label] ?? item.items.some((subItem) => isActive(subItem.href))}
+            open={openSections[item.label] ?? false}
             onOpenChange={(open) => setOpenSections(prev => ({ ...prev, [item.label]: open }))}
             className="w-full"
           >
