@@ -233,10 +233,7 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         isPremium: true,
       },
 
-        category: "Legal Reference Library",
-        isPremium: true,
-      },
-      {
+        {
         id: "local-ordinances-guide",
         title: "Local Ordinances",
         summary: "Search city and county ordinances by jurisdiction and topic.",
