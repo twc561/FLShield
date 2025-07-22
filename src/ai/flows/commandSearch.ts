@@ -90,6 +90,11 @@ export async function* streamCommandSearch(input: CommandSearchInput) {
     let chunkCount = 0;
     let totalContent = '';
     
+    // Set up a timeout for the stream
+    const streamTimeout = setTimeout(() => {
+      console.log('Stream timeout reached, but may continue processing...');
+    }, 30000); // 30 second timeout
+
     try {
       for await (const chunk of result.stream) {
         const chunkText = chunk.text();
@@ -97,13 +102,18 @@ export async function* streamCommandSearch(input: CommandSearchInput) {
           chunkCount++;
           totalContent += chunkText;
           yield chunkText;
+          
+          // Reset timeout on each successful chunk
+          clearTimeout(streamTimeout);
         }
       }
+      clearTimeout(streamTimeout);
     } catch (streamError: any) {
+      clearTimeout(streamTimeout);
       console.error('Stream interrupted:', streamError);
       
       // If we got substantial content before the interruption, that's okay
-      if (totalContent.length > 100) {
+      if (totalContent.length > 200) {
         console.log('Stream was interrupted but substantial content was delivered:', { 
           chunkCount, 
           contentLength: totalContent.length 
@@ -111,7 +121,16 @@ export async function* streamCommandSearch(input: CommandSearchInput) {
         return; // Don't yield error message if we got substantial content
       }
       
-      // Only yield error if we got very little or no content
+      // For minimal content, try to provide what we have
+      if (totalContent.length > 50) {
+        console.log('Stream interrupted with partial content:', { 
+          contentLength: totalContent.length 
+        });
+        yield "\n\n[Response was interrupted, but partial content above may still be helpful]";
+        return;
+      }
+      
+      // Only throw error if we got virtually no content
       console.error('Stream failed with minimal content:', { 
         contentLength: totalContent.length,
         error: streamError.message 

@@ -38,11 +38,13 @@ export default function AICommandSearch() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleSearch = async () => {
+  const handleSearch = async (retryCount = 0) => {
     if (!query.trim()) return
 
     setIsLoading(true)
-    setResult("")
+    if (retryCount === 0) {
+      setResult("")
+    }
 
     try {
       // Use streaming command search for better responsiveness
@@ -56,6 +58,7 @@ export default function AICommandSearch() {
 
       let hasReceivedContent = false;
       let accumulatedContent = "";
+      let lastChunkTime = Date.now();
 
       try {
         for await (const chunk of stream) {
@@ -63,39 +66,59 @@ export default function AICommandSearch() {
             hasReceivedContent = true;
             accumulatedContent += chunk;
             setResult(accumulatedContent);
+            lastChunkTime = Date.now();
           }
         }
       } catch (streamError) {
         console.error('Stream processing error:', streamError);
         
-        // If we got some content before the error, keep it
-        if (accumulatedContent.trim().length > 100) {
-          console.log('Partial content received before stream error, keeping it');
-          return; // Don't throw error if we have substantial content
+        // If we got substantial content before the error, keep it and don't retry
+        if (accumulatedContent.trim().length > 200) {
+          console.log('Substantial content received before stream error, keeping it');
+          return; 
         }
         
-        // Only throw if we got no meaningful content
+        // Retry once if we got minimal content and haven't retried yet
+        if (retryCount === 0 && accumulatedContent.trim().length < 50) {
+          console.log('Retrying search due to stream interruption...');
+          setTimeout(() => handleSearch(1), 1000);
+          return;
+        }
+        
         throw new Error('Stream was interrupted');
       }
 
-      // If no content was received, show fallback message
+      // If no content was received after retries, show fallback message
       if (!hasReceivedContent || accumulatedContent.trim().length === 0) {
+        if (retryCount === 0) {
+          console.log('No content received, retrying...');
+          setTimeout(() => handleSearch(1), 1000);
+          return;
+        }
         setResult("I'm having difficulty processing that question right now. Please try rephrasing it or try again in a moment.");
       }
     } catch (error: any) {
       console.error("Search failed:", error);
 
-      // Provide more specific error messages based on error type
-      if (error.message?.includes('fetch') || error.name === 'TypeError') {
-        setResult("Connection issue detected. Please check your internet connection and try again.");
-      } else if (error.message?.includes('timeout') || error.message?.includes('DEADLINE_EXCEEDED')) {
-        setResult("The request timed out. Please try a shorter, more specific question.");
-      } else if (error.message?.includes('quota') || error.message?.includes('RESOURCE_EXHAUSTED')) {
+      // Don't retry on certain error types
+      if (error.message?.includes('quota') || error.message?.includes('RESOURCE_EXHAUSTED')) {
         setResult("The AI service is experiencing high demand. Please try again in a few moments.");
-      } else if (error.message?.includes('Stream was interrupted')) {
-        setResult("The response was interrupted. Please try your question again.");
+      } else if (error.message?.includes('API key')) {
+        setResult("There's a configuration issue. Please contact support.");
+      } else if (retryCount === 0) {
+        // Retry once for other errors
+        console.log('Retrying search due to error...');
+        setTimeout(() => handleSearch(1), 2000);
+        return;
       } else {
-        setResult("I'm experiencing technical difficulties. Please try rephrasing your question or try again in a moment.");
+        // After retry, show appropriate error message
+        if (error.message?.includes('fetch') || error.name === 'TypeError') {
+          setResult("Connection issue detected. Please check your internet connection and try again.");
+        } else if (error.message?.includes('timeout') || error.message?.includes('DEADLINE_EXCEEDED')) {
+          setResult("The request timed out. Please try a shorter, more specific question.");
+        } else {
+          setResult("I'm experiencing technical difficulties. Please try rephrasing your question or try again in a moment.");
+        }
       }
     } finally {
       setIsLoading(false)
