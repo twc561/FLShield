@@ -212,38 +212,9 @@ export default function AICommandSearch() {
         {result && (
           <div className="mt-4 p-4 rounded-md bg-accent/10 border border-accent/20 text-foreground">
             <div className="prose prose-sm max-w-none">
-              {result.split('\n').map((line, index) => {
-                // Check if line contains section headers
-                if (line.includes('**MUST KNOW:**')) {
-                  return (
-                    <div key={index} className="flex items-center gap-2 mt-4 mb-2 first:mt-0">
-                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                      <h4 className="font-semibold text-red-700 dark:text-red-400 m-0">MUST KNOW</h4>
-                    </div>
-                  );
-                } else if (line.includes('**HOW IT APPLIES:**')) {
-                  return (
-                    <div key={index} className="flex items-center gap-2 mt-4 mb-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <h4 className="font-semibold text-blue-700 dark:text-blue-400 m-0">HOW IT APPLIES</h4>
-                    </div>
-                  );
-                } else if (line.includes('**EXAMPLE:**')) {
-                  return (
-                    <div key={index} className="flex items-center gap-2 mt-4 mb-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <h4 className="font-semibold text-green-700 dark:text-green-400 m-0">EXAMPLE</h4>
-                    </div>
-                  );
-                } else if (line.trim() && !line.includes('**')) {
-                  return (
-                    <p key={index} className="mb-2 leading-relaxed">
-                      {line}
-                    </p>
-                  );
-                }
-                return null;
-              })}
+              <div className="whitespace-pre-wrap leading-relaxed">
+                {result}
+              </div>
             </div>
           </div>
         )}
