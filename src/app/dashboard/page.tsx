@@ -1,4 +1,3 @@
-
 'use client'
 
 import React, { useState, useEffect } from "react"
@@ -113,7 +112,7 @@ const SectionCard = ({ title, description, icon: Icon, children, gradient = fals
 
 const QuickAccessGrid = ({ isClient }: { isClient: boolean }) => {
   const { isPro, mounted } = useSubscription()
-  
+
   const quickAccess: FeatureModule[] = [
     dashboardFeatureGroups.find(g => g.category === "AI Assistant Tools")?.features[0],
     dashboardFeatureGroups.find(g => g.category === "Field Operations & Procedures")?.features[0],
@@ -231,7 +230,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setIsClient(true)
-    
+
     const getGreeting = () => {
       const hour = new Date().getHours()
       if (hour < 12) {
