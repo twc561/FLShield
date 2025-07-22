@@ -69,19 +69,19 @@ export default function AICommandSearch() {
   ];
 
   return (
-    <Card className={`w-full max-w-4xl mx-auto bg-gradient-to-r from-slate-50 to-blue-50 border-slate-200 transition-all duration-200 ${isShortcutPressed ? 'ring-2 ring-blue-500 scale-[1.02]' : ''}`}>
+    <Card className={`w-full max-w-4xl mx-auto bg-gradient-to-r from-card/50 to-accent/10 border-border transition-all duration-200 ${isShortcutPressed ? 'ring-2 ring-accent scale-[1.02]' : ''}`}>
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Sparkles className="w-5 h-5 text-blue-600" />
+            <div className="p-2 bg-accent/20 rounded-lg">
+              <Sparkles className="w-5 h-5 text-accent" />
             </div>
             <div>
-              <h3 className="font-semibold text-slate-900">AI Command Search</h3>
-              <p className="text-sm text-slate-600">Ask me anything about Florida law, procedures, or get quick tool recommendations.</p>
+              <h3 className="font-semibold">AI Command Search</h3>
+              <p className="text-sm text-muted-foreground">Ask me anything about Florida law, procedures, or get quick tool recommendations.</p>
             </div>
           </div>
-          <div className="hidden sm:flex items-center gap-1 text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">
+          <div className="hidden sm:flex items-center gap-1 text-xs text-accent bg-accent/20 px-2 py-1 rounded">
             <Keyboard className="w-3 h-3" />
             <Command className="w-3 h-3" />
             <span>K</span>
@@ -90,19 +90,19 @@ export default function AICommandSearch() {
 
         <div className="flex gap-2 mb-4">
           <div className="flex-1 relative">
-            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="e.g., 'What are the elements of battery?' or 'Show me DUI procedures'"
-              className="pl-10 bg-white/80 border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              className="pl-10 bg-background/80 border-border focus:border-accent focus:ring-2 focus:ring-accent/20"
               onKeyDown={(e) => e.key === 'Enter' && !isLoading && query.trim() && handleSearch()}
             />
             {query && (
               <button
                 onClick={() => {setQuery(""); setResult(null)}}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
                 ✕
               </button>
@@ -111,7 +111,7 @@ export default function AICommandSearch() {
           <Button
             onClick={handleSearch}
             disabled={isLoading || !query.trim()}
-            className="bg-blue-600 hover:bg-blue-700 transition-all duration-200"
+            className="bg-accent hover:bg-accent/80 transition-all duration-200"
             size="default"
           >
             {isLoading ? (
@@ -131,14 +131,14 @@ export default function AICommandSearch() {
         {/* Quick suggestions with better categorization */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-slate-700">Quick Actions:</span>
+            <span className="text-xs font-medium text-muted-foreground">Quick Actions:</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {quickActions.map((suggestion) => (
               <Badge
                 key={suggestion.text}
                 variant="secondary"
-                className="cursor-pointer hover:bg-blue-100 hover:text-blue-700 hover:scale-105 transition-all duration-200 flex items-center gap-1 bg-slate-100 text-slate-700 border-slate-200"
+                className="cursor-pointer hover:bg-accent/20 hover:text-accent hover:scale-105 transition-all duration-200 flex items-center gap-1 bg-muted text-muted-foreground border-border"
                 onClick={() => router.push(suggestion.path)}
               >
                 <span className="text-xs opacity-70">{suggestion.category}</span>
@@ -147,13 +147,13 @@ export default function AICommandSearch() {
               </Badge>
             ))}
           </div>
-          <div className="text-xs text-slate-600 opacity-75">
+          <div className="text-xs text-muted-foreground opacity-75">
             💡 Try: "What tools do I need for..." or "Show me procedures for..."
           </div>
         </div>
 
         {result && (
-          <div className="mt-4 p-4 rounded-md bg-blue-50 border border-blue-200 text-blue-800">
+          <div className="mt-4 p-4 rounded-md bg-accent/10 border border-accent/20 text-foreground">
             {result}
           </div>
         )}
