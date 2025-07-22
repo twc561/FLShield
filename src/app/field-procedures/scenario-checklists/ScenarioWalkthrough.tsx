@@ -92,7 +92,7 @@ export const ScenarioWalkthrough = React.memo(function ScenarioWalkthrough({
 
         </CardContent>
         <CardFooter className="flex flex-col items-start gap-4">
-          {currentStep.choices && currentStep.choices.length > 0 && (
+          {currentStep.choices && Array.isArray(currentStep.choices) && currentStep.choices.length > 0 && (
             <div className="w-full">
               <h4 className="text-sm font-semibold text-muted-foreground mb-2">
                 Select your next action:
