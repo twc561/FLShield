@@ -1,4 +1,3 @@
-
 "use client"
 
 import Link from "next/link"
@@ -15,6 +14,7 @@ import {
   Crown,
   MapPin,
   X,
+  ChevronRight,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { signOut } from "firebase/auth"
@@ -33,6 +33,55 @@ const mainNavItems = [
   },
 ]
 
+// Menu sections data
+const menuSections = [
+  {
+    label: "AI Assistant Tools",
+    icon: Bot,
+    items: [
+      { href: "/reporting-development/ai-charge-assistant", label: "AI Charge Assistant" },
+      { href: "/ai-legal-advisor", label: "AI Legal Advisor" },
+      { href: "/reporting-development/ai-report-writer", label: "AI Report Assistant" },
+    ]
+  },
+  {
+    label: "Emergency Response",
+    icon: Bot,
+    items: [
+      { href: "/emergency-response/baker-act-guide", label: "Baker Act Procedures" },
+      { href: "/emergency-response/first-aid-guide", label: "Field First Aid Guide" },
+      { href: "/emergency-response/hazmat-guide", label: "HAZMAT Response Guide" },
+    ]
+  },
+  {
+    label: "Field Operations",
+    icon: Bot,
+    items: [
+      { href: "/field-procedures/crime-scene-management", label: "Crime Scene Management" },
+      { href: "/field-procedures/domestic-violence-protocol", label: "Domestic Violence Protocol" },
+      { href: "/field-procedures/evidence-management-guide", label: "Evidence Management" },
+    ]
+  },
+  {
+    label: "Legal Reference",
+    icon: Scale,
+    items: [
+      { href: "/legal-reference/statutes", label: "Florida Statutes" },
+      { href: "/legal-reference/case-law", label: "Case Law Database" },
+      { href: "/legal-reference/constitutional-law-guide", label: "Constitutional Law" },
+    ]
+  },
+  {
+    label: "Quick Tools",
+    icon: Bot,
+    items: [
+      { href: "/notes", label: "Digital Field Notes" },
+      { href: "/field-translation-guide", label: "Field Translator" },
+      { href: "/wellness", label: "Wellness Resources" },
+    ]
+  }
+]
+
 // Simple overlay menu without Sheet component to avoid hydration issues
 function MobileMenu({ 
   isOpen, 
@@ -44,7 +93,7 @@ function MobileMenu({
   isPro: boolean
 }) {
   const router = useRouter()
-  
+
   const handleSignOut = useCallback(async () => {
     try {
       await signOut(auth)
@@ -68,11 +117,11 @@ function MobileMenu({
         className="absolute inset-0 bg-black/80" 
         onClick={onClose}
       />
-      
+
       {/* Menu Panel */}
       <div className="absolute left-0 top-0 bottom-0 w-3/4 bg-background border-r shadow-xl flex flex-col">
         {/* Header */}
-        <div className="p-4 border-b flex items-center justify-between">
+        <div className="p-4 border-b flex items-center justify-between bg-background">
           <Link
             href="/"
             className="flex items-center gap-2.5"
@@ -99,166 +148,36 @@ function MobileMenu({
             <X className="h-5 w-5" />
           </button>
         </div>
-        
-        {/* Menu Content */}
-        <div className="flex-1 overflow-y-auto p-4">
-          <div className="space-y-6">
-            {/* AI Assistant Tools */}
-            <div>
-              <h3 className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-foreground/80 bg-muted/30 rounded-md mb-2">
-                <Bot className="h-4 w-4" />
-                AI Assistant Tools
-              </h3>
-              <div className="space-y-1 ml-2">
-                <Link
-                  href="/reporting-development/ai-charge-assistant"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  AI Charge Assistant
-                </Link>
-                <Link
-                  href="/ai-legal-advisor"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  AI Legal Advisor
-                </Link>
-                <Link
-                  href="/reporting-development/ai-report-writer"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  AI Report Assistant
-                </Link>
-              </div>
-            </div>
 
-            {/* Emergency Response */}
-            <div>
-              <h3 className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-foreground/80 bg-muted/30 rounded-md mb-2">
-                Emergency Response
-              </h3>
-              <div className="space-y-1 ml-2">
-                <Link
-                  href="/emergency-response/baker-act-guide"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  Baker Act Procedures
-                </Link>
-                <Link
-                  href="/emergency-response/first-aid-guide"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  Field First Aid Guide
-                </Link>
-                <Link
-                  href="/emergency-response/hazmat-guide"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  HAZMAT Response Guide
-                </Link>
+        {/* Menu Content - Scrollable */}
+        <div className="flex-1 overflow-y-auto bg-background">
+          <div className="p-4 space-y-6">
+            {menuSections.map((section) => (
+              <div key={section.label}>
+                <h3 className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-foreground/80 bg-muted/30 rounded-md mb-3">
+                  <section.icon className="h-4 w-4" />
+                  {section.label}
+                </h3>
+                <div className="space-y-1">
+                  {section.items.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={handleLinkClick}
+                      className="flex items-center gap-3 px-4 py-3 text-sm rounded-md transition-colors hover:bg-accent text-foreground group"
+                    >
+                      <span className="flex-1">{item.label}</span>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground/60 group-hover:text-foreground/80" />
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
-
-            {/* Field Operations */}
-            <div>
-              <h3 className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-foreground/80 bg-muted/30 rounded-md mb-2">
-                Field Operations
-              </h3>
-              <div className="space-y-1 ml-2">
-                <Link
-                  href="/field-procedures/crime-scene-management"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  Crime Scene Management
-                </Link>
-                <Link
-                  href="/field-procedures/domestic-violence-protocol"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  Domestic Violence Protocol
-                </Link>
-                <Link
-                  href="/field-procedures/evidence-management-guide"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  Evidence Management
-                </Link>
-              </div>
-            </div>
-
-            {/* Legal Reference */}
-            <div>
-              <h3 className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-foreground/80 bg-muted/30 rounded-md mb-2">
-                <Scale className="h-4 w-4" />
-                Legal Reference
-              </h3>
-              <div className="space-y-1 ml-2">
-                <Link
-                  href="/legal-reference/statutes"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  Florida Statutes
-                </Link>
-                <Link
-                  href="/legal-reference/case-law"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  Case Law Database
-                </Link>
-                <Link
-                  href="/legal-reference/constitutional-law-guide"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  Constitutional Law
-                </Link>
-              </div>
-            </div>
-
-            {/* Quick Tools */}
-            <div>
-              <h3 className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-foreground/80 bg-muted/30 rounded-md mb-2">
-                Quick Tools
-              </h3>
-              <div className="space-y-1 ml-2">
-                <Link
-                  href="/notes"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  Digital Field Notes
-                </Link>
-                <Link
-                  href="/field-translation-guide"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  Field Translator
-                </Link>
-                <Link
-                  href="/wellness"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-colors hover:bg-accent text-foreground"
-                >
-                  Wellness Resources
-                </Link>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
-        
+
         {/* Footer */}
-        <div className="p-4 border-t">
+        <div className="p-4 border-t bg-background flex-shrink-0">
           <button
             onClick={handleSignOut}
             className="flex items-center gap-3 p-3 rounded-md text-foreground hover:bg-muted w-full transition-colors"
@@ -304,7 +223,7 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
     } else {
       document.body.style.overflow = 'unset'
     }
-    
+
     return () => {
       document.body.style.overflow = 'unset'
     }
@@ -367,7 +286,7 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
               )}>{item.label}</span>
             </Link>
           ))}
-          
+
           {/* More Menu Button */}
           <button
             type="button"
