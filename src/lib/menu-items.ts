@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { 
   Shield, 
@@ -128,9 +129,9 @@ export const menuItems: MenuItem[] = [
       { href: "/wellness", label: "Wellness Resources Hub", icon: Heart },
     ],
   },
-    {
+  {
     label: "Account & Billing",
-    icon: Heart,
+    icon: CreditCard,
     items: [
       { href: "/subscription", label: "Upgrade to Pro", icon: CreditCard },
     ],
