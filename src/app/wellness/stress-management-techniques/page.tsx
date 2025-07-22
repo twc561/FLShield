@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState } from "react"
@@ -311,7 +310,7 @@ export default function StressManagementTechniquesPage() {
       {/* Stress Management Categories */}
       <div className="space-y-6">
         <h2 className="text-xl font-semibold">Stress Management by Situation</h2>
-        
+
         <div className="grid gap-4">
           {stressManagementCategories.map((category) => {
             const IconComponent = category.icon
@@ -334,23 +333,23 @@ export default function StressManagementTechniquesPage() {
                     </Button>
                   </div>
                 </CardHeader>
-                
+
                 {activeCategory === category.id && (
                   <CardContent>
                     <div className="space-y-6">
                       {category.techniques.map((technique, index) => (
-                        <div key={index} className="border rounded-lg p-4 bg-muted/30">
+                        <div key={index} className="border border-border rounded-lg p-4 bg-card/50">
                           <div className="flex items-start justify-between mb-3">
                             <h4 className="font-semibold">{technique.name}</h4>
                             <Badge variant="outline" className="ml-2">
                               {technique.timeRequired}
                             </Badge>
                           </div>
-                          
+
                           <p className="text-sm text-muted-foreground mb-3">
                             <strong>Best for:</strong> {technique.situation}
                           </p>
-                          
+
                           <div className="grid md:grid-cols-2 gap-4">
                             <div>
                               <h5 className="font-medium mb-2">Steps:</h5>
