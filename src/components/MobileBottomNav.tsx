@@ -1,165 +1,124 @@
-"use client"
+'use client'
 
+import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
+import { Home, Search, Heart, MoreHorizontal, X } from "lucide-react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import * as React from "react"
-import {
-  LayoutGrid,
-  Scale,
-  Menu,
-  Flame,
-  LogOut,
-  Bot,
-  Crown,
-  MapPin,
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-  SheetTrigger,
-} from "@/components/ui/sheet"
-import { signOut } from "firebase/auth"
-import { auth } from "@/lib/firebase"
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { AppMenuContent } from "./AppMenuContent"
-import { useSubscription } from "@/hooks/use-subscription"
-import { Badge } from "@/components/ui/badge"
-
-const mainNavItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
-  { href: "/legal-reference/statutes", label: "Statutes", icon: Scale },
-  { href: "/ai-tools", label: "AI Tools", icon: Bot },
-  {
-    href: "/field-procedures/nearby-resources",
-    label: "Nearby",
-    icon: MapPin,
-  },
-]
 
 export function MobileBottomNav() {
   const pathname = usePathname()
-  const router = useRouter()
-  const [isSheetOpen, setIsSheetOpen] = React.useState(false)
-  const [isClient, setIsClient] = React.useState(false)
-  const { isPro, mounted } = useSubscription()
+  const [isOpen, setIsOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
-  React.useEffect(() => {
-    setIsClient(true)
+  useEffect(() => {
+    setMounted(true)
   }, [])
 
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth)
-      router.push('/')
-    } catch (error) {
-      console.error("Error signing out: ", error)
+  const publicPages = [
+    "/",
+    "/login", 
+    "/features",
+    "/agency-intelligence",
+    "/cjis-compliance",
+    "/support",
+    "/request-demo",
+    "/terms-of-use",
+    "/privacy-policy",
+    "/security",
+    "/for-officers",
+  ]
+
+  const isPublicPage = publicPages.includes(pathname)
+
+  // Prevent hydration mismatch by rendering consistent structure
+  if (!mounted) {
+    return (
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t md:hidden">
+        <nav className="flex items-center justify-around h-16 px-4">
+          <div className="flex flex-col items-center gap-1 px-3 py-2">
+            <div className="h-5 w-5" />
+            <span className="text-xs font-medium invisible">Home</span>
+          </div>
+          <div className="flex flex-col items-center gap-1 px-3 py-2">
+            <div className="h-5 w-5" />
+            <span className="text-xs font-medium invisible">AI Tools</span>
+          </div>
+          <div className="flex flex-col items-center gap-1 px-3 py-2">
+            <div className="h-5 w-5" />
+            <span className="text-xs font-medium invisible">Favorites</span>
+          </div>
+          <div className="flex flex-col items-center gap-1 px-3 py-2">
+            <div className="h-5 w-5" />
+            <span className="text-xs font-medium invisible">More</span>
+          </div>
+        </nav>
+      </div>
+    )
+  }
+
+  // Don't render on public pages after mounting
+  if (isPublicPage) {
+    return null
+  }
+
+  const navItems = [
+    {
+      href: "/dashboard",
+      icon: Home,
+      label: "Home",
+      isActive: pathname === "/dashboard"
+    },
+    {
+      href: "/ai-tools", 
+      icon: Search,
+      label: "AI Tools",
+      isActive: pathname === "/ai-tools"
+    },
+    {
+      href: "/favorites",
+      icon: Heart, 
+      label: "Favorites",
+      isActive: pathname === "/favorites"
     }
-  }
-
-  const isActive = (href: string) => {
-    if (!isClient) return false
-    // Exact match for dashboard and ai-tools, startsWith for others to handle nested pages.
-    if (href === "/dashboard" || href === "/ai-tools") return pathname === href
-    // Special handling for nearby resources to ensure it activates correctly
-    if (href === "/field-procedures/nearby-resources") return pathname.startsWith(href)
-    return pathname.startsWith(href)
-  }
-
-  const handleLinkClick = () => {
-    setIsSheetOpen(false)
-  }
+  ]
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t z-50">
-      {/* Pro Status Bar */}
-      {isClient && mounted && isPro && (
-        <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-1">
-          <div className="flex items-center justify-center gap-2 text-white text-xs font-medium">
-            <Crown className="w-3 h-3" />
-            <span>Shield FL Pro Active</span>
-          </div>
-        </div>
-      )}
-
-      {/* Navigation Bar */}
-      <div className="h-16 flex justify-around items-center">
-      {mainNavItems.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={cn(
-            "flex flex-col items-center justify-center text-muted-foreground w-full h-full transition-all duration-200 active:scale-95 active:bg-accent/20 rounded-lg",
-            isActive(item.href) && "text-primary bg-primary/5"
-          )}
-        >
-          <item.icon className={cn(
-            "h-6 w-6 transition-all duration-200",
-            isActive(item.href) && "scale-110"
-          )} />
-          <span className={cn(
-            "text-xs transition-all duration-200",
-            isActive(item.href) && "font-medium"
-          )}>{item.label}</span>
-        </Link>
-      ))}
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetTrigger asChild>
-          <button
-            type="button"
-            className="flex flex-col items-center justify-center text-muted-foreground w-full h-full relative"
-            aria-label="Open full menu"
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t md:hidden">
+      <nav className="flex items-center justify-around h-16 px-4">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
+              item.isActive 
+                ? "text-primary bg-primary/10" 
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            }`}
           >
-            <Menu className="h-6 w-6" />
-            <span className="text-xs">More</span>
-            {isClient && mounted && isPro && (
-              <div className="absolute -top-1 -right-1">
-                <Crown className="w-3 h-3 text-amber-500" />
-              </div>
-            )}
-          </button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-3/4 p-0 flex flex-col">
-          <SheetHeader className="p-4 border-b">
-            <SheetTitle asChild>
-                <Link
-                href="/"
-                className="flex items-center gap-2.5"
-                onClick={handleLinkClick}
-                >
-                <Flame className="w-8 h-8 text-primary" />
-                <div className="flex flex-col">
-                  <span className="font-bold text-lg text-foreground">
-                      Florida Shield
-                  </span>
-                  {isClient && mounted && isPro && (
-                    <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs w-fit">
-                      <Crown className="w-3 h-3 mr-1" />
-                      Pro
-                    </Badge>
-                  )}
-                </div>
-                </Link>
-            </SheetTitle>
-            <SheetDescription className="sr-only">Main application menu</SheetDescription>
-          </SheetHeader>
-          <div className="overflow-y-auto flex-1 p-2">
-            <AppMenuContent onLinkClick={handleLinkClick} />
-          </div>
-          <div className="p-2 border-t">
-            <button
-              onClick={handleSignOut}
-              className="flex items-center gap-3 p-3 rounded-md text-foreground hover:bg-muted w-full"
+            <item.icon className="h-5 w-5" />
+            <span className="text-xs font-medium">{item.label}</span>
+          </Link>
+        ))}
+
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex flex-col items-center gap-1 px-3 py-2 h-auto"
             >
-              <LogOut className="h-5 w-5" />
-              <span>Sign Out</span>
-            </button>
-          </div>
-        </SheetContent>
-      </Sheet>
-      </div>
+              <MoreHorizontal className="h-5 w-5" />
+              <span className="text-xs font-medium">More</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="bottom" className="h-[80vh]">
+            <AppMenuContent onNavigate={() => setIsOpen(false)} />
+          </SheetContent>
+        </Sheet>
+      </nav>
     </div>
   )
 }
