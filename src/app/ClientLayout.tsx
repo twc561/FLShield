@@ -44,11 +44,7 @@ export function ClientLayout({
 
   // Don't render anything until client-side mounted
   if (!isClient) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Toaster />
-      </div>
-    )
+    return null
   }
 
   return (

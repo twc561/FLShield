@@ -47,13 +47,13 @@ export default function AICommandSearch() {
     try {
       // Use streaming command search for better responsiveness
       const { streamCommandSearch } = await import('@/ai/flows/commandSearch');
-      
+
       if (!streamCommandSearch) {
         throw new Error('Command search function not available');
       }
 
       const stream = streamCommandSearch({ query });
-      
+
       let hasReceivedContent = false;
       let accumulatedContent = "";
 
@@ -76,7 +76,7 @@ export default function AICommandSearch() {
       }
     } catch (error: any) {
       console.error("Search failed:", error);
-      
+
       // Provide more specific error messages
       if (error.message?.includes('fetch')) {
         setResult("Connection issue detected. Please check your internet connection and try again.");
@@ -191,3 +191,7 @@ export default function AICommandSearch() {
     </Card>
   );
 }
+```
+
+```
+There are no changes need to be applied to this code. It seems the changes provided are for other files.

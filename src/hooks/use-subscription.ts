@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -24,92 +23,66 @@ interface UserSubscription {
   plan: string
 }
 
-export const useSubscription = () => {
-  const [mounted, setMounted] = useState(false);
-  const [subscription, setSubscription] = useState<UserSubscription | null>(null);
-  const [loading, setLoading] = useState(true);
-  
-  const { user } = useAuthState(auth);
-  const pathname = usePathname();
-
-  // Always call hooks in same order
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+export function useSubscription() {
+  const [user, loading] = useAuthState(auth)
+  const [subscription, setSubscription] = useState<UserSubscription | null>(null)
+  const [mounted, setMounted] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
-    if (!mounted) {
-      return;
-    }
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (loading) return // Wait for auth to complete
 
     if (!user) {
-      console.log('No authenticated user, setting subscription to null');
-      setLoading(false);
-      setSubscription(null);
-      return;
+      console.log("No authenticated user, setting subscription to null")
+      setSubscription(null)
+      return
     }
 
-    console.log('Checking subscription for user:', user.uid);
-    setLoading(true);
+    console.log('Checking subscription for user:', user.uid)
 
     const unsubscribe = onSnapshot(
       doc(db, 'users', user.uid),
       (doc) => {
-        try {
-          if (doc.exists()) {
-            const data = doc.data();
-            const subscriptionData = data.subscription || null;
-            console.log('User subscription data:', subscriptionData);
-            setSubscription(subscriptionData);
-          } else {
-            console.log('User document does not exist, creating free user status');
-            setSubscription(null);
-          }
-        } catch (error) {
-          console.error('Subscription data parsing error:', error);
-          setSubscription(null);
+        if (doc.exists()) {
+          const data = doc.data();
+          const subscriptionData = data.subscription || null;
+          console.log('User subscription data:', subscriptionData)
+          setSubscription(subscriptionData)
+        } else {
+          console.log('User document does not exist, creating free user status')
+          setSubscription(null)
         }
-        setLoading(false);
-      },
-      (error) => {
-        console.error('Subscription fetch error:', error);
-        setSubscription(null);
-        setLoading(false);
       }
-    );
+    )
 
-    return unsubscribe;
-  }, [user, mounted]);
+    return unsubscribe
+  }, [user, loading, mounted])
 
-  const isPro = subscription?.status === 'active';
-  
+  const isPro = subscription?.status === "active"
+
   const isFeatureFree = (pathname: string) => {
     const freeFeatures = [
-      '/dashboard',
-      '/legal-reference/statutes',
-      '/field-procedures/scenario-checklists'
+      "/dashboard",
+      "/legal-reference/statutes",
+      "/field-procedures/scenario-checklists",
     ];
     return freeFeatures.includes(pathname);
   };
 
   const requiresSubscription = mounted && !isPro && !isFeatureFree(pathname);
 
-  // Debug logging
-  console.log('Subscription status:', {
+  console.log("Subscription status:", {
     isPro,
     subscriptionStatus: subscription?.status,
     pathname,
     isFeatureFree: isFeatureFree(pathname),
     requiresSubscription,
-    mounted
+    mounted,
   });
 
-  return { 
-    subscription, 
-    loading: loading || !mounted, 
-    isPro, 
-    mounted, 
-    isFeatureFree, 
-    requiresSubscription 
-  };
+  return { subscription, loading: loading || !mounted, isPro, mounted, isFeatureFree, requiresSubscription };
 }
