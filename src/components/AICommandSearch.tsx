@@ -66,9 +66,15 @@ export default function AICommandSearch() {
   ];
 
   const handleQuickActionClick = (path: string) => {
-    setResult(null); // Clear the overlay
-    setQuery(""); // Clear the search input
-    router.push(path);
+    // Force immediate state cleanup
+    setResult(null);
+    setQuery("");
+    setIsLoading(false);
+    
+    // Use setTimeout to ensure state updates complete before navigation
+    setTimeout(() => {
+      router.push(path);
+    }, 0);
   };
 
   return (
@@ -156,10 +162,22 @@ export default function AICommandSearch() {
         </div>
 
         {result && (
-          <div className="mt-4 p-4 rounded-md bg-accent/10 border border-accent/20 text-foreground">
-            {result}
+          <div className="mt-4 p-4 rounded-md bg-accent/10 border border-accent/20 text-foreground relative">
+            <button
+              onClick={() => {
+                setResult(null);
+                setQuery("");
+              }}
+              className="absolute top-2 right-2 text-muted-foreground hover:text-foreground text-sm"
+              aria-label="Close result"
+            >
+              ✕
+            </button>
+            <div className="pr-6">
+              {result}
+            </div>
           </div>
-        )}
+        )}</div>
       </CardContent>
     </Card>
   );
