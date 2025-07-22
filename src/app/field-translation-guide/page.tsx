@@ -8,7 +8,7 @@ export default function FieldTranslationGuidePage() {
     <div className="animate-fade-in-up">
       <PageHeader
         title="Field Translation Guide"
-        description="Search for common phrases and play audio translations in Spanish or Haitian Creole. Powered by AI Text-to-Speech."
+        description="Search for common phrases and play audio translations in English, Spanish, and Haitian Creole. Click the speaker icons to hear AI-generated pronunciations for accurate field communication."
       />
       <FieldTranslationClient phrases={translationPhrases} />
     </div>
