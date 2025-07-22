@@ -28,7 +28,17 @@ import {
   Lock, 
   ShieldQuestion,
   Brain,
-  Activity
+  Activity,
+  Wind,
+  Languages,
+  Building,
+  Search,
+  Stethoscope,
+  Truck,
+  Fish,
+  Dog,
+  Mic,
+  CreditCard
 } from "lucide-react"
 
 type SubMenuItem = {
