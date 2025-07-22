@@ -25,37 +25,50 @@ interface UserSubscription {
 }
 
 export const useSubscription = () => {
-  const { user } = useAuthState(auth);
+  const [mounted, setMounted] = useState(false);
   const [subscription, setSubscription] = useState<UserSubscription | null>(null);
   const [loading, setLoading] = useState(true);
-  const [mounted, setMounted] = useState(false);
+  
+  const { user } = useAuthState(auth);
   const pathname = usePathname();
 
-  // Track mounting state to prevent hydration issues
+  // Always call hooks in same order
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setMounted(true);
-    }, 100);
-    return () => clearTimeout(timer);
+    setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (!mounted || !user) {
-      setLoading(false);
+    if (!mounted) {
       return;
     }
+
+    if (!user) {
+      setLoading(false);
+      setSubscription(null);
+      return;
+    }
+
+    setLoading(true);
 
     const unsubscribe = onSnapshot(
       doc(db, 'users', user.uid),
       (doc) => {
-        if (doc.exists()) {
-          const data = doc.data();
-          setSubscription(data.subscription || null);
+        try {
+          if (doc.exists()) {
+            const data = doc.data();
+            setSubscription(data.subscription || null);
+          } else {
+            setSubscription(null);
+          }
+        } catch (error) {
+          console.error('Subscription data parsing error:', error);
+          setSubscription(null);
         }
         setLoading(false);
       },
       (error) => {
         console.error('Subscription fetch error:', error);
+        setSubscription(null);
         setLoading(false);
       }
     );
@@ -74,11 +87,11 @@ export const useSubscription = () => {
     return freeFeatures.includes(pathname);
   };
 
-  const requiresSubscription = !isPro && !isFeatureFree(pathname);
+  const requiresSubscription = mounted && !isPro && !isFeatureFree(pathname);
 
   return { 
     subscription, 
-    loading, 
+    loading: loading || !mounted, 
     isPro, 
     mounted, 
     isFeatureFree, 

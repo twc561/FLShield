@@ -1,74 +1,78 @@
 'use client'
 
-import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
-import { SidebarProvider } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/AppSidebar"
-import { ContextualPanel } from "@/components/ContextualPanel"
 import { Toaster } from "@/components/ui/toaster"
-import { MobileBottomNav } from "@/components/MobileBottomNav"
 import { AuthWrapper } from "@/components/AuthWrapper"
 import { SubscriptionGate } from "@/components/SubscriptionGate"
+import { usePathname } from "next/navigation"
+import { SidebarProvider } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/AppSidebar"
+import { MobileBottomNav } from "@/components/MobileBottomNav"
+import { useMobile } from "@/hooks/use-mobile"
+import { useState, useEffect } from "react"
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { auth } from '@/lib/firebase'
 
-export function ClientLayout({
+export default function ClientLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const pathname = usePathname()
-  const [mounted, setMounted] = useState(false)
+  const [isClient, setIsClient] = useState(false)
 
-  const publicPages = [
+  // Always call hooks in the same order
+  const pathname = usePathname()
+  const isMobile = useMobile()
+  const { user, loading } = useAuthState(auth);
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  const isPublicPage = [
     "/",
-    "/login",
     "/features",
-    "/agency-intelligence",
-    "/cjis-compliance",
-    "/support",
-    "/request-demo",
+    "/support", 
     "/terms-of-use",
     "/privacy-policy",
     "/security",
     "/for-officers",
-  ];
+    "/agency-intelligence",
+    "/cjis-compliance",
+    "/request-demo",
+    "/login"
+  ].includes(pathname)
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const isPublicPage = publicPages.includes(pathname);
-
-  // Prevent hydration mismatch by only rendering after mount
-  if (!mounted) {
+  // Don't render anything until client-side mounted
+  if (!isClient) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      <div className="min-h-screen bg-background">
+        <Toaster />
       </div>
     )
   }
 
   return (
     <AuthWrapper>
-      {isPublicPage ? (
-        <>
-          {children}
-          <Toaster />
-        </>
-      ) : (
-        <SidebarProvider>
+      <div className="min-h-screen bg-background">
+        {!isPublicPage && user && !loading ? (
           <SubscriptionGate>
-            <div className="flex min-h-screen">
-              <AppSidebar />
-              <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto pb-20 md:pb-6">
-                {children}
-              </main>
-              <ContextualPanel />
-            </div>
+            <SidebarProvider>
+              <div className="flex h-screen w-full">
+                <AppSidebar />
+                <main className="flex-1 flex flex-col overflow-hidden">
+                  <div className="flex-1 overflow-y-auto">
+                    {children}
+                  </div>
+                  {isMobile && <MobileBottomNav />}
+                </main>
+              </div>
+            </SidebarProvider>
           </SubscriptionGate>
-          <MobileBottomNav />
-          <Toaster />
-        </SidebarProvider>
-      )}
+        ) : (
+          children
+        )}
+      </div>
+      <Toaster />
     </AuthWrapper>
   )
 }

@@ -13,12 +13,14 @@ const LoadingScreen = () => (
 )
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
-    const { user, loading } = useAuthState(auth);
+    const [isMounted, setIsMounted] = useState(false);
+    const [isRedirecting, setIsRedirecting] = useState(false);
+    
+    const { user, loading, error } = useAuthState(auth);
     const pathname = usePathname();
     const router = useRouter();
-    const [isMounted, setIsMounted] = useState(false);
 
-    // Prevent hydration issues
+    // Always call hooks in the same order
     useEffect(() => {
         setIsMounted(true);
     }, []);
@@ -38,31 +40,47 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         "/login"
     ].includes(pathname);
 
-    // Redirect authenticated users from landing page to dashboard
+    // Handle redirects in a single effect
     useEffect(() => {
-        if (isMounted && !loading && user && (pathname === '/' || pathname === '/login')) {
+        if (!isMounted || loading) return;
+
+        if (user && (pathname === '/' || pathname === '/login')) {
+            setIsRedirecting(true);
             router.push('/dashboard');
+            return;
         }
-    }, [user, loading, pathname, router, isMounted]);
 
-    // Redirect unauthenticated users to login (except on public pages)
-    useEffect(() => {
-        if (isMounted && !loading && !user && !isPublicPage) {
+        if (!user && !isPublicPage) {
+            setIsRedirecting(true);
             router.push('/login');
+            return;
         }
-    }, [user, loading, isPublicPage, router, isMounted]);
 
-    // Show loading screen while auth state is being determined or before mounting
-    if (!isMounted || loading) {
+        setIsRedirecting(false);
+    }, [user, loading, pathname, router, isMounted, isPublicPage]);
+
+    // Don't render anything until mounted (prevents hydration issues)
+    if (!isMounted) {
         return <LoadingScreen />;
     }
 
-    // While redirecting, show a loading screen to prevent flashing content
-    if (!user && !isPublicPage) {
+    // Show loading while auth is being determined
+    if (loading) {
         return <LoadingScreen />;
     }
 
+    // Show loading while redirecting
+    if (isRedirecting) {
+        return <LoadingScreen />;
+    }
+
+    // Show loading if user should be redirected but hasn't yet
     if (user && (pathname === '/' || pathname === '/login')) {
+        return <LoadingScreen />;
+    }
+
+    // Show loading if no user on protected page
+    if (!user && !isPublicPage) {
         return <LoadingScreen />;
     }
 
