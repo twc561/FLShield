@@ -1,4 +1,6 @@
 
+"use client"
+
 import { MarketingHeader } from "@/components/MarketingHeader";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
