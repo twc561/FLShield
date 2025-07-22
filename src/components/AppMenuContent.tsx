@@ -32,12 +32,21 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
   const pathname = usePathname()
   const { isPro, mounted } = useSubscription()
   const [isClient, setIsClient] = useState(false)
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
   const { setOpen } = useSidebar()
   const isMobile = useMobile()
 
   const handleMenuItemClick = () => {
     if (isMobile) {
       setOpen(false)
+    }
+  }
+
+  const handleSubMenuClick = (parentLabel: string) => {
+    setOpen(false) // Always close sidebar when clicking submenu items
+    setOpenSections(prev => ({ ...prev, [parentLabel]: false })) // Close the collapsible section
+    if (onLinkClick) {
+      onLinkClick()
     }
   }
 
@@ -81,7 +90,8 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
         item.items ? (
           <Collapsible
             key={item.label}
-            defaultOpen={item.items.some((subItem) => isActive(subItem.href))}
+            open={openSections[item.label] ?? item.items.some((subItem) => isActive(subItem.href))}
+            onOpenChange={(open) => setOpenSections(prev => ({ ...prev, [item.label]: open }))}
             className="w-full"
           >
             <SidebarMenuItem>
@@ -109,12 +119,7 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
                   <SidebarMenuSubItem key={subItem.label}>
                     <Link
                       href={subItem.href}
-                      onClick={() => {
-                        setOpen(false); // Always close sidebar when clicking submenu items
-                        if (onLinkClick) {
-                          onLinkClick(); // Call any additional link click handler if provided
-                        }
-                      }}
+                      onClick={() => handleSubMenuClick(item.label)}
                       className={cn(
                         "flex h-full w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-sidebar-foreground/80 outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2",
                         isActive(subItem.href) &&
