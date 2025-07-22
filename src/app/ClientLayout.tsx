@@ -1,3 +1,4 @@
+
 'use client'
 
 import { Toaster } from "@/components/ui/toaster"
@@ -17,17 +18,13 @@ export function ClientLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Always call all hooks first, in the same order
   const [isClient, setIsClient] = useState(false)
-
-  // Always call hooks in the same order
   const pathname = usePathname()
   const isMobile = useMobile()
-  const { user, loading } = useAuthState(auth);
+  const [user, loading] = useAuthState(auth)
 
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
-
+  // Define constants after hooks
   const isPublicPage = [
     "/",
     "/features",
@@ -41,6 +38,10 @@ export function ClientLayout({
     "/request-demo",
     "/login"
   ].includes(pathname)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   // Don't render anything until client-side mounted
   if (!isClient) {

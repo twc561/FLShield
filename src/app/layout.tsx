@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import "@/app/globals.css"
 import { cn } from "@/lib/utils"
 import { ClientLayout } from "./ClientLayout"
+import { ErrorBoundary } from "react-error-boundary"
 
 export const metadata: Metadata = {
   title: "Shield FL - Law Enforcement Assistant",
