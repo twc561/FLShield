@@ -57,6 +57,46 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
     features: [
       {
         id: "ai-legal-advisor",
+
+      {
+        id: "real-time-alerts",
+        title: "Real-Time BOLO Alerts",
+        summary: "Get push notifications for active BOLOs, officer safety alerts, and weather warnings.",
+        icon: "Bell",
+        targetPage: "/intelligence/real-time-alerts",
+        category: "AI Assistant Tools",
+        isPremium: true,
+      },
+      {
+        id: "shift-intel-briefing",
+        title: "Pre-Shift Intel Brief",
+        summary: "Automated briefing with recent incidents, hot spots, and patrol priorities for your beat.",
+        icon: "MapPin",
+        targetPage: "/intelligence/shift-briefing",
+        category: "AI Assistant Tools",
+        isPremium: true,
+      },
+
+
+      {
+        id: "beat-intelligence",
+        title: "Beat Intelligence Hub",
+        summary: "Crime trends, frequent addresses, and known subjects specific to your patrol area.",
+        icon: "MapPin",
+        targetPage: "/field-procedures/beat-intelligence",
+        category: "Field Operations & Procedures",
+        isPremium: true,
+      },
+      {
+        id: "nearby-backup",
+        title: "Nearest Backup Locator",
+        summary: "Find closest available units and backup resources using GPS.",
+        icon: "Radio",
+        targetPage: "/field-procedures/backup-locator",
+        category: "Field Operations & Procedures",
+        isPremium: true,
+      },
+
         title: "AI Legal Advisor",
         summary: "Analyze scenarios against policy, statutes, and case law instantly.",
         icon: "ShieldQuestion",
@@ -107,6 +147,17 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "FileCheck",
         targetPage: "/training-development/report-proofreader",
         category: "AI Assistant Tools",
+
+      {
+        id: "offline-references",
+        title: "Offline Reference Pack",
+        summary: "Download essential statutes, procedures, and guides for offline access.",
+        icon: "Download",
+        targetPage: "/tools/offline-pack",
+        category: "Field Operations & Procedures",
+        isPremium: true,
+      },
+
         isPremium: true,
       },
     ],
@@ -157,6 +208,35 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         summary: "Criminal jury instructions to understand legal elements.",
         icon: "Users",
         targetPage: "/legal-reference/jury-instructions-navigator",
+
+      {
+        id: "florida-gun-laws",
+        title: "Florida Firearms Laws",
+        summary: "Concealed carry, stand your ground, and weapons violations specific to Florida.",
+        icon: "Shield",
+        targetPage: "/legal-reference/florida-firearms-laws",
+        category: "Legal Reference Library",
+        isPremium: true,
+      },
+      {
+        id: "hurricane-protocols",
+        title: "Hurricane Response Protocols",
+        summary: "Emergency procedures, evacuation zones, and resource coordination for severe weather.",
+        icon: "Wind",
+        targetPage: "/emergency-response/hurricane-protocols",
+        category: "Emergency Response Protocols",
+        isPremium: true,
+      },
+      {
+        id: "florida-traffic-laws",
+        title: "Florida Traffic Code",
+        summary: "Complete Florida traffic statutes with common violations and penalties.",
+        icon: "Car",
+        targetPage: "/traffic-enforcement/florida-traffic-code",
+        category: "Specialized Enforcement",
+        isPremium: true,
+      },
+
         category: "Legal Reference Library",
         isPremium: true,
       },
@@ -217,6 +297,26 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         summary: "Complete DUI stop procedures from initial contact to arrest.",
         icon: "Car",
         targetPage: "/traffic-enforcement/dui-investigation",
+
+      {
+        id: "wellness-tracker",
+        title: "Wellness Check-in",
+        summary: "Quick daily mood and stress tracking with personalized wellness tips.",
+        icon: "Heart",
+        targetPage: "/wellness/daily-checkin",
+        category: "Officer Wellness & Rights",
+        isPremium: true,
+      },
+      {
+        id: "peer-support",
+        title: "Peer Support Network",
+        summary: "Connect with trained peer supporters and crisis intervention resources.",
+        icon: "Users",
+        targetPage: "/wellness/peer-support",
+        category: "Officer Wellness & Rights",
+        isPremium: true,
+      },
+
         category: "Field Operations & Procedures",
         isPremium: true,
       },

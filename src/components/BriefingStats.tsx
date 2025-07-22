@@ -1,11 +1,10 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Target, Calendar, TrendingUp } from 'lucide-react';
+import { Trophy, Target, Calendar, TrendingUp, Brain } from 'lucide-react';
 import { dailyRollCallModules } from '@/data/daily-roll-call';
 
 interface BriefingStatsProps {
@@ -45,7 +44,7 @@ export function BriefingStats({ className }: BriefingStatsProps) {
       dailyRollCallModules.forEach(module => {
         const completionKey = `daily-roll-call-${module.id}`;
         const completion = localStorage.getItem(completionKey);
-        
+
         if (completion) {
           completedModules.push(module.id);
           categoryCount[module.category].completed++;
