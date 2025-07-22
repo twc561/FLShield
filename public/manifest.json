@@ -1,4 +1,3 @@
-
 {
   "name": "Shield FL - Law Enforcement Assistant",
   "short_name": "Shield FL",
@@ -7,7 +6,7 @@
   "scope": "/",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
-  "background_color": "#020817",
+  "background_color": "#0f172a",
   "theme_color": "#3B82F6",
   "orientation": "any",
   "categories": ["productivity", "utilities", "education"],

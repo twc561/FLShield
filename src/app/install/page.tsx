@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -21,18 +21,30 @@ import {
 
 export default function InstallPage() {
   const [showInstallPrompt, setShowInstallPrompt] = useState(false)
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   const handleInstallClick = async () => {
-    // @ts-ignore
-    if (window.deferredPrompt) {
+    if (!isClient) return
+    
+    try {
       // @ts-ignore
-      window.deferredPrompt.prompt()
-      // @ts-ignore
-      const { outcome } = await window.deferredPrompt.userChoice
-      console.log(`User response: ${outcome}`)
-      // @ts-ignore
-      window.deferredPrompt = null
-    } else {
+      if (window.deferredPrompt) {
+        // @ts-ignore
+        window.deferredPrompt.prompt()
+        // @ts-ignore
+        const { outcome } = await window.deferredPrompt.userChoice
+        console.log(`User response: ${outcome}`)
+        // @ts-ignore
+        window.deferredPrompt = null
+      } else {
+        setShowInstallPrompt(true)
+      }
+    } catch (error) {
+      console.log('Install prompt not available')
       setShowInstallPrompt(true)
     }
   }

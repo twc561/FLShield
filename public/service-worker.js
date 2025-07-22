@@ -1,4 +1,3 @@
-
 const CACHE_NAME = `florida-shield-cache-v0.6.0`;
 const PRECACHE_ASSETS = [
     '/',
@@ -121,7 +120,7 @@ self.addEventListener('fetch', (event) => {
             headers: { 'Content-Type': 'image/svg+xml' }
           });
         }
-        
+
         return new Response('Network error occurred', {
           status: 408,
           headers: { 'Content-Type': 'text/plain' },
@@ -142,4 +141,20 @@ self.addEventListener('sync', (event) => {
 self.addEventListener('push', (event) => {
   console.log('[Service Worker] Push received');
   // Handle push notifications when implemented
+});
+// Install Event
+self.addEventListener('install', (event) => {
+  console.log('Service Worker: Installed');
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll([
+        '/',
+        '/dashboard',
+        '/manifest.json',
+        '/icons/icon-192x192.png',
+        '/icons/icon-512x512.png'
+      ]);
+    })
+  );
+  self.skipWaiting();
 });
