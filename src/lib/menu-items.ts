@@ -1,5 +1,35 @@
 import * as React from "react"
-import { AlertCircle, Biohazard, Bot, BrainCircuit, Camera, Car, ClipboardEdit, Dog, FileCheck, FileText, Fish, FlaskConical, Gavel, GraduationCap, Heart, HeartPulse, Home, Languages, ListChecks, Lock, MapPin, MessageSquare, Mic, Newspaper, Scale, Search, ShieldAlert, ShieldCheck, ShieldQuestion, Siren, Stethoscope, Truck, Users, Wind, Footprints, CreditCard, Building } from 'lucide-react'
+import { 
+  Bot, 
+  Shield, 
+  Users, 
+  FileText, 
+  ShieldCheck, 
+  Scale, 
+  Heart, 
+  Gavel, 
+  Camera, 
+  Car, 
+  FlaskConical, 
+  ShieldAlert, 
+  HeartPulse, 
+  MessageSquare, 
+  ClipboardEdit, 
+  FileCheck, 
+  Siren, 
+  AlertCircle, 
+  Biohazard, 
+  ListChecks, 
+  Footprints, 
+  Home, 
+  Newspaper, 
+  GraduationCap, 
+  BrainCircuit, 
+  Lock, 
+  ShieldQuestion,
+  Brain,
+  Activity
+} from "lucide-react"
 
 type SubMenuItem = {
   href: string
@@ -78,8 +108,8 @@ export const menuItems: MenuItem[] = [
     icon: Heart,
     items: [
       { href: "/officer-wellness-rights/community-engagement-guide", label: "Community Relations Guide", icon: Users },
-      { href: "/wellness/active-listener", label: "Confidential Support Chat", icon: Heart },
-      { href: "/wellness/live-debrief", label: "Incident Debrief Tool", icon: MessageSquare },
+      { href: "/wellness/mindfulness-exercises", label: "Mindfulness Exercises", icon: Brain },
+      { href: "/wellness/stress-management-techniques", label: "Stress Management Techniques", icon: Activity },
       { href: "/officer-wellness-rights/police-officers-bill-of-rights", label: "Police Officer's Bill of Rights", icon: ShieldCheck },
       { href: "/wellness", label: "Wellness Resources Hub", icon: Heart },
     ],

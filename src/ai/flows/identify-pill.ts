@@ -44,8 +44,10 @@ const PillIdentificationSchema = z.object({
 });
 
 const IdentifyPillOutputSchema = z.object({
-  identification: PillIdentificationSchema,
-  disclaimer: z.string().default('This AI identification is for investigative purposes only. Definitive identification requires laboratory analysis. Always follow proper evidence handling procedures.'),
+  drugName: z.string().describe('The identified drug name or "Unknown" if not identifiable'),
+  visualDescription: z.string().describe('Detailed visual description of the pill'),
+  primaryUse: z.string().describe('Primary medical use of the identified substance'),
+  keyWarnings: z.string().describe('Key warnings and safety information'),
 });
 export type IdentifyPillOutput = z.infer<typeof IdentifyPillOutputSchema>;
 
@@ -57,28 +59,17 @@ export const identifyPill = ai.defineFlow(
   },
   async (input) => {
     const { output } = await ai.generate({
-      prompt: `You are an expert forensic pharmacologist and narcotics identification specialist for Florida law enforcement. Your task is to analyze the provided image of a pill or substance and provide a comprehensive identification assessment.
+      prompt: `You are an expert forensic pharmacologist analyzing a pill/substance for law enforcement identification. 
 
-ANALYSIS REQUIREMENTS:
-1. Examine all visible physical characteristics (shape, color, size, markings, texture)
-2. Compare against known pharmaceutical and illicit substance databases
-3. Consider common street drugs, prescription medications, and counterfeit pills
-4. Pay special attention to fentanyl-pressed pills and dangerous substances
-5. Provide multiple identification possibilities ranked by likelihood
-6. Include detailed safety warnings and handling instructions
-7. Reference relevant Florida statutes and controlled substance schedules
+Analyze the image and provide:
+1. drugName: The most likely substance name, or "Unknown" if unidentifiable
+2. visualDescription: Detailed description of shape, color, size, markings, texture
+3. primaryUse: What this substance is typically used for medically
+4. keyWarnings: Critical safety information and warnings
 
-CRITICAL FOCUS AREAS:
-- Fentanyl-pressed counterfeit pills (extremely dangerous)
-- Common prescription medications (Oxycodone, Alprazolam, etc.)
-- Street drugs and their common forms
-- Pill press characteristics that indicate illicit manufacturing
-- Size, shape, color, and imprint analysis
-- Safety considerations for officer exposure
+Focus on officer safety and accurate identification. If uncertain, state "Unknown" for drugName.
 
-ADDITIONAL CONTEXT: ${input.additionalContext || 'No additional context provided'}
-
-Provide a thorough, detailed analysis that prioritizes officer safety while delivering actionable intelligence for the investigation.`,
+ADDITIONAL CONTEXT: ${input.additionalContext || 'No additional context provided'}`,
       media: {
         url: `data:image/jpeg;base64,${input.imageBase64}`,
       },
@@ -109,46 +100,13 @@ Provide a thorough, detailed analysis that prioritizes officer safety while deli
       },
     });
 
-    if (!output || !output.identification) {
+    if (!output) {
       // Provide a safe fallback response
       return {
-        identification: {
-          primaryIdentification: {
-            substanceName: "Unable to identify - requires lab analysis",
-            confidence: "Low" as const,
-            reasoning: "AI analysis was unable to provide reliable identification from the provided image."
-          },
-          alternativeIdentifications: [],
-          physicalCharacteristics: {
-            shape: "Analysis incomplete",
-            color: "Analysis incomplete", 
-            size: "Analysis incomplete",
-            markings: "Analysis incomplete",
-            texture: "Analysis incomplete"
-          },
-          legalClassification: {
-            controlledSubstance: false,
-            schedule: undefined,
-            flStatute: undefined
-          },
-          fieldSafetyNotes: [
-            "Treat all unknown substances as potentially dangerous",
-            "Use proper PPE when handling",
-            "Avoid direct contact or inhalation"
-          ],
-          recommendedActions: [
-            "Secure evidence properly",
-            "Submit for laboratory analysis",
-            "Document findings thoroughly"
-          ],
-          testingRecommendations: {
-            fieldTest: "Consult department protocols",
-            labAnalysis: true,
-            preservationInstructions: "Store in appropriate evidence container, maintain chain of custody"
-          },
-          warningFlags: ["Unknown substance - exercise extreme caution"]
-        },
-        disclaimer: "This AI identification is for investigative purposes only. Definitive identification requires laboratory analysis. Always follow proper evidence handling procedures."
+        drugName: "Unknown",
+        visualDescription: "Unable to analyze the provided image",
+        primaryUse: "Information not available",
+        keyWarnings: "Unknown substance - exercise extreme caution. Do not ingest. Use proper PPE when handling."
       };
     }
 
