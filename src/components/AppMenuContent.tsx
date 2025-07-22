@@ -36,7 +36,7 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
   const { setOpen } = useSidebar()
   const isMobile = useMobile()
 
-  // Initialize sections based on active routes only on first mount
+  // Initialize sections based on active routes
   useEffect(() => {
     const initialState: Record<string, boolean> = {}
     menuItems.forEach(item => {
@@ -45,7 +45,7 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
       }
     })
     setOpenSections(initialState)
-  }, []) // Remove pathname dependency
+  }, [pathname]) // Add pathname dependency back
 
   const handleMenuItemClick = () => {
     if (isMobile) {
@@ -53,9 +53,10 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
     }
   }
 
-  const handleSubMenuClick = (parentLabel: string) => {
-    setOpen(false) // Always close sidebar when clicking submenu items
-    setOpenSections(prev => ({ ...prev, [parentLabel]: false })) // Close the collapsible section
+  const handleSubMenuClick = () => {
+    if (isMobile) {
+      setOpen(false) // Close sidebar on mobile
+    }
     if (onLinkClick) {
       onLinkClick()
     }
@@ -130,7 +131,7 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
                   <SidebarMenuSubItem key={subItem.label}>
                     <Link
                       href={subItem.href}
-                      onClick={() => handleSubMenuClick(item.label)}
+                      onClick={handleSubMenuClick}
                       className={cn(
                         "flex h-full w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-sidebar-foreground/80 outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2",
                         isActive(subItem.href) &&
