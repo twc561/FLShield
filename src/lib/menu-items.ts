@@ -23,7 +23,8 @@ import {
   FileText,
   Crown,
   Smartphone,
-  Download
+  Download,
+  ShieldQuestion
 } from "lucide-react"
 
 type SubMenuItem = {
