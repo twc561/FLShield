@@ -191,7 +191,3 @@ export default function AICommandSearch() {
     </Card>
   );
 }
-```
-
-```
-There are no changes need to be applied to this code. It seems the changes provided are for other files.
