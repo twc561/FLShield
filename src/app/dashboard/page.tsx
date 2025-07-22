@@ -59,7 +59,7 @@ const ToolCard = ({ module }: { module: FeatureModule }) => {
   return (
     <div className="group relative">
       <Link href={module.targetPage}>
-        <Card className="h-full hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20">
+        <Card className="h-full hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20 bg-card border-border">
           <CardHeader className="pb-4">
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2">
@@ -74,7 +74,7 @@ const ToolCard = ({ module }: { module: FeatureModule }) => {
                 )}
               </div>
             </div>
-            <CardTitle className="text-lg leading-tight">{module.title}</CardTitle>
+            <CardTitle className="text-lg leading-tight text-card-foreground">{module.title}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground leading-relaxed">{module.summary}</p>
@@ -100,7 +100,7 @@ const FeaturedTools = ({ isClient }: { isClient: boolean }) => {
     return (
         <motion.div variants={itemVariants}>
             <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-card-foreground mb-4">Smart Suggestions</h2>
+                <h2 className="text-3xl font-bold text-foreground mb-4">Smart Suggestions</h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                     AI-powered tool recommendations based on your current shift context
                 </p>
@@ -118,7 +118,7 @@ const PinnedTools = ({ isClient }: { isClient: boolean }) => {
   return (
     <motion.div variants={itemVariants}>
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-card-foreground mb-4">Pinned Tools</h2>
+        <h2 className="text-3xl font-bold text-foreground mb-4">Pinned Tools</h2>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Quick access to your most frequently used tools
         </p>
@@ -170,12 +170,12 @@ export default function DashboardPage() {
   }, [])
 
   return (
-    <div className="container mx-auto p-4 md:p-6">
+    <div className="container mx-auto p-4 md:p-6 bg-background text-foreground">
       <PageHeader 
         title={`${greeting}, ${userName || "Officer"}.`}
         description={
           isClient && mounted && isPro ? (
-            <div className="flex items-center gap-2 text-amber-600">
+            <div className="flex items-center gap-2 text-amber-400">
               <Crown className="w-4 h-4" />
               <span>Pro Member - All premium features unlocked</span>
             </div>
@@ -199,15 +199,15 @@ export default function DashboardPage() {
         {/* Pro Status Card */}
         {isClient && mounted && isPro && (
           <motion.div variants={itemVariants}>
-            <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+            <Card className="bg-gradient-to-r from-amber-900/20 to-orange-900/20 border-amber-600/30 bg-card">
               <CardContent className="p-6 text-center">
                 <div className="flex items-center justify-center gap-3 mb-4">
                   <div className="p-3 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full">
                     <Crown className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-amber-900">Shield FL Pro Active</h3>
-                    <p className="text-amber-700">Access to all premium AI tools and features</p>
+                    <h3 className="text-xl font-bold text-amber-400">Shield FL Pro Active</h3>
+                    <p className="text-amber-300">Access to all premium AI tools and features</p>
                   </div>
                 </div>
               </CardContent>
@@ -218,12 +218,12 @@ export default function DashboardPage() {
         {/* Daily Roll Call Section */}
         <motion.div variants={itemVariants}>
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-card-foreground mb-4">Daily Roll Call</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-4">Daily Roll Call</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Stay informed with today's critical briefing information
             </p>
           </div>
-          <Card className="hover:shadow-lg transition-all duration-300">
+          <Card className="hover:shadow-lg transition-all duration-300 bg-card border-border">
             <CardContent className="p-6">
               <DailyRollCall />
             </CardContent>
@@ -233,12 +233,12 @@ export default function DashboardPage() {
         {/* Training Progress Section */}
         <motion.div variants={itemVariants}>
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-card-foreground mb-4">Training Progress</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-4">Training Progress</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Track your professional development and skill advancement
             </p>
           </div>
-          <Card className="hover:shadow-lg transition-all duration-300">
+          <Card className="hover:shadow-lg transition-all duration-300 bg-card border-border">
             <CardContent className="p-6">
               <BriefingStats />
             </CardContent>
@@ -258,7 +258,7 @@ export default function DashboardPage() {
         {/* Complete Tools Library */}
         <motion.div variants={itemVariants}>
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-card-foreground mb-4">Complete Tools Library</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-4">Complete Tools Library</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Comprehensive collection of law enforcement tools and resources
             </p>
@@ -279,7 +279,7 @@ export default function DashboardPage() {
                   variants={itemVariants}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <Card className="hover:shadow-lg transition-all duration-300">
+                  <Card className="hover:shadow-lg transition-all duration-300 bg-card border-border">
                     <CardHeader className="pb-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
