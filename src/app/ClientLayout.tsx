@@ -9,6 +9,8 @@ import { Toaster } from "@/components/ui/toaster"
 import { MobileBottomNav } from "@/components/MobileBottomNav"
 import { AuthWrapper } from "@/components/AuthWrapper"
 import { SubscriptionGate } from "@/components/SubscriptionGate"
+import { ErrorBoundary } from 'react-error-boundary'; // Import ErrorBoundary
+import { ScrollArea } from "@/components/ui/scroll-area" // Import ScrollArea
 
 export function ClientLayout({
   children,
@@ -38,6 +40,17 @@ export function ClientLayout({
 
   const isPublicPage = publicPages.includes(pathname);
 
+  // Define a fallback UI for the error boundary
+  const ErrorFallback = ({ error, resetErrorBoundary }) => {
+    return (
+      <div role="alert">
+        <p>Something went wrong:</p>
+        <pre>{error.message}</pre>
+        <button onClick={() => resetErrorBoundary()}>Try again</button>
+      </div>
+    );
+  }
+
   return (
     <AuthWrapper>
       {!mounted ? (
@@ -55,7 +68,16 @@ export function ClientLayout({
             <div className="flex min-h-screen">
               <AppSidebar />
               <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto pb-20 md:pb-6">
-                {children}
+                <ErrorBoundary
+                  FallbackComponent={ErrorFallback}
+                  onReset={() => {
+                    // Optional: Resetting the state of your app
+                  }}
+                >
+                  <ScrollArea>
+                    {children}
+                  </ScrollArea>
+                </ErrorBoundary>
               </main>
               <ContextualPanel />
             </div>

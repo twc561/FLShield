@@ -1,8 +1,6 @@
-'use client'
+"use client"
 
-import { useState, useEffect } from "react"
-import { usePathname } from "next/navigation"
-import { Home, Search, Heart, MoreHorizontal, X } from "lucide-react"
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -10,108 +8,45 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { AppMenuContent } from "./AppMenuContent"
 
 export function MobileBottomNav() {
-  const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const publicPages = [
-    "/",
-    "/login", 
-    "/features",
-    "/agency-intelligence",
-    "/cjis-compliance",
-    "/support",
-    "/request-demo",
-    "/terms-of-use",
-    "/privacy-policy",
-    "/security",
-    "/for-officers",
-  ]
-
-  const isPublicPage = publicPages.includes(pathname)
-
-  // Prevent hydration mismatch by rendering consistent structure
-  if (!mounted) {
-    return (
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t md:hidden">
-        <nav className="flex items-center justify-around h-16 px-4">
-          <div className="flex flex-col items-center gap-1 px-3 py-2">
-            <div className="h-5 w-5" />
-            <span className="text-xs font-medium invisible">Home</span>
-          </div>
-          <div className="flex flex-col items-center gap-1 px-3 py-2">
-            <div className="h-5 w-5" />
-            <span className="text-xs font-medium invisible">AI Tools</span>
-          </div>
-          <div className="flex flex-col items-center gap-1 px-3 py-2">
-            <div className="h-5 w-5" />
-            <span className="text-xs font-medium invisible">Favorites</span>
-          </div>
-          <div className="flex flex-col items-center gap-1 px-3 py-2">
-            <div className="h-5 w-5" />
-            <span className="text-xs font-medium invisible">More</span>
-          </div>
-        </nav>
-      </div>
-    )
-  }
-
-  // Don't render on public pages after mounting
-  if (isPublicPage) {
-    return null
-  }
-
-  const navItems = [
-    {
-      href: "/dashboard",
-      icon: Home,
-      label: "Home",
-      isActive: pathname === "/dashboard"
-    },
-    {
-      href: "/ai-tools", 
-      icon: Search,
-      label: "AI Tools",
-      isActive: pathname === "/ai-tools"
-    },
-    {
-      href: "/favorites",
-      icon: Heart, 
-      label: "Favorites",
-      isActive: pathname === "/favorites"
-    }
-  ]
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t md:hidden">
-      <nav className="flex items-center justify-around h-16 px-4">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
-              item.isActive 
-                ? "text-primary bg-primary/10" 
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-            }`}
-          >
-            <item.icon className="h-5 w-5" />
-            <span className="text-xs font-medium">{item.label}</span>
-          </Link>
-        ))}
+    <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+      <nav className="flex h-16 items-center justify-around border-t bg-background px-4">
+        <Link href="/dashboard">
+          <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2">
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z" />
+            </svg>
+            <span className="text-xs font-medium">Dashboard</span>
+          </Button>
+        </Link>
+
+        <Link href="/favorites">
+          <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2">
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            <span className="text-xs font-medium">Favorites</span>
+          </Button>
+        </Link>
+
+        <Link href="/ai-legal-advisor">
+          <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2">
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            <span className="text-xs font-medium">AI Advisor</span>
+          </Button>
+        </Link>
 
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex flex-col items-center gap-1 px-3 py-2 h-auto"
-            >
-              <MoreHorizontal className="h-5 w-5" />
+            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 h-auto py-2">
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
               <span className="text-xs font-medium">More</span>
             </Button>
           </SheetTrigger>
