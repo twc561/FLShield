@@ -4,6 +4,7 @@ import {
   Crown,
   Smartphone,
   Download,
+  Bot,
   ShieldQuestion,
   MessageSquare,
   FileCheck,
