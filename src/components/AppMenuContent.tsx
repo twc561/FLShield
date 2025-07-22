@@ -36,7 +36,7 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
   const { setOpen } = useSidebar()
   const isMobile = useMobile()
 
-  // Initialize sections based on active routes
+  // Initialize sections based on active routes only on first mount
   useEffect(() => {
     const initialState: Record<string, boolean> = {}
     menuItems.forEach(item => {
@@ -45,7 +45,7 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
       }
     })
     setOpenSections(initialState)
-  }, [pathname])
+  }, []) // Remove pathname dependency
 
   const handleMenuItemClick = () => {
     if (isMobile) {
