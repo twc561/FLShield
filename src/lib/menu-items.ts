@@ -26,7 +26,8 @@ import {
   Download,
   ShieldQuestion,
   MessageSquare,
-  FileCheck
+  FileCheck,
+  Siren
 } from "lucide-react"
 
 type SubMenuItem = {
