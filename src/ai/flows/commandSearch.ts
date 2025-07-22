@@ -69,7 +69,7 @@ export async function* streamCommandSearch(input: CommandSearchInput): AsyncGene
         temperature: 0.4,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 8192, // Increased from 2048 for more comprehensive responses
+        maxOutputTokens: 32768, // Maximum tokens for ultra-comprehensive responses
       },
     });
 
@@ -108,7 +108,7 @@ export async function* streamCommandSearch(input: CommandSearchInput): AsyncGene
 
   } catch (error: any) {
     console.error('Command Search streaming error:', error);
-    
+
     // Provide more specific error messages based on error type
     if (error?.message?.includes('API_KEY')) {
       yield "Authentication error: Please check your API key configuration.";
@@ -140,7 +140,7 @@ export async function getCommandSearchResponse(input: CommandSearchInput): Promi
         temperature: 0.4,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 8192, // Increased from 2048 for more comprehensive responses
+        maxOutputTokens: 32768, // Maximum tokens for ultra-comprehensive responses
       },
     });
 
@@ -156,7 +156,7 @@ export async function getCommandSearchResponse(input: CommandSearchInput): Promi
 
   } catch (error: any) {
     console.error('Command Search error:', error);
-    
+
     // Provide specific error messages
     if (error?.message?.includes('API_KEY')) {
       return { answer: "Authentication error: Please check your API key configuration." };
