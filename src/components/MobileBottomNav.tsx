@@ -6,12 +6,12 @@ import * as React from "react"
 import {
   LayoutGrid,
   Scale,
-  ListChecks,
   Menu,
   Flame,
   LogOut,
   Bot,
   Crown,
+  Mic,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
@@ -33,9 +33,9 @@ const mainNavItems = [
   { href: "/legal-reference/statutes", label: "Statutes", icon: Scale },
   { href: "/ai-tools", label: "AI Tools", icon: Bot },
   {
-    href: "/field-procedures/scenario-checklists",
-    label: "Checklists",
-    icon: ListChecks,
+    href: "/voice-assistant",
+    label: "Voice",
+    icon: Mic,
   },
 ]
 
@@ -64,7 +64,7 @@ export function MobileBottomNav() {
     // Exact match for dashboard and ai-tools, startsWith for others to handle nested pages.
     if (href === "/dashboard" || href === "/ai-tools") return pathname === href
     // Special handling for checklists to ensure it activates correctly
-    if (href === "/field-procedures/scenario-checklists") return pathname.startsWith(href)
+    if (href === "/voice-assistant") return pathname.startsWith(href)
     return pathname.startsWith(href)
   }
 
