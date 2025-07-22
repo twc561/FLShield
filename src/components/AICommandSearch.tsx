@@ -48,13 +48,23 @@ export default function AICommandSearch() {
       // Use streaming command search for better responsiveness
       const { streamCommandSearch } = await import('@/ai/flows/commandSearch');
       const stream = streamCommandSearch({ query });
+      
+      let hasReceivedContent = false;
 
       for await (const chunk of stream) {
-        setResult(prev => prev + chunk);
+        if (chunk && chunk.trim()) {
+          hasReceivedContent = true;
+          setResult(prev => prev + chunk);
+        }
+      }
+
+      // If no content was received, show fallback message
+      if (!hasReceivedContent) {
+        setResult("I'm having difficulty processing that question right now. Please try rephrasing it or check back in a moment.");
       }
     } catch (error) {
       console.error("Search failed:", error)
-      setResult("I encountered an error while processing your request. Please try again.")
+      setResult("I encountered an error while processing your request. Please try again or rephrase your question.")
     } finally {
       setIsLoading(false)
     }

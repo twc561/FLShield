@@ -17,51 +17,73 @@ const CommandSearchOutputSchema = z.object({
 export type CommandSearchOutput = z.infer<typeof CommandSearchOutputSchema>;
 
 function createCommandSearchPrompt(query: string): string {
-  return `You are 'Shield FL,' an AI partner for Florida law enforcement. Your purpose is to provide immediate, clear, and practical answers to questions from front-line patrol officers. 
+  return `You are 'Shield FL,' an AI partner for Florida law enforcement. Your purpose is to provide immediate, clear, and practical answers to questions from front-line patrol officers.
 
-The answer should be:
-- Concise and easy to understand during high-stakes situations
-- Grounded in Florida statutes and common police procedures
-- Focused on operational guidance and factual information
-- Prioritizing officer safety and legal accuracy
-- NOT legal advice, but rather practical guidance
+RESPONSE GUIDELINES:
+- Provide comprehensive but digestible information
+- Structure responses with clear sections when appropriate (Overview, Key Points, Procedures, etc.)
+- Ground answers in Florida statutes and established police procedures
+- Focus on operational guidance and factual information
+- Prioritize officer safety and legal accuracy
+- Include relevant statute numbers or case law when applicable
+- Provide practical examples when helpful
+- Note when something is NOT legal advice, but operational guidance
 
 OFFICER'S QUESTION: "${query}"
 
-Your response as Shield FL:`;
+Your comprehensive response as Shield FL:`;
 }
 
 export async function* streamCommandSearch(input: CommandSearchInput) {
   try {
     console.log('Command Search streaming call:', {
-      queryLength: input.query.length
+      queryLength: input.query.length,
+      timestamp: new Date().toISOString()
     });
 
     const prompt = createCommandSearchPrompt(input.query);
 
-    // Use Gemini Pro with robust streaming like role-play simulator
+    // Use Gemini Pro with increased token limits for comprehensive responses
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-pro",
       generationConfig: {
         temperature: 0.4,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 4096,
+        maxOutputTokens: 8192,
       },
     });
 
-    const result = await model.generateContentStream(prompt);
+    // Add timeout wrapper
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Request timeout')), 30000); // 30 second timeout
+    });
 
+    const streamPromise = model.generateContentStream(prompt);
+    
+    const result = await Promise.race([streamPromise, timeoutPromise]) as any;
+
+    let chunkCount = 0;
     for await (const chunk of result.stream) {
       const chunkText = chunk.text();
-      if (chunkText) {
+      if (chunkText && chunkText.trim()) {
+        chunkCount++;
         yield chunkText;
       }
     }
 
+    console.log('Command Search completed:', { chunkCount });
+
   } catch (error: any) {
     console.error('Command Search streaming error:', error);
-    yield "I'm having difficulty processing that command right now. Please try again or rephrase your question.";
+    
+    if (error.message === 'Request timeout') {
+      yield "The request is taking longer than expected. Please try a more specific question or try again in a moment.";
+    } else if (error.message?.includes('quota') || error.message?.includes('limit')) {
+      yield "I'm experiencing high demand right now. Please try again in a few moments.";
+    } else {
+      yield "I'm having difficulty processing that command right now. Please try again or rephrase your question.";
+    }
   }
 }
 
@@ -75,7 +97,7 @@ export async function getCommandSearchResponse(input: CommandSearchInput): Promi
         temperature: 0.4,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 4096,
+        maxOutputTokens: 8192,
       },
     });
 
