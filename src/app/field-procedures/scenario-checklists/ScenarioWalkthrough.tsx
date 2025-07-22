@@ -51,7 +51,7 @@ export const ScenarioWalkthrough = React.memo(function ScenarioWalkthrough({
   }
 
   return (
-    <div className="animate-fade-in-up space-y-6">
+    <div className="space-y-6">
       <Card className="w-full">
         <CardHeader>
           <Badge variant="secondary" className="w-fit mb-2">
@@ -61,7 +61,7 @@ export const ScenarioWalkthrough = React.memo(function ScenarioWalkthrough({
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-muted-foreground">{currentStep.content}</p>
-          
+
           {currentStep.aiTip && (
               <div className="p-3 bg-accent/10 border-l-4 border-accent rounded-r-lg">
                 <div className="flex items-start gap-3">
