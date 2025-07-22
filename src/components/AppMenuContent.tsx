@@ -49,6 +49,12 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
     return pathname === href || (href !== "/dashboard" && href !== "/" && pathname.startsWith(href))
   }
 
+  const onNavigate = () => {
+    if (isMobile) {
+      setOpen(false);
+    }
+  };
+
   // Prevent hydration mismatch by not rendering interactive elements until mounted
   if (!mounted) {
     return (
@@ -103,7 +109,12 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
                   <SidebarMenuSubItem key={subItem.label}>
                     <Link
                       href={subItem.href}
-                      onClick={handleMenuItemClick}
+                      onClick={() => {
+                        handleMenuItemClick(); // Close sidebar on mobile
+                        if (onLinkClick) {
+                          onLinkClick(); // Call any additional link click handler if provided
+                        }
+                      }}
                       className={cn(
                         "flex h-full w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-sidebar-foreground/80 outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2",
                         isActive(subItem.href) &&

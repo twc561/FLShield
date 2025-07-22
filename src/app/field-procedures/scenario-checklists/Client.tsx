@@ -26,7 +26,8 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
   categoryOrder: string[]
 }) {
   const [searchTerm, setSearchTerm] = React.useState("")
-  const [selectedScenario, setSelectedScenario] = React.useState<Scenario | null>(null);
+  const [selectedScenario, setSelectedScenario] = React.useState<Scenario | null>(null)
+  const [openAccordionItem, setOpenAccordionItem] = React.useState<string | undefined>(undefined)
 
   const filteredScenarios = React.useMemo(() => {
     if (!searchTerm) {
@@ -52,7 +53,13 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
         />
       </div>
 
-      <Accordion type="single" collapsible className="w-full space-y-2">
+      <Accordion 
+        type="single" 
+        collapsible 
+        className="w-full space-y-2"
+        value={openAccordionItem}
+        onValueChange={setOpenAccordionItem}
+      >
         {categoryOrder
           .filter(category => 
             filteredScenarios.some(s => s.category === category)
