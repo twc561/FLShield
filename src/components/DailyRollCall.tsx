@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -39,9 +40,9 @@ export function DailyRollCall({ className }: DailyRollCallProps) {
 
   const handleComplete = () => {
     if (!module) return;
-
+    
     setCompletionState('completed');
-
+    
     // Store completion in localStorage
     const completionKey = `daily-roll-call-${module.id}`;
     localStorage.setItem(completionKey, JSON.stringify({
