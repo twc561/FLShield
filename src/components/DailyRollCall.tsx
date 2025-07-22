@@ -209,38 +209,36 @@ export function DailyRollCall({ className }: DailyRollCallProps) {
 
         {/* Feedback & Completion */}
         {completionState === 'answered' && (
-              <div className="flex flex-col space-y-3 pt-4 border-t">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Was this briefing helpful?</span>
-                  <div className="flex space-x-2">
-                    <Button
-                      size="sm"
-                      variant={feedback === 'helpful' ? 'default' : 'outline'}
-                      onClick={() => handleFeedback(true)}
-                    >
-                      <ThumbsUp className="h-3 w-3" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant={feedback === 'not-helpful' ? 'default' : 'outline'}
-                      onClick={() => handleFeedback(false)}
-                    >
-                      <ThumbsDown className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-                <Button onClick={handleComplete} className="w-full">
-                  Mark as Complete
+          <div className="flex flex-col space-y-3 pt-4 border-t">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">Was this briefing helpful?</span>
+              <div className="flex space-x-2">
+                <Button
+                  size="sm"
+                  variant={feedback === 'helpful' ? 'default' : 'outline'}
+                  onClick={() => handleFeedback(true)}
+                >
+                  <ThumbsUp className="h-3 w-3" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant={feedback === 'not-helpful' ? 'default' : 'outline'}
+                  onClick={() => handleFeedback(false)}
+                >
+                  <ThumbsDown className="h-3 w-3" />
                 </Button>
               </div>
-            )}
-
-            {module.smeAttribution && (
-              <p className="text-xs text-muted-foreground italic border-t pt-3">
-                {module.smeAttribution}
-              </p>
-            )}
+            </div>
+            <Button onClick={handleComplete} className="w-full">
+              Mark as Complete
+            </Button>
           </div>
+        )}
+
+        {module.smeAttribution && (
+          <p className="text-xs text-muted-foreground italic border-t pt-3">
+            {module.smeAttribution}
+          </p>
         )}
       </CardContent>
     </Card>
