@@ -1,3 +1,4 @@
+
 'use client'
 
 import React, { useState, useEffect } from "react"
@@ -22,7 +23,6 @@ import * as LucideIcons from "lucide-react"
 
 import { dashboardFeatureGroups } from "@/data/dashboard-features"
 import type { FeatureModule } from "@/data/dashboard-features"
-
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -49,17 +49,36 @@ const itemVariants = {
 
 const ToolCard = ({ module }: { module: FeatureModule }) => {
   const Icon = (LucideIcons as any)[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle;
+  const { isPro, mounted } = useSubscription()
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   return (
     <div className="group relative">
       <Link href={module.targetPage}>
-        <Card className="h-full hover:border-primary/80 hover:bg-card/60 transition-colors flex items-center p-3 gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Icon className="w-5 h-5 text-primary" />
-          </div>
-          <div className="flex-1">
-            <p className="font-semibold text-sm text-foreground">{module.title}</p>
-            <p className="text-xs text-muted-foreground">{module.summary}</p>
-          </div>
+        <Card className="h-full hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20">
+          <CardHeader className="pb-4">
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">
+                  <Icon className="h-5 w-5 text-primary" />
+                </span>
+                {isClient && mounted && isPro && module.isPremium && (
+                  <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs">
+                    <Crown className="w-3 h-3 mr-1" />
+                    Pro
+                  </Badge>
+                )}
+              </div>
+            </div>
+            <CardTitle className="text-lg leading-tight">{module.title}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground leading-relaxed">{module.summary}</p>
+          </CardContent>
         </Card>
       </Link>
       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -69,15 +88,9 @@ const ToolCard = ({ module }: { module: FeatureModule }) => {
   )
 }
 
-
-
-
 const FeaturedTools = ({ isClient }: { isClient: boolean }) => {
     const { isPro, mounted } = useSubscription()
     
-    // In a real AI-driven app, this logic would be powered by a model
-    // analyzing context (time, location, user history).
-    // Here, we simulate it by selecting a few key tools.
     const featured: FeatureModule[] = [
         dashboardFeatureGroups.find(g => g.category === "Field Operations & Procedures")?.features[0],
         dashboardFeatureGroups.find(g => g.category === "Legal Reference Library")?.features[0],
@@ -86,55 +99,34 @@ const FeaturedTools = ({ isClient }: { isClient: boolean }) => {
 
     return (
         <motion.div variants={itemVariants}>
-            <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-bold tracking-tight px-1">Smart Suggestions</h2>
-                {isClient && mounted && isPro && (
-                    <Badge variant="outline" className="text-amber-600 border-amber-300">
-                        <Crown className="w-3 h-3 mr-1" />
-                        Pro Features
-                    </Badge>
-                )}
+            <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-card-foreground mb-4">Smart Suggestions</h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    AI-powered tool recommendations based on your current shift context
+                </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {featured.map(tool => (
-                     <Link href={tool.targetPage} key={tool.id} className="group">
-                        <Card className="h-full hover:border-primary transition-colors relative">
-                            {isClient && mounted && isPro && tool.isPremium && (
-                                <div className="absolute top-2 right-2">
-                                    <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs">
-                                        <Crown className="w-3 h-3 mr-1" />
-                                        Pro
-                                    </Badge>
-                                </div>
-                            )}
-                            <CardHeader>
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-primary/10 rounded-lg">
-                                        <LucideIcons.Star className="w-5 h-5 text-primary"/>
-                                    </div>
-                                    <CardTitle className="text-base">{tool.title}</CardTitle>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">{tool.summary}</p>
-                            </CardContent>
-                        </Card>
-                    </Link>
+                    <ToolCard key={tool.id} module={tool} />
                 ))}
             </div>
         </motion.div>
     )
 }
 
-
 const PinnedTools = ({ isClient }: { isClient: boolean }) => {
   return (
     <motion.div variants={itemVariants}>
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-card-foreground mb-4">Pinned Tools</h2>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          Quick access to your most frequently used tools
+        </p>
+      </div>
       <PinnedToolsGrid isClient={isClient} />
     </motion.div>
   )
 }
-
 
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("Good day")
@@ -170,7 +162,7 @@ export default function DashboardPage() {
                 setUserName("Officer");
             }
         } else {
-            setUserName("Officer"); // Fallback for loading state
+            setUserName("Officer");
         }
     });
 
@@ -178,24 +170,9 @@ export default function DashboardPage() {
   }, [])
 
   return (
-    <motion.div 
-      className="space-y-8"
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-    >
+    <div className="container mx-auto p-4 md:p-6">
       <PageHeader 
-        title={
-          <div className="flex items-center gap-3">
-            {`${greeting}, ${userName || "Officer"}.`}
-            {isClient && mounted && isPro && (
-              <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 shadow-lg text-sm px-3 py-1">
-                <Crown className="w-4 h-4 mr-2" />
-                Shield FL Pro
-              </Badge>
-            )}
-          </div>
-        }
+        title={`${greeting}, ${userName || "Officer"}.`}
         description={
           isClient && mounted && isPro ? (
             <div className="flex items-center gap-2 text-amber-600">
@@ -208,116 +185,144 @@ export default function DashboardPage() {
         }
       />
 
-      <motion.div variants={itemVariants}>
-        <AICommandSearch />
-      </motion.div>
-
-      {/* Pro Status Card */}
-      {isClient && mounted && isPro && (
+      <motion.div 
+        className="space-y-12"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+      >
+        {/* AI Command Search */}
         <motion.div variants={itemVariants}>
-          <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full">
-                    <Crown className="w-5 h-5 text-white" />
+          <AICommandSearch />
+        </motion.div>
+
+        {/* Pro Status Card */}
+        {isClient && mounted && isPro && (
+          <motion.div variants={itemVariants}>
+            <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+              <CardContent className="p-6 text-center">
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <div className="p-3 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full">
+                    <Crown className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-amber-900">Shield FL Pro Active</h3>
-                    <p className="text-sm text-amber-700">Access to all premium AI tools and features</p>
+                    <h3 className="text-xl font-bold text-amber-900">Shield FL Pro Active</h3>
+                    <p className="text-amber-700">Access to all premium AI tools and features</p>
                   </div>
                 </div>
-                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0">
-                  Premium
-                </Badge>
-              </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Daily Roll Call Section */}
+        <motion.div variants={itemVariants}>
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-card-foreground mb-4">Daily Roll Call</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Stay informed with today's critical briefing information
+            </p>
+          </div>
+          <Card className="hover:shadow-lg transition-all duration-300">
+            <CardContent className="p-6">
+              <DailyRollCall />
             </CardContent>
           </Card>
         </motion.div>
-      )}
 
-      {/* Daily Roll Call - Primary focal point */}
-      <motion.div variants={itemVariants} className="mb-8">
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
-          <DailyRollCall />
+        {/* Training Progress Section */}
+        <motion.div variants={itemVariants}>
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-card-foreground mb-4">Training Progress</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Track your professional development and skill advancement
+            </p>
+          </div>
+          <Card className="hover:shadow-lg transition-all duration-300">
+            <CardContent className="p-6">
+              <BriefingStats />
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Featured Tools Section */}
+        <div>
+          <FeaturedTools isClient={isClient} />
         </div>
-      </motion.div>
 
-      {/* Training Progress Section */}
-      <motion.div variants={itemVariants} className="mb-8">
-        <div className="bg-card/30 border rounded-lg p-6">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-primary" />
-            Your Training Progress
-          </h2>
-          <BriefingStats />
+        {/* Pinned Tools Section */}
+        <div>
+          <PinnedTools isClient={isClient} />
         </div>
-      </motion.div>
 
-      {/* Featured Tools Section */}
-      <div className="mb-8 bg-card/20 border rounded-lg p-6">
-        <FeaturedTools isClient={isClient} />
-      </div>
+        {/* Complete Tools Library */}
+        <motion.div variants={itemVariants}>
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-card-foreground mb-4">Complete Tools Library</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Comprehensive collection of law enforcement tools and resources
+            </p>
+          </div>
+          
+          <div className="mb-4">
+            <p className="text-sm text-muted-foreground text-center">
+              Showing {dashboardFeatureGroups.reduce((acc, group) => acc + group.features.length, 0)} tools across {dashboardFeatureGroups.length} categories
+            </p>
+          </div>
 
-      {/* Pinned Tools Section */}
-      <div className="mb-8 bg-gradient-to-r from-amber-50/50 to-orange-50/50 border border-amber-200/50 rounded-lg p-6">
-        <PinnedTools isClient={isClient} />
-      </div>
-
-      {/* The "All Tools" Library */}
-      <motion.div variants={itemVariants} className="bg-card/10 border rounded-lg p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold tracking-tight flex items-center gap-3">
-            <BookOpen className="w-6 h-6 text-primary" />
-            Complete Tools Library
-          </h2>
-          <Badge variant="outline" className="text-sm">
-            {dashboardFeatureGroups.reduce((acc, group) => acc + group.features.length, 0)} Tools
-          </Badge>
-        </div>
-        <div className="space-y-8">
-          {Array.isArray(dashboardFeatureGroups) && dashboardFeatureGroups.map((group, index) => {
-            const GroupIcon = (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle
-            return (
-              <motion.div
-                key={group.category}
-                variants={itemVariants}
-                transition={{ delay: index * 0.05 }}
-              >
-                <Card className="bg-card/60 border-2 hover:border-primary/20 transition-colors">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-3 text-lg">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <GroupIcon className="w-5 h-5 text-primary"/>
+          <div className="space-y-8">
+            {Array.isArray(dashboardFeatureGroups) && dashboardFeatureGroups.map((group, index) => {
+              const GroupIcon = (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle
+              return (
+                <motion.div
+                  key={group.category}
+                  variants={itemVariants}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <Card className="hover:shadow-lg transition-all duration-300">
+                    <CardHeader className="pb-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                            <GroupIcon className="w-6 h-6 text-primary"/>
+                          </div>
+                          <div>
+                            <CardTitle className="text-xl">{group.category}</CardTitle>
+                            <CardDescription className="text-sm">
+                              {group.features.length} {group.features.length === 1 ? 'tool' : 'tools'} available
+                            </CardDescription>
+                          </div>
+                        </div>
+                        <Badge variant="secondary" className="text-sm">
+                          {group.features.length}
+                        </Badge>
                       </div>
-                      {group.category}
-                      <Badge variant="secondary" className="ml-auto">
-                        {group.features.length} {group.features.length === 1 ? 'tool' : 'tools'}
-                      </Badge>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {group.features.map((feature) => (
-                      <ToolCard key={feature.id} module={feature} />
-                    ))}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )
-          })}
-        </div>
-      </motion.div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {group.features.map((feature) => (
+                          <ToolCard key={feature.id} module={feature} />
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )
+            })}
+          </div>
+        </motion.div>
 
-      <motion.div variants={itemVariants} className="pt-4">
-        <Alert variant="destructive">
+        {/* Disclaimer */}
+        <motion.div variants={itemVariants}>
+          <Alert variant="destructive">
             <LucideIcons.ShieldAlert className="h-4 w-4" />
             <AlertTitle>For Informational Use Only</AlertTitle>
             <AlertDescription>
-            This application is a training and informational aid. It is NOT a CJIS-compliant system. Do not enter, store, or transmit any real Criminal Justice Information (CJI) or Personally Identifiable Information (PII).
+              This application is a training and informational aid. It is NOT a CJIS-compliant system. Do not enter, store, or transmit any real Criminal Justice Information (CJI) or Personally Identifiable Information (PII).
             </AlertDescription>
-        </Alert>
+          </Alert>
+        </motion.div>
       </motion.div>
-
-    </motion.div>
+    </div>
   )
 }
