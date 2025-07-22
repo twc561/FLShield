@@ -65,6 +65,12 @@ export default function AICommandSearch() {
     { text: "Baker Act requirements", category: "Emergency", path: "/emergency-response/baker-act-guide" }
   ];
 
+  const handleQuickActionClick = (path: string) => {
+    setResult(null); // Clear the overlay
+    setQuery(""); // Clear the search input
+    router.push(path);
+  };
+
   return (
     <Card className={`w-full max-w-4xl mx-auto bg-gradient-to-r from-card/50 to-accent/10 border-border transition-all duration-200 ${isShortcutPressed ? 'ring-2 ring-accent scale-[1.02]' : ''}`}>
       <CardContent className="p-6">
@@ -136,7 +142,7 @@ export default function AICommandSearch() {
                 key={suggestion.text}
                 variant="secondary"
                 className="cursor-pointer hover:bg-accent/20 hover:text-accent hover:scale-105 transition-all duration-200 flex items-center gap-1 bg-muted text-muted-foreground border-border"
-                onClick={() => router.push(suggestion.path)}
+                onClick={() => handleQuickActionClick(suggestion.path)}
               >
                 <span className="text-xs opacity-70">{suggestion.category}</span>
                 <span>•</span>
