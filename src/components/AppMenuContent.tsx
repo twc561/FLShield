@@ -110,7 +110,7 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
                     <Link
                       href={subItem.href}
                       onClick={() => {
-                        handleMenuItemClick(); // Close sidebar on mobile
+                        setOpen(false); // Always close sidebar when clicking submenu items
                         if (onLinkClick) {
                           onLinkClick(); // Call any additional link click handler if provided
                         }
