@@ -177,7 +177,7 @@ export default function AICommandSearch() {
               {result}
             </div>
           </div>
-        )}</div>
+        )}
       </CardContent>
     </Card>
   );
