@@ -1,135 +1,43 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
-import { ChevronDown } from "lucide-react"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import {
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
-import { cn } from "@/lib/utils"
 import { menuItems } from "@/lib/menu-items"
-import { useSubscription } from "@/hooks/use-subscription"
-import { Badge } from "@/components/ui/badge"
-import * as LucideIcons from "lucide-react"
+import { ChevronRight } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface AppMenuContentProps {
   onLinkClick?: () => void
 }
 
 export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
-  const pathname = usePathname()
-  const { isPro, mounted } = useSubscription()
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  const isActive = (href: string) => {
-    return pathname === href || (href !== "/dashboard" && href !== "/" && pathname.startsWith(href))
-  }
-
-  // Prevent hydration mismatch by not rendering interactive elements until mounted
-  if (!mounted) {
-    return (
-      <SidebarMenu className="p-0">
-        {menuItems.map((item) => (
-          <SidebarMenuItem key={item.label}>
-            <SidebarMenuButton variant="ghost" className="w-full">
-              <div className="flex items-center gap-2">
-                <item.icon className="size-5" />
-                <span className="group-data-[collapsible=icon]:hidden">
-                  {item.label}
-                </span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
-      </SidebarMenu>
-    )
-  }
-
   return (
-    <SidebarMenu className="p-0">
-      {menuItems.map((item) =>
-        item.items ? (
-          <Collapsible
-            key={item.label}
-            defaultOpen={item.items.some((subItem) => isActive(subItem.href))}
-            className="w-full"
-          >
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton
-                  className="w-full justify-between"
-                  variant="ghost"
-                  data-active={item.items.some((subItem) =>
-                    isActive(subItem.href)
-                  )}
-                >
-                  <div className="flex items-center gap-2">
-                    <item.icon className="size-5" />
-                    <span className="group-data-[collapsible=icon]:hidden">
-                      {item.label}
-                    </span>
-                  </div>
-                  <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200 group-data-[collapsible=icon]:hidden data-[state=open]:rotate-180" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-            </SidebarMenuItem>
-            <CollapsibleContent>
-              <SidebarMenuSub>
-                {item.items.map((subItem) => (
-                  <SidebarMenuSubItem key={subItem.label}>
-                    <Link
-                      href={subItem.href}
-                      onClick={onLinkClick}
-                      className={cn(
-                        "flex h-full w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-sidebar-foreground/80 outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2",
-                        isActive(subItem.href) &&
-                          "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                      )}
-                    >
-                      <subItem.icon className="size-4 shrink-0" />
-                      <span className="truncate">{subItem.label}</span>
-                    </Link>
-                  </SidebarMenuSubItem>
-                ))}
-              </SidebarMenuSub>
-            </CollapsibleContent>
-          </Collapsible>
-        ) : (
-          <SidebarMenuItem key={item.label}>
-            <SidebarMenuButton
-              asChild
-              isActive={pathname === item.href}
-              tooltip={{ children: item.label, side: "right" }}
-              className={cn(
-                pathname === item.href &&
-                  "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary"
-              )}
-              onClick={onLinkClick}
-            >
-              <Link href={item.href!}>
-                <item.icon className="size-5" />
-                <span className="group-data-[collapsible=icon]:hidden">
-                  {item.label}
-                </span>
+    <div className="space-y-2">
+      {menuItems.map((section) => (
+        <div key={section.label} className="space-y-1">
+          <div className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground">
+            <section.icon className="h-4 w-4" />
+            <span>{section.label}</span>
+          </div>
+          <div className="space-y-1 pl-2">
+            {section.items.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onLinkClick}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors",
+                  "hover:bg-accent hover:text-accent-foreground",
+                  "active:bg-accent/80"
+                )}
+              >
+                <item.icon className="h-4 w-4 flex-shrink-0" />
+                <span className="flex-1">{item.label}</span>
+                <ChevronRight className="h-3 w-3 text-muted-foreground" />
               </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        )
-      )}
-    </SidebarMenu>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   )
 }

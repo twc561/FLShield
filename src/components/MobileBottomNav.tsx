@@ -45,10 +45,25 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
   const router = useRouter()
   const [isSheetOpen, setIsSheetOpen] = React.useState(false)
   const [isClient, setIsClient] = React.useState(false)
+  const [showNavHint, setShowNavHint] = React.useState(false)
   const { isPro, mounted } = useSubscription()
 
   React.useEffect(() => {
     setIsClient(true)
+    
+    // Show navigation hint for new users
+    const hasSeenNavHint = localStorage.getItem('hasSeenMobileNavHint')
+    if (!hasSeenNavHint) {
+      const timer = setTimeout(() => {
+        setShowNavHint(true)
+        setTimeout(() => {
+          setShowNavHint(false)
+          localStorage.setItem('hasSeenMobileNavHint', 'true')
+        }, 3000)
+      }, 2000)
+      
+      return () => clearTimeout(timer)
+    }
   }, [])
 
   const handleSignOut = useCallback(async () => {
@@ -74,7 +89,7 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
   }, [])
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t z-50">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t z-50 shadow-lg">
       {/* Pro Status Bar */}
       {isClient && mounted && isPro && (
         <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-1">
@@ -110,14 +125,29 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
         <SheetTrigger asChild>
           <button
             type="button"
-            className="flex flex-col items-center justify-center text-muted-foreground w-full h-full relative"
+            className={cn(
+              "flex flex-col items-center justify-center text-muted-foreground w-full h-full relative transition-all duration-300",
+              showNavHint && "animate-pulse bg-primary/10 text-primary rounded-lg"
+            )}
             aria-label="Open full menu"
           >
-            <Menu className="h-6 w-6" />
-            <span className="text-xs">More</span>
+            <Menu className={cn(
+              "h-6 w-6 transition-all duration-300",
+              showNavHint && "scale-110"
+            )} />
+            <span className={cn(
+              "text-xs transition-all duration-300",
+              showNavHint && "font-medium"
+            )}>More</span>
             {isClient && mounted && isPro && (
               <div className="absolute -top-1 -right-1">
                 <Crown className="w-3 h-3 text-amber-500" />
+              </div>
+            )}
+            {showNavHint && (
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-md whitespace-nowrap animate-bounce">
+                Tap for more tools!
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-t-4 border-transparent border-t-primary"></div>
               </div>
             )}
           </button>
