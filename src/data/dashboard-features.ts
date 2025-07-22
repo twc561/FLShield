@@ -256,15 +256,6 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         category: "Field Operations & Procedures",
         isPremium: true,
       },
-       {
-        id: "jurisdiction-finder",
-        title: "Jurisdiction Finder",
-        summary: "Use GPS to identify your current jurisdiction and access local laws.",
-        icon: "MapPin",
-        targetPage: "/field-procedures/jurisdiction-finder",
-        category: "Field Operations & Procedures",
-        isPremium: true,
-      },
     ],
   },
   {
