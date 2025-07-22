@@ -55,9 +55,9 @@ export async function* streamCommandSearch(input: CommandSearchInput): AsyncGene
 
     const prompt = createCommandSearchPrompt(input.query);
 
-    // Use Gemini 2.5 Flash with increased token limits for robust responses
+    // Use Gemini 1.5 Flash for optimal speed and reliability
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash", // Updated to 2.5 Flash
+      model: "gemini-1.5-flash",
       generationConfig: {
         temperature: 0.4,
         topP: 0.95,
@@ -128,7 +128,7 @@ export async function getCommandSearchResponse(input: CommandSearchInput): Promi
     const prompt = createCommandSearchPrompt(input.query);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash", // Updated to 2.5 Flash
+      model: "gemini-1.5-flash",
       generationConfig: {
         temperature: 0.4,
         topP: 0.95,
