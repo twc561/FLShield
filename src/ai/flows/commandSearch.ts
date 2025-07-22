@@ -17,123 +17,65 @@ const CommandSearchOutputSchema = z.object({
 export type CommandSearchOutput = z.infer<typeof CommandSearchOutputSchema>;
 
 function createCommandSearchPrompt(query: string): string {
-  return `You are 'Shield FL,' an AI partner for Florida law enforcement. Your purpose is to provide immediate, clear, and comprehensive answers to questions from front-line patrol officers.
+  return `You are 'Shield FL,' an AI partner for Florida law enforcement. Your purpose is to provide immediate, clear, and practical answers to questions from front-line patrol officers. 
 
-Provide detailed, thorough responses that cover:
-- Essential facts, statutes, or procedures
-- Critical safety considerations
-- Legal requirements and thresholds
-- Practical field application
-- Real-world scenarios and examples
-- Step-by-step guidance when applicable
-
-Requirements:
-- Be comprehensive and detailed in your explanations
-- Focus on Florida law and procedures
-- Prioritize officer safety and legal accuracy
-- Provide operational guidance, not legal advice
-- Include multiple examples and scenarios when relevant
-- Cover all relevant aspects of the topic thoroughly
+The answer should be:
+- Concise and easy to understand during high-stakes situations
+- Grounded in Florida statutes and common police procedures
+- Focused on operational guidance and factual information
+- Prioritizing officer safety and legal accuracy
+- NOT legal advice, but rather practical guidance
 
 OFFICER'S QUESTION: "${query}"
 
-Your comprehensive response as Shield FL:`;
+Your response as Shield FL:`;
 }
 
-export async function* streamCommandSearch(input: CommandSearchInput): AsyncGenerator<string, void, unknown> {
+export async function* streamCommandSearch(input: CommandSearchInput) {
   try {
     console.log('Command Search streaming call:', {
       queryLength: input.query.length
     });
 
-    // Validate API key
-    if (!process.env.GOOGLE_GENAI_API_KEY) {
-      console.error('Missing GOOGLE_GENAI_API_KEY');
-      yield "Configuration error: API key not found. Please check your environment variables.";
-      return;
-    }
-
     const prompt = createCommandSearchPrompt(input.query);
 
-    // Use Gemini 1.5 Flash for optimal speed and reliability
+    // Use Gemini Pro with robust streaming like role-play simulator
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-1.5-pro",
       generationConfig: {
         temperature: 0.4,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 32768, // Maximum tokens for ultra-comprehensive responses
+        maxOutputTokens: 4096,
       },
     });
 
     const result = await model.generateContentStream(prompt);
 
-    let hasContent = false;
-    try {
-      for await (const chunk of result.stream) {
-        const chunkText = chunk.text();
-        if (chunkText && chunkText.trim()) {
-          hasContent = true;
-          yield chunkText;
-        }
+    for await (const chunk of result.stream) {
+      const chunkText = chunk.text();
+      if (chunkText) {
+        yield chunkText;
       }
-    } catch (streamingError) {
-      console.error('Error during streaming:', streamingError);
-      if (!hasContent) {
-        // Fall back to non-streaming if streaming fails
-        try {
-          const fallbackResult = await model.generateContent(prompt);
-          const fallbackResponse = await fallbackResult.response;
-          const fallbackText = fallbackResponse.text();
-          if (fallbackText && fallbackText.trim()) {
-            yield fallbackText.trim();
-            hasContent = true;
-          }
-        } catch (fallbackError) {
-          console.error('Fallback also failed:', fallbackError);
-        }
-      }
-    }
-
-    if (!hasContent) {
-      yield "I wasn't able to generate a response. Please try rephrasing your question or ask something more specific.";
     }
 
   } catch (error: any) {
     console.error('Command Search streaming error:', error);
-
-    // Provide more specific error messages based on error type
-    if (error?.message?.includes('API_KEY')) {
-      yield "Authentication error: Please check your API key configuration.";
-    } else if (error?.message?.includes('QUOTA') || error?.message?.includes('quota')) {
-      yield "API quota exceeded. Please try again later.";
-    } else if (error?.message?.includes('SAFETY') || error?.message?.includes('safety')) {
-      yield "Content was filtered for safety. Please rephrase your question.";
-    } else if (error?.message?.includes('TOKEN') || error?.message?.includes('token')) {
-      yield "Your query is too long. Please try asking a shorter, more specific question.";
-    } else {
-      yield "I'm experiencing technical difficulties. Please try your question again in a moment.";
-    }
+    yield "I'm having difficulty processing that command right now. Please try again or rephrase your question.";
   }
 }
 
 export async function getCommandSearchResponse(input: CommandSearchInput): Promise<CommandSearchOutput> {
   try {
-    // Validate API key
-    if (!process.env.GOOGLE_GENAI_API_KEY) {
-      console.error('Missing GOOGLE_GENAI_API_KEY');
-      return { answer: "Configuration error: API key not found. Please check your environment variables." };
-    }
-
     const prompt = createCommandSearchPrompt(input.query);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-1.5-pro",
       generationConfig: {
         temperature: 0.4,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 32768, // Maximum tokens for ultra-comprehensive responses
+        maxOutputTokens: 4096,
       },
     });
 
@@ -145,23 +87,11 @@ export async function getCommandSearchResponse(input: CommandSearchInput): Promi
       return { answer: text.trim() };
     }
 
-    return { answer: "I wasn't able to generate a response. Please try rephrasing your question or ask something more specific." };
+    return { answer: "I'm having difficulty processing that question right now. Please try rephrasing it." };
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Command Search error:', error);
-
-    // Provide specific error messages
-    if (error?.message?.includes('API_KEY')) {
-      return { answer: "Authentication error: Please check your API key configuration." };
-    } else if (error?.message?.includes('QUOTA') || error?.message?.includes('quota')) {
-      return { answer: "API quota exceeded. Please try again later." };
-    } else if (error?.message?.includes('SAFETY') || error?.message?.includes('safety')) {
-      return { answer: "Content was filtered for safety. Please rephrase your question." };
-    } else if (error?.message?.includes('TOKEN') || error?.message?.includes('token')) {
-      return { answer: "Your query is too long. Please try asking a shorter, more specific question." };
-    } else {
-      return { answer: "I'm experiencing technical difficulties. Please try your question again in a moment." };
-    }
+    return { answer: "I'm experiencing technical difficulties. Please try your question again." };
   }
 }
 

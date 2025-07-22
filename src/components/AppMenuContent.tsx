@@ -1,96 +1,135 @@
-
 "use client"
 
 import Link from "next/link"
-import { menuItems } from "@/lib/menu-items"
-import { ChevronRight } from "lucide-react"
+import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
+import { ChevronDown } from "lucide-react"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+import {
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+} from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
-import { useState, useEffect } from "react"
+import { menuItems } from "@/lib/menu-items"
+import { useSubscription } from "@/hooks/use-subscription"
+import { Badge } from "@/components/ui/badge"
+import * as LucideIcons from "lucide-react"
 
 interface AppMenuContentProps {
   onLinkClick?: () => void
 }
 
-// Loading skeleton component
-function MenuSkeleton() {
-  return (
-    <div className="space-y-4 p-4">
-      <div className="animate-pulse space-y-4">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="space-y-2">
-            <div className="h-5 bg-muted rounded w-1/3"></div>
-            <div className="space-y-2 pl-4">
-              {[1, 2, 3].map((j) => (
-                <div key={j} className="h-4 bg-muted/60 rounded w-2/3"></div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
-  const [isReady, setIsReady] = useState(false)
+  const pathname = usePathname()
+  const { isPro, mounted } = useSubscription()
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    // Ensure component is ready after hydration
-    const timer = setTimeout(() => {
-      setIsReady(true)
-    }, 100)
-
-    return () => clearTimeout(timer)
+    setIsClient(true)
   }, [])
 
-  // Show loading skeleton while not ready
-  if (!isReady) {
-    return <MenuSkeleton />
+  const isActive = (href: string) => {
+    return pathname === href || (href !== "/dashboard" && href !== "/" && pathname.startsWith(href))
   }
 
-  // Ensure menuItems is available
-  if (!menuItems || menuItems.length === 0) {
+  // Prevent hydration mismatch by not rendering interactive elements until mounted
+  if (!mounted) {
     return (
-      <div className="p-4 text-center text-muted-foreground">
-        <p>Unable to load menu items</p>
-      </div>
+      <SidebarMenu className="p-0">
+        {menuItems.map((item) => (
+          <SidebarMenuItem key={item.label}>
+            <SidebarMenuButton variant="ghost" className="w-full">
+              <div className="flex items-center gap-2">
+                <item.icon className="size-5" />
+                <span className="group-data-[collapsible=icon]:hidden">
+                  {item.label}
+                </span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
     )
   }
 
   return (
-    <div className="space-y-1 p-2">
-      {menuItems.map((section) => (
-        <div key={section.label} className="space-y-1">
-          {/* Section Header */}
-          <div className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-foreground/80 bg-muted/30 rounded-md">
-            <section.icon className="h-4 w-4" />
-            <span>{section.label}</span>
-          </div>
-          
-          {/* Section Items */}
-          {section.items && section.items.length > 0 && (
-            <div className="space-y-1 ml-2">
-              {section.items.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={onLinkClick}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 text-sm rounded-md transition-all duration-200",
-                    "hover:bg-accent hover:text-accent-foreground",
-                    "active:bg-accent/80 active:scale-[0.98]",
-                    "text-foreground border border-transparent hover:border-border/50"
+    <SidebarMenu className="p-0">
+      {menuItems.map((item) =>
+        item.items ? (
+          <Collapsible
+            key={item.label}
+            defaultOpen={item.items.some((subItem) => isActive(subItem.href))}
+            className="w-full"
+          >
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className="w-full justify-between"
+                  variant="ghost"
+                  data-active={item.items.some((subItem) =>
+                    isActive(subItem.href)
                   )}
                 >
-                  <item.icon className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                  <span className="flex-1 leading-tight">{item.label}</span>
-                  <ChevronRight className="h-3 w-3 text-muted-foreground/60" />
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
+                  <div className="flex items-center gap-2">
+                    <item.icon className="size-5" />
+                    <span className="group-data-[collapsible=icon]:hidden">
+                      {item.label}
+                    </span>
+                  </div>
+                  <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200 group-data-[collapsible=icon]:hidden data-[state=open]:rotate-180" />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+            </SidebarMenuItem>
+            <CollapsibleContent>
+              <SidebarMenuSub>
+                {item.items.map((subItem) => (
+                  <SidebarMenuSubItem key={subItem.label}>
+                    <Link
+                      href={subItem.href}
+                      onClick={onLinkClick}
+                      className={cn(
+                        "flex h-full w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-sidebar-foreground/80 outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2",
+                        isActive(subItem.href) &&
+                          "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                      )}
+                    >
+                      <subItem.icon className="size-4 shrink-0" />
+                      <span className="truncate">{subItem.label}</span>
+                    </Link>
+                  </SidebarMenuSubItem>
+                ))}
+              </SidebarMenuSub>
+            </CollapsibleContent>
+          </Collapsible>
+        ) : (
+          <SidebarMenuItem key={item.label}>
+            <SidebarMenuButton
+              asChild
+              isActive={pathname === item.href}
+              tooltip={{ children: item.label, side: "right" }}
+              className={cn(
+                pathname === item.href &&
+                  "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary"
+              )}
+              onClick={onLinkClick}
+            >
+              <Link href={item.href!}>
+                <item.icon className="size-5" />
+                <span className="group-data-[collapsible=icon]:hidden">
+                  {item.label}
+                </span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        )
+      )}
+    </SidebarMenu>
   )
 }

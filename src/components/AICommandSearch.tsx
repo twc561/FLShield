@@ -45,73 +45,16 @@ export default function AICommandSearch() {
     setResult("")
 
     try {
-      // Add timeout to prevent hanging
-      const searchPromise = (async () => {
-        const { streamCommandSearch } = await import('@/ai/flows/commandSearch');
-        
-        let hasReceivedContent = false;
-        try {
-          // Ensure we're properly handling the async generator
-          const streamGenerator = streamCommandSearch({ query });
-          
-          // Check if it's actually iterable
-          if (streamGenerator && typeof streamGenerator[Symbol.asyncIterator] === 'function') {
-            for await (const chunk of streamGenerator) {
-              if (chunk && typeof chunk === 'string') {
-                hasReceivedContent = true;
-                setResult(prev => (prev || '') + chunk);
-              }
-            }
-          } else {
-            // Fallback if streaming doesn't work
-            const { getCommandSearchResponse } = await import('@/ai/flows/commandSearch');
-            const response = await getCommandSearchResponse({ query });
-            if (response.answer) {
-              hasReceivedContent = true;
-              setResult(response.answer);
-            }
-          }
-        } catch (streamError) {
-          console.error('Streaming error, falling back to non-streaming:', streamError);
-          // Fallback to non-streaming
-          const { getCommandSearchResponse } = await import('@/ai/flows/commandSearch');
-          const response = await getCommandSearchResponse({ query });
-          if (response.answer) {
-            hasReceivedContent = true;
-            setResult(response.answer);
-          }
-        }
+      // Use streaming command search for better responsiveness
+      const { streamCommandSearch } = await import('@/ai/flows/commandSearch');
+      const stream = streamCommandSearch({ query });
 
-        // If no content was received, show a fallback message
-        if (!hasReceivedContent) {
-          setResult("No response received. Please try rephrasing your question or check your internet connection.");
-        }
-      })();
-
-      // Timeout after 30 seconds
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Request timed out')), 30000);
-      });
-
-      await Promise.race([searchPromise, timeoutPromise]);
-
-    } catch (error) {
-      console.error("Search failed:", error);
-      
-      // Provide more specific error messages
-      if (error instanceof Error) {
-        if (error.message.includes('timed out')) {
-          setResult("Request timed out. Please try a shorter question or try again later.");
-        } else if (error.message.includes('fetch')) {
-          setResult("Network error: Please check your internet connection and try again.");
-        } else if (error.message.includes('import')) {
-          setResult("Loading error: Please refresh the page and try again.");
-        } else {
-          setResult(`Error: ${error.message}. Please try again.`);
-        }
-      } else {
-        setResult("I encountered an unexpected error. Please refresh the page and try again.");
+      for await (const chunk of stream) {
+        setResult(prev => prev + chunk);
       }
+    } catch (error) {
+      console.error("Search failed:", error)
+      setResult("I encountered an error while processing your request. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -211,11 +154,7 @@ export default function AICommandSearch() {
 
         {result && (
           <div className="mt-4 p-4 rounded-md bg-accent/10 border border-accent/20 text-foreground">
-            <div className="prose prose-sm max-w-none">
-              <div className="whitespace-pre-wrap leading-relaxed">
-                {result}
-              </div>
-            </div>
+            {result}
           </div>
         )}
       </CardContent>

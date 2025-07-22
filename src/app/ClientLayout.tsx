@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from "next/navigation"
-import { useEffect, useState, useMemo } from "react"
+import { useEffect, useState } from "react"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { ContextualPanel } from "@/components/ContextualPanel"
@@ -18,7 +18,7 @@ export function ClientLayout({
   const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
 
-  const publicPages = useMemo(() => [
+  const publicPages = [
     "/",
     "/login",
     "/features",
@@ -30,22 +30,19 @@ export function ClientLayout({
     "/privacy-policy",
     "/security",
     "/for-officers",
-  ], []);
+  ];
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  const isPublicPage = useMemo(() => publicPages.includes(pathname), [publicPages, pathname]);
+  const isPublicPage = publicPages.includes(pathname);
 
   // Prevent hydration mismatch by always rendering the same structure initially
   if (!mounted) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-sm text-muted-foreground">Loading Florida Shield...</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     )
   }

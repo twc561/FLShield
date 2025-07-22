@@ -2,52 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Performance optimizations for mobile */
-* {
-  -webkit-transform: translateZ(0);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-html {
-  scroll-behavior: smooth;
-  -webkit-text-size-adjust: 100%;
-}
-
-body {
-  transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -webkit-perspective: 1000px;
-  perspective: 1000px;
-}
-
-/* Optimize animations and transitions */
-.animate-fade-in-up {
-  will-change: transform, opacity;
-  transform: translateZ(0);
-}
-
-/* Smooth scrolling for mobile */
-@media (max-width: 768px) {
-  html {
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
-  }
-  
-  /* Hardware acceleration for cards and interactive elements */
-  .group, [role="button"], button, a {
-    will-change: transform;
-    transform: translateZ(0);
-  }
-  
-  /* Optimize motion components */
-  [data-motion] {
-    will-change: transform, opacity;
-    transform: translateZ(0);
-  }
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
