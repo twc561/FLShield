@@ -1,0 +1,116 @@
+Error:   × Return statement is not allowed here
+
+./src/app/field-procedures/scenario-checklists/ScenarioWalkthrough.tsx
+
+Error:   × Return statement is not allowed here
+     ╭─[/home/runner/workspace/src/app/field-procedures/scenario-checklists/ScenarioWalkthrough.tsx:116:1]
+ 113 │     })
+ 114 │     
+ 115 │       if (!currentStep) {
+ 116 │ ╭─▶     return (
+ 117 │ │         <div className="text-center p-8 border-2 border-dashed rounded-lg">
+ 118 │ │           <AlertTriangle className="mx-auto h-12 w-12 text-destructive" />
+ 119 │ │           <h3 className="mt-4 text-lg font-semibold">Scenario Error</h3>
+ 120 │ │           <p className="text-muted-foreground">Could not load the current step. Please try restarting.</p>
+ 121 │ │           <Button onClick={handleRestart} className="mt-4">
+ 122 │ │             <Repeat className="mr-2 h-4 w-4" />
+ 123 │ │             Restart Scenario
+ 124 │ │           </Button>
+ 125 │ │         </div>
+ 126 │ ╰─▶     );
+ 127 │       }
+ 128 │     
+ 129 │       return (
+     ╰────
+  × Return statement is not allowed here
+     ╭─[/home/runner/workspace/src/app/field-procedures/scenario-checklists/ScenarioWalkthrough.tsx:129:1]
+ 126 │         );
+ 127 │       }
+ 128 │     
+ 129 │ ╭─▶   return (
+ 130 │ │       <div className="space-y-6">
+ 131 │ │         <Card className="w-full">
+ 132 │ │           <CardHeader>
+ 133 │ │             <Badge variant="secondary" className="w-fit mb-2">
+ 134 │ │               Phase: {currentStep.phase}
+ 135 │ │             </Badge>
+ 136 │ │             <CardTitle>{currentStep.title}</CardTitle>
+ 137 │ │           </CardHeader>
+ 138 │ │           <CardContent className="space-y-4">
+ 139 │ │             <p className="text-muted-foreground">{currentStep.content}</p>
+ 140 │ │   
+ 141 │ │             {currentStep.aiTip && (
+ 142 │ │                 <div className="p-3 bg-accent/10 border-l-4 border-accent rounded-r-lg">
+ 143 │ │                   <div className="flex items-start gap-3">
+ 144 │ │                   <Bot className="h-5 w-5 text-accent mt-1 flex-shrink-0" />
+ 145 │ │                   <div>
+ 146 │ │                       <h4 className="font-semibold text-accent-foreground/90">
+ 147 │ │                       AI Tactical Tip
+ 148 │ │                       </h4>
+ 149 │ │                       <p className="text-accent-foreground/80 text-sm">{currentStep.aiTip}</p>
+ 150 │ │                   </div>
+ 151 │ │                   </div>
+ 152 │ │                 </div>
+ 153 │ │             )}
+ 154 │ │   
+ 155 │ │             {currentStep.aiLegalNote && (
+ 156 │ │                 <div className="p-3 bg-destructive/10 border-l-4 border-destructive rounded-r-lg">
+ 157 │ │                   <div className="flex items-start gap-3">
+ 158 │ │                   <AlertTriangle className="h-5 w-5 text-destructive mt-1 flex-shrink-0" />
+ 159 │ │                   <div>
+ 160 │ │                       <h4 className="font-semibold text-destructive-foreground/90">
+ 161 │ │                       Legal Note
+ 162 │ │                       </h4>
+ 163 │ │                       <p className="text-destructive-foreground/80 text-sm">{currentStep.aiLegalNote}</p>
+ 164 │ │                   </div>
+ 165 │ │                   </div>
+ 166 │ │                 </div>
+ 167 │ │             )}
+ 168 │ │   
+ 169 │ │           </CardContent>
+ 170 │ │           <CardFooter className="flex flex-col items-start gap-4">
+ 171 │ │             {currentStep.choices && Array.isArray(currentStep.choices) && currentStep.choices.length > 0 && (
+ 172 │ │               <div className="w-full">
+ 173 │ │                 <h4 className="text-sm font-semibold text-muted-foreground mb-2">
+ 174 │ │                   Select your next action:
+ 175 │ │                 </h4>
+ 176 │ │                 <div className="flex flex-wrap gap-2">
+ 177 │ │                   {currentStep.choices.map((choice, index) => (
+ 178 │ │                     <Button
+ 179 │ │                       key={index}
+ 180 │ │                       onClick={() => handleChoice(choice.nextStepId)}
+ 181 │ │                     >
+ 182 │ │                       {choice.text}
+ 183 │ │                     </Button>
+ 184 │ │                   ))}
+ 185 │ │                 </div>
+ 186 │ │               </div>
+ 187 │ │             )}
+ 188 │ │   
+ 189 │ │             {(currentStep.isEnd || !currentStep.choices || currentStep.choices.length === 0) && (
+ 190 │ │               <Button onClick={handleRestart} variant="outline">
+ 191 │ │                 <Repeat className="mr-2 h-4 w-4" />
+ 192 │ │                 Start Over
+ 193 │ │               </Button>
+ 194 │ │             )}
+ 195 │ │           </CardFooter>
+ 196 │ │         </Card>
+ 197 │ │       </div>
+ 198 │ ╰─▶   )
+ 199 │     })
+     ╰────
+  × Expression expected
+     ╭─[/home/runner/workspace/src/app/field-procedures/scenario-checklists/ScenarioWalkthrough.tsx:199:1]
+ 196 │       </Card>
+ 197 │     </div>
+ 198 │   )
+ 199 │ })
+     · ─
+     ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/field-procedures/scenario-checklists/ScenarioWalkthrough.tsx
+./src/app/field-procedures/scenario-checklists/Clie
