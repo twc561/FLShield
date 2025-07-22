@@ -173,40 +173,38 @@ export function DailyRollCall({ className }: DailyRollCallProps) {
           </div>
         )}
 
-        {/* Step 3: The Reveal & Rationale */}
+        {/* Step 3: Encouraging Message & Tomorrow's Preview */}
         {completionState !== 'not-started' && (
           <div className="space-y-4">
-            <div className={`p-4 rounded-lg border-2 ${isCorrectAnswer ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+            {/* Encouraging Message */}
+            <div className={`p-4 rounded-lg border-2 ${isCorrectAnswer ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200'}`}>
               <div className="flex items-center space-x-2 mb-2">
-                <div className={`text-sm font-medium ${isCorrectAnswer ? 'text-green-800' : 'text-red-800'}`}>
-                  {isCorrectAnswer ? '✅ Correct!' : '❌ Incorrect'}
+                <div className={`text-sm font-medium ${isCorrectAnswer ? 'text-green-800' : 'text-blue-800'}`}>
+                  {isCorrectAnswer ? '🎉 Great job!' : '💡 Keep learning!'}
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground mb-2">
-                <strong>Explanation:</strong> {module.rationale}
-              </p>
-              <p className="text-xs text-muted-foreground italic">
-                <strong>Legal Citation:</strong> {module.citation}
+              <p className="text-sm text-muted-foreground">
+                {isCorrectAnswer 
+                  ? 'Your knowledge of law enforcement procedures is solid. Every correct answer helps build the expertise that keeps you and your community safe.' 
+                  : 'Every question is a learning opportunity. This kind of critical thinking and continuous learning makes you a better officer. Keep up the great work!'}
               </p>
             </div>
 
-            {/* Step 4: The Deeper Dive */}
-            <div className="space-y-3">
-              <h4 className="font-medium text-sm">Explore Further:</h4>
-              <div className="grid grid-cols-1 gap-2">
-                {module.deepDiveLinks.map((link, index) => (
-                  <Link
-                    key={index}
-                    href={link.url}
-                    className="flex items-center space-x-2 p-2 rounded-lg border border-border hover:bg-muted/50 transition-colors group"
-                  >
-                    <span className="text-lg">{link.icon}</span>
-                    <span className="text-sm flex-1">{link.title}</span>
-                    <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary" />
-                  </Link>
-                ))}
+            {/* Tomorrow's Preview */}
+            <div className="p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg border border-primary/20">
+              <div className="flex items-center space-x-2 mb-2">
+                <Calendar className="h-4 w-4 text-primary" />
+                <h4 className="font-medium text-sm text-primary">Tomorrow's Briefing Preview</h4>
               </div>
-            </div>
+              <p className="text-sm text-muted-foreground mb-2">
+                Get ready for another scenario that will test your knowledge and keep your skills sharp.
+              </p>
+              <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                <BookOpen className="h-3 w-3" />
+                <span>New case law, procedures, and officer safety topics coming your way</span>
+              </div>
+            </div></div>
+        )}
 
             {/* Feedback & Completion */}
             {completionState === 'answered' && (
