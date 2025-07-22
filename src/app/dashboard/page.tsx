@@ -19,6 +19,9 @@ import AICommandSearch from "@/components/AICommandSearch"
 import { PinButton } from "@/components/PinButton"
 import Link from 'next/link'
 import * as LucideIcons from "lucide-react"
+import { CheckCircle, Clock, ThumbsUp, ThumbsDown, ExternalLink, Archive, Calendar, BookOpen, Star } from 'lucide-react';
+import { DailyRollCallModule, getTodaysModule } from '@/data/daily-roll-call';
+import { usePinnedTools } from '@/hooks/use-pinned-tools';
 
 import { dashboardFeatureGroups } from "@/data/dashboard-features"
 import type { FeatureModule } from "@/data/dashboard-features"
@@ -74,7 +77,7 @@ const ToolCard = ({ module }: { module: FeatureModule }) => {
 
 const FeaturedTools = ({ isClient }: { isClient: boolean }) => {
     const { isPro, mounted } = useSubscription()
-    
+
     // In a real AI-driven app, this logic would be powered by a model
     // analyzing context (time, location, user history).
     // Here, we simulate it by selecting a few key tools.
@@ -141,10 +144,11 @@ export default function DashboardPage() {
   const [userName, setUserName] = useState<string | null>("Officer");
   const { isPro, mounted } = useSubscription()
   const [isClient, setIsClient] = useState(false)
+  const { pinnedTools } = usePinnedTools()
 
   useEffect(() => {
     setIsClient(true)
-    
+
     const getGreeting = () => {
       const hour = new Date().getHours()
       if (hour < 12) {
@@ -251,6 +255,33 @@ export default function DashboardPage() {
 
       <PinnedTools isClient={isClient} />
 
+          {/* Pinning Tips - Show when user has no pinned tools */}
+          {mounted && pinnedTools.length === 0 && (
+            <Card className="border-dashed border-2 bg-gradient-to-r from-primary/5 to-primary/10">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <Star className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold mb-2">💡 Pro Tip: Pin Your Most-Used Tools</h3>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Click the star icon ⭐ on any tool below to pin it to your dashboard for instant access. 
+                      Great starter tools: AI Legal Advisor, Florida Statutes, Field Scenario Checklists.
+                    </p>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Star className="w-3 h-3" />
+                      <span>Maximum 6 tools • Drag to reorder when pinned</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Quick Action Tools */}
+          <div className="space-y-6">
+        
       {/* The "All Tools" Library */}
       <motion.div variants={itemVariants}>
         <h2 className="text-lg font-bold tracking-tight mb-3 px-1">All Tools Library</h2>

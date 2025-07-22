@@ -51,10 +51,19 @@ export function PinButton({ module, variant = 'ghost', size = 'icon' }: PinButto
       variant={variant}
       size={size}
       onClick={handlePin}
-      className={`transition-colors ${toolIsPinned ? 'text-amber-500 hover:text-amber-600' : 'text-muted-foreground hover:text-foreground'}`}
-      title={toolIsPinned ? 'Unpin tool' : 'Pin tool'}
+      className={`transition-all duration-200 ${
+        toolIsPinned 
+          ? 'text-amber-500 hover:text-amber-600 bg-amber-50 hover:bg-amber-100' 
+          : 'text-muted-foreground hover:text-amber-500 hover:bg-amber-50'
+      }`}
+      title={toolIsPinned ? 'Unpin from dashboard' : 'Pin to dashboard for quick access'}
     >
-      <Star className={`w-4 h-4 ${toolIsPinned ? 'fill-current' : ''}`} />
+      <Star className={`w-4 h-4 transition-all duration-200 ${toolIsPinned ? 'fill-current scale-110' : 'hover:scale-110'}`} />
+      {size !== 'icon' && (
+        <span className="ml-1 text-xs">
+          {toolIsPinned ? 'Pinned' : 'Pin'}
+        </span>
+      )}
     </Button>
   )
 }
