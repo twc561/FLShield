@@ -152,8 +152,8 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
             )}
           </button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-3/4 p-0 flex flex-col">
-          <SheetHeader className="p-4 border-b">
+        <SheetContent side="left" className="w-3/4 p-0 flex flex-col max-h-screen">
+          <SheetHeader className="p-4 border-b flex-shrink-0">
             <SheetTitle asChild>
                 <Link
                 href="/"
@@ -176,20 +176,12 @@ export const MobileBottomNav = memo(function MobileBottomNav() {
             </SheetTitle>
             <SheetDescription className="sr-only">Main application menu</SheetDescription>
           </SheetHeader>
-          <div className="overflow-y-auto flex-1 p-2">
-            {isClient ? (
+          <div className="flex-1 overflow-y-auto min-h-0">
+            <div className="p-2">
               <AppMenuContent onLinkClick={handleLinkClick} />
-            ) : (
-              <div className="space-y-4 p-4">
-                <div className="animate-pulse space-y-2">
-                  <div className="h-4 bg-muted rounded w-3/4"></div>
-                  <div className="h-4 bg-muted rounded w-1/2"></div>
-                  <div className="h-4 bg-muted rounded w-2/3"></div>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
-          <div className="p-2 border-t">
+          <div className="p-2 border-t flex-shrink-0">
             <button
               onClick={handleSignOut}
               className="flex items-center gap-3 p-3 rounded-md text-foreground hover:bg-muted w-full"

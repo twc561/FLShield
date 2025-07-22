@@ -11,38 +11,44 @@ interface AppMenuContentProps {
 }
 
 export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
-  const [isClient, setIsClient] = useState(false)
-  const [loadedMenuItems, setLoadedMenuItems] = useState(menuItems)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setIsClient(true)
-    // Ensure menu items are properly loaded on client
-    setLoadedMenuItems(menuItems)
+    setMounted(true)
   }, [])
 
-  if (!isClient) {
+  // Prevent hydration mismatch by showing consistent loading state
+  if (!mounted) {
     return (
       <div className="space-y-4 p-4">
-        <div className="animate-pulse space-y-2">
-          <div className="h-4 bg-muted rounded w-3/4"></div>
-          <div className="h-4 bg-muted rounded w-1/2"></div>
-          <div className="h-4 bg-muted rounded w-2/3"></div>
+        <div className="animate-pulse space-y-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="space-y-2">
+              <div className="h-4 bg-muted rounded w-1/3"></div>
+              <div className="space-y-1 pl-4">
+                <div className="h-3 bg-muted/70 rounded w-2/3"></div>
+                <div className="h-3 bg-muted/70 rounded w-1/2"></div>
+                <div className="h-3 bg-muted/70 rounded w-3/4"></div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     )
   }
 
-  if (!loadedMenuItems || loadedMenuItems.length === 0) {
+  // Ensure menuItems is available and has content
+  if (!menuItems || menuItems.length === 0) {
     return (
       <div className="space-y-4 p-4 text-center text-muted-foreground">
-        <p>Loading menu...</p>
+        <p>No menu items available</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-2">
-      {loadedMenuItems.map((section) => (
+    <div className="space-y-2 pb-4">
+      {menuItems.map((section) => (
         <div key={section.label} className="space-y-1">
           <div className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground">
             <section.icon className="h-4 w-4" />
