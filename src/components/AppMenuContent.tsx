@@ -17,10 +17,13 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
     setMounted(true)
   }, [])
 
-  // Prevent hydration mismatch by showing consistent loading state
-  if (!mounted) {
+  // Always render the menu content to prevent blank overlay
+  // Even if not mounted, show the menu structure
+  const shouldShowMenu = mounted || typeof window === 'undefined'
+
+  if (!shouldShowMenu) {
     return (
-      <div className="space-y-4 p-4">
+      <div className="space-y-4 p-4 bg-background">
         <div className="animate-pulse space-y-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="space-y-2">
@@ -37,18 +40,24 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
     )
   }
 
-  // Ensure menuItems is available and has content
-  if (!menuItems || menuItems.length === 0) {
+  // Always try to render menu items - they should be available at build time
+  const itemsToRender = menuItems && menuItems.length > 0 ? menuItems : []
+
+  if (itemsToRender.length === 0) {
     return (
-      <div className="space-y-4 p-4 text-center text-muted-foreground">
-        <p>No menu items available</p>
+      <div className="space-y-4 p-4 text-center text-muted-foreground bg-background">
+        <p>Loading menu items...</p>
+        <div className="animate-pulse space-y-2">
+          <div className="h-4 bg-muted rounded w-1/2 mx-auto"></div>
+          <div className="h-4 bg-muted rounded w-1/3 mx-auto"></div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-2 pb-4">
-      {menuItems.map((section) => (
+    <div className="space-y-2 pb-4 bg-background min-h-[200px]">
+      {itemsToRender.map((section) => (
         <div key={section.label} className="space-y-1">
           <div className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground">
             <section.icon className="h-4 w-4" />
@@ -63,7 +72,8 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors",
                   "hover:bg-accent hover:text-accent-foreground",
-                  "active:bg-accent/80"
+                  "active:bg-accent/80",
+                  "text-foreground" // Ensure text is visible
                 )}
               >
                 <item.icon className="h-4 w-4 flex-shrink-0" />
