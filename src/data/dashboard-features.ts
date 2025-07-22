@@ -202,7 +202,9 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         summary: "Criminal jury instructions to understand legal elements.",
         icon: "Users",
         targetPage: "/legal-reference/jury-instructions-navigator",
-
+        category: "Legal Reference Library",
+        isPremium: true,
+      },
       {
         id: "florida-gun-laws",
         title: "Florida Firearms Laws",
