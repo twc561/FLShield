@@ -56,15 +56,6 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
     icon: Bot,
     features: [
       {
-        id: "ai-voice-partner",
-        title: "AI Partner Mode",
-        summary: "Your hands-free, voice-to-voice AI partner for real-time assistance.",
-        icon: "Mic",
-        targetPage: "/voice-assistant",
-        category: "AI Assistant Tools",
-        isPremium: true,
-      },
-      {
         id: "ai-legal-advisor",
         title: "AI Legal Advisor",
         summary: "Analyze scenarios against policy, statutes, and case law instantly.",

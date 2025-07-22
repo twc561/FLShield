@@ -1,4 +1,3 @@
-
 /**
  * @fileOverview A unified search index for the entire application.
  * This file imports all relevant data sources, transforms them into a
