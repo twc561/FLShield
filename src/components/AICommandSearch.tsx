@@ -70,7 +70,7 @@ export default function AICommandSearch() {
     setResult(null);
     setQuery("");
     setIsLoading(false);
-    
+
     // Use setTimeout to ensure state updates complete before navigation
     setTimeout(() => {
       router.push(path);
