@@ -53,7 +53,7 @@ export default function DailyBriefingPage() {
         description="Review past Daily Roll Call modules and enhance your knowledge with interactive micro-learning content."
       />
 
-      
+
 />
 
       {/* Search and Filter Controls */}
@@ -99,9 +99,7 @@ export default function DailyBriefingPage() {
                     )}
 
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                      {filteredModules
-                        .filter(module => selectedCategory === 'all' || module.category === category.id)
-                        .map((module) => {
+                      {filteredModules && filteredModules.map((module) => {
                           const completionStatus = getCompletionStatus(module.id);
 
                           return (

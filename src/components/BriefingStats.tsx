@@ -34,23 +34,27 @@ export function BriefingStats({ className }: BriefingStatsProps) {
       const categoryCount: Record<string, { completed: number; total: number }> = {};
 
       // Initialize category counts
-      dailyRollCallModules.forEach(module => {
-        if (!categoryCount[module.category]) {
-          categoryCount[module.category] = { completed: 0, total: 0 };
-        }
-        categoryCount[module.category].total++;
-      });
+      if (dailyRollCallModules && Array.isArray(dailyRollCallModules)) {
+        dailyRollCallModules.forEach(module => {
+          if (!categoryCount[module.category]) {
+            categoryCount[module.category] = { completed: 0, total: 0 };
+          }
+          categoryCount[module.category].total++;
+        });
+      }
 
       // Check completed modules
-      dailyRollCallModules.forEach(module => {
-        const completionKey = `daily-roll-call-${module.id}`;
-        const completion = localStorage.getItem(completionKey);
-        
-        if (completion) {
-          completedModules.push(module.id);
-          categoryCount[module.category].completed++;
-        }
-      });
+      if (dailyRollCallModules && Array.isArray(dailyRollCallModules)) {
+        dailyRollCallModules.forEach(module => {
+          const completionKey = `daily-roll-call-${module.id}`;
+          const completion = localStorage.getItem(completionKey);
+          
+          if (completion) {
+            completedModules.push(module.id);
+            categoryCount[module.category].completed++;
+          }
+        });
+      }
 
       // Calculate streak (simplified - in production, this would be more sophisticated)
       const streak = completedModules.length > 0 ? Math.min(completedModules.length, 7) : 0;
