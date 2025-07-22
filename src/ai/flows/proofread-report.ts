@@ -24,19 +24,35 @@ const ProofreadReportOutputSchema = z.object({
 });
 export type ProofreadReportOutput = z.infer<typeof ProofreadReportOutputSchema>;
 
-export async function proofreadReport(input: ProofreadReportInput): Promise<ProofreadReportOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are an AI Police Report Writing Instructor, specializing in Florida law. Your task is to review the following anonymized narrative and provide concise, constructive feedback to help the officer improve their report. Do not comment on the facts of the case. Your analysis must focus exclusively on the quality of the writing and its legal sufficiency based on the specified offense.
+export const proofreadReportFlow = ai.defineFlow(
+  {
+    name: 'proofreadReport',
+    inputSchema: ProofreadReportInputSchema,
+    outputSchema: ProofreadReportOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are an AI Police Report Writing Instructor, specializing in Florida law. Your task is to review the following anonymized narrative and provide concise, constructive feedback to help the officer improve their report. Do not comment on the facts of the case. Your analysis must focus exclusively on the quality of the writing and its legal sufficiency based on the specified offense.
 
 Primary Offense: ${input.primaryOffense}
 Anonymized Narrative:
 ${input.anonymizedNarrative}
 
-Provide your feedback ONLY as a structured JSON object.
-`,
-    output: {
-      schema: ProofreadReportOutputSchema,
-    },
-  });
-  return output!;
+Provide your feedback ONLY as a structured JSON object with the following structure:
+- articulatingElements_feedback: Analysis of elements support
+- objectiveLanguage_feedback: Identification of subjective language
+- clarityAndChronology_feedback: Comments on flow and clarity  
+- grammarAndSpelling_suggestions: Array of specific errors found
+
+Focus on constructive, actionable feedback to improve report quality and legal sufficiency.`,
+      output: {
+        schema: ProofreadReportOutputSchema,
+      },
+    });
+    return output!;
+  }
+);
+
+export async function proofreadReport(input: ProofreadReportInput): Promise<ProofreadReportOutput> {
+  return await proofreadReportFlow(input);
 }
