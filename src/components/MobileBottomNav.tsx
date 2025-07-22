@@ -11,7 +11,7 @@ import {
   LogOut,
   Bot,
   Crown,
-  Mic,
+  MapPin,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
@@ -33,9 +33,9 @@ const mainNavItems = [
   { href: "/legal-reference/statutes", label: "Statutes", icon: Scale },
   { href: "/ai-tools", label: "AI Tools", icon: Bot },
   {
-    href: "/voice-assistant",
-    label: "Voice",
-    icon: Mic,
+    href: "/field-procedures/nearby-resources",
+    label: "Nearby",
+    icon: MapPin,
   },
 ]
 
@@ -63,8 +63,8 @@ export function MobileBottomNav() {
     if (!isClient) return false
     // Exact match for dashboard and ai-tools, startsWith for others to handle nested pages.
     if (href === "/dashboard" || href === "/ai-tools") return pathname === href
-    // Special handling for checklists to ensure it activates correctly
-    if (href === "/voice-assistant") return pathname.startsWith(href)
+    // Special handling for nearby resources to ensure it activates correctly
+    if (href === "/field-procedures/nearby-resources") return pathname.startsWith(href)
     return pathname.startsWith(href)
   }
 
