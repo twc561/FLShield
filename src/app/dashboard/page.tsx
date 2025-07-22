@@ -29,20 +29,20 @@ const containerVariants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.05,
+      staggerChildren: 0.03,
     },
   },
 }
 
 const itemVariants = {
-  hidden: { y: 30, opacity: 0 },
+  hidden: { y: 20, opacity: 0 },
   show: {
     y: 0,
     opacity: 1,
     transition: {
       type: "spring",
-      stiffness: 120,
-      damping: 20,
+      stiffness: 150,
+      damping: 25,
     },
   },
 }
@@ -57,30 +57,30 @@ const QuickActionCard = ({ module }: { module: FeatureModule }) => {
   }, [])
 
   return (
-    <Link href={module.targetPage}>
+    <Link href={module.targetPage} className="block w-full">
       <motion.div
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        className="group"
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
+        className="group h-full"
       >
-        <Card className="h-full bg-gradient-to-br from-background to-muted/20 border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between mb-3">
-              <div className="p-3 bg-primary/10 rounded-xl">
-                <Icon className="h-5 w-5 text-primary" />
+        <Card className="h-full bg-gradient-to-br from-background to-muted/10 border border-border/40 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+          <CardContent className="p-3">
+            <div className="flex items-start justify-between mb-2">
+              <div className="p-2 bg-primary/8 rounded-lg shrink-0">
+                <Icon className="h-4 w-4 text-primary" />
               </div>
               {isClient && mounted && isPro && module.isPremium && (
-                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs">
-                  <Crown className="w-3 h-3 mr-1" />
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs px-1.5 py-0.5 shrink-0">
+                  <Crown className="w-2.5 h-2.5 mr-1" />
                   Pro
                 </Badge>
               )}
             </div>
-            <h3 className="font-semibold text-sm leading-tight mb-2">{module.title}</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed mb-3">{module.summary}</p>
+            <h3 className="font-semibold text-sm leading-tight mb-1.5 line-clamp-2">{module.title}</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed mb-2.5 line-clamp-2">{module.summary}</p>
             <div className="flex items-center justify-between">
               <span className="text-xs text-primary font-medium">Tap to open</span>
-              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
             </div>
           </CardContent>
         </Card>
@@ -94,27 +94,28 @@ const CategorySection = ({ group, index }: { group: any, index: number }) => {
   const [isExpanded, setIsExpanded] = useState(index < 2) // Show first 2 categories expanded by default
 
   return (
-    <motion.div variants={itemVariants} className="space-y-3">
-      <Card className="overflow-hidden bg-gradient-to-r from-card to-card/80 border border-border/50">
+    <motion.div variants={itemVariants} className="w-full">
+      <Card className="overflow-hidden bg-gradient-to-r from-card to-card/80 border border-border/40">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full p-4 text-left focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+          className="w-full p-3 text-left focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <GroupIcon className="h-5 w-5 text-primary" />
+            <div className="flex items-center space-x-2.5 min-w-0 flex-1">
+              <div className="p-1.5 bg-primary/8 rounded-lg shrink-0">
+                <GroupIcon className="h-4 w-4 text-primary" />
               </div>
-              <div>
-                <h3 className="font-semibold text-base">{group.category}</h3>
-                <p className="text-sm text-muted-foreground">{group.features.length} tools</p>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-semibold text-sm truncate">{group.category}</h3>
+                <p className="text-xs text-muted-foreground">{group.features.length} tools</p>
               </div>
             </div>
             <motion.div
               animate={{ rotate: isExpanded ? 90 : 0 }}
               transition={{ duration: 0.2 }}
+              className="shrink-0"
             >
-              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </motion.div>
           </div>
         </button>
@@ -122,11 +123,11 @@ const CategorySection = ({ group, index }: { group: any, index: number }) => {
         <motion.div
           initial={false}
           animate={{ height: isExpanded ? "auto" : 0, opacity: isExpanded ? 1 : 0 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
+          transition={{ duration: 0.25, ease: "easeInOut" }}
           className="overflow-hidden"
         >
-          <div className="px-4 pb-4">
-            <div className="grid grid-cols-1 gap-3">
+          <div className="px-3 pb-3">
+            <div className="grid grid-cols-1 gap-2">
               {group.features.slice(0, isExpanded ? undefined : 3).map((feature: FeatureModule) => (
                 <QuickActionCard key={feature.id} module={feature} />
               ))}
@@ -139,14 +140,14 @@ const CategorySection = ({ group, index }: { group: any, index: number }) => {
 }
 
 const StatsCard = ({ title, value, icon: Icon, color = "primary" }: { title: string; value: string; icon: any; color?: string }) => (
-  <Card className="bg-gradient-to-br from-background to-muted/20 border border-border/50">
-    <CardContent className="p-4">
-      <div className="flex items-center space-x-3">
-        <div className={`p-2 rounded-lg bg-${color}/10`}>
-          <Icon className={`h-4 w-4 text-${color}`} />
+  <Card className="bg-gradient-to-br from-background to-muted/10 border border-border/40">
+    <CardContent className="p-3">
+      <div className="flex items-center space-x-2.5">
+        <div className={`p-1.5 rounded-lg bg-${color}/10 shrink-0`}>
+          <Icon className={`h-3.5 w-3.5 text-${color}`} />
         </div>
-        <div>
-          <p className="text-xs text-muted-foreground">{title}</p>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs text-muted-foreground truncate">{title}</p>
           <p className="font-semibold text-sm">{value}</p>
         </div>
       </div>
@@ -198,31 +199,31 @@ export default function DashboardPage() {
   ].flat().filter(Boolean) as FeatureModule[];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/10 pb-20">
-      <div className="px-4 pt-6 space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/5 pb-20">
+      <div className="px-3 pt-4 max-w-md mx-auto w-full">
         
         {/* Header Section */}
         <motion.div 
           variants={itemVariants}
           initial="hidden" 
           animate="show"
-          className="text-center space-y-2"
+          className="text-center mb-4"
         >
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">
+          <h1 className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text mb-1">
             {greeting}, {userName}
           </h1>
           {isClient && mounted && isPro ? (
-            <div className="flex items-center justify-center gap-2 text-amber-400">
-              <Crown className="w-4 h-4" />
-              <span className="text-sm font-medium">Shield FL Pro Active</span>
+            <div className="flex items-center justify-center gap-1.5 text-amber-400">
+              <Crown className="w-3.5 h-3.5" />
+              <span className="text-xs font-medium">Shield FL Pro Active</span>
             </div>
           ) : (
-            <p className="text-muted-foreground text-sm">Your command center awaits</p>
+            <p className="text-muted-foreground text-xs">Your command center awaits</p>
           )}
         </motion.div>
 
         <motion.div 
-          className="space-y-6"
+          className="space-y-4"
           variants={containerVariants}
           initial="hidden"
           animate="show"
@@ -234,7 +235,7 @@ export default function DashboardPage() {
 
           {/* Quick Stats Row */}
           <motion.div variants={itemVariants}>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               <StatsCard 
                 title="Tools Available" 
                 value={`${dashboardFeatureGroups.reduce((acc, group) => acc + group.features.length, 0)}`}
@@ -249,30 +250,30 @@ export default function DashboardPage() {
           </motion.div>
 
           {/* Daily Roll Call */}
-          <motion.div variants={itemVariants} className="space-y-3">
+          <motion.div variants={itemVariants} className="space-y-2">
             <div className="flex items-center space-x-2">
-              <div className="p-1 bg-primary/10 rounded-lg">
-                <BookOpen className="h-4 w-4 text-primary" />
+              <div className="p-1 bg-primary/8 rounded-lg">
+                <BookOpen className="h-3.5 w-3.5 text-primary" />
               </div>
-              <h2 className="font-semibold text-lg">Today's Briefing</h2>
+              <h2 className="font-semibold text-base">Today's Briefing</h2>
             </div>
             <DailyRollCall />
           </motion.div>
 
           {/* Featured Tools */}
-          <motion.div variants={itemVariants} className="space-y-4">
+          <motion.div variants={itemVariants} className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <div className="p-1 bg-amber-500/10 rounded-lg">
-                  <Star className="h-4 w-4 text-amber-500" />
+                <div className="p-1 bg-amber-500/8 rounded-lg">
+                  <Star className="h-3.5 w-3.5 text-amber-500" />
                 </div>
-                <h2 className="font-semibold text-lg">Quick Access</h2>
+                <h2 className="font-semibold text-base">Quick Access</h2>
               </div>
-              <Button variant="ghost" size="sm" asChild>
+              <Button variant="ghost" size="sm" asChild className="h-7 px-2 text-xs">
                 <Link href="/favorites">View All</Link>
               </Button>
             </div>
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-2">
               {featuredTools.map((tool) => (
                 <QuickActionCard key={tool.id} module={tool} />
               ))}
@@ -280,29 +281,29 @@ export default function DashboardPage() {
           </motion.div>
 
           {/* Training Progress */}
-          <motion.div variants={itemVariants} className="space-y-3">
+          <motion.div variants={itemVariants} className="space-y-2">
             <div className="flex items-center space-x-2">
-              <div className="p-1 bg-green-500/10 rounded-lg">
-                <TrendingUp className="h-4 w-4 text-green-500" />
+              <div className="p-1 bg-green-500/8 rounded-lg">
+                <TrendingUp className="h-3.5 w-3.5 text-green-500" />
               </div>
-              <h2 className="font-semibold text-lg">Your Progress</h2>
+              <h2 className="font-semibold text-base">Your Progress</h2>
             </div>
-            <Card className="bg-gradient-to-br from-background to-muted/20 border border-border/50">
-              <CardContent className="p-4">
+            <Card className="bg-gradient-to-br from-background to-muted/10 border border-border/40">
+              <CardContent className="p-3">
                 <BriefingStats />
               </CardContent>
             </Card>
           </motion.div>
 
           {/* All Categories */}
-          <motion.div variants={itemVariants} className="space-y-4">
+          <motion.div variants={itemVariants} className="space-y-3">
             <div className="flex items-center space-x-2">
-              <div className="p-1 bg-blue-500/10 rounded-lg">
-                <Briefcase className="h-4 w-4 text-blue-500" />
+              <div className="p-1 bg-blue-500/8 rounded-lg">
+                <Briefcase className="h-3.5 w-3.5 text-blue-500" />
               </div>
-              <h2 className="font-semibold text-lg">All Tools</h2>
+              <h2 className="font-semibold text-base">All Tools</h2>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {dashboardFeatureGroups.map((group, index) => (
                 <CategorySection key={group.category} group={group} index={index} />
               ))}
@@ -312,9 +313,9 @@ export default function DashboardPage() {
           {/* Disclaimer */}
           <motion.div variants={itemVariants}>
             <Alert variant="destructive" className="border-destructive/20 bg-destructive/5">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle className="text-sm">Training Use Only</AlertTitle>
-              <AlertDescription className="text-xs">
+              <AlertTriangle className="h-3.5 w-3.5" />
+              <AlertTitle className="text-xs">Training Use Only</AlertTitle>
+              <AlertDescription className="text-xs leading-relaxed">
                 This app is for training purposes only. Do not enter real Criminal Justice Information (CJI) or PII.
               </AlertDescription>
             </Alert>
