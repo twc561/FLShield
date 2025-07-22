@@ -96,7 +96,7 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
                               </TabsContent>
                               <TabsContent value="static" className="mt-4">
                                  <div className="space-y-4">
-                                    {scenario.staticChecklist.map((section, index) => {
+                                    {scenario.staticChecklist?.map((section, index) => {
                                         const SectionIcon = (LucideIcons as any)[section.icon] || Check
                                         return (
                                             <Card key={index} className="bg-muted/50">
@@ -118,7 +118,11 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
                                                 </CardContent>
                                             </Card>
                                         )
-                                    })}
+                                    }) || (
+                                      <div className="text-center p-8 border-2 border-dashed rounded-lg">
+                                        <p className="text-muted-foreground">No static checklist available for this scenario.</p>
+                                      </div>
+                                    )}
                                 </div>
                               </TabsContent>
                             </Tabs>
