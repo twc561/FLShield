@@ -61,8 +61,10 @@ export function MobileBottomNav() {
 
   const isActive = (href: string) => {
     if (!isClient) return false
-    // Exact match for dashboard, startsWith for others to handle nested pages.
+    // Exact match for dashboard and ai-tools, startsWith for others to handle nested pages.
     if (href === "/dashboard" || href === "/ai-tools") return pathname === href
+    // Special handling for checklists to ensure it activates correctly
+    if (href === "/field-procedures/scenario-checklists") return pathname.startsWith(href)
     return pathname.startsWith(href)
   }
 
