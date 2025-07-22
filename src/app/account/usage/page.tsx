@@ -1,12 +1,49 @@
 
 "use client"
 
+import { useState, useEffect } from "react"
+import { useAuthState } from "react-firebase-hooks/auth"
+import { auth } from "@/lib/firebase"
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart3, Zap, MessageSquare, Calendar } from "lucide-react"
 import { SubscriptionGate } from "@/components/SubscriptionGate"
 
+interface UsageData {
+  aiQueries: number
+  featuresUsed: number
+  activeDays: number
+  mostUsedFeatures: Array<{ feature: string; count: number }>
+  usageTrends: Array<{ date: string; queries: number }>
+}
+
 export default function UsageAnalyticsPage() {
+  const [user] = useAuthState(auth)
+  const [usageData, setUsageData] = useState<UsageData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchUsageData = async () => {
+      if (!user) return
+
+      try {
+        const response = await fetch(`/api/usage?userId=${user.uid}`, {
+          headers: {
+            'Authorization': `Bearer ${await user.getIdToken()}`
+          }
+        })
+        
+        const data = await response.json()
+        setUsageData(data)
+      } catch (error) {
+        console.error('Error fetching usage data:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchUsageData()
+  }, [user])
   return (
     <SubscriptionGate>
       <div className="animate-fade-in-up">
@@ -25,7 +62,9 @@ export default function UsageAnalyticsPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">1,247</div>
+                <div className="text-2xl font-bold">
+                  {isLoading ? "..." : usageData?.aiQueries || 0}
+                </div>
                 <p className="text-xs text-muted-foreground">This month</p>
               </CardContent>
             </Card>
@@ -38,7 +77,9 @@ export default function UsageAnalyticsPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">23</div>
+                <div className="text-2xl font-bold">
+                  {isLoading ? "..." : usageData?.featuresUsed || 0}
+                </div>
                 <p className="text-xs text-muted-foreground">Different tools</p>
               </CardContent>
             </Card>
@@ -51,7 +92,9 @@ export default function UsageAnalyticsPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">18</div>
+                <div className="text-2xl font-bold">
+                  {isLoading ? "..." : usageData?.activeDays || 0}
+                </div>
                 <p className="text-xs text-muted-foreground">This month</p>
               </CardContent>
             </Card>
@@ -80,18 +123,18 @@ export default function UsageAnalyticsPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">AI Legal Advisor</span>
-                  <span className="text-sm text-muted-foreground">342 queries</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Report Assistant</span>
-                  <span className="text-sm text-muted-foreground">186 queries</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Statute Search</span>
-                  <span className="text-sm text-muted-foreground">127 queries</span>
-                </div>
+                {isLoading ? (
+                  <div className="text-sm text-muted-foreground">Loading...</div>
+                ) : (
+                  usageData?.mostUsedFeatures?.slice(0, 3).map((feature, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <span className="text-sm">{feature.feature}</span>
+                      <span className="text-sm text-muted-foreground">{feature.count} queries</span>
+                    </div>
+                  )) || (
+                    <div className="text-sm text-muted-foreground">No usage data available</div>
+                  )
+                )}
               </div>
             </CardContent>
           </Card>

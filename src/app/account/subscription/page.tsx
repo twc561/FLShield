@@ -19,13 +19,26 @@ export default function SubscriptionManagementPage() {
   const { isPro, mounted } = useSubscription()
 
   const handleManageSubscription = async () => {
+    if (!user) return
+    
     setIsLoading(true)
     try {
-      // This would redirect to Stripe customer portal
-      toast({
-        title: "Opening Billing Portal",
-        description: "Redirecting you to manage your subscription...",
+      const response = await fetch('/api/subscription/manage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await user.getIdToken()}`
+        },
+        body: JSON.stringify({ userId: user.uid })
       })
+
+      const data = await response.json()
+
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        throw new Error('No portal URL received')
+      }
     } catch (error) {
       toast({
         title: "Error",
