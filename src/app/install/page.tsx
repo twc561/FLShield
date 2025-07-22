@@ -13,7 +13,7 @@ import {
   Share, 
   Plus, 
   Chrome, 
-  Safari, 
+  Globe, 
   Info,
   CheckCircle,
   AlertCircle
@@ -164,7 +164,7 @@ export default function InstallPage() {
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <Safari className="w-5 h-5 text-blue-500" />
+                  <Globe className="w-5 h-5 text-blue-500" />
                   <CardTitle className="text-lg">iPhone/iPad Installation</CardTitle>
                 </div>
                 <CardDescription>
