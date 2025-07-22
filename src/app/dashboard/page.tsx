@@ -6,7 +6,7 @@ import { motion } from "framer-motion"
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { BrainCircuit, Users, AlertTriangle, BookOpen, Shield, Zap, Clock, TrendingUp, MapPin, MessageSquare, FileText, Briefcase, Target, Eye, GraduationCap, Heart, Search, Headphones, Crown } from "lucide-react"
+import { BrainCircuit, Users, AlertTriangle, BookOpen, Shield, Zap, Clock, TrendingUp, MapPin, MessageSquare, FileText, Briefcase, Target, Eye, GraduationCap, Heart, Search, Headphones, Crown, Sparkles, Command, Keyboard } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { DailyRollCall } from "@/components/DailyRollCall"
 import { BriefingStats } from "@/components/BriefingStats"
@@ -59,13 +59,13 @@ const ToolCard = ({ module }: { module: FeatureModule }) => {
   return (
     <div className="group relative">
       <Link href={module.targetPage}>
-        <Card className="h-full hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20 bg-card border-border">
+        <Card className="h-full hover:shadow-lg transition-all duration-200 bg-gradient-to-r from-card/50 to-accent/5 border-border hover:border-accent/30 hover:scale-[1.02]">
           <CardHeader className="pb-4">
             <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">
-                  <Icon className="h-5 w-5 text-primary" />
-                </span>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-accent/20 rounded-lg">
+                  <Icon className="h-5 w-5 text-accent" />
+                </div>
                 {isClient && mounted && isPro && module.isPremium && (
                   <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs">
                     <Crown className="w-3 h-3 mr-1" />
@@ -88,42 +88,137 @@ const ToolCard = ({ module }: { module: FeatureModule }) => {
   )
 }
 
-const FeaturedTools = ({ isClient }: { isClient: boolean }) => {
-    const { isPro, mounted } = useSubscription()
-    
-    const featured: FeatureModule[] = [
-        dashboardFeatureGroups.find(g => g.category === "Field Operations & Procedures")?.features[0],
-        dashboardFeatureGroups.find(g => g.category === "Legal Reference Library")?.features[0],
-        dashboardFeatureGroups.find(g => g.category === "Reporting & Documentation")?.features[2],
-    ].filter(Boolean) as FeatureModule[];
+const SectionCard = ({ title, description, icon: Icon, children, gradient = false }: {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  children: React.ReactNode;
+  gradient?: boolean;
+}) => (
+  <Card className={`w-full transition-all duration-200 hover:shadow-lg ${gradient ? 'bg-gradient-to-r from-card/50 to-accent/10' : 'bg-card'} border-border`}>
+    <CardContent className="p-6">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2 bg-accent/20 rounded-lg">
+          <Icon className="w-5 h-5 text-accent" />
+        </div>
+        <div>
+          <h3 className="text-xl font-semibold">{title}</h3>
+          <p className="text-sm text-muted-foreground">{description}</p>
+        </div>
+      </div>
+      {children}
+    </CardContent>
+  </Card>
+)
 
-    return (
-        <motion.div variants={itemVariants}>
-            <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-foreground mb-4">Smart Suggestions</h2>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                    AI-powered tool recommendations based on your current shift context
-                </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {featured.map(tool => (
-                    <ToolCard key={tool.id} module={tool} />
-                ))}
-            </div>
-        </motion.div>
-    )
-}
+const QuickAccessGrid = ({ isClient }: { isClient: boolean }) => {
+  const { isPro, mounted } = useSubscription()
+  
+  const quickAccess: FeatureModule[] = [
+    dashboardFeatureGroups.find(g => g.category === "AI Assistant Tools")?.features[0],
+    dashboardFeatureGroups.find(g => g.category === "Field Operations & Procedures")?.features[0],
+    dashboardFeatureGroups.find(g => g.category === "Legal Reference Library")?.features[0],
+    dashboardFeatureGroups.find(g => g.category === "Emergency Response Protocols")?.features[0],
+  ].filter(Boolean) as FeatureModule[];
 
-const PinnedTools = ({ isClient }: { isClient: boolean }) => {
   return (
     <motion.div variants={itemVariants}>
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-foreground mb-4">Pinned Tools</h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Quick access to your most frequently used tools
-        </p>
-      </div>
-      <PinnedToolsGrid isClient={isClient} />
+      <SectionCard
+        title="Quick Access"
+        description="Your most essential tools, ready to go"
+        icon={Zap}
+        gradient={true}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {quickAccess.map(tool => (
+            <ToolCard key={tool.id} module={tool} />
+          ))}
+        </div>
+      </SectionCard>
+    </motion.div>
+  )
+}
+
+const OperationalHub = ({ isClient }: { isClient: boolean }) => {
+  return (
+    <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-6">
+      <SectionCard
+        title="Daily Roll Call"
+        description="Stay informed with today's critical briefing information"
+        icon={Shield}
+      >
+        <DailyRollCall />
+      </SectionCard>
+      <SectionCard
+        title="Training Progress"
+        description="Track your professional development and skill advancement"
+        icon={TrendingUp}
+      >
+        <BriefingStats />
+      </SectionCard>
+    </motion.div>
+  )
+}
+
+const PinnedToolsSection = ({ isClient }: { isClient: boolean }) => {
+  return (
+    <motion.div variants={itemVariants}>
+      <SectionCard
+        title="Pinned Tools"
+        description="Quick access to your most frequently used tools"
+        icon={Target}
+        gradient={true}
+      >
+        <PinnedToolsGrid isClient={isClient} />
+      </SectionCard>
+    </motion.div>
+  )
+}
+
+const ToolsLibrary = ({ isClient }: { isClient: boolean }) => {
+  return (
+    <motion.div variants={itemVariants}>
+      <SectionCard
+        title="Complete Tools Library"
+        description={`${dashboardFeatureGroups.reduce((acc, group) => acc + group.features.length, 0)} tools across ${dashboardFeatureGroups.length} categories`}
+        icon={BookOpen}
+      >
+        <div className="space-y-6">
+          {Array.isArray(dashboardFeatureGroups) && dashboardFeatureGroups.map((group, index) => {
+            const GroupIcon = (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle
+            return (
+              <motion.div
+                key={group.category}
+                variants={itemVariants}
+                transition={{ delay: index * 0.05 }}
+                className="border border-border rounded-lg p-4 bg-muted/30 hover:bg-muted/50 transition-colors"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+                      <GroupIcon className="w-5 h-5 text-accent"/>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-semibold">{group.category}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {group.features.length} {group.features.length === 1 ? 'tool' : 'tools'} available
+                      </p>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className="text-sm bg-accent/20 text-accent">
+                    {group.features.length}
+                  </Badge>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  {group.features.map((feature) => (
+                    <ToolCard key={feature.id} module={feature} />
+                  ))}
+                </div>
+              </motion.div>
+            )
+          })}
+        </div>
+      </SectionCard>
     </motion.div>
   )
 }
@@ -186,7 +281,7 @@ export default function DashboardPage() {
       />
 
       <motion.div 
-        className="space-y-12"
+        className="space-y-8"
         variants={containerVariants}
         initial="hidden"
         animate="show"
@@ -215,102 +310,17 @@ export default function DashboardPage() {
           </motion.div>
         )}
 
-        {/* Daily Roll Call Section */}
-        <motion.div variants={itemVariants}>
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-foreground mb-4">Daily Roll Call</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Stay informed with today's critical briefing information
-            </p>
-          </div>
-          <Card className="hover:shadow-lg transition-all duration-300 bg-card border-border">
-            <CardContent className="p-6">
-              <DailyRollCall />
-            </CardContent>
-          </Card>
-        </motion.div>
+        {/* Quick Access Section */}
+        <QuickAccessGrid isClient={isClient} />
 
-        {/* Training Progress Section */}
-        <motion.div variants={itemVariants}>
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-foreground mb-4">Training Progress</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Track your professional development and skill advancement
-            </p>
-          </div>
-          <Card className="hover:shadow-lg transition-all duration-300 bg-card border-border">
-            <CardContent className="p-6">
-              <BriefingStats />
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Featured Tools Section */}
-        <div>
-          <FeaturedTools isClient={isClient} />
-        </div>
+        {/* Operational Hub */}
+        <OperationalHub isClient={isClient} />
 
         {/* Pinned Tools Section */}
-        <div>
-          <PinnedTools isClient={isClient} />
-        </div>
+        <PinnedToolsSection isClient={isClient} />
 
         {/* Complete Tools Library */}
-        <motion.div variants={itemVariants}>
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-foreground mb-4">Complete Tools Library</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive collection of law enforcement tools and resources
-            </p>
-          </div>
-          
-          <div className="mb-4">
-            <p className="text-sm text-muted-foreground text-center">
-              Showing {dashboardFeatureGroups.reduce((acc, group) => acc + group.features.length, 0)} tools across {dashboardFeatureGroups.length} categories
-            </p>
-          </div>
-
-          <div className="space-y-8">
-            {Array.isArray(dashboardFeatureGroups) && dashboardFeatureGroups.map((group, index) => {
-              const GroupIcon = (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle
-              return (
-                <motion.div
-                  key={group.category}
-                  variants={itemVariants}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Card className="hover:shadow-lg transition-all duration-300 bg-card border-border">
-                    <CardHeader className="pb-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                            <GroupIcon className="w-6 h-6 text-primary"/>
-                          </div>
-                          <div>
-                            <CardTitle className="text-xl">{group.category}</CardTitle>
-                            <CardDescription className="text-sm">
-                              {group.features.length} {group.features.length === 1 ? 'tool' : 'tools'} available
-                            </CardDescription>
-                          </div>
-                        </div>
-                        <Badge variant="secondary" className="text-sm">
-                          {group.features.length}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {group.features.map((feature) => (
-                          <ToolCard key={feature.id} module={feature} />
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )
-            })}
-          </div>
-        </motion.div>
+        <ToolsLibrary isClient={isClient} />
 
         {/* Disclaimer */}
         <motion.div variants={itemVariants}>
