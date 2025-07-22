@@ -45,16 +45,47 @@ export default function AICommandSearch() {
     setResult("")
 
     try {
-      // Use streaming command search for better responsiveness
-      const { streamCommandSearch } = await import('@/ai/flows/commandSearch');
-      const stream = streamCommandSearch({ query });
+      // Add timeout to prevent hanging
+      const searchPromise = (async () => {
+        const { streamCommandSearch } = await import('@/ai/flows/commandSearch');
+        const stream = streamCommandSearch({ query });
 
-      for await (const chunk of stream) {
-        setResult(prev => prev + chunk);
-      }
+        let hasReceivedContent = false;
+        for await (const chunk of stream) {
+          hasReceivedContent = true;
+          setResult(prev => prev + chunk);
+        }
+
+        // If no content was received, show a fallback message
+        if (!hasReceivedContent) {
+          setResult("No response received. Please try rephrasing your question or check your internet connection.");
+        }
+      })();
+
+      // Timeout after 30 seconds
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Request timed out')), 30000);
+      });
+
+      await Promise.race([searchPromise, timeoutPromise]);
+
     } catch (error) {
-      console.error("Search failed:", error)
-      setResult("I encountered an error while processing your request. Please try again.")
+      console.error("Search failed:", error);
+      
+      // Provide more specific error messages
+      if (error instanceof Error) {
+        if (error.message.includes('timed out')) {
+          setResult("Request timed out. Please try a shorter question or try again later.");
+        } else if (error.message.includes('fetch')) {
+          setResult("Network error: Please check your internet connection and try again.");
+        } else if (error.message.includes('import')) {
+          setResult("Loading error: Please refresh the page and try again.");
+        } else {
+          setResult(`Error: ${error.message}. Please try again.`);
+        }
+      } else {
+        setResult("I encountered an unexpected error. Please refresh the page and try again.");
+      }
     } finally {
       setIsLoading(false)
     }

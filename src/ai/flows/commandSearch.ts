@@ -37,45 +37,76 @@ export async function* streamCommandSearch(input: CommandSearchInput) {
       queryLength: input.query.length
     });
 
+    // Validate API key
+    if (!process.env.GOOGLE_GENAI_API_KEY) {
+      console.error('Missing GOOGLE_GENAI_API_KEY');
+      yield "Configuration error: API key not found. Please check your environment variables.";
+      return;
+    }
+
     const prompt = createCommandSearchPrompt(input.query);
 
-    // Use Gemini Pro with robust streaming like role-play simulator
+    // Use Gemini Pro with reduced token limits to prevent errors
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-pro",
+      model: "gemini-1.5-flash", // Use Flash for better reliability
       generationConfig: {
         temperature: 0.4,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 4096,
+        maxOutputTokens: 2048, // Reduced from 4096
       },
     });
 
     const result = await model.generateContentStream(prompt);
 
+    let hasContent = false;
     for await (const chunk of result.stream) {
       const chunkText = chunk.text();
-      if (chunkText) {
+      if (chunkText && chunkText.trim()) {
+        hasContent = true;
         yield chunkText;
       }
     }
 
+    if (!hasContent) {
+      yield "I wasn't able to generate a response. Please try rephrasing your question or ask something more specific.";
+    }
+
   } catch (error: any) {
     console.error('Command Search streaming error:', error);
-    yield "I'm having difficulty processing that command right now. Please try again or rephrase your question.";
+    
+    // Provide more specific error messages based on error type
+    if (error?.message?.includes('API_KEY')) {
+      yield "Authentication error: Please check your API key configuration.";
+    } else if (error?.message?.includes('QUOTA') || error?.message?.includes('quota')) {
+      yield "API quota exceeded. Please try again later.";
+    } else if (error?.message?.includes('SAFETY') || error?.message?.includes('safety')) {
+      yield "Content was filtered for safety. Please rephrase your question.";
+    } else if (error?.message?.includes('TOKEN') || error?.message?.includes('token')) {
+      yield "Your query is too long. Please try asking a shorter, more specific question.";
+    } else {
+      yield "I'm experiencing technical difficulties. Please try your question again in a moment.";
+    }
   }
 }
 
 export async function getCommandSearchResponse(input: CommandSearchInput): Promise<CommandSearchOutput> {
   try {
+    // Validate API key
+    if (!process.env.GOOGLE_GENAI_API_KEY) {
+      console.error('Missing GOOGLE_GENAI_API_KEY');
+      return { answer: "Configuration error: API key not found. Please check your environment variables." };
+    }
+
     const prompt = createCommandSearchPrompt(input.query);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-pro",
+      model: "gemini-1.5-flash", // Use Flash for better reliability
       generationConfig: {
         temperature: 0.4,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 4096,
+        maxOutputTokens: 2048, // Reduced from 4096
       },
     });
 
@@ -87,11 +118,23 @@ export async function getCommandSearchResponse(input: CommandSearchInput): Promi
       return { answer: text.trim() };
     }
 
-    return { answer: "I'm having difficulty processing that question right now. Please try rephrasing it." };
+    return { answer: "I wasn't able to generate a response. Please try rephrasing your question or ask something more specific." };
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Command Search error:', error);
-    return { answer: "I'm experiencing technical difficulties. Please try your question again." };
+    
+    // Provide specific error messages
+    if (error?.message?.includes('API_KEY')) {
+      return { answer: "Authentication error: Please check your API key configuration." };
+    } else if (error?.message?.includes('QUOTA') || error?.message?.includes('quota')) {
+      return { answer: "API quota exceeded. Please try again later." };
+    } else if (error?.message?.includes('SAFETY') || error?.message?.includes('safety')) {
+      return { answer: "Content was filtered for safety. Please rephrase your question." };
+    } else if (error?.message?.includes('TOKEN') || error?.message?.includes('token')) {
+      return { answer: "Your query is too long. Please try asking a shorter, more specific question." };
+    } else {
+      return { answer: "I'm experiencing technical difficulties. Please try your question again in a moment." };
+    }
   }
 }
 
