@@ -86,16 +86,20 @@ export async function* streamCommandSearch(input: CommandSearchInput) {
     } catch (streamError: any) {
       console.error('Stream interrupted:', streamError);
       
-      // If we got some content before the interruption, that's okay
-      if (totalContent.length > 0) {
-        console.log('Stream was interrupted but partial content was delivered:', { 
+      // If we got substantial content before the interruption, that's okay
+      if (totalContent.length > 100) {
+        console.log('Stream was interrupted but substantial content was delivered:', { 
           chunkCount, 
           contentLength: totalContent.length 
         });
-        return; // Don't yield error message if we got partial content
+        return; // Don't yield error message if we got substantial content
       }
       
-      // Only yield error if we got no content at all
+      // Only yield error if we got very little or no content
+      console.error('Stream failed with minimal content:', { 
+        contentLength: totalContent.length,
+        error: streamError.message 
+      });
       throw streamError;
     }
 
@@ -104,15 +108,17 @@ export async function* streamCommandSearch(input: CommandSearchInput) {
   } catch (error: any) {
     console.error('Command Search streaming error:', error);
     
-    // Handle specific error types
+    // Handle specific error types with more helpful messages
     if (error.message?.includes('timeout') || error.code === 'DEADLINE_EXCEEDED') {
       yield "The request is taking longer than expected. Please try a more specific question or try again in a moment.";
     } else if (error.message?.includes('quota') || error.message?.includes('limit') || error.code === 'RESOURCE_EXHAUSTED') {
       yield "I'm experiencing high demand right now. Please try again in a few moments.";
     } else if (error.name === 'ResponseAborted' || error.message?.includes('aborted')) {
       yield "The connection was interrupted. Please try your question again.";
+    } else if (error.message?.includes('API key')) {
+      yield "There's an issue with the AI service configuration. Please contact support.";
     } else {
-      yield "I'm having difficulty processing that command right now. Please try again or rephrase your question.";
+      yield "I'm experiencing technical difficulties. Please try rephrasing your question or try again in a moment.";
     }
   }
 }

@@ -67,23 +67,35 @@ export default function AICommandSearch() {
         }
       } catch (streamError) {
         console.error('Stream processing error:', streamError);
-        throw streamError;
+        
+        // If we got some content before the error, keep it
+        if (accumulatedContent.trim().length > 100) {
+          console.log('Partial content received before stream error, keeping it');
+          return; // Don't throw error if we have substantial content
+        }
+        
+        // Only throw if we got no meaningful content
+        throw new Error('Stream was interrupted');
       }
 
       // If no content was received, show fallback message
       if (!hasReceivedContent || accumulatedContent.trim().length === 0) {
-        setResult("I'm having difficulty processing that question right now. Please try rephrasing it or check back in a moment.");
+        setResult("I'm having difficulty processing that question right now. Please try rephrasing it or try again in a moment.");
       }
     } catch (error: any) {
       console.error("Search failed:", error);
 
-      // Provide more specific error messages
-      if (error.message?.includes('fetch')) {
+      // Provide more specific error messages based on error type
+      if (error.message?.includes('fetch') || error.name === 'TypeError') {
         setResult("Connection issue detected. Please check your internet connection and try again.");
-      } else if (error.message?.includes('timeout')) {
+      } else if (error.message?.includes('timeout') || error.message?.includes('DEADLINE_EXCEEDED')) {
         setResult("The request timed out. Please try a shorter, more specific question.");
+      } else if (error.message?.includes('quota') || error.message?.includes('RESOURCE_EXHAUSTED')) {
+        setResult("The AI service is experiencing high demand. Please try again in a few moments.");
+      } else if (error.message?.includes('Stream was interrupted')) {
+        setResult("The response was interrupted. Please try your question again.");
       } else {
-        setResult("I encountered an error while processing your request. Please try again or rephrase your question.");
+        setResult("I'm experiencing technical difficulties. Please try rephrasing your question or try again in a moment.");
       }
     } finally {
       setIsLoading(false)
