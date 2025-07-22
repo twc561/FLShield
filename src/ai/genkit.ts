@@ -10,6 +10,8 @@ const ai = genkit({
   model: gemini15Pro,
 });
 
+export { ai };
+
 // Export enhanced model configurations with maximum token limits
 export const enhancedAI = genkit({
   plugins: [
