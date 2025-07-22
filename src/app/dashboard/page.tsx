@@ -60,11 +60,11 @@ const ToolCard = ({ module }: { module: FeatureModule }) => {
     <div className="group relative">
       <Link href={module.targetPage}>
         <Card className="h-full hover:shadow-lg transition-all duration-200 bg-gradient-to-r from-card/50 to-accent/5 border-border hover:border-accent/30 hover:scale-[1.02]">
-          <CardHeader className="pb-4">
+          <CardHeader className="pb-3 p-4 md:p-6 md:pb-4">
             <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-accent/20 rounded-lg">
-                  <Icon className="h-5 w-5 text-accent" />
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="p-1.5 md:p-2 bg-accent/20 rounded-lg">
+                  <Icon className="h-4 w-4 md:h-5 md:w-5 text-accent" />
                 </div>
                 {isClient && mounted && isPro && module.isPremium && (
                   <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs">
@@ -74,10 +74,10 @@ const ToolCard = ({ module }: { module: FeatureModule }) => {
                 )}
               </div>
             </div>
-            <CardTitle className="text-lg leading-tight text-card-foreground">{module.title}</CardTitle>
+            <CardTitle className="text-base md:text-lg leading-tight text-card-foreground">{module.title}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground leading-relaxed">{module.summary}</p>
+          <CardContent className="space-y-3 p-4 pt-0 md:p-6 md:pt-0 md:space-y-4">
+            <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-3">{module.summary}</p>
           </CardContent>
         </Card>
       </Link>
@@ -96,14 +96,14 @@ const SectionCard = ({ title, description, icon: Icon, children, gradient = fals
   gradient?: boolean;
 }) => (
   <Card className={`w-full transition-all duration-200 hover:shadow-lg ${gradient ? 'bg-gradient-to-r from-card/50 to-accent/10' : 'bg-card'} border-border`}>
-    <CardContent className="p-6">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-accent/20 rounded-lg">
-          <Icon className="w-5 h-5 text-accent" />
+    <CardContent className="p-4 md:p-6">
+      <div className="flex items-start md:items-center gap-3 mb-4 md:mb-6">
+        <div className="p-1.5 md:p-2 bg-accent/20 rounded-lg flex-shrink-0">
+          <Icon className="w-4 h-4 md:w-5 md:h-5 text-accent" />
         </div>
-        <div>
-          <h3 className="text-xl font-semibold">{title}</h3>
-          <p className="text-sm text-muted-foreground">{description}</p>
+        <div className="min-w-0">
+          <h3 className="text-lg md:text-xl font-semibold">{title}</h3>
+          <p className="text-xs md:text-sm text-muted-foreground mt-1">{description}</p>
         </div>
       </div>
       {children}
@@ -129,7 +129,7 @@ const QuickAccessGrid = ({ isClient }: { isClient: boolean }) => {
         icon={Zap}
         gradient={true}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
           {quickAccess.map(tool => (
             <ToolCard key={tool.id} module={tool} />
           ))}
@@ -141,7 +141,7 @@ const QuickAccessGrid = ({ isClient }: { isClient: boolean }) => {
 
 const OperationalHub = ({ isClient }: { isClient: boolean }) => {
   return (
-    <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-6">
+    <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
       <SectionCard
         title="Daily Roll Call"
         description="Stay informed with today's critical briefing information"
@@ -209,7 +209,7 @@ const ToolsLibrary = ({ isClient }: { isClient: boolean }) => {
                     {group.features.length}
                   </Badge>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
                   {group.features.map((feature) => (
                     <ToolCard key={feature.id} module={feature} />
                   ))}
@@ -265,27 +265,28 @@ export default function DashboardPage() {
   }, [])
 
   return (
-    <div className="container mx-auto p-4 md:p-6 bg-background text-foreground">
-      <PageHeader 
-        title={`${greeting}, ${userName || "Officer"}.`}
-        description={
-          isClient && mounted && isPro ? (
-            <div className="flex items-center gap-2 text-amber-400">
-              <Crown className="w-4 h-4" />
-              <span>Pro Member - All premium features unlocked</span>
-            </div>
-          ) : (
-            "Welcome to your Mission Hub. How can I help?"
-          )
-        }
-      />
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="container mx-auto px-4 py-4 md:px-6 md:py-6 max-w-7xl">
+        <PageHeader 
+          title={`${greeting}, ${userName || "Officer"}.`}
+          description={
+            isClient && mounted && isPro ? (
+              <div className="flex items-center gap-2 text-amber-400">
+                <Crown className="w-4 h-4" />
+                <span className="text-sm md:text-base">Pro Member - All premium features unlocked</span>
+              </div>
+            ) : (
+              "Welcome to your Mission Hub. How can I help?"
+            )
+          }
+        />
 
-      <motion.div 
-        className="space-y-8"
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-      >
+        <motion.div 
+          className="space-y-6 md:space-y-8 mt-6 md:mt-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
         {/* AI Command Search */}
         <motion.div variants={itemVariants}>
           <AICommandSearch />
@@ -295,14 +296,14 @@ export default function DashboardPage() {
         {isClient && mounted && isPro && (
           <motion.div variants={itemVariants}>
             <Card className="bg-gradient-to-r from-amber-900/20 to-orange-900/20 border-amber-600/30 bg-card">
-              <CardContent className="p-6 text-center">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <div className="p-3 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full">
-                    <Crown className="w-6 h-6 text-white" />
+              <CardContent className="p-4 md:p-6 text-center">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
+                  <div className="p-2 md:p-3 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full">
+                    <Crown className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-amber-400">Shield FL Pro Active</h3>
-                    <p className="text-amber-300">Access to all premium AI tools and features</p>
+                    <h3 className="text-lg md:text-xl font-bold text-amber-400">Shield FL Pro Active</h3>
+                    <p className="text-sm md:text-base text-amber-300">Access to all premium AI tools and features</p>
                   </div>
                 </div>
               </CardContent>
