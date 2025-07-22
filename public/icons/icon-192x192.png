@@ -1,0 +1,17 @@
+
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="192" height="192" rx="24" fill="#3A4A5A"/>
+<!-- Shield Outline -->
+<path d="M96 30L60 45V96C60 132 96 162 96 162C96 162 132 132 132 96V45L96 30Z" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<!-- Scales of Justice -->
+<g stroke="#3B82F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Central pole -->
+  <line x1="96" y1="60" x2="96" y2="105"/>
+  <!-- Cross bar -->
+  <line x1="75" y1="75" x2="117" y2="75"/>
+  <!-- Left scale -->
+  <path d="M67.5 75C67.5 75 60 82.5 60 90C60 97.5 67.5 105 75 105C82.5 105 90 97.5 90 90C90 82.5 82.5 75 82.5 75"/>
+  <!-- Right scale -->
+  <path d="M102 75C102 75 109.5 82.5 109.5 90C109.5 97.5 102 105 109.5 105C117 105 124.5 97.5 124.5 90C124.5 82.5 117 75 117 75"/>
+</g>
+</svg>

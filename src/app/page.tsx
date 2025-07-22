@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useRouter } from 'next/navigation'
@@ -64,7 +63,7 @@ export default function LandingPage() {
             <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
               An AI-powered mobile application designed to enhance officer safety, improve in-field decision-making, and ensure procedural accuracy for Florida law enforcement.
             </p>
-            
+
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 <Card className="text-left flex flex-col hover:border-primary transition-colors">
                     <CardHeader>
