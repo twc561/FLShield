@@ -14,7 +14,7 @@ export function PageHeader({ title, description, className = "" }: PageHeaderPro
         {title}
       </h1>
       {description && (
-        <p className="mt-2 text-muted-foreground">{description}</p>
+        <div className="mt-2 text-muted-foreground">{description}</div>
       )}
     </div>
   )
