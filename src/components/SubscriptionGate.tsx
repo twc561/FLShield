@@ -58,12 +58,8 @@ function SubscriptionGateInner({ children }: { children: React.ReactNode }) {
     setClientMounted(true)
   }, [])
 
-  // Prevent hydration issues by not rendering anything until fully mounted
-  if (!clientMounted) {
-    return <LoadingScreen />
-  }
-
-  if (!mounted || loading) {
+  // Always render the same structure to prevent hydration mismatch
+  if (!clientMounted || !mounted || loading) {
     return <LoadingScreen />
   }
 
