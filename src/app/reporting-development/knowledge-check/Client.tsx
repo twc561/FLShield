@@ -126,65 +126,73 @@ export function KnowledgeCheckClient({ questions }: { questions: DrillQuestion[]
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-4xl">
+    <div className="container mx-auto px-3 py-4 max-w-4xl min-h-screen">
       <Card className="overflow-hidden">
-        <CardHeader className="pb-4">
-          <CardTitle>Knowledge Drill</CardTitle>
-          <CardDescription>{currentQuestion.questionCategory}</CardDescription>
-          <div className="pt-4">
-            <Progress value={((currentQuestionIndex + 1) / shuffledQuestions.length) * 100} />
-            <p className="text-xs text-muted-foreground text-right mt-1">Question {currentQuestionIndex + 1} of {shuffledQuestions.length}</p>
+        <CardHeader className="pb-6 px-4 sm:px-6">
+          <CardTitle className="text-xl">Knowledge Drill</CardTitle>
+          <CardDescription className="text-sm">{currentQuestion.questionCategory}</CardDescription>
+          <div className="pt-4 space-y-2">
+            <Progress value={((currentQuestionIndex + 1) / shuffledQuestions.length) * 100} className="h-2" />
+            <p className="text-xs text-muted-foreground text-right">Question {currentQuestionIndex + 1} of {shuffledQuestions.length}</p>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6 pb-6">
-          <p className="text-lg font-semibold leading-relaxed">{currentQuestion.questionText}</p>
-          
-          <RadioGroup
-            value={selectedAnswer ?? ''}
-            onValueChange={setSelectedAnswer}
-            disabled={isAnswered}
-            className="space-y-3"
-          >
-            {answerOptions.map((answer, index) => {
-              const isCorrect = answer === currentQuestion.correctAnswer;
-              const isSelected = answer === selectedAnswer;
-              return (
-                <Label
-                  key={index}
-                  className={cn(
-                    "flex items-start gap-4 rounded-lg border p-4 transition-colors hover:bg-muted/50 cursor-pointer min-h-[3rem]",
-                    isAnswered && isCorrect && "border-green-500 bg-green-500/10",
-                    isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10"
-                  )}
-                >
-                  <RadioGroupItem value={answer} id={`q${index}`} className="mt-1 flex-shrink-0" />
-                  <span className="break-words leading-relaxed">{answer}</span>
-                </Label>
-              );
-            })}
-          </RadioGroup>
+        <CardContent className="px-4 sm:px-6 pb-8">
+          <div className="space-y-8">
+            <p className="text-base sm:text-lg font-semibold leading-relaxed break-words">{currentQuestion.questionText}</p>
+            
+            <RadioGroup
+              value={selectedAnswer ?? ''}
+              onValueChange={setSelectedAnswer}
+              disabled={isAnswered}
+              className="space-y-4"
+            >
+              {answerOptions.map((answer, index) => {
+                const isCorrect = answer === currentQuestion.correctAnswer;
+                const isSelected = answer === selectedAnswer;
+                return (
+                  <Label
+                    key={index}
+                    className={cn(
+                      "flex items-start gap-3 rounded-lg border p-4 transition-colors hover:bg-muted/50 cursor-pointer min-h-[60px] block",
+                      isAnswered && isCorrect && "border-green-500 bg-green-500/10",
+                      isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10"
+                    )}
+                  >
+                    <RadioGroupItem value={answer} id={`q${index}`} className="mt-0.5 flex-shrink-0" />
+                    <span className="break-words leading-relaxed text-sm sm:text-base flex-1">{answer}</span>
+                  </Label>
+                );
+              })}
+            </RadioGroup>
 
-          {isAnswered && (
-            <Alert variant={selectedAnswer === currentQuestion.correctAnswer ? 'default' : 'destructive'} className={cn("mt-6", selectedAnswer === currentQuestion.correctAnswer && "border-green-500/50 bg-green-500/5")}>
-               {selectedAnswer === currentQuestion.correctAnswer ? <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" /> : <XCircle className="h-4 w-4 flex-shrink-0" />}
-              <AlertTitle>{selectedAnswer === currentQuestion.correctAnswer ? "Correct!" : "Incorrect"}</AlertTitle>
-              <AlertDescription className="break-words leading-relaxed">
-                {currentQuestion.explanation}
-              </AlertDescription>
-            </Alert>
-          )}
+            {isAnswered && (
+              <div className="mt-8">
+                <Alert variant={selectedAnswer === currentQuestion.correctAnswer ? 'default' : 'destructive'} className={cn(selectedAnswer === currentQuestion.correctAnswer && "border-green-500/50 bg-green-500/5")}>
+                   <div className="flex items-start gap-2">
+                     {selectedAnswer === currentQuestion.correctAnswer ? <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" /> : <XCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />}
+                     <div className="flex-1 min-w-0">
+                       <AlertTitle className="text-sm font-semibold mb-1">{selectedAnswer === currentQuestion.correctAnswer ? "Correct!" : "Incorrect"}</AlertTitle>
+                       <AlertDescription className="break-words leading-relaxed text-sm">
+                         {currentQuestion.explanation}
+                       </AlertDescription>
+                     </div>
+                   </div>
+                </Alert>
+              </div>
+            )}
 
-          <div className="pt-6 border-t mt-8">
-            <div className="flex justify-end">
-              {isAnswered ? (
-                <Button onClick={handleNextQuestion} className="w-full sm:w-auto min-h-[44px]">
-                  {currentQuestionIndex < shuffledQuestions.length - 1 ? 'Next Question' : 'Finish Quiz'}
-                </Button>
-              ) : (
-                <Button onClick={handleAnswerSubmit} disabled={!selectedAnswer} className="w-full sm:w-auto min-h-[44px]">
-                  Submit Answer
-                </Button>
-              )}
+            <div className="pt-8 border-t mt-12">
+              <div className="flex justify-center sm:justify-end">
+                {isAnswered ? (
+                  <Button onClick={handleNextQuestion} className="w-full sm:w-auto min-h-[48px] text-sm px-6">
+                    {currentQuestionIndex < shuffledQuestions.length - 1 ? 'Next Question' : 'Finish Quiz'}
+                  </Button>
+                ) : (
+                  <Button onClick={handleAnswerSubmit} disabled={!selectedAnswer} className="w-full sm:w-auto min-h-[48px] text-sm px-6">
+                    Submit Answer
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </CardContent>
