@@ -203,11 +203,12 @@ export function DailyRollCall({ className }: DailyRollCallProps) {
                 <BookOpen className="h-3 w-3" />
                 <span>New case law, procedures, and officer safety topics coming your way</span>
               </div>
-            </div></div>
+            </div>
+          </div>
         )}
 
-            {/* Feedback & Completion */}
-            {completionState === 'answered' && (
+        {/* Feedback & Completion */}
+        {completionState === 'answered' && (
               <div className="flex flex-col space-y-3 pt-4 border-t">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Was this briefing helpful?</span>
