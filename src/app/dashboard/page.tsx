@@ -6,7 +6,7 @@ import { motion } from "framer-motion"
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { BrainCircuit, Users, AlertTriangle, BookOpen, Shield, Zap, Clock, TrendingUp, MapPin, MessageSquare, FileText, Briefcase, Target, Eye, GraduationCap, Heart, Search, Headphones, Crown } from "lucide-react"
+import { BrainCircuit, Users, AlertTriangle, BookOpen, Shield, Zap, Clock, TrendingUp, MapPin, MessageSquare, FileText, Briefcase, Target, Eye, GraduationCap, Heart, Search, Headphones, Crown, ChevronRight, Star, Bookmark } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { DailyRollCall } from "@/components/DailyRollCall"
 import { BriefingStats } from "@/components/BriefingStats"
@@ -29,25 +29,25 @@ const containerVariants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.05,
     },
   },
 }
 
 const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
+  hidden: { y: 30, opacity: 0 },
   show: {
     y: 0,
     opacity: 1,
     transition: {
       type: "spring",
-      stiffness: 100,
-      damping: 15,
+      stiffness: 120,
+      damping: 20,
     },
   },
 }
 
-const ToolCard = ({ module }: { module: FeatureModule }) => {
+const QuickActionCard = ({ module }: { module: FeatureModule }) => {
   const Icon = (LucideIcons as any)[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle;
   const { isPro, mounted } = useSubscription()
   const [isClient, setIsClient] = useState(false)
@@ -57,76 +57,102 @@ const ToolCard = ({ module }: { module: FeatureModule }) => {
   }, [])
 
   return (
-    <div className="group relative w-full">
-      <Link href={module.targetPage}>
-        <Card className="h-full hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20 bg-card border-border w-full">
-          <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-4">
-            <div className="flex items-start justify-between mb-1 sm:mb-2 gap-2">
-              <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
-                <span className="text-base sm:text-lg flex-shrink-0">
-                  <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                </span>
-                {isClient && mounted && isPro && module.isPremium && (
-                  <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs flex-shrink-0">
-                    <Crown className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
-                    Pro
-                  </Badge>
-                )}
+    <Link href={module.targetPage}>
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        className="group"
+      >
+        <Card className="h-full bg-gradient-to-br from-background to-muted/20 border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-3 bg-primary/10 rounded-xl">
+                <Icon className="h-5 w-5 text-primary" />
               </div>
+              {isClient && mounted && isPro && module.isPremium && (
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs">
+                  <Crown className="w-3 h-3 mr-1" />
+                  Pro
+                </Badge>
+              )}
             </div>
-            <CardTitle className="text-sm sm:text-base md:text-lg leading-tight text-card-foreground break-words">{module.title}</CardTitle>
-          </CardHeader>
-          <CardContent className="p-3 sm:p-4 pt-0">
-            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed break-words">{module.summary}</p>
+            <h3 className="font-semibold text-sm leading-tight mb-2">{module.title}</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed mb-3">{module.summary}</p>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-primary font-medium">Tap to open</span>
+              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            </div>
           </CardContent>
         </Card>
-      </Link>
-      <div className="absolute top-1 sm:top-2 right-1 sm:right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <PinButton module={module} variant="ghost" size="icon" />
-      </div>
-    </div>
+      </motion.div>
+    </Link>
   )
 }
 
-const FeaturedTools = ({ isClient }: { isClient: boolean }) => {
-    const { isPro, mounted } = useSubscription()
-    
-    const featured: FeatureModule[] = [
-        dashboardFeatureGroups.find(g => g.category === "Field Operations & Procedures")?.features[0],
-        dashboardFeatureGroups.find(g => g.category === "Legal Reference Library")?.features[0],
-        dashboardFeatureGroups.find(g => g.category === "Reporting & Documentation")?.features[2],
-    ].filter(Boolean) as FeatureModule[];
+const CategorySection = ({ group, index }: { group: any, index: number }) => {
+  const GroupIcon = (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle
+  const [isExpanded, setIsExpanded] = useState(index < 2) // Show first 2 categories expanded by default
 
-    return (
-        <motion.div variants={itemVariants}>
-            <div className="text-center mb-4 sm:mb-6 px-2">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2 sm:mb-3">Smart Suggestions</h2>
-                <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                    AI-powered tool recommendations based on your current shift context
-                </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full">
-                {featured.map(tool => (
-                    <ToolCard key={tool.id} module={tool} />
-                ))}
-            </div>
-        </motion.div>
-    )
-}
-
-const PinnedTools = ({ isClient }: { isClient: boolean }) => {
   return (
-    <motion.div variants={itemVariants}>
-      <div className="text-center mb-4 sm:mb-6 px-2">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2 sm:mb-3">Pinned Tools</h2>
-        <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Quick access to your most frequently used tools
-        </p>
-      </div>
-      <PinnedToolsGrid isClient={isClient} />
+    <motion.div variants={itemVariants} className="space-y-3">
+      <Card className="overflow-hidden bg-gradient-to-r from-card to-card/80 border border-border/50">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full p-4 text-left focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <GroupIcon className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-base">{group.category}</h3>
+                <p className="text-sm text-muted-foreground">{group.features.length} tools</p>
+              </div>
+            </div>
+            <motion.div
+              animate={{ rotate: isExpanded ? 90 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+            </motion.div>
+          </div>
+        </button>
+        
+        <motion.div
+          initial={false}
+          animate={{ height: isExpanded ? "auto" : 0, opacity: isExpanded ? 1 : 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="overflow-hidden"
+        >
+          <div className="px-4 pb-4">
+            <div className="grid grid-cols-1 gap-3">
+              {group.features.slice(0, isExpanded ? undefined : 3).map((feature: FeatureModule) => (
+                <QuickActionCard key={feature.id} module={feature} />
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </Card>
     </motion.div>
   )
 }
+
+const StatsCard = ({ title, value, icon: Icon, color = "primary" }: { title: string; value: string; icon: any; color?: string }) => (
+  <Card className="bg-gradient-to-br from-background to-muted/20 border border-border/50">
+    <CardContent className="p-4">
+      <div className="flex items-center space-x-3">
+        <div className={`p-2 rounded-lg bg-${color}/10`}>
+          <Icon className={`h-4 w-4 text-${color}`} />
+        </div>
+        <div>
+          <p className="text-xs text-muted-foreground">{title}</p>
+          <p className="font-semibold text-sm">{value}</p>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+)
 
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("Good day")
@@ -139,13 +165,9 @@ export default function DashboardPage() {
     
     const getGreeting = () => {
       const hour = new Date().getHours()
-      if (hour < 12) {
-        return "Good morning"
-      } else if (hour < 18) {
-        return "Good afternoon"
-      } else {
-        return "Good evening"
-      }
+      if (hour < 12) return "Good morning"
+      else if (hour < 18) return "Good afternoon"
+      else return "Good evening"
     }
     setGreeting(getGreeting());
 
@@ -169,160 +191,136 @@ export default function DashboardPage() {
     return () => unsubscribe();
   }, [])
 
+  const featuredTools = [
+    dashboardFeatureGroups.find(g => g.category === "AI Assistant Tools")?.features.slice(0, 3),
+    dashboardFeatureGroups.find(g => g.category === "Field Operations & Procedures")?.features.slice(0, 2),
+    dashboardFeatureGroups.find(g => g.category === "Emergency Response Protocols")?.features.slice(0, 1),
+  ].flat().filter(Boolean) as FeatureModule[];
+
   return (
-    <div className="w-full max-w-full mx-auto px-3 sm:px-4 md:px-6 bg-background text-foreground overflow-x-hidden">
-      <PageHeader 
-        title={`${greeting}, ${userName || "Officer"}.`}
-        description={
-          isClient && mounted && isPro ? (
-            <div className="flex items-center gap-2 text-amber-400 text-xs sm:text-sm">
-              <Crown className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-              <span className="break-words">Pro Member - All premium features unlocked</span>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/10 pb-20">
+      <div className="px-4 pt-6 space-y-6">
+        
+        {/* Header Section */}
+        <motion.div 
+          variants={itemVariants}
+          initial="hidden" 
+          animate="show"
+          className="text-center space-y-2"
+        >
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">
+            {greeting}, {userName}
+          </h1>
+          {isClient && mounted && isPro ? (
+            <div className="flex items-center justify-center gap-2 text-amber-400">
+              <Crown className="w-4 h-4" />
+              <span className="text-sm font-medium">Shield FL Pro Active</span>
             </div>
           ) : (
-            "Welcome to your Mission Hub. How can I help?"
-          )
-        }
-      />
-
-      <motion.div 
-        className="space-y-4 sm:space-y-6 md:space-y-8"
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-      >
-        {/* AI Command Search */}
-        <motion.div variants={itemVariants}>
-          <AICommandSearch />
+            <p className="text-muted-foreground text-sm">Your command center awaits</p>
+          )}
         </motion.div>
 
-        {/* Pro Status Card */}
-        {isClient && mounted && isPro && (
+        <motion.div 
+          className="space-y-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
+          {/* AI Command Search */}
           <motion.div variants={itemVariants}>
-            <Card className="bg-gradient-to-r from-amber-900/20 to-orange-900/20 border-amber-600/30 bg-card">
-              <CardContent className="p-6 text-center">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <div className="p-3 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full">
-                    <Crown className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-amber-400">Shield FL Pro Active</h3>
-                    <p className="text-amber-300">Access to all premium AI tools and features</p>
-                  </div>
+            <AICommandSearch />
+          </motion.div>
+
+          {/* Quick Stats Row */}
+          <motion.div variants={itemVariants}>
+            <div className="grid grid-cols-2 gap-3">
+              <StatsCard 
+                title="Tools Available" 
+                value={`${dashboardFeatureGroups.reduce((acc, group) => acc + group.features.length, 0)}`}
+                icon={Shield}
+              />
+              <StatsCard 
+                title="Categories" 
+                value={`${dashboardFeatureGroups.length}`}
+                icon={Briefcase}
+              />
+            </div>
+          </motion.div>
+
+          {/* Daily Roll Call */}
+          <motion.div variants={itemVariants} className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <div className="p-1 bg-primary/10 rounded-lg">
+                <BookOpen className="h-4 w-4 text-primary" />
+              </div>
+              <h2 className="font-semibold text-lg">Today's Briefing</h2>
+            </div>
+            <DailyRollCall />
+          </motion.div>
+
+          {/* Featured Tools */}
+          <motion.div variants={itemVariants} className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="p-1 bg-amber-500/10 rounded-lg">
+                  <Star className="h-4 w-4 text-amber-500" />
                 </div>
+                <h2 className="font-semibold text-lg">Quick Access</h2>
+              </div>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/favorites">View All</Link>
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 gap-3">
+              {featuredTools.map((tool) => (
+                <QuickActionCard key={tool.id} module={tool} />
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Training Progress */}
+          <motion.div variants={itemVariants} className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <div className="p-1 bg-green-500/10 rounded-lg">
+                <TrendingUp className="h-4 w-4 text-green-500" />
+              </div>
+              <h2 className="font-semibold text-lg">Your Progress</h2>
+            </div>
+            <Card className="bg-gradient-to-br from-background to-muted/20 border border-border/50">
+              <CardContent className="p-4">
+                <BriefingStats />
               </CardContent>
             </Card>
           </motion.div>
-        )}
 
-        {/* Daily Roll Call Section */}
-        <motion.div variants={itemVariants}>
-          <div className="text-center mb-4 sm:mb-6">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2 sm:mb-3">Daily Roll Call</h2>
-            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto px-2">
-              Stay informed with today's critical briefing information
-            </p>
-          </div>
-          <Card className="hover:shadow-lg transition-all duration-300 bg-card border-border w-full">
-            <CardContent className="p-3 sm:p-4 md:p-6">
-              <DailyRollCall />
-            </CardContent>
-          </Card>
+          {/* All Categories */}
+          <motion.div variants={itemVariants} className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <div className="p-1 bg-blue-500/10 rounded-lg">
+                <Briefcase className="h-4 w-4 text-blue-500" />
+              </div>
+              <h2 className="font-semibold text-lg">All Tools</h2>
+            </div>
+            <div className="space-y-3">
+              {dashboardFeatureGroups.map((group, index) => (
+                <CategorySection key={group.category} group={group} index={index} />
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Disclaimer */}
+          <motion.div variants={itemVariants}>
+            <Alert variant="destructive" className="border-destructive/20 bg-destructive/5">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle className="text-sm">Training Use Only</AlertTitle>
+              <AlertDescription className="text-xs">
+                This app is for training purposes only. Do not enter real Criminal Justice Information (CJI) or PII.
+              </AlertDescription>
+            </Alert>
+          </motion.div>
         </motion.div>
-
-        {/* Training Progress Section */}
-        <motion.div variants={itemVariants}>
-          <div className="text-center mb-4 sm:mb-6">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2 sm:mb-3">Training Progress</h2>
-            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto px-2">
-              Track your professional development and skill advancement
-            </p>
-          </div>
-          <Card className="hover:shadow-lg transition-all duration-300 bg-card border-border w-full">
-            <CardContent className="p-3 sm:p-4 md:p-6">
-              <BriefingStats />
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Featured Tools Section */}
-        <div>
-          <FeaturedTools isClient={isClient} />
-        </div>
-
-        {/* Pinned Tools Section */}
-        <div>
-          <PinnedTools isClient={isClient} />
-        </div>
-
-        {/* Complete Tools Library */}
-        <motion.div variants={itemVariants}>
-          <div className="text-center mb-4 sm:mb-6">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2 sm:mb-3">Complete Tools Library</h2>
-            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto px-2">
-              Comprehensive collection of law enforcement tools and resources
-            </p>
-          </div>
-          
-          <div className="mb-3 sm:mb-4">
-            <p className="text-xs sm:text-sm text-muted-foreground text-center px-2">
-              Showing {dashboardFeatureGroups.reduce((acc, group) => acc + group.features.length, 0)} tools across {dashboardFeatureGroups.length} categories
-            </p>
-          </div>
-
-          <div className="space-y-4 sm:space-y-6">
-            {Array.isArray(dashboardFeatureGroups) && dashboardFeatureGroups.map((group, index) => {
-              const GroupIcon = (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle
-              return (
-                <motion.div
-                  key={group.category}
-                  variants={itemVariants}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Card className="hover:shadow-lg transition-all duration-300 bg-card border-border w-full">
-                    <CardHeader className="pb-3 sm:pb-4">
-                      <div className="flex items-center justify-between flex-wrap gap-2">
-                        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <GroupIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-primary"/>
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <CardTitle className="text-base sm:text-lg md:text-xl truncate">{group.category}</CardTitle>
-                            <CardDescription className="text-xs sm:text-sm">
-                              {group.features.length} {group.features.length === 1 ? 'tool' : 'tools'} available
-                            </CardDescription>
-                          </div>
-                        </div>
-                        <Badge variant="secondary" className="text-xs sm:text-sm flex-shrink-0">
-                          {group.features.length}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 w-full">
-                        {group.features.map((feature) => (
-                          <ToolCard key={feature.id} module={feature} />
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )
-            })}
-          </div>
-        </motion.div>
-
-        {/* Disclaimer */}
-        <motion.div variants={itemVariants}>
-          <Alert variant="destructive">
-            <LucideIcons.ShieldAlert className="h-4 w-4" />
-            <AlertTitle>For Informational Use Only</AlertTitle>
-            <AlertDescription>
-              This application is a training and informational aid. It is NOT a CJIS-compliant system. Do not enter, store, or transmit any real Criminal Justice Information (CJI) or Personally Identifiable Information (PII).
-            </AlertDescription>
-          </Alert>
-        </motion.div>
-      </motion.div>
+      </div>
     </div>
   )
 }
