@@ -45,16 +45,9 @@ export default function AICommandSearch() {
     setResult("");
 
     try {
-      const { streamCommandSearch } = await import('@/ai/flows/commandSearch');
-      const stream = streamCommandSearch({ query });
-
-      let content = "";
-      for await (const chunk of stream) {
-        if (chunk && typeof chunk === 'string') {
-          content += chunk;
-          setResult(content);
-        }
-      }
+      const { getCommandSearchResponse } = await import('@/ai/flows/commandSearch');
+      const response = await getCommandSearchResponse({ query });
+      setResult(response);
 
     } catch (error: any) {
       console.error("Search failed:", error);

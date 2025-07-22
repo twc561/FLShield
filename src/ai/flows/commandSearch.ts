@@ -30,10 +30,11 @@ RESPONSE GUIDELINES:
 - Provide multiple practical examples and scenarios when relevant
 - Address potential complications or edge cases
 - Include step-by-step procedures where applicable
+- Keep responses comprehensive but concise (under 3000 characters)
 
 OFFICER'S QUESTION: "${query}"
 
-Your comprehensive, detailed response as Shield FL:`;
+Your comprehensive response as Shield FL:`;
 }
 
 export async function getCommandSearchResponse(input: CommandSearchInput): Promise<string> {
@@ -56,7 +57,7 @@ export async function getCommandSearchResponse(input: CommandSearchInput): Promi
         temperature: 0.3,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 4096,
+        maxOutputTokens: 2048, // Reduced for reliability
       },
     });
 
@@ -112,8 +113,10 @@ export async function* streamCommandSearch(input: CommandSearchInput) {
       timestamp: new Date().toISOString()
     });
 
-    // Always fall back to direct response for reliability like roleplay simulator
+    // Use direct response instead of streaming to avoid ResponseAborted errors
     const directResponse = await getCommandSearchResponse(input);
+    
+    // Simulate streaming by yielding the complete response
     yield directResponse;
 
     console.log('Command Search completed successfully via direct response');
