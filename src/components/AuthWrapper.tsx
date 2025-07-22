@@ -14,9 +14,9 @@ const LoadingScreen = () => (
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
     const [isMounted, setIsMounted] = useState(false);
-    const [isRedirecting, setIsRedirecting] = useState(false);
+    const [hasRedirected, setHasRedirected] = useState(false);
     
-    const { user, loading, error } = useAuthState(auth);
+    const [user, loading] = useAuthState(auth);
     const pathname = usePathname();
     const router = useRouter();
 
@@ -40,24 +40,32 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         "/login"
     ].includes(pathname);
 
-    // Handle redirects in a single effect
+    // Handle redirects with better logic
     useEffect(() => {
-        if (!isMounted || loading) return;
+        if (!isMounted || loading || hasRedirected) return;
 
+        // If user is authenticated and on login/home page, redirect to dashboard
         if (user && (pathname === '/' || pathname === '/login')) {
-            setIsRedirecting(true);
-            router.push('/dashboard');
+            console.log('Redirecting authenticated user to dashboard...');
+            setHasRedirected(true);
+            window.location.href = '/dashboard';
             return;
         }
 
+        // If user is not authenticated and on protected page, redirect to login
         if (!user && !isPublicPage) {
-            setIsRedirecting(true);
+            console.log('Redirecting unauthenticated user to login...');
+            setHasRedirected(true);
             router.push('/login');
             return;
         }
 
-        setIsRedirecting(false);
-    }, [user, loading, pathname, router, isMounted, isPublicPage]);
+    }, [user, loading, pathname, router, isMounted, isPublicPage, hasRedirected]);
+
+    // Reset redirect flag when pathname changes
+    useEffect(() => {
+        setHasRedirected(false);
+    }, [pathname]);
 
     // Don't render anything until mounted (prevents hydration issues)
     if (!isMounted) {
@@ -69,18 +77,13 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         return <LoadingScreen />;
     }
 
-    // Show loading while redirecting
-    if (isRedirecting) {
-        return <LoadingScreen />;
-    }
-
-    // Show loading if user should be redirected but hasn't yet
-    if (user && (pathname === '/' || pathname === '/login')) {
+    // Show loading if user should be redirected
+    if (user && (pathname === '/' || pathname === '/login') && !hasRedirected) {
         return <LoadingScreen />;
     }
 
     // Show loading if no user on protected page
-    if (!user && !isPublicPage) {
+    if (!user && !isPublicPage && !hasRedirected) {
         return <LoadingScreen />;
     }
 

@@ -97,12 +97,9 @@ export default function LoginPage() {
         try {
             const result = await signInWithPopup(auth!, provider);
 
-            console.log('Google sign-in successful, redirecting...');
+            console.log('Google sign-in successful, user authenticated');
             const userCredential = result;
             console.log('User details:', userCredential.user?.email);
-            
-            // Let AuthWrapper handle the redirect instead of doing it here
-            // router.push('/dashboard');
         } catch (error: any) {
             console.error("Google Auth Failed:", error);
             console.error("Error Code:", error.code);
@@ -133,7 +130,7 @@ export default function LoginPage() {
         setIsLoading("email");
         try {
             await signInWithEmailAndPassword(auth!, values.email, values.password);
-            // Let AuthWrapper handle the redirect
+            console.log('Email sign-in successful');
         } catch (error) {
             handleAuthError(error);
             setIsLoading(null);
@@ -145,7 +142,7 @@ export default function LoginPage() {
         try {
             await createUserWithEmailAndPassword(auth!, values.email, values.password);
             toast({ title: "Account Created", description: "You have been successfully signed in." });
-            // Let AuthWrapper handle the redirect
+            console.log('Account creation successful');
         } catch (error) {
             handleAuthError(error);
             setIsLoading(null);
