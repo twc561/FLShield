@@ -26,7 +26,7 @@ export const enhancedAI = genkit({
 export const highCapacityConfig = {
   model: gemini15Pro,
   config: {
-    maxOutputTokens: 32768, // Increased to maximum available
+    maxOutputTokens: 8192, // Use supported token limit
     temperature: 0.3, // Slightly lower for more focused responses
     topP: 0.95,
     topK: 40,
@@ -56,7 +56,7 @@ export const highCapacityConfig = {
 export const commandSearchConfig = {
   model: "gemini-1.5-pro-002", // Latest and most capable model
   config: {
-    maxOutputTokens: 32768, // Maximum token output for comprehensive responses
+    maxOutputTokens: 8192, // Use supported token limit for comprehensive responses
     temperature: 0.3, // Lower temperature for more accurate, focused responses
     topP: 0.95,
     topK: 40,

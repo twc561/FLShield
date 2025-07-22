@@ -74,14 +74,14 @@ export async function* streamCommandSearch(input: CommandSearchInput) {
       throw new Error('AI service not initialized');
     }
 
-    // Use latest Gemini Pro with maximum token limits for comprehensive responses
+    // Use latest Gemini Pro with supported token limits for comprehensive responses
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-pro-002",
       generationConfig: {
         temperature: 0.3,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 32768, // Increased to maximum available
+        maxOutputTokens: 8192, // Use supported token limit
       },
     });
 
@@ -149,7 +149,7 @@ export async function getCommandSearchResponse(input: CommandSearchInput): Promi
         temperature: 0.3,
         topP: 0.95,
         topK: 40,
-        maxOutputTokens: 32768, // Increased to maximum available
+        maxOutputTokens: 8192, // Use supported token limit
       },
     });
 
