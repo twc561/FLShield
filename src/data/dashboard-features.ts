@@ -57,7 +57,13 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
     features: [
       {
         id: "ai-legal-advisor",
-
+        title: "AI Legal Advisor",
+        summary: "Analyze scenarios against policy, statutes, and case law instantly.",
+        icon: "ShieldQuestion",
+        targetPage: "/ai-legal-advisor",
+        category: "AI Assistant Tools",
+        isPremium: true,
+      },
       {
         id: "real-time-alerts",
         title: "Real-Time BOLO Alerts",
@@ -76,8 +82,6 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         category: "AI Assistant Tools",
         isPremium: true,
       },
-
-
       {
         id: "beat-intelligence",
         title: "Beat Intelligence Hub",
@@ -94,14 +98,6 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
         icon: "Radio",
         targetPage: "/field-procedures/backup-locator",
         category: "Field Operations & Procedures",
-        isPremium: true,
-      },
-
-        title: "AI Legal Advisor",
-        summary: "Analyze scenarios against policy, statutes, and case law instantly.",
-        icon: "ShieldQuestion",
-        targetPage: "/ai-legal-advisor",
-        category: "AI Assistant Tools",
         isPremium: true,
       },
       {
