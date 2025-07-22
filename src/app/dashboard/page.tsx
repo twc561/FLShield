@@ -1,8 +1,8 @@
 
 'use client'
 
-import React, { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import React, { useState, useEffect, useMemo, useCallback } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -29,26 +29,27 @@ const containerVariants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.03,
+      staggerChildren: 0.02,
+      ease: "easeOut",
+      duration: 0.3
     },
   },
 }
 
 const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
+  hidden: { y: 10, opacity: 0 },
   show: {
     y: 0,
     opacity: 1,
     transition: {
-      type: "spring",
-      stiffness: 150,
-      damping: 25,
+      ease: "easeOut",
+      duration: 0.3
     },
   },
 }
 
-const QuickActionCard = ({ module }: { module: FeatureModule }) => {
-  const Icon = (LucideIcons as any)[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle;
+const QuickActionCard = React.memo(({ module }: { module: FeatureModule }) => {
+  const Icon = useMemo(() => (LucideIcons as any)[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle, [module.icon]);
   const { isPro, mounted } = useSubscription()
   const [isClient, setIsClient] = useState(false)
 
@@ -87,17 +88,21 @@ const QuickActionCard = ({ module }: { module: FeatureModule }) => {
       </motion.div>
     </Link>
   )
-}
+})
 
-const CategorySection = ({ group, index }: { group: any, index: number }) => {
-  const GroupIcon = (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle
+const CategorySection = React.memo(({ group, index }: { group: any, index: number }) => {
+  const GroupIcon = useMemo(() => (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle, [group.icon])
   const [isExpanded, setIsExpanded] = useState(index < 2) // Show first 2 categories expanded by default
+  
+  const toggleExpanded = useCallback(() => {
+    setIsExpanded(!isExpanded)
+  }, [isExpanded])
 
   return (
     <motion.div variants={itemVariants} className="w-full">
       <Card className="overflow-hidden bg-gradient-to-r from-card to-card/80 border border-border/40">
         <button
-          onClick={() => setIsExpanded(!isExpanded)}
+          onClick={toggleExpanded}
           className="w-full p-3 text-left focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
         >
           <div className="flex items-center justify-between">
@@ -137,9 +142,9 @@ const CategorySection = ({ group, index }: { group: any, index: number }) => {
       </Card>
     </motion.div>
   )
-}
+})
 
-const StatsCard = ({ title, value, icon: Icon, color = "primary" }: { title: string; value: string; icon: any; color?: string }) => (
+const StatsCard = React.memo(({ title, value, icon: Icon, color = "primary" }: { title: string; value: string; icon: any; color?: string }) => (
   <Card className="bg-gradient-to-br from-background to-muted/10 border border-border/40">
     <CardContent className="p-3">
       <div className="flex items-center space-x-2.5">
@@ -153,24 +158,50 @@ const StatsCard = ({ title, value, icon: Icon, color = "primary" }: { title: str
       </div>
     </CardContent>
   </Card>
-)
+))
 
 export default function DashboardPage() {
-  const [greeting, setGreeting] = useState("Good day")
-  const [userName, setUserName] = useState<string | null>("Officer");
+  const [greeting, setGreeting] = useState("")
+  const [userName, setUserName] = useState<string | null>(null);
   const { isPro, mounted } = useSubscription()
   const [isClient, setIsClient] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
+
+  // Memoize expensive computations
+  const featuredTools = useMemo(() => {
+    return [
+      dashboardFeatureGroups.find(g => g.category === "AI Assistant Tools")?.features.slice(0, 3),
+      dashboardFeatureGroups.find(g => g.category === "Field Operations & Procedures")?.features.slice(0, 2),
+      dashboardFeatureGroups.find(g => g.category === "Emergency Response Protocols")?.features.slice(0, 1),
+    ].flat().filter(Boolean) as FeatureModule[];
+  }, [])
+
+  const totalTools = useMemo(() => {
+    return dashboardFeatureGroups.reduce((acc, group) => acc + group.features.length, 0)
+  }, [])
+
+  const totalCategories = useMemo(() => {
+    return dashboardFeatureGroups.length
+  }, [])
 
   useEffect(() => {
-    setIsClient(true)
-    
-    const getGreeting = () => {
-      const hour = new Date().getHours()
-      if (hour < 12) return "Good morning"
-      else if (hour < 18) return "Good afternoon"
-      else return "Good evening"
+    // Prevent hydration mismatches by setting everything on client side
+    const initializeClient = () => {
+      setIsClient(true)
+      
+      const getGreeting = () => {
+        const hour = new Date().getHours()
+        if (hour < 12) return "Good morning"
+        else if (hour < 18) return "Good afternoon"
+        else return "Good evening"
+      }
+      setGreeting(getGreeting());
+
+      // Set hydrated after a short delay to prevent SSR mismatches
+      setTimeout(() => setHydrated(true), 50)
     }
-    setGreeting(getGreeting());
+
+    initializeClient()
 
     const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
         if (user) {
@@ -192,8 +223,8 @@ export default function DashboardPage() {
     return () => unsubscribe();
   }, [])
 
-  // Prevent hydration mismatch by not rendering dynamic content until client-side
-  if (!isClient || !mounted) {
+  // Prevent hydration mismatch by not rendering dynamic content until fully hydrated
+  if (!isClient || !mounted || !hydrated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/5 pb-20">
         <div className="px-3 pt-4 max-w-md mx-auto w-full">
@@ -207,12 +238,6 @@ export default function DashboardPage() {
       </div>
     )
   }
-
-  const featuredTools = [
-    dashboardFeatureGroups.find(g => g.category === "AI Assistant Tools")?.features.slice(0, 3),
-    dashboardFeatureGroups.find(g => g.category === "Field Operations & Procedures")?.features.slice(0, 2),
-    dashboardFeatureGroups.find(g => g.category === "Emergency Response Protocols")?.features.slice(0, 1),
-  ].flat().filter(Boolean) as FeatureModule[];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/5 pb-20">
@@ -254,12 +279,12 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 gap-2">
               <StatsCard 
                 title="Tools Available" 
-                value={`${dashboardFeatureGroups.reduce((acc, group) => acc + group.features.length, 0)}`}
+                value={`${totalTools}`}
                 icon={Shield}
               />
               <StatsCard 
                 title="Categories" 
-                value={`${dashboardFeatureGroups.length}`}
+                value={`${totalCategories}`}
                 icon={Briefcase}
               />
             </div>

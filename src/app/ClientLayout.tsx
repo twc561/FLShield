@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { ContextualPanel } from "@/components/ContextualPanel"
@@ -18,7 +18,7 @@ export function ClientLayout({
   const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
 
-  const publicPages = [
+  const publicPages = useMemo(() => [
     "/",
     "/login",
     "/features",
@@ -30,13 +30,13 @@ export function ClientLayout({
     "/privacy-policy",
     "/security",
     "/for-officers",
-  ];
+  ], []);
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  const isPublicPage = publicPages.includes(pathname);
+  const isPublicPage = useMemo(() => publicPages.includes(pathname), [publicPages, pathname]);
 
   // Prevent hydration mismatch by always rendering the same structure initially
   if (!mounted) {

@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import * as React from "react"
+import { memo, useCallback, useMemo }
 import {
   LayoutGrid,
   Scale,
@@ -39,7 +40,7 @@ const mainNavItems = [
   },
 ]
 
-export function MobileBottomNav() {
+export const MobileBottomNav = memo(function MobileBottomNav() {
   const pathname = usePathname()
   const router = useRouter()
   const [isSheetOpen, setIsSheetOpen] = React.useState(false)
@@ -50,27 +51,27 @@ export function MobileBottomNav() {
     setIsClient(true)
   }, [])
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     try {
       await signOut(auth)
       router.push('/')
     } catch (error) {
       console.error("Error signing out: ", error)
     }
-  }
+  }, [router])
 
-  const isActive = (href: string) => {
+  const isActive = useCallback((href: string) => {
     if (!isClient) return false
     // Exact match for dashboard and ai-tools, startsWith for others to handle nested pages.
     if (href === "/dashboard" || href === "/ai-tools") return pathname === href
     // Special handling for nearby resources to ensure it activates correctly
     if (href === "/field-procedures/nearby-resources") return pathname.startsWith(href)
     return pathname.startsWith(href)
-  }
+  }, [isClient, pathname])
 
-  const handleLinkClick = () => {
+  const handleLinkClick = useCallback(() => {
     setIsSheetOpen(false)
-  }
+  }, [])
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t z-50">
@@ -162,4 +163,4 @@ export function MobileBottomNav() {
       </div>
     </div>
   )
-}
+})
