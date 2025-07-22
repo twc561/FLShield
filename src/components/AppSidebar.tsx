@@ -1,4 +1,3 @@
-
 "use client"
 
 import Link from "next/link"
@@ -20,8 +19,12 @@ import {
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import { AppMenuContent } from "./AppMenuContent"
+import { ChevronUp, User2, Settings, LogOut, Menu, Crown } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { useSubscription } from "@/hooks/use-subscription"
 
 export function AppSidebar() {
+  const { isPro, mounted } = useSubscription()
   const router = useRouter()
   const [isClient, setIsClient] = React.useState(false)
   const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null)

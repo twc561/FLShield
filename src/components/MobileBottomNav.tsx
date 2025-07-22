@@ -1,4 +1,3 @@
-
 "use client"
 
 import Link from "next/link"
@@ -82,7 +81,7 @@ export function MobileBottomNav() {
           </div>
         </div>
       )}
-      
+
       {/* Navigation Bar */}
       <div className="h-16 flex justify-around items-center">
       {mainNavItems.map((item) => (

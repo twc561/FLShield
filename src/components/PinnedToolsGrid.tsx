@@ -3,12 +3,11 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { usePinnedTools } from "@/hooks/use-pinned-tools"
-import { useSubscription } from "@/hooks/use-subscription"
 import * as LucideIcons from "lucide-react"
 import { Crown, X, GripVertical, Settings, Star } from "lucide-react"
+import { usePinnedTools } from "@/hooks/use-pinned-tools"
+import { useSubscription } from "@/hooks/use-subscription"
 import type { FeatureModule } from '@/types'
 
 interface PinnedToolsGridProps {
@@ -44,9 +43,9 @@ const PinnedToolCard = ({
       className="group relative"
     >
       <Link href={module.targetPage} className={`block ${isEditMode ? 'pointer-events-none' : ''}`}>
-        <Card className="h-full hover:border-primary transition-colors relative cursor-pointer">
-          {mounted && isPro && module.isPremium && (
-            <div className="absolute top-2 right-2">
+        <Card className="h-full hover:border-primary transition-colors relative">
+          {mounted && module.isPremium && (
+            <div className="absolute top-2 right-2 z-20">
               <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs">
                 <Crown className="w-3 h-3 mr-1" />
                 Pro

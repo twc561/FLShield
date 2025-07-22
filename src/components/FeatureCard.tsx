@@ -29,6 +29,14 @@ export const FeatureCard = memo(function FeatureCard({ module, showPinButton = t
       className="h-full relative"
     >
       <Card className="h-full flex flex-col hover:border-primary transition-colors duration-200">
+        {mounted && module.isPremium && (
+          <div className="absolute top-2 right-2 z-20">
+            <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs">
+              <Crown className="w-3 h-3 mr-1" />
+              Pro
+            </Badge>
+          </div>
+        )}
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

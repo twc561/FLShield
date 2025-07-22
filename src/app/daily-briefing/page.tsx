@@ -12,6 +12,7 @@ import { Search, Calendar, Clock, Target, CheckCircle2, PlayCircle, BookOpen, Cr
 import { dailyRollCallModules } from "@/data/daily-roll-call"
 import { categories } from "@/data/daily-briefing"
 import { useSubscription } from "@/hooks/use-subscription"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function DailyBriefingPage() {
   const { isPro } = useSubscription()
@@ -140,7 +141,13 @@ export default function DailyBriefingPage() {
                           const completionStatus = getCompletionStatus(module.id);
 
                           return (
-                            <Card key={module.id} className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20">
+                            <Card key={module.id} className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20 relative">
+                              <div className="absolute top-2 right-2 z-20">
+                                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs">
+                                  <Crown className="w-3 h-3 mr-1" />
+                                  Pro
+                                </Badge>
+                              </div>
                               <CardHeader className="pb-4">
                                 <div className="flex items-start justify-between mb-2">
                                   <div className="flex items-center gap-2">
