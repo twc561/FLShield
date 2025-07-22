@@ -67,14 +67,14 @@ export function MobileBottomNav() {
               <span className="text-xs font-medium">More</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="h-[80vh] flex flex-col">
+          <SheetContent side="bottom" className="h-[80vh] flex flex-col bg-background/95 backdrop-blur-sm border-t z-[100]">
             <div className="flex-shrink-0 pb-4">
               <h2 className="text-lg font-semibold">Menu</h2>
             </div>
             <div className="flex-1 overflow-hidden">
               <ScrollArea className="h-full">
                 <div className="pr-4">
-                  <AppMenuContent onNavigate={handleMoreNavigate} />
+                  <AppMenuContent onLinkClick={handleMoreNavigate} />
                 </div>
               </ScrollArea>
             </div>
