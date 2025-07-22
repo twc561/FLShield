@@ -2,26 +2,22 @@
 
 import React, { memo } from "react"
 import Link from "next/link"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { PinButton } from "@/components/PinButton"
 import * as LucideIcons from "lucide-react"
-import { motion } from "framer-motion"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Crown } from "lucide-react"
+import { useSubscription } from "@/hooks/use-subscription"
 import type { FeatureModule } from "@/types"
 import { ArrowRight } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Crown } from "lucide-react"
 
 type FeatureCardProps = {
   module: FeatureModule
+  showPinButton?: boolean
 }
 
-export const FeatureCard = memo(function FeatureCard({ module }: FeatureCardProps) {
+export const FeatureCard = memo(function FeatureCard({ module, showPinButton = true }: FeatureCardProps) {
+  const { isPro, mounted } = useSubscription()
   const Icon = (LucideIcons as any)[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle
 
   return (
@@ -37,11 +33,14 @@ export const FeatureCard = memo(function FeatureCard({ module }: FeatureCardProp
       >
         <Card className="h-full flex flex-col hover:border-primary transition-colors duration-200">
           <CardHeader>
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary/10 rounded-lg">
-                <Icon className="w-6 h-6 text-primary" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Icon className="w-5 h-5 text-primary" />
+                </div>
+                <CardTitle className="text-base">{module.title}</CardTitle>
               </div>
-              <CardTitle>{module.title}</CardTitle>
+              {showPinButton && <PinButton module={module} />}
             </div>
           </CardHeader>
           <CardContent className="flex-grow">

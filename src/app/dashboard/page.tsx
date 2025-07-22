@@ -9,12 +9,14 @@ import { BrainCircuit, Users, AlertTriangle, BookOpen, Shield, Zap, Clock, Trend
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { DailyRollCall } from "@/components/DailyRollCall"
 import { BriefingStats } from "@/components/BriefingStats"
+import { PinnedToolsGrid } from "@/components/PinnedToolsGrid"
 import { Badge } from "@/components/ui/badge"
 import { useSubscription } from "@/hooks/use-subscription"
 import { onAuthStateChanged, type User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 
 import AICommandSearch from "@/components/AICommandSearch"
+import { PinButton } from "@/components/PinButton"
 import Link from 'next/link'
 import * as LucideIcons from "lucide-react"
 
@@ -48,17 +50,22 @@ const itemVariants = {
 const ToolCard = ({ module }: { module: FeatureModule }) => {
   const Icon = (LucideIcons as any)[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle;
   return (
-    <Link href={module.targetPage} className="group">
-      <Card className="h-full hover:border-primary/80 hover:bg-card/60 transition-colors flex items-center p-3 gap-3">
-        <div className="p-2 bg-primary/10 rounded-lg">
-          <Icon className="w-5 h-5 text-primary" />
-        </div>
-        <div>
-          <p className="font-semibold text-sm text-foreground">{module.title}</p>
-          <p className="text-xs text-muted-foreground">{module.summary}</p>
-        </div>
-      </Card>
-    </Link>
+    <div className="group relative">
+      <Link href={module.targetPage}>
+        <Card className="h-full hover:border-primary/80 hover:bg-card/60 transition-colors flex items-center p-3 gap-3">
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <Icon className="w-5 h-5 text-primary" />
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold text-sm text-foreground">{module.title}</p>
+            <p className="text-xs text-muted-foreground">{module.summary}</p>
+          </div>
+        </Card>
+      </Link>
+      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <PinButton module={module} variant="ghost" size="icon" />
+      </div>
+    </div>
   )
 }
 
@@ -120,19 +127,10 @@ const FeaturedTools = ({ isClient }: { isClient: boolean }) => {
 }
 
 
-const PinnedTools = () => {
+const PinnedTools = ({ isClient }: { isClient: boolean }) => {
   return (
     <motion.div variants={itemVariants}>
-      <h2 className="text-lg font-bold tracking-tight mb-3 px-1">Pinned Tools</h2>
-      <div className="p-8 text-center border-2 border-dashed rounded-lg">
-        <div className="flex justify-center mb-4">
-          <LucideIcons.Star className="w-10 h-10 text-muted-foreground" />
-        </div>
-        <h3 className="text-base font-semibold">Feature Coming Soon</h3>
-        <p className="text-sm text-muted-foreground">
-          Pin your most-used tools here for instant access.
-        </p>
-      </div>
+      <PinnedToolsGrid isClient={isClient} />
     </motion.div>
   )
 }
@@ -251,7 +249,7 @@ export default function DashboardPage() {
 
       <FeaturedTools isClient={isClient} />
 
-      <PinnedTools />
+      <PinnedTools isClient={isClient} />
 
       {/* The "All Tools" Library */}
       <motion.div variants={itemVariants}>
