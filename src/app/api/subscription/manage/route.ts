@@ -10,7 +10,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(request: NextRequest) {
   try {
-    const authHeader = headers().get('authorization')
+    const headersList = await headers()
+    const authHeader = headersList.get('authorization')
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -23,6 +24,16 @@ export async function POST(request: NextRequest) {
 
     if (!userData?.subscription?.customerId) {
       return NextResponse.json({ error: 'No subscription found' }, { status: 404 })
+    }
+
+    // Verify customer exists in Stripe before creating portal session
+    try {
+      await stripe.customers.retrieve(userData.subscription.customerId)
+    } catch (customerError: any) {
+      console.error('Customer not found in Stripe:', customerError)
+      return NextResponse.json({ 
+        error: 'Subscription data is invalid. Please contact support.' 
+      }, { status: 400 })
     }
 
     // Create Stripe customer portal session
