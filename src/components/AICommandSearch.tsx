@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { SearchIcon, Loader2, Sparkles, Command } from "lucide-react";
+import { SearchIcon, Loader2, Sparkles, Command, ChevronDown, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { dashboardFeatureGroups } from "@/data/dashboard-features";
 
 interface SearchResult {
@@ -29,6 +30,8 @@ export default function AICommandSearch() {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [contextualSuggestions, setContextualSuggestions] = useState<string[]>([]);
   const [smartShortcuts, setSmartShortcuts] = useState<{key: string, title: string, href: string}[]>([]);
+  const [quickAccessOpen, setQuickAccessOpen] = useState(true);
+  const [aiSuggestionsOpen, setAiSuggestionsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -190,8 +193,16 @@ export default function AICommandSearch() {
       >
         <SearchIcon className="w-4 h-4" />
         <span className="text-muted-foreground">Search everything...</span>
-        <div className="ml-auto flex items-center gap-1 text-xs bg-muted px-1.5 py-0.5 rounded">
-          <Command className="w-3 h-3" />K
+        <div className="ml-auto flex items-center gap-1">
+          {/* Small shortcuts */}
+          <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground mr-2">
+            <kbd className="px-1 py-0.5 bg-muted/50 rounded text-[10px]">⌘1</kbd>
+            <kbd className="px-1 py-0.5 bg-muted/50 rounded text-[10px]">⌘2</kbd>
+            <kbd className="px-1 py-0.5 bg-muted/50 rounded text-[10px]">⌘3</kbd>
+          </div>
+          <div className="flex items-center gap-1 text-xs bg-muted px-1.5 py-0.5 rounded">
+            <Command className="w-3 h-3" />K
+          </div>
         </div>
       </Button>
 
@@ -274,31 +285,47 @@ export default function AICommandSearch() {
                   </div>
                 )
               ) : (
-                <div className="space-y-6">
-                  {/* Smart Shortcuts */}
-                  <div>
-                    <h3 className="text-sm font-medium mb-3 text-muted-foreground">Quick Access</h3>
-                    <div className="grid grid-cols-2 gap-2">
-                      {smartShortcuts.map((shortcut) => (
-                        <div
-                          key={shortcut.key}
-                          onClick={() => {
-                            setIsOpen(false);
-                            router.push(shortcut.href);
-                          }}
-                          className="p-2 rounded-md border hover:bg-accent/5 cursor-pointer transition-colors flex items-center justify-between"
-                        >
-                          <span className="text-sm">{shortcut.title}</span>
-                          <kbd className="px-1.5 py-0.5 text-xs bg-muted rounded">{shortcut.key}</kbd>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                <div className="space-y-4">
+                  {/* Smart Shortcuts - Collapsible */}
+                  <Collapsible open={quickAccessOpen} onOpenChange={setQuickAccessOpen}>
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-accent/5 rounded-md transition-colors">
+                      <h3 className="text-sm font-medium text-muted-foreground">Quick Access</h3>
+                      {quickAccessOpen ? (
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-2 mt-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {smartShortcuts.map((shortcut) => (
+                          <div
+                            key={shortcut.key}
+                            onClick={() => {
+                              setIsOpen(false);
+                              router.push(shortcut.href);
+                            }}
+                            className="p-2 rounded-md border hover:bg-accent/5 cursor-pointer transition-colors flex items-center justify-between"
+                          >
+                            <span className="text-sm truncate">{shortcut.title}</span>
+                            <kbd className="px-1.5 py-0.5 text-xs bg-muted rounded flex-shrink-0">{shortcut.key}</kbd>
+                          </div>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
 
-                  {/* Contextual Suggestions */}
-                  <div>
-                    <h3 className="text-sm font-medium mb-3 text-muted-foreground">AI Suggestions</h3>
-                    <div className="space-y-2">
+                  {/* AI Suggestions - Collapsible */}
+                  <Collapsible open={aiSuggestionsOpen} onOpenChange={setAiSuggestionsOpen}>
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-accent/5 rounded-md transition-colors">
+                      <h3 className="text-sm font-medium text-muted-foreground">Smart Recommendations</h3>
+                      {aiSuggestionsOpen ? (
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-2 mt-2">
                       {contextualSuggestions.map((suggestion, index) => (
                         <div
                           key={index}
@@ -306,13 +333,13 @@ export default function AICommandSearch() {
                           className="p-2 rounded-md border-dashed border hover:bg-blue-50/50 dark:hover:bg-blue-950/20 cursor-pointer transition-colors"
                         >
                           <div className="flex items-center gap-2">
-                            <Sparkles className="w-3 h-3 text-blue-500" />
+                            <Sparkles className="w-3 h-3 text-blue-500 flex-shrink-0" />
                             <span className="text-sm text-blue-700 dark:text-blue-300">"{suggestion}"</span>
                           </div>
                         </div>
                       ))}
-                    </div>
-                  </div>
+                    </CollapsibleContent>
+                  </Collapsible>
                 </div>
               )}
 
