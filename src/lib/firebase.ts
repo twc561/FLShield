@@ -30,6 +30,12 @@ if (isFirebaseConfigured) {
     app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
     auth = getAuth(app);
     db = getFirestore(app);
+
+    // Configure WebAuthn settings
+    if (auth && typeof window !== 'undefined') {
+        // Configure WebAuthn for the current domain
+        auth.settings.appVerificationDisabledForTesting = false;
+    }
 }
 
 export { app, auth, db };

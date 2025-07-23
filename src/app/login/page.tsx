@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useForm } from "react-hook-form"
@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
 import { FirebaseError } from 'firebase/app'
+import { isSupported, isAvailable, createCredential, signInWith } from '@firebase-web-authn/browser'
 
 import { auth, isFirebaseConfigured } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
@@ -16,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, AlertTriangle } from 'lucide-react'
+import { Loader2, AlertTriangle, Fingerprint } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 const GoogleIcon = () => (
@@ -35,8 +36,9 @@ const authSchema = z.object({
 })
 
 export default function LoginPage() {
-    const [isLoading, setIsLoading] = useState<"google" | "email" | "reset" | null>(null)
+    const [isLoading, setIsLoading] = useState<"google" | "email" | "reset" | "passkey" | null>(null)
     const [showForgotPassword, setShowForgotPassword] = useState(false)
+    const [passkeysSupported, setPasskeysSupported] = useState(false)
     const router = useRouter()
     const { toast } = useToast()
 
@@ -54,6 +56,16 @@ export default function LoginPage() {
         resolver: zodResolver(z.object({ email: z.string().email() })),
         defaultValues: { email: "" },
     });
+
+    // Check if WebAuthn/passkeys are supported
+    React.useEffect(() => {
+        const checkPasskeySupport = async () => {
+            if (await isSupported() && await isAvailable()) {
+                setPasskeysSupported(true);
+            }
+        };
+        checkPasskeySupport();
+    }, []);
 
     const handleAuthError = (error: any) => {
         let title = "Authentication Failed";
@@ -149,6 +161,79 @@ export default function LoginPage() {
         }
     }
 
+    const handlePasskeySignIn = async () => {
+        if (!passkeysSupported) {
+            toast({
+                variant: "destructive",
+                title: "Passkeys Not Supported",
+                description: "Your browser or device doesn't support passkey authentication."
+            });
+            return;
+        }
+
+        setIsLoading("passkey");
+        try {
+            const userCredential = await signInWith(auth!, { rpId: window.location.hostname });
+            console.log('Passkey sign-in successful');
+            toast({
+                title: "Welcome Back!",
+                description: "You've been signed in with your passkey."
+            });
+        } catch (error: any) {
+            console.error("Passkey sign-in failed:", error);
+            if (error.name === 'NotAllowedError') {
+                toast({
+                    variant: "destructive",
+                    title: "Passkey Sign-in Cancelled",
+                    description: "The passkey sign-in was cancelled or timed out."
+                });
+            } else if (error.name === 'NotSupportedError') {
+                toast({
+                    variant: "destructive",
+                    title: "Passkeys Not Available",
+                    description: "No passkeys found for this account. Try signing in with email/password first."
+                });
+            } else {
+                handleAuthError(error);
+            }
+        } finally {
+            setIsLoading(null);
+        }
+    }
+
+    const handleCreatePasskey = async () => {
+        if (!auth?.currentUser) {
+            toast({
+                variant: "destructive",
+                title: "Sign In Required",
+                description: "Please sign in first before creating a passkey."
+            });
+            return;
+        }
+
+        setIsLoading("passkey");
+        try {
+            await createCredential(auth.currentUser, { rpId: window.location.hostname });
+            toast({
+                title: "Passkey Created",
+                description: "Your passkey has been successfully created for future sign-ins."
+            });
+        } catch (error: any) {
+            console.error("Passkey creation failed:", error);
+            if (error.name === 'NotAllowedError') {
+                toast({
+                    variant: "destructive",
+                    title: "Passkey Creation Cancelled",
+                    description: "Passkey creation was cancelled."
+                });
+            } else {
+                handleAuthError(error);
+            }
+        } finally {
+            setIsLoading(null);
+        }
+    }
+
     if (!isFirebaseConfigured) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-muted/50 p-4">
@@ -197,6 +282,13 @@ export default function LoginPage() {
                         {isLoading === 'google' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
                         Sign in with Google
                     </Button>
+                    
+                    {passkeysSupported && (
+                        <Button onClick={handlePasskeySignIn} disabled={!!isLoading} variant="outline" className="w-full">
+                            {isLoading === 'passkey' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Fingerprint className="mr-2 h-4 w-4" />}
+                            Sign in with Passkey
+                        </Button>
+                    )}
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t" />

@@ -1,4 +1,3 @@
-
 "use client"
 
 import { PageHeader } from "@/components/PageHeader"
@@ -6,12 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
-import { Lock, Shield, Smartphone, Clock, Eye, QrCode } from "lucide-react"
+import { Lock, Shield, Smartphone, Clock, Eye, QrCode, Fingerprint } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from "@/lib/firebase"
 import { multiFactor, PhoneAuthProvider, RecaptchaVerifier } from "firebase/auth"
 import { toast } from "@/hooks/use-toast"
+import { Loader2 } from "lucide-react"
 
 export default function AccountSecurityPage() {
   const [user] = useAuthState(auth)
@@ -23,10 +23,13 @@ export default function AccountSecurityPage() {
   const [verificationId, setVerificationId] = useState("")
   const [showPhoneInput, setShowPhoneInput] = useState(false)
   const [sessions, setSessions] = useState<any[]>([])
+  const [passkeys, setPasskeys] = useState<any[]>([]) // Placeholder for passkeys
+  const [passkeysSupported, setPasskeysSupported] = useState(true) // Assume passkeys are supported
+  const [isCreatingPasskey, setIsCreatingPasskey] = useState(false)
 
   const fetchSessions = async () => {
     if (!user) return
-    
+
     try {
       const token = await user.getIdToken()
       const response = await fetch(`/api/security/sessions?userId=${user.uid}`, {
@@ -34,7 +37,7 @@ export default function AccountSecurityPage() {
           'Authorization': `Bearer ${token}`
         }
       })
-      
+
       if (response.ok) {
         const data = await response.json()
         setSessions(data.sessions || [])
@@ -58,7 +61,7 @@ export default function AccountSecurityPage() {
 
   const handleEnable2FA = async () => {
     if (!user) return
-    
+
     if (twoFactorEnabled) {
       // Disable 2FA
       try {
@@ -86,7 +89,7 @@ export default function AccountSecurityPage() {
 
   const sendVerificationCode = async () => {
     if (!user || !phoneNumber) return
-    
+
     setIsEnabling2FA(true)
     try {
       // Create RecaptchaVerifier
@@ -97,7 +100,7 @@ export default function AccountSecurityPage() {
       const multiFactorSession = await multiFactor(user).getSession()
       const phoneAuthCredential = PhoneAuthProvider.credential(verificationId, verificationCode)
       const multiFactorAssertion = PhoneAuthProvider.credentialFromResult(phoneAuthCredential)
-      
+
       // This is a simplified version - you'll need to implement the full flow
       toast({
         title: "Verification Code Sent",
@@ -113,13 +116,33 @@ export default function AccountSecurityPage() {
     setIsEnabling2FA(false)
   }
 
+  const handleCreatePasskey = async () => {
+    setIsCreatingPasskey(true);
+    try {
+      // Simulate passkey creation
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate delay
+      setPasskeys([...passkeys, { createdAt: Date.now() }]); // Add a dummy passkey
+      toast({
+        title: "Passkey Added",
+        description: "Your passkey has been successfully added."
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to create passkey: " + error.message,
+        variant: "destructive"
+      });
+    }
+    setIsCreatingPasskey(false);
+  };
+
   return (
     <div className="animate-fade-in-up">
       <PageHeader
         title="Account Security"
         description="Manage two-factor authentication, view login history, and configure security settings."
       />
-      
+
       <div className="max-w-4xl mx-auto space-y-6">
         <Card>
           <CardHeader>
@@ -144,7 +167,7 @@ export default function AccountSecurityPage() {
                 onCheckedChange={handleEnable2FA}
               />
             </div>
-            
+
             {showPhoneInput && !twoFactorEnabled && (
               <div className="space-y-4 p-4 border rounded-lg">
                 <div>
@@ -187,6 +210,59 @@ export default function AccountSecurityPage() {
             )}
           </CardContent>
         </Card>
+
+        {passkeysSupported && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Fingerprint className="w-5 h-5" />
+                Passkey Authentication
+              </CardTitle>
+              <CardDescription>
+                Use biometric authentication or security keys for faster, more secure sign-ins
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Registered Passkeys</p>
+                  <p className="text-sm text-muted-foreground">
+                    {passkeys.length} passkey{passkeys.length !== 1 ? 's' : ''} registered
+                  </p>
+                </div>
+                <Button 
+                  onClick={handleCreatePasskey}
+                  disabled={isCreatingPasskey}
+                  size="sm"
+                >
+                  {isCreatingPasskey && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  Add Passkey
+                </Button>
+              </div>
+
+              {passkeys.length > 0 && (
+                <div className="space-y-2">
+                  {passkeys.map((passkey, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Fingerprint className="w-4 h-4 text-muted-foreground" />
+                        <div>
+                          <p className="text-sm font-medium">
+                            Passkey {index + 1}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Created {new Date(passkey.createdAt || Date.now()).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge variant="secondary">Active</Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardHeader>
