@@ -35,7 +35,7 @@ const authSchema = z.object({
 })
 
 const resetSchema = z.object({ 
-  email: z.string().min(1, { message: "Email is required." }).email({ message: "Please enter a valid email address." })
+  email: z.string().email({ message: "Please enter a valid email address." }).or(z.literal(""))
 })
 
 export default function LoginPage() {
@@ -120,7 +120,16 @@ export default function LoginPage() {
     }
 
     const handlePasswordReset = async (values: { email: string }) => {
-        if (!values.email || !values.email.includes('@')) {
+        if (!values.email || values.email.trim() === '') {
+            toast({
+                variant: "destructive",
+                title: "Email Required",
+                description: "Please enter your email address."
+            });
+            return;
+        }
+
+        if (!values.email.includes('@') || !values.email.includes('.')) {
             toast({
                 variant: "destructive",
                 title: "Invalid Email",
