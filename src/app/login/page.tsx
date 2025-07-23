@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
 import { FirebaseError } from 'firebase/app'
-// WebAuthn imports will be added later when package is properly configured
 
 import { auth, isFirebaseConfigured } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
@@ -31,8 +30,12 @@ const GoogleIcon = () => (
 );
 
 const authSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email." }),
+  email: z.string().min(1, { message: "Email is required." }).email({ message: "Please enter a valid email address." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+})
+
+const resetSchema = z.object({ 
+  email: z.string().min(1, { message: "Email is required." }).email({ message: "Please enter a valid email address." })
 })
 
 export default function LoginPage() {
@@ -53,15 +56,12 @@ export default function LoginPage() {
     });
 
     const resetForm = useForm<{ email: string }>({
-        resolver: zodResolver(z.object({ 
-            email: z.string().email({ message: "Please enter a valid email address." })
-        })),
+        resolver: zodResolver(resetSchema),
         defaultValues: { email: "" },
     });
 
-    // WebAuthn support check disabled temporarily
+    // WebAuthn support check - currently disabled
     React.useEffect(() => {
-        // Will re-enable when WebAuthn package is properly configured
         setPasskeysSupported(false);
     }, []);
 
@@ -120,6 +120,15 @@ export default function LoginPage() {
     }
 
     const handlePasswordReset = async (values: { email: string }) => {
+        if (!values.email || !values.email.includes('@')) {
+            toast({
+                variant: "destructive",
+                title: "Invalid Email",
+                description: "Please enter a valid email address."
+            });
+            return;
+        }
+
         setIsLoading("reset");
         console.log('Attempting password reset for:', values.email);
         
