@@ -69,7 +69,11 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
 
     // Don't render anything until mounted (prevents hydration issues)
     if (!isMounted) {
-        return <LoadingScreen />;
+        return (
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            </div>
+        );
     }
 
     // Show loading while auth is being determined

@@ -192,16 +192,14 @@ export default function DashboardPage() {
     return () => unsubscribe();
   }, [])
 
-  // Prevent hydration mismatch by not rendering dynamic content until client-side
+  // Prevent hydration mismatch by ensuring consistent server/client rendering
   if (!isClient || !mounted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/5 pb-20">
         <div className="px-3 pt-4 max-w-md mx-auto w-full">
           <div className="text-center mb-4">
-            <h1 className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text mb-1">
-              Good day, Officer
-            </h1>
-            <p className="text-muted-foreground text-xs">Your command center awaits</p>
+            <div className="h-6 bg-muted/20 rounded animate-pulse mb-1" />
+            <div className="h-4 bg-muted/10 rounded animate-pulse w-2/3 mx-auto" />
           </div>
         </div>
       </div>

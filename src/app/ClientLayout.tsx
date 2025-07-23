@@ -49,14 +49,14 @@ export function ClientLayout({
 
   return (
     <AuthWrapper>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background" suppressHydrationWarning>
         {!isPublicPage && user && !loading ? (
           <SubscriptionGate>
             <SidebarProvider>
               <div className="flex h-screen w-full">
                 <AppSidebar />
                 <main className="flex-1 flex flex-col overflow-hidden">
-                  <div className={`flex-1 overflow-y-auto ${isMobile ? 'pb-16' : ''}`}>
+                  <div className={`flex-1 overflow-y-auto ${isMobile ? 'pb-16' : ''}`} suppressHydrationWarning>
                     {children}
                   </div>
                   {isMobile && <MobileBottomNav />}

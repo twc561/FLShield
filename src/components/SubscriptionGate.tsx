@@ -15,7 +15,7 @@ export function SubscriptionGate({ children }: SubscriptionGateProps) {
 
   if (!mounted || loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center" suppressHydrationWarning>
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     )
