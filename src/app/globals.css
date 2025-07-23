@@ -1,68 +1,30 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 45 93% 47%;
-    --accent-foreground: 24 9.8% 10%;
-    --destructive: 35 91% 55%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 217 91% 60%;
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 222.2 84% 4.9%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 90%;
-    --sidebar-accent-foreground: 222.2 47.4% 11.2%;
-    --sidebar-border: 0 0% 89.8%;
-    --sidebar-ring: 217 91% 60%;
-  }
-  .dark {
-    --background: 215 28% 17%;
-    --foreground: 210 40% 98%;
-    --card: 215 28% 22%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 217.2 32.6% 25%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 25%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 45 93% 47%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 35 91% 55%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 25%;
-    --input: 217.2 32.6% 25%;
-    --ring: 217 91% 60%;
-
-    --sidebar-background: 215 28% 17%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 217.2 32.6% 25%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 217.2 32.6% 25%;
-    --sidebar-ring: 217 91% 60%;
+    --background: 220 13% 9%;
+    --foreground: 220 9% 96%;
+    --card: 220 13% 11%;
+    --card-foreground: 220 9% 96%;
+    --popover: 220 13% 11%;
+    --popover-foreground: 220 9% 96%;
+    --primary: 220 91% 25%;
+    --primary-foreground: 220 9% 96%;
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 220 9% 96%;
+    --muted: 220 13% 15%;
+    --muted-foreground: 220 9% 65%;
+    --accent: 43 96% 56%;
+    --accent-foreground: 220 13% 9%;
+    --destructive: 0 84% 37%;
+    --destructive-foreground: 220 9% 96%;
+    --border: 220 13% 18%;
+    --input: 220 13% 18%;
+    --ring: 220 91% 25%;
+    --radius: 0.75rem;
   }
 }
 
@@ -71,51 +33,127 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body;
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Mobile-First Optimizations */
+@layer components {
+  .dashboard-gradient {
+    background: linear-gradient(180deg, 
+      theme('colors.slate.800') 0%, 
+      theme('colors.slate.700') 100%);
   }
   
-  /* Mobile scrolling fixes */
-  @media (max-width: 768px) {
-    html, body {
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-    }
-    
-    main {
-      min-height: 100vh;
-      position: relative;
-    }
+  .quick-action-btn {
+    @apply backdrop-blur-sm transition-all duration-200;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  }
+  
+  .quick-action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  .module-card {
+    @apply backdrop-blur-sm transition-all duration-200;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+  
+  .module-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 }
 
+/* Touch Target Optimization */
 @layer utilities {
-  .line-clamp-1 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
   }
-
-  .line-clamp-2 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-
-  .line-clamp-3 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+  
+  .tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
-@layer utilities {
-  .animation-delay-200 {
-    animation-delay: 200ms;
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --border: 0 0% 50%;
   }
-  .animation-delay-400 {
-    animation-delay: 400ms;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus States for Accessibility */
+@layer components {
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-slate-900;
+  }
+}
+
+/* Typography Optimization for Mobile */
+@layer base {
+  body {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Status Indicators */
+@layer components {
+  .status-live {
+    @apply animate-pulse;
+  }
+  
+  .status-critical::before {
+    content: '';
+    @apply absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping;
+  }
+  
+  .status-warning::before {
+    content: '';
+    @apply absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full;
+  }
+}
+
+/* Loading States */
+@layer components {
+  .skeleton {
+    @apply animate-pulse bg-slate-700 rounded;
+  }
+  
+  .loading-shimmer {
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.1), 
+      transparent);
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Search Bar Enhancements */
+@layer components {
+  .search-bar-focus {
+    @apply ring-2 ring-amber-400 ring-opacity-50;
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
   }
 }
