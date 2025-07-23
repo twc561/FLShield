@@ -33,7 +33,17 @@ const AdvisorOutputSchema = z.object({
 export type AdvisorOutput = z.infer<typeof AdvisorOutputSchema>;
 
 export async function getAdvisorResponse(input: AdvisorInput): Promise<AdvisorOutput> {
-  const { output } = await ai.generate({
+  try {
+    // Validate input
+    const validatedInput = AdvisorInputSchema.parse(input);
+    
+    console.log('Legal Advisor Input:', {
+      scenarioLength: validatedInput.scenario.length,
+      analysisMode: validatedInput.analysisMode,
+      timestamp: new Date().toISOString()
+    });
+
+    const { output } = await ai.generate({
     prompt: `You are an AI Legal Information Synthesizer for law enforcement. Your role is to analyze a scenario and provide structured, source-attributed information. You are NOT a legal advisor.
 
 ANALYSIS MODE: ${input.analysisMode}
@@ -76,5 +86,46 @@ Analyze the user's scenario against the knowledge base. Structure your response 
       schema: AdvisorOutputSchema,
     },
   });
-  return output!;
+
+  if (!output) {
+    throw new Error('No response generated from AI model');
+  }
+
+  console.log('Legal Advisor Response Generated Successfully');
+  return output;
+
+  } catch (error: any) {
+    console.error('Legal Advisor Error:', error);
+    
+    // Provide a structured fallback response
+    const fallbackResponse: AdvisorOutput = {
+      atAGlanceSummary: [
+        "Unable to generate analysis due to technical difficulties",
+        "Please review relevant Florida Statutes and case law",
+        "Consider consulting with legal counsel or supervisor",
+        "Document all relevant facts and circumstances"
+      ],
+      statutoryGuidelines: [{
+        content: "System temporarily unable to provide statute analysis. Please consult Florida Statutes directly.",
+        source: "N/A"
+      }],
+      relevantCaseLaw: [{
+        content: "System temporarily unable to provide case law analysis. Please consult relevant precedents.",
+        source: "N/A"
+      }],
+      riskFactors: input.includeRiskFactors ? [
+        "Technical system limitations may affect analysis accuracy",
+        "Always verify legal information with authoritative sources"
+      ] : undefined,
+      practicalGuidance: input.includePracticalGuidance ? [
+        "Follow standard operating procedures",
+        "Consult with supervisor when uncertain",
+        "Document all actions and decisions"
+      ] : undefined,
+      confidenceLevel: 'low' as const
+    };
+    
+    // Re-throw with better error message but also return fallback
+    throw new Error(`AI Legal Advisor temporarily unavailable: ${error.message || 'Unknown error'}`);
+  }
 }

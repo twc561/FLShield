@@ -1,6 +1,11 @@
 import { gemini20FlashExp, gemini15Pro, gemini15Flash, googleAI } from '@genkit-ai/googleai';
 import { genkit, z } from 'genkit';
 
+// Validate API key exists
+if (!process.env.GOOGLE_GENAI_API_KEY) {
+  console.error('GOOGLE_GENAI_API_KEY environment variable is not set');
+}
+
 const ai = genkit({
   plugins: [
     googleAI({

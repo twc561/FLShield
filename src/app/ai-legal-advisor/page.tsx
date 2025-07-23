@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -61,10 +60,10 @@ const ResultCard = ({
     variant?: "default" | "critical" | "warning"
 }) => {
     if (items.length === 0) return null;
-    
+
     const borderColor = variant === "critical" ? "border-red-500/50" : 
                        variant === "warning" ? "border-yellow-500/50" : "border-border";
-    
+
     return (
         <Card className={`bg-muted/30 hover:bg-muted/50 transition-colors ${borderColor}`}>
             <CardHeader className="pb-3">
@@ -178,7 +177,7 @@ const ConversationHistory = ({
                     </Button>
                 )}
             </div>
-            
+
             <ScrollArea className="h-[400px]">
                 <div className="space-y-3">
                     {filteredHistory.length === 0 ? (
@@ -270,7 +269,7 @@ export default function AiLegalAdvisorPage() {
 
     const generateTags = (scenario: string, result: AdvisorOutput): string[] => {
         const tags: string[] = [];
-        
+
         // Extract tags from scenario keywords
         const keywords = scenario.toLowerCase();
         if (keywords.includes('traffic')) tags.push('Traffic');
@@ -281,12 +280,12 @@ export default function AiLegalAdvisorPage() {
         if (keywords.includes('use of force') || keywords.includes('force')) tags.push('Use of Force');
         if (keywords.includes('mental') || keywords.includes('baker')) tags.push('Mental Health');
         if (keywords.includes('juvenile') || keywords.includes('minor')) tags.push('Juvenile');
-        
+
         // Add tags based on result content
         if (result.policyConsiderations.length > 0) tags.push('Policy');
         if (result.statutoryGuidelines.length > 0) tags.push('Statutes');
         if (result.relevantCaseLaw.length > 0) tags.push('Case Law');
-        
+
         return tags.length > 0 ? tags : ['General'];
     };
 
@@ -299,15 +298,19 @@ export default function AiLegalAdvisorPage() {
         setResult(null);
 
         try {
-            const response = await getAdvisorResponse({ 
-                scenario,
-                analysisMode,
+            const input = {
+                scenario: scenario.trim(),
+                analysisMode: analysisMode as 'standard' | 'comprehensive',
                 includeRiskFactors: true,
                 includePracticalGuidance: true
-            });
-            
+            };
+
+            // Call the server action directly
+            const { getAdvisorResponse } = await import('@/ai/flows/legalAdvisor');
+            const response = await getAdvisorResponse(input);
+
             setResult(response);
-            
+
             // Add to conversation history
             const newEntry: ConversationEntry = {
                 id: Date.now().toString(),
@@ -317,18 +320,21 @@ export default function AiLegalAdvisorPage() {
                 isBookmarked: false,
                 tags: generateTags(scenario, response)
             };
-            
+
             setConversationHistory(prev => [newEntry, ...prev.slice(0, 49)]); // Keep last 50
             setCurrentTags(newEntry.tags);
-            
+
             toast({
                 title: "Analysis Complete",
                 description: "Your scenario has been analyzed and added to conversation history."
             });
-            
-        } catch (err) {
+
+        } catch (err: any) {
             console.error('AI Advisor Error:', err);
-            setError('The AI model failed to generate a response. Please try again later.');
+            setError(
+                err?.message || 
+                'The AI model failed to generate a response. Please try again later.'
+            );
         } finally {
             setIsLoading(false);
         }
@@ -362,18 +368,18 @@ export default function AiLegalAdvisorPage() {
 
     const exportResults = () => {
         if (!result) return;
-        
+
         const exportData = {
             scenario,
             timestamp: new Date().toISOString(),
             analysis: result,
             tags: currentTags
         };
-        
+
         const blob = new Blob([JSON.stringify(exportData, null, 2)], {
             type: 'application/json'
         });
-        
+
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -441,7 +447,7 @@ export default function AiLegalAdvisorPage() {
                                     value={scenario}
                                     onChange={(e) => setScenario(e.target.value)}
                                 />
-                                
+
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-4">
                                         <label className="text-sm font-medium">Analysis Mode:</label>
@@ -464,7 +470,7 @@ export default function AiLegalAdvisorPage() {
                                             </Button>
                                         </div>
                                     </div>
-                                    
+
                                     {result && (
                                         <Button
                                             type="button"
@@ -477,7 +483,7 @@ export default function AiLegalAdvisorPage() {
                                         </Button>
                                     )}
                                 </div>
-                                
+
                                 <p className="text-xs text-muted-foreground">
                                     ⚠️ Warning: Do NOT enter PII, case numbers, or any other sensitive information.
                                 </p>
@@ -553,7 +559,7 @@ export default function AiLegalAdvisorPage() {
                         </Alert>
                     </motion.div>
                 )}
-                
+
                 {result && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                         <div className="flex items-center justify-between">
@@ -571,7 +577,7 @@ export default function AiLegalAdvisorPage() {
                                 </Badge>
                             </div>
                         </div>
-                        
+
                         <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-3 text-lg">
@@ -626,7 +632,7 @@ export default function AiLegalAdvisorPage() {
                                                 Consider documentation requirements, witness availability, and potential constitutional challenges.
                                             </AlertDescription>
                                         </Alert>
-                                        
+
                                         <Alert>
                                             <CheckCircle className="h-4 w-4" />
                                             <AlertTitle>Best Practices</AlertTitle>
