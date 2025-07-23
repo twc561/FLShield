@@ -282,7 +282,6 @@ export default function AiLegalAdvisorPage() {
         if (keywords.includes('juvenile') || keywords.includes('minor')) tags.push('Juvenile');
 
         // Add tags based on result content
-        if (result.policyConsiderations.length > 0) tags.push('Policy');
         if (result.statutoryGuidelines.length > 0) tags.push('Statutes');
         if (result.relevantCaseLaw.length > 0) tags.push('Case Law');
 
@@ -595,12 +594,6 @@ export default function AiLegalAdvisorPage() {
                         </Card>
 
                         <div className="grid gap-6">
-                            <ResultCard 
-                                title="Agency Policy Considerations" 
-                                icon={FileText} 
-                                items={result.policyConsiderations}
-                                variant="default"
-                            />
                             <ResultCard 
                                 title="Statutory Guidelines" 
                                 icon={Scale} 
