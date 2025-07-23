@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
 import { FirebaseError } from 'firebase/app'
-import { isSupported, isAvailable, createCredential, signInWith } from '@firebase-web-authn/browser'
+// WebAuthn imports will be added later when package is properly configured
 
 import { auth, isFirebaseConfigured } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
@@ -53,18 +53,16 @@ export default function LoginPage() {
     });
 
     const resetForm = useForm<{ email: string }>({
-        resolver: zodResolver(z.object({ email: z.string().email() })),
+        resolver: zodResolver(z.object({ 
+            email: z.string().email({ message: "Please enter a valid email address." })
+        })),
         defaultValues: { email: "" },
     });
 
-    // Check if WebAuthn/passkeys are supported
+    // WebAuthn support check disabled temporarily
     React.useEffect(() => {
-        const checkPasskeySupport = async () => {
-            if (await isSupported() && await isAvailable()) {
-                setPasskeysSupported(true);
-            }
-        };
-        checkPasskeySupport();
+        // Will re-enable when WebAuthn package is properly configured
+        setPasskeysSupported(false);
     }, []);
 
     const handleAuthError = (error: any) => {
@@ -123,15 +121,21 @@ export default function LoginPage() {
 
     const handlePasswordReset = async (values: { email: string }) => {
         setIsLoading("reset");
+        console.log('Attempting password reset for:', values.email);
+        
         try {
-            await sendPasswordResetEmail(auth!, values.email);
+            await sendPasswordResetEmail(auth!, values.email, {
+                url: `${window.location.origin}/login`,
+                handleCodeInApp: false
+            });
             toast({ 
                 title: "Password Reset Email Sent", 
                 description: "Check your email for instructions to reset your password." 
             });
             setShowForgotPassword(false);
             resetForm.reset();
-        } catch (error) {
+        } catch (error: any) {
+            console.error('Password reset error:', error);
             handleAuthError(error);
         } finally {
             setIsLoading(null);
@@ -162,76 +166,19 @@ export default function LoginPage() {
     }
 
     const handlePasskeySignIn = async () => {
-        if (!passkeysSupported) {
-            toast({
-                variant: "destructive",
-                title: "Passkeys Not Supported",
-                description: "Your browser or device doesn't support passkey authentication."
-            });
-            return;
-        }
-
-        setIsLoading("passkey");
-        try {
-            const userCredential = await signInWith(auth!, { rpId: window.location.hostname });
-            console.log('Passkey sign-in successful');
-            toast({
-                title: "Welcome Back!",
-                description: "You've been signed in with your passkey."
-            });
-        } catch (error: any) {
-            console.error("Passkey sign-in failed:", error);
-            if (error.name === 'NotAllowedError') {
-                toast({
-                    variant: "destructive",
-                    title: "Passkey Sign-in Cancelled",
-                    description: "The passkey sign-in was cancelled or timed out."
-                });
-            } else if (error.name === 'NotSupportedError') {
-                toast({
-                    variant: "destructive",
-                    title: "Passkeys Not Available",
-                    description: "No passkeys found for this account. Try signing in with email/password first."
-                });
-            } else {
-                handleAuthError(error);
-            }
-        } finally {
-            setIsLoading(null);
-        }
+        toast({
+            variant: "destructive",
+            title: "Feature Temporarily Disabled",
+            description: "Passkey authentication is currently being configured."
+        });
     }
 
     const handleCreatePasskey = async () => {
-        if (!auth?.currentUser) {
-            toast({
-                variant: "destructive",
-                title: "Sign In Required",
-                description: "Please sign in first before creating a passkey."
-            });
-            return;
-        }
-
-        setIsLoading("passkey");
-        try {
-            await createCredential(auth.currentUser, { rpId: window.location.hostname });
-            toast({
-                title: "Passkey Created",
-                description: "Your passkey has been successfully created for future sign-ins."
-            });
-        } catch (error: any) {
-            console.error("Passkey creation failed:", error);
-            if (error.name === 'NotAllowedError') {
-                toast({
-                    variant: "destructive",
-                    title: "Passkey Creation Cancelled",
-                    description: "Passkey creation was cancelled."
-                });
-            } else {
-                handleAuthError(error);
-            }
-        } finally {
-            setIsLoading(null);
-        }
+        toast({
+            variant: "destructive",
+            title: "Feature Temporarily Disabled",
+            description: "Passkey creation is currently being configured."
+        });
     }
 
     if (!isFirebaseConfigured) {

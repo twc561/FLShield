@@ -10,7 +10,7 @@ import { useState, useEffect } from "react"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from "@/lib/firebase"
 import { multiFactor, PhoneAuthProvider, RecaptchaVerifier, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth"
-import { isSupported, isAvailable, createCredential, signInWith } from '@firebase-web-authn/browser'
+// WebAuthn imports temporarily disabled
 import { toast } from "@/hooks/use-toast"
 import { Loader2 } from "lucide-react"
 

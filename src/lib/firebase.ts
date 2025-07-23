@@ -26,15 +26,25 @@ export const isFirebaseConfigured =
     firebaseConfig.projectId;
 
 if (isFirebaseConfigured) {
-    // Initialize Firebase
-    app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
-    auth = getAuth(app);
-    db = getFirestore(app);
+    try {
+        // Initialize Firebase
+        app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+        auth = getAuth(app);
+        db = getFirestore(app);
 
-    // Configure WebAuthn settings
-    if (auth && typeof window !== 'undefined') {
-        // Configure WebAuthn for the current domain
-        auth.settings.appVerificationDisabledForTesting = false;
+        // Configure auth settings
+        if (auth && typeof window !== 'undefined') {
+            // Set auth language to user's preferred language
+            auth.languageCode = 'en';
+            
+            // Configure for production use
+            auth.settings.appVerificationDisabledForTesting = false;
+            
+            console.log('Firebase Auth initialized successfully');
+            console.log('Auth domain:', firebaseConfig.authDomain);
+        }
+    } catch (error) {
+        console.error('Firebase initialization error:', error);
     }
 }
 
