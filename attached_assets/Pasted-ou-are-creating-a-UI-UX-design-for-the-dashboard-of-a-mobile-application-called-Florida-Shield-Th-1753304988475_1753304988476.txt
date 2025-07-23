@@ -1,0 +1,51 @@
+ou are creating a UI/UX design for the dashboard of a mobile application called "Florida Shield." The app is for front-line police officers in Florida. The design must be AI-centric, prioritizing a proactive, contextual AI assistant. The layout should use a clean accordion style to present dense information clearly on a mobile screen. The overall feel should be modern, authoritative, and incredibly functional for an officer in high-stress situations.
+
+Step-by-Step Design Prompt Breakdown
+Here is the detailed prompt you can use, broken down by key design elements:
+
+1. Core Concept & Persona 🧑‍✈️
+Prompt: UI/UX design for a police officer's mobile app dashboard, "Florida Shield." The central feature is an "AI Co-Pilot" that provides contextual, real-time intelligence. The user is a Florida police officer on patrol. The design must be clean, modern, and easy to navigate with one hand.
+
+Deeper Detail: The primary goal is to reduce cognitive load. The AI should anticipate the officer's needs, pushing the most relevant information forward. The design must feel like a reliable partner, not just a tool. Every element should answer the question: "How does this help an officer make a safer, more informed decision right now?"
+
+2. Visual Style & Color Palette 🎨
+Prompt: Art style: High-fidelity, professional UI design. Dark mode first. The color palette is inspired by Florida law enforcement. Use a deep, authoritative **Navy Blue** (#002B7F) as the primary color, an **Accent Gold** (#FFC72C) for key interactive elements and highlights, and a bright **Alert Red** (#D81B21) strictly for critical notifications. The background is a dark charcoal (#1C1C1E) with crisp white text for high contrast and readability.
+
+Real-World Example: Think of the clean interface of a modern vehicle's dashboard (like a Tesla or Audi) combined with the authoritative branding of a government agency. The colors should evoke the Florida state flag and traditional police uniforms, creating a sense of local identity and trust.
+
+3. Layout & Structure (The Accordion) 📱
+Prompt: The layout is a single-screen dashboard organized into collapsible accordion sections. By default, the top accordion ("AI Priority Briefing") is expanded. Each section has a clear header with an icon. The design must be optimized for a standard smartphone screen.
+
+Plain Language: Imagine a list where you can tap on each item to expand it and see the details, and tap it again to collapse it. This keeps the screen tidy and allows the officer to focus on one piece of information at a time.
+
+4. Accordion Section Details (The Core Content) 📋
+This is the most critical part of the prompt. You can provide this as a list to the AI or designer.
+
+Accordion 1: 🤖 AI Priority Briefing (Expanded by Default)
+
+Prompt: The top accordion, labeled "AI Priority Briefing," is open. It shows a profile icon, the officer's name/badge number, and current status (e.g., "On Patrol - Zone 4"). Below this, the AI provides 2-3 contextual bullet points, such as: "⚠️ BOLO Alert: White Ford F-150, license plate XYZ-123, last seen 2 miles from your location." or "📈 Trend Alert: 3 vehicle break-ins reported in your patrol zone in the last 2 hours."
+
+Purpose: This is the "what you need to know right now" section. It's proactive and changes based on location, time of day, and incoming alerts.
+
+Accordion 2: 🗺️ Active Call Details (Context-Aware)
+
+Prompt: A collapsed accordion labeled "Active Call: [Call Type]." When expanded, it shows a mini-map with a route to the location, the full address, CAD notes, and buttons for "On Scene" and "Request Backup." It also lists premise history (e.g., "3 prior calls to this address"). This section is only prominent when the officer is assigned to a call.
+
+Purpose: This provides a complete operational picture for an active call, eliminating the need to switch between apps or reference a bulky in-car computer.
+
+Accordion 3: 🔎 Quick Actions & Search
+
+Prompt: A collapsed accordion labeled "Quick Actions." When expanded, it reveals four large, easy-to-tap buttons: "Run Plate," "Run Person," "Start Field Report," and "Check Statute." Below the buttons is a prominent search bar with a microphone icon for voice commands.
+
+Purpose: This is the officer's toolkit for their most common, repetitive tasks. Big buttons are crucial for use in potentially unstable environments (e.g., walking, in a car).
+
+Accordion 4: 📊 Patrol Zone Intel
+
+Prompt: A collapsed accordion labeled "Patrol Zone Intel." When expanded, it displays a mini-heatmap of recent crime in the officer's assigned zone, a short, scrollable list of recent incidents (theft, traffic stops, etc.), and any active BOLOs relevant to that specific area.
+
+Purpose: This gives the officer situational awareness during downtime or proactive patrol, helping them know where to focus their attention.
+
+5. Final Polishing Touches ✨
+Prompt: Incorporate subtle iconography that is universally understood (e.g., a magnifying glass for search, a map pin for location). Typography should be a clean, sans-serif font like Inter or Roboto. All interactive elements should have a clear visual state (e.g., pressed, inactive). The overall composition should feel balanced, informative, and never cluttered.
+
+By combining these elements into one master prompt, you give the AI or designer a comprehensive and vivid picture of exactly what you need. Good luck with the redesign! 🚀
