@@ -1,388 +1,341 @@
 
-'use client';
+'use client'
 
-import * as React from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '@/lib/firebase';
-import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Bot, 
-  MapPin, 
-  Search, 
-  TrendingUp, 
-  ChevronDown, 
-  ChevronUp,
-  AlertTriangle,
-  Shield,
-  Clock,
-  Radio,
-  Car,
-  Users,
-  Mic,
-  Phone,
-  FileText,
-  BarChart3,
-  Activity,
-  Navigation
-} from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import React, { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { PageHeader } from "@/components/PageHeader"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { BrainCircuit, Users, AlertTriangle, BookOpen, Shield, Zap, Clock, TrendingUp, MapPin, MessageSquare, FileText, Briefcase, Target, Eye, GraduationCap, Heart, Search, Headphones, Crown, ChevronRight, Star, Bookmark } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { DailyRollCall } from "@/components/DailyRollCall"
+import { BriefingStats } from "@/components/BriefingStats"
+import { PinnedToolsGrid } from "@/components/PinnedToolsGrid"
+import { Badge } from "@/components/ui/badge"
+import { useSubscription } from "@/hooks/use-subscription"
+import { onAuthStateChanged, type User } from "firebase/auth"
+import { auth } from "@/lib/firebase"
 
-interface AccordionSectionProps {
-  id: string;
-  title: string;
-  icon: React.ElementType;
-  isExpanded: boolean;
-  onToggle: (id: string) => void;
-  children: React.ReactNode;
-  variant?: 'default' | 'priority' | 'alert';
-  badge?: string;
+import AICommandSearch from "@/components/AICommandSearch"
+import { PinButton } from "@/components/PinButton"
+import Link from 'next/link'
+import * as LucideIcons from "lucide-react"
+
+import { dashboardFeatureGroups } from "@/data/dashboard-features"
+import type { FeatureModule } from "@/data/dashboard-features"
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.03,
+    },
+  },
 }
 
-const AccordionSection: React.FC<AccordionSectionProps> = ({
-  id,
-  title,
-  icon: Icon,
-  isExpanded,
-  onToggle,
-  children,
-  variant = 'default',
-  badge
-}) => {
-  const headerBg = variant === 'priority' ? 'bg-navy-900' : 
-                   variant === 'alert' ? 'bg-red-900/20' : 
-                   'bg-muted/20';
-  
-  const iconColor = variant === 'priority' ? 'text-gold-400' :
-                    variant === 'alert' ? 'text-red-400' :
-                    'text-primary';
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  show: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 150,
+      damping: 25,
+    },
+  },
+}
+
+const QuickActionCard = ({ module }: { module: FeatureModule }) => {
+  const Icon = (LucideIcons as any)[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle;
+  const { isPro, mounted } = useSubscription()
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   return (
-    <Card className="mb-3 overflow-hidden border-border/50">
-      <button
-        onClick={() => onToggle(id)}
-        className={`w-full p-4 ${headerBg} hover:bg-opacity-80 transition-colors flex items-center justify-between`}
+    <Link href={module.targetPage} className="block w-full">
+      <motion.div
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
+        className="group h-full"
       >
-        <div className="flex items-center gap-3">
-          <Icon className={`h-5 w-5 ${iconColor}`} />
-          <span className="font-medium text-foreground">{title}</span>
-          {badge && (
-            <Badge variant="secondary" className="text-xs">
-              {badge}
-            </Badge>
-          )}
+        <Card className="h-full bg-gradient-to-br from-background to-muted/10 border border-border/40 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-2 bg-primary/10 rounded-lg shrink-0">
+                <Icon className="h-5 w-5 text-primary" />
+              </div>
+              {isClient && mounted && isPro && module.isPremium && (
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 text-xs px-2 py-1 shrink-0">
+                  <Crown className="w-3 h-3 mr-1" />
+                  Pro
+                </Badge>
+              )}
+            </div>
+            <h3 className="font-semibold text-base leading-tight mb-2 line-clamp-2">{module.title}</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3 line-clamp-2">{module.summary}</p>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-primary font-medium">Tap to open</span>
+              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </Link>
+  )
+}
+
+const CategorySection = ({ group, index }: { group: any, index: number }) => {
+  const GroupIcon = (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle
+  const [isExpanded, setIsExpanded] = useState(index < 2) // Show first 2 categories expanded by default
+
+  return (
+    <motion.div variants={itemVariants} className="w-full">
+      <Card className="overflow-hidden bg-gradient-to-r from-card to-card/80 border border-border/40">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full p-3 text-left focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2.5 min-w-0 flex-1">
+              <div className="p-1.5 bg-primary/8 rounded-lg shrink-0">
+                <GroupIcon className="h-4 w-4 text-primary" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-semibold text-sm truncate">{group.category}</h3>
+                <p className="text-xs text-muted-foreground">{group.features.length} tools</p>
+              </div>
+            </div>
+            <motion.div
+              animate={{ rotate: isExpanded ? 90 : 0 }}
+              transition={{ duration: 0.2 }}
+              className="shrink-0"
+            >
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </motion.div>
+          </div>
+        </button>
+        
+        <motion.div
+          initial={false}
+          animate={{ height: isExpanded ? "auto" : 0, opacity: isExpanded ? 1 : 0 }}
+          transition={{ duration: 0.25, ease: "easeInOut" }}
+          className="overflow-hidden"
+        >
+          <div className="px-3 pb-3">
+            <div className="grid grid-cols-1 gap-2">
+              {group.features.slice(0, isExpanded ? undefined : 3).map((feature: FeatureModule) => (
+                <QuickActionCard key={feature.id} module={feature} />
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </Card>
+    </motion.div>
+  )
+}
+
+const StatsCard = ({ title, value, icon: Icon, color = "primary" }: { title: string; value: string; icon: any; color?: string }) => (
+  <Card className="bg-gradient-to-br from-background to-muted/10 border border-border/40">
+    <CardContent className="p-3">
+      <div className="flex items-center space-x-2.5">
+        <div className={`p-1.5 rounded-lg bg-${color}/10 shrink-0`}>
+          <Icon className={`h-3.5 w-3.5 text-${color}`} />
         </div>
-        {isExpanded ? (
-          <ChevronUp className="h-4 w-4 text-muted-foreground" />
-        ) : (
-          <ChevronDown className="h-4 w-4 text-muted-foreground" />
-        )}
-      </button>
-      
-      <AnimatePresence>
-        {isExpanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <CardContent className="p-4 pt-0">
-              {children}
-            </CardContent>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </Card>
-  );
-};
-
-export default function AICentricDashboard() {
-  const [user, loading, error] = useAuthState(auth);
-  const [mounted, setMounted] = React.useState(false);
-  const [expandedSections, setExpandedSections] = React.useState<Set<string>>(
-    new Set(['ai-briefing']) // AI Priority Briefing expanded by default
-  );
-  const [currentTime, setCurrentTime] = React.useState(new Date());
-  const router = useRouter();
-
-  React.useEffect(() => {
-    setMounted(true);
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const toggleSection = (sectionId: string) => {
-    setExpandedSections(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(sectionId)) {
-        newSet.delete(sectionId);
-      } else {
-        newSet.add(sectionId);
-      }
-      return newSet;
-    });
-  };
-
-  if (!mounted || loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <div className="min-w-0 flex-1">
+          <p className="text-xs text-muted-foreground truncate">{title}</p>
+          <p className="font-semibold text-sm">{value}</p>
+        </div>
       </div>
-    );
+    </CardContent>
+  </Card>
+)
+
+export default function DashboardPage() {
+  const [greeting, setGreeting] = useState("Good day")
+  const [userName, setUserName] = useState<string | null>("Officer");
+  const { isPro, mounted } = useSubscription()
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+    
+    const getGreeting = () => {
+      const hour = new Date().getHours()
+      if (hour < 12) return "Good morning"
+      else if (hour < 18) return "Good afternoon"
+      else return "Good evening"
+    }
+    setGreeting(getGreeting());
+
+    const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
+        if (user) {
+            if (user.displayName) {
+                setUserName(user.displayName.split(' ')[0]);
+            } else if (user.email) {
+                const emailName = user.email.split('@')[0];
+                setUserName(emailName.charAt(0).toUpperCase() + emailName.slice(1));
+            } else if (user.isAnonymous) {
+                setUserName("Guest");
+            } else {
+                setUserName("Officer");
+            }
+        } else {
+            setUserName("Officer");
+        }
+    });
+
+    return () => unsubscribe();
+  }, [])
+
+  // Prevent hydration mismatch by ensuring consistent server/client rendering
+  if (!isClient || !mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/5 pb-20">
+        <div className="px-3 pt-4 max-w-md mx-auto w-full">
+          <div className="text-center mb-4">
+            <div className="h-6 bg-muted/20 rounded animate-pulse mb-1" />
+            <div className="h-4 bg-muted/10 rounded animate-pulse w-2/3 mx-auto" />
+          </div>
+        </div>
+      </div>
+    )
   }
 
-  if (error || !user) {
-    router.push('/login');
-    return null;
-  }
+  const featuredTools = [
+    dashboardFeatureGroups.find(g => g.category === "AI Assistant Tools")?.features.slice(0, 3),
+    dashboardFeatureGroups.find(g => g.category === "Field Operations & Procedures")?.features.slice(0, 2),
+    dashboardFeatureGroups.find(g => g.category === "Emergency Response Protocols")?.features.slice(0, 1),
+  ].flat().filter(Boolean) as FeatureModule[];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/5 pb-20">
-      {/* Header Status Bar */}
-      <div className="sticky top-0 z-10 bg-navy-900/95 backdrop-blur-sm border-b border-gold-400/20 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-gold-400/20 flex items-center justify-center">
-              <Shield className="h-5 w-5 text-gold-400" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-white">Officer {user?.displayName || 'Shield'}</p>
-              <p className="text-xs text-gold-400">On Patrol - Zone 4</p>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-white font-mono">{currentTime.toLocaleTimeString()}</p>
-            <p className="text-xs text-gold-400">Active</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="px-4 pt-4 max-w-md mx-auto">
-        {/* AI Priority Briefing - Always First */}
-        <AccordionSection
-          id="ai-briefing"
-          title="AI Priority Briefing"
-          icon={Bot}
-          isExpanded={expandedSections.has('ai-briefing')}
-          onToggle={toggleSection}
-          variant="priority"
-          badge="3 Alerts"
+      <div className="px-4 pt-6 max-w-md mx-auto w-full">
+        
+        {/* Header Section */}
+        <motion.div 
+          variants={itemVariants}
+          initial="hidden" 
+          animate="show"
+          className="text-center mb-6"
         >
-          <div className="space-y-3">
-            <Alert className="border-yellow-500/50 bg-yellow-500/10">
-              <AlertTriangle className="h-4 w-4 text-yellow-500" />
-              <AlertDescription className="text-sm">
-                <strong>BOLO Alert:</strong> White Ford F-150, License: ABC-1234, last seen 2 miles from your location (I-95 & Commercial Blvd)
-              </AlertDescription>
-            </Alert>
-            
-            <Alert className="border-blue-500/50 bg-blue-500/10">
-              <TrendingUp className="h-4 w-4 text-blue-500" />
-              <AlertDescription className="text-sm">
-                <strong>Trend Alert:</strong> 3 vehicle break-ins reported in your patrol zone in the last 2 hours
-              </AlertDescription>
-            </Alert>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text mb-2">
+            {greeting}, {userName}
+          </h1>
+          {isClient && mounted && isPro ? (
+            <div className="flex items-center justify-center gap-2 text-amber-400">
+              <Crown className="w-4 h-4" />
+              <span className="text-sm font-medium">Shield FL Pro Active</span>
+            </div>
+          ) : (
+            <p className="text-muted-foreground text-sm">Your command center awaits</p>
+          )}
+        </motion.div>
 
-            <Alert className="border-green-500/50 bg-green-500/10">
-              <Activity className="h-4 w-4 text-green-500" />
-              <AlertDescription className="text-sm">
-                <strong>Intel Update:</strong> Traffic enforcement detail at US-1 & Sunrise showing 23% reduction in speeding violations
-              </AlertDescription>
-            </Alert>
-          </div>
-        </AccordionSection>
-
-        {/* Active Call Details */}
-        <AccordionSection
-          id="active-call"
-          title="Active Call: Traffic Accident"
-          icon={Radio}
-          isExpanded={expandedSections.has('active-call')}
-          onToggle={toggleSection}
-          variant="alert"
-          badge="Priority 2"
+        <motion.div 
+          className="space-y-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
         >
-          <div className="space-y-4">
-            <div className="bg-muted/20 rounded-lg p-3">
-              <div className="flex items-start gap-3">
-                <MapPin className="h-4 w-4 text-primary mt-1" />
-                <div className="flex-1">
-                  <p className="font-medium text-sm">1755 E Sunrise Blvd, Fort Lauderdale</p>
-                  <p className="text-xs text-muted-foreground">2.3 miles • 4 min arrival</p>
-                </div>
-              </div>
-            </div>
+          {/* AI Command Search */}
+          <motion.div variants={itemVariants}>
+            <AICommandSearch />
+          </motion.div>
 
-            <div className="space-y-2">
-              <p className="text-sm"><strong>CAD Notes:</strong> Minor rear-end collision, no injuries reported, traffic backing up in eastbound lanes</p>
-              <p className="text-xs text-muted-foreground"><strong>Premise History:</strong> 2 prior calls to this intersection (traffic incidents)</p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                <Navigation className="h-4 w-4 mr-2" />
-                Navigate
-              </Button>
-              <Button size="sm" variant="outline">
-                <Users className="h-4 w-4 mr-2" />
-                Request Backup
-              </Button>
-            </div>
-          </div>
-        </AccordionSection>
-
-        {/* Quick Actions & Search */}
-        <AccordionSection
-          id="quick-actions"
-          title="Quick Actions & Search"
-          icon={Search}
-          isExpanded={expandedSections.has('quick-actions')}
-          onToggle={toggleSection}
-        >
-          <div className="space-y-4">
+          {/* Quick Stats Row */}
+          <motion.div variants={itemVariants}>
             <div className="grid grid-cols-2 gap-3">
-              <Button 
-                size="lg" 
-                className="h-16 flex flex-col gap-1 bg-navy-800 hover:bg-navy-700"
-                onClick={() => router.push('/field-procedures/visual-evidence-identifier')}
-              >
-                <Car className="h-5 w-5" />
-                <span className="text-xs">Run Plate</span>
-              </Button>
-              
-              <Button 
-                size="lg" 
-                className="h-16 flex flex-col gap-1 bg-navy-800 hover:bg-navy-700"
-                onClick={() => router.push('/ai-tools')}
-              >
-                <Users className="h-5 w-5" />
-                <span className="text-xs">Run Person</span>
-              </Button>
-              
-              <Button 
-                size="lg" 
-                className="h-16 flex flex-col gap-1 bg-navy-800 hover:bg-navy-700"
-                onClick={() => router.push('/reporting-development/ai-report-writer')}
-              >
-                <FileText className="h-5 w-5" />
-                <span className="text-xs">Field Report</span>
-              </Button>
-              
-              <Button 
-                size="lg" 
-                className="h-16 flex flex-col gap-1 bg-navy-800 hover:bg-navy-700"
-                onClick={() => router.push('/legal-reference/statutes')}
-              >
-                <Shield className="h-5 w-5" />
-                <span className="text-xs">Check Statute</span>
-              </Button>
-            </div>
-
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search Florida Shield..."
-                className="pl-10 pr-12 bg-muted/20"
+              <StatsCard 
+                title="Tools Available" 
+                value={`${dashboardFeatureGroups.reduce((acc, group) => acc + group.features.length, 0)}`}
+                icon={Shield}
               />
-              <Button size="sm" variant="ghost" className="absolute right-1 top-1/2 transform -translate-y-1/2">
-                <Mic className="h-4 w-4" />
+              <StatsCard 
+                title="Categories" 
+                value={`${dashboardFeatureGroups.length}`}
+                icon={Briefcase}
+              />
+            </div>
+          </motion.div>
+
+          {/* Daily Roll Call */}
+          <motion.div variants={itemVariants} className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <BookOpen className="h-4 w-4 text-primary" />
+              </div>
+              <h2 className="font-semibold text-lg">Today's Briefing</h2>
+            </div>
+            <DailyRollCall />
+          </motion.div>
+
+          {/* Featured Tools */}
+          <motion.div variants={itemVariants} className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-amber-500/10 rounded-lg">
+                  <Star className="h-4 w-4 text-amber-500" />
+                </div>
+                <h2 className="font-semibold text-lg">Quick Access</h2>
+              </div>
+              <Button variant="ghost" size="sm" asChild className="h-8 px-3 text-sm">
+                <Link href="/favorites">View All</Link>
               </Button>
             </div>
-          </div>
-        </AccordionSection>
-
-        {/* Patrol Zone Intel */}
-        <AccordionSection
-          id="patrol-intel"
-          title="Patrol Zone Intel"
-          icon={BarChart3}
-          isExpanded={expandedSections.has('patrol-intel')}
-          onToggle={toggleSection}
-          badge="Zone 4"
-        >
-          <div className="space-y-4">
-            <div className="bg-muted/20 rounded-lg p-3">
-              <h4 className="font-medium text-sm mb-2">Recent Activity (Last 8 Hours)</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center text-xs">
-                  <span>Vehicle Break-ins</span>
-                  <Badge variant="secondary">3</Badge>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                  <span>Traffic Stops</span>
-                  <Badge variant="secondary">12</Badge>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                  <span>Welfare Checks</span>
-                  <Badge variant="secondary">2</Badge>
-                </div>
-              </div>
+            <div className="grid grid-cols-1 gap-3">
+              {featuredTools.map((tool) => (
+                <QuickActionCard key={tool.id} module={tool} />
+              ))}
             </div>
+          </motion.div>
 
-            <div>
-              <h4 className="font-medium text-sm mb-2">Active BOLOs in Zone</h4>
-              <div className="text-xs text-muted-foreground">
-                <p>• Suspect: B/M, 25-30 yrs, red shirt (shoplifting)</p>
-                <p>• Vehicle: Blue Honda Civic, damage to rear bumper</p>
+          {/* Training Progress */}
+          <motion.div variants={itemVariants} className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-green-500/10 rounded-lg">
+                <TrendingUp className="h-4 w-4 text-green-500" />
               </div>
+              <h2 className="font-semibold text-lg">Your Progress</h2>
             </div>
+            <Card className="bg-gradient-to-br from-background to-muted/10 border border-border/40">
+              <CardContent className="p-4">
+                <BriefingStats />
+              </CardContent>
+            </Card>
+          </motion.div>
 
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="w-full"
-              onClick={() => router.push('/agency-intelligence')}
-            >
-              View Full Intel Report
-            </Button>
-          </div>
-        </AccordionSection>
+          {/* All Categories */}
+          <motion.div variants={itemVariants} className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-500/10 rounded-lg">
+                <Briefcase className="h-4 w-4 text-blue-500" />
+              </div>
+              <h2 className="font-semibold text-lg">All Tools</h2>
+            </div>
+            <div className="space-y-3">
+              {dashboardFeatureGroups.map((group, index) => (
+                <CategorySection key={group.category} group={group} index={index} />
+              ))}
+            </div>
+          </motion.div>
 
-        {/* Emergency Tools */}
-        <AccordionSection
-          id="emergency-tools"
-          title="Emergency Response Tools"
-          icon={AlertTriangle}
-          isExpanded={expandedSections.has('emergency-tools')}
-          onToggle={toggleSection}
-          variant="alert"
-        >
-          <div className="grid grid-cols-1 gap-2">
-            <Button 
-              variant="destructive" 
-              className="justify-start"
-              onClick={() => router.push('/emergency-response/baker-act-guide')}
-            >
-              <Phone className="h-4 w-4 mr-2" />
-              Baker Act Assessment
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              className="justify-start"
-              onClick={() => router.push('/emergency-response/first-aid-guide')}
-            >
-              <Activity className="h-4 w-4 mr-2" />
-              First Aid Protocols
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              className="justify-start"
-              onClick={() => router.push('/emergency-response/hazmat-guide')}
-            >
-              <AlertTriangle className="h-4 w-4 mr-2" />
-              HAZMAT Response
-            </Button>
-          </div>
-        </AccordionSection>
+          {/* Disclaimer */}
+          <motion.div variants={itemVariants}>
+            <Alert variant="destructive" className="border-destructive/20 bg-destructive/5">
+              <AlertTriangle className="h-3.5 w-3.5" />
+              <AlertTitle className="text-xs">Training Use Only</AlertTitle>
+              <AlertDescription className="text-xs leading-relaxed">
+                This app is for training purposes only. Do not enter real Criminal Justice Information (CJI) or PII.
+              </AlertDescription>
+            </Alert>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
-  );
+  )
 }
