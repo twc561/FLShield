@@ -7,6 +7,17 @@ import { ErrorBoundary } from "react-error-boundary"
 export const metadata: Metadata = {
   title: "Shield FL - Law Enforcement Assistant",
   description: "AI-powered law enforcement assistant for Florida officers",
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Shield FL',
+  },
+  other: {
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'default',
+    'apple-mobile-web-app-title': 'Shield FL',
+  }
 }
 
 export default function RootLayout({
