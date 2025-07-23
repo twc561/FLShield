@@ -23,6 +23,11 @@ import { Badge } from "@/components/ui/badge"
 import * as LucideIcons from "lucide-react"
 import { useSidebar } from "@/components/ui/sidebar"
 import { useMobile } from "@/hooks/use-mobile"
+import { signOut } from "firebase/auth"
+import { auth } from "@/lib/firebase"
+import { LogOut } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useToast } from "@/hooks/use-toast"
 
 interface AppMenuContentProps {
   onLinkClick?: () => void
@@ -35,6 +40,8 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
   const { setOpen } = useSidebar()
   const isMobile = useMobile()
+  const router = useRouter()
+  const { toast } = useToast()
 
   // Initialize sections based on active routes
   useEffect(() => {
@@ -82,6 +89,23 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
       [label]: !prev[label]
     }));
   };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth!)
+      toast({
+        title: "Signed Out",
+        description: "You have been successfully signed out."
+      })
+      router.push('/login')
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Sign Out Failed",
+        description: "There was an error signing out. Please try again."
+      })
+    }
+  }
 
   // Prevent hydration mismatch by not rendering interactive elements until mounted
   if (!mounted) {
@@ -175,6 +199,19 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
           </SidebarMenuItem>
         )
       )}
+      
+      {/* Sign Out Option */}
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          onClick={handleSignOut}
+          variant="ghost"
+          className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
+          tooltip={{ children: "Sign Out", side: "right" }}
+        >
+          <LogOut className="size-5" />
+          <span className="group-data-[collapsible=icon]:hidden">Sign Out</span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
     </SidebarMenu>
   )
 }
