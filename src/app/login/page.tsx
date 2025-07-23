@@ -120,44 +120,12 @@ export default function LoginPage() {
     }
 
     const handlePasswordReset = async (values: { email: string }) => {
-        if (!values.email || values.email.trim() === '') {
-            toast({
-                variant: "destructive",
-                title: "Email Required",
-                description: "Please enter your email address."
-            });
-            return;
-        }
-
-        if (!values.email.includes('@') || !values.email.includes('.')) {
-            toast({
-                variant: "destructive",
-                title: "Invalid Email",
-                description: "Please enter a valid email address."
-            });
-            return;
-        }
-
-        setIsLoading("reset");
-        console.log('Attempting password reset for:', values.email);
-        
-        try {
-            await sendPasswordResetEmail(auth!, values.email, {
-                url: `${window.location.origin}/login`,
-                handleCodeInApp: false
-            });
-            toast({ 
-                title: "Password Reset Email Sent", 
-                description: "Check your email for instructions to reset your password." 
-            });
-            setShowForgotPassword(false);
-            resetForm.reset();
-        } catch (error: any) {
-            console.error('Password reset error:', error);
-            handleAuthError(error);
-        } finally {
-            setIsLoading(null);
-        }
+        toast({ 
+            title: "Password Reset", 
+            description: "To reset your password please email admin@shieldfl.app" 
+        });
+        setShowForgotPassword(false);
+        resetForm.reset();
     }
 
     const onSignInSubmit = async (values: z.infer<typeof authSchema>) => {
@@ -247,7 +215,7 @@ export default function LoginPage() {
                         {isLoading === 'google' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
                         Sign in with Google
                     </Button>
-                    
+
                     {passkeysSupported && (
                         <Button onClick={handlePasskeySignIn} disabled={!!isLoading} variant="outline" className="w-full">
                             {isLoading === 'passkey' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Fingerprint className="mr-2 h-4 w-4" />}
