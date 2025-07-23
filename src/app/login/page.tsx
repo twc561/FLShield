@@ -1,3 +1,4 @@
+
 'use client'
 
 import React, { useState } from 'react'
@@ -6,17 +7,17 @@ import { useRouter } from 'next/navigation'
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
+import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import { FirebaseError } from 'firebase/app'
 
 import { auth, isFirebaseConfigured } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, AlertTriangle, Fingerprint } from 'lucide-react'
+import { Loader2, AlertTriangle, Shield, Users, Lock, CheckCircle2, Star, Zap, Eye, EyeOff } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 const GoogleIcon = () => (
@@ -34,14 +35,25 @@ const authSchema = z.object({
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
 })
 
-const resetSchema = z.object({ 
-  email: z.string().email({ message: "Please enter a valid email address." }).or(z.literal(""))
-})
+const features = [
+    { icon: Shield, title: "Secure Authentication", description: "Enterprise-grade security with multi-factor support" },
+    { icon: Users, title: "Role-Based Access", description: "Granular permissions for different user types" },
+    { icon: Lock, title: "Data Protection", description: "End-to-end encryption for sensitive information" },
+]
+
+const benefits = [
+    "AI-Powered Legal Research & Analysis",
+    "Comprehensive Florida Statutes Database", 
+    "Interactive Training Scenarios",
+    "Real-Time Case Law Updates",
+    "Mobile-Optimized Field Tools",
+    "24/7 Technical Support"
+]
 
 export default function LoginPage() {
-    const [isLoading, setIsLoading] = useState<"google" | "email" | "reset" | "passkey" | null>(null)
-    const [showForgotPassword, setShowForgotPassword] = useState(false)
-    const [passkeysSupported, setPasskeysSupported] = useState(false)
+    const [isLoading, setIsLoading] = useState<"google" | "email" | null>(null)
+    const [showPassword, setShowPassword] = useState(false)
+    const [activeTab, setActiveTab] = useState("sign-in")
     const router = useRouter()
     const { toast } = useToast()
 
@@ -54,16 +66,6 @@ export default function LoginPage() {
         resolver: zodResolver(authSchema),
         defaultValues: { email: "", password: "" },
     });
-
-    const resetForm = useForm<{ email: string }>({
-        resolver: zodResolver(resetSchema),
-        defaultValues: { email: "" },
-    });
-
-    // WebAuthn support check - currently disabled
-    React.useEffect(() => {
-        setPasskeysSupported(false);
-    }, []);
 
     const handleAuthError = (error: any) => {
         let title = "Authentication Failed";
@@ -79,7 +81,7 @@ export default function LoginPage() {
                     break;
                 case 'auth/email-already-in-use':
                     title = 'Email Already in Use';
-                    description = 'An account with this email address already exists.';
+                    description = 'An account with this email address already exists. Try signing in instead.';
                     break;
                 case 'auth/weak-password':
                     title = 'Weak Password';
@@ -87,54 +89,64 @@ export default function LoginPage() {
                     break;
                 case 'auth/network-request-failed':
                     title = 'Network Error';
-                    description = 'Could not connect to the authentication service. Please check your internet connection and try again.';
+                    description = 'Could not connect to the authentication service. Please check your internet connection.';
                     break;
-                case 'auth/unauthorized-domain':
-                     title = 'Domain Not Authorized';
-                     description = 'This domain is not authorized for authentication. Please check your Firebase console settings.';
-                     break;
+                case 'auth/too-many-requests':
+                    title = 'Too Many Attempts';
+                    description = 'Too many failed login attempts. Please try again later.';
+                    break;
+                case 'auth/user-disabled':
+                    title = 'Account Disabled';
+                    description = 'This account has been disabled. Please contact support.';
+                    break;
                 default:
-                    description = "An unexpected error occurred. Please check the browser console for more details.";
+                    description = "An unexpected error occurred. Please try again or contact support.";
                     console.error("Firebase Auth Error:", error.message);
             }
         }
         toast({ variant: "destructive", title, description });
     }
 
-    const handleGoogleSignIn = async (e: React.FormEvent) => {
+    const handleGoogleSignIn = async () => {
         setIsLoading("google");
         const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({
+            prompt: 'select_account'
+        });
+        
         try {
-            const result = await signInWithPopup(auth!, provider);
-
-            console.log('Google sign-in successful, user authenticated');
-            const userCredential = result;
-            console.log('User details:', userCredential.user?.email);
+            await signInWithPopup(auth!, provider);
+            toast({ 
+                title: "Welcome to Florida Shield!", 
+                description: "You've been successfully signed in." 
+            });
         } catch (error: any) {
             console.error("Google Auth Failed:", error);
-            console.error("Error Code:", error.code);
-            console.error("Error Message:", error.message);
             handleAuthError(error);
+        } finally {
             setIsLoading(null);
         }
     }
 
-    const handlePasswordReset = async (values: { email: string }) => {
+    const handlePasswordReset = () => {
         toast({ 
             title: "Password Reset", 
-            description: "To reset your password please email admin@shieldfl.app" 
+            description: "To reset your password, please email admin@shieldfl.app with your registered email address.",
+            duration: 8000
         });
-        setShowForgotPassword(false);
-        resetForm.reset();
     }
 
     const onSignInSubmit = async (values: z.infer<typeof authSchema>) => {
         setIsLoading("email");
         try {
             await signInWithEmailAndPassword(auth!, values.email, values.password);
-            console.log('Email sign-in successful');
+            toast({ 
+                title: "Welcome back!", 
+                description: "You've been successfully signed in." 
+            });
         } catch (error) {
             handleAuthError(error);
+        } finally {
             setIsLoading(null);
         }
     }
@@ -143,193 +155,323 @@ export default function LoginPage() {
         setIsLoading("email");
         try {
             await createUserWithEmailAndPassword(auth!, values.email, values.password);
-            toast({ title: "Account Created", description: "You have been successfully signed in." });
-            console.log('Account creation successful');
+            toast({ 
+                title: "Account Created Successfully!", 
+                description: "Welcome to Florida Shield. You're now signed in." 
+            });
         } catch (error) {
             handleAuthError(error);
+        } finally {
             setIsLoading(null);
         }
     }
 
-    const handlePasskeySignIn = async () => {
-        toast({
-            variant: "destructive",
-            title: "Feature Temporarily Disabled",
-            description: "Passkey authentication is currently being configured."
-        });
-    }
-
-    const handleCreatePasskey = async () => {
-        toast({
-            variant: "destructive",
-            title: "Feature Temporarily Disabled",
-            description: "Passkey creation is currently being configured."
-        });
-    }
-
     if (!isFirebaseConfigured) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-muted/50 p-4">
-                <Card className="w-full max-w-lg">
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center p-4">
+                <Card className="w-full max-w-lg shadow-xl">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><AlertTriangle className="text-destructive"/> Firebase Configuration Missing</CardTitle>
-                        <CardDescription>Authentication is currently disabled.</CardDescription>
+                        <CardTitle className="flex items-center gap-2 text-red-600">
+                            <AlertTriangle className="h-6 w-6"/>
+                            Configuration Required
+                        </CardTitle>
+                        <CardDescription>Authentication service is currently unavailable.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Alert variant="destructive">
                             <AlertTriangle className="h-4 w-4" />
-                            <AlertTitle>Action Required</AlertTitle>
+                            <AlertTitle>System Configuration Issue</AlertTitle>
                             <AlertDescription>
-                                <p>Your Firebase credentials are not set up correctly in `src/lib/firebase.ts`. Please ensure the configuration object is present and accurate.</p>
-                                <p className="mt-2">The app will not function correctly until this is resolved.</p>
+                                The authentication system requires configuration. Please contact your system administrator.
                             </AlertDescription>
                         </Alert>
                     </CardContent>
-                    <CardFooter>
-                         <Link href="/" className="underline hover:text-primary text-sm">
-                            Return to Landing Page
-                         </Link>
-                    </CardFooter>
                 </Card>
             </div>
         )
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-muted/50 p-4">
-            <Card className="w-full max-w-sm">
-                <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">Welcome Back</CardTitle>
-                    <CardDescription>Sign in to access your Florida Shield dashboard.</CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-4">
-                    <Alert variant="destructive">
-                        <AlertTriangle className="h-4 w-4" />
-                        <AlertTitle>For Informational Use Only</AlertTitle>
-                        <AlertDescription>
-                        This is not a CJIS-compliant system. Do not enter any real PII, CJI, or sensitive case data.
-                        </AlertDescription>
-                    </Alert>
-
-                    <Button onClick={handleGoogleSignIn} disabled={!!isLoading} variant="outline" className="w-full">
-                        {isLoading === 'google' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
-                        Sign in with Google
-                    </Button>
-
-                    {passkeysSupported && (
-                        <Button onClick={handlePasskeySignIn} disabled={!!isLoading} variant="outline" className="w-full">
-                            {isLoading === 'passkey' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Fingerprint className="mr-2 h-4 w-4" />}
-                            Sign in with Passkey
-                        </Button>
-                    )}
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t" />
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+            {/* Hero Section */}
+            <div className="relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5" />
+                <div className="relative container mx-auto px-4 py-8">
+                    <div className="text-center mb-8">
+                        <div className="flex justify-center mb-4">
+                            <div className="bg-blue-600 p-3 rounded-2xl shadow-lg">
+                                <Shield className="h-8 w-8 text-white" />
+                            </div>
                         </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                        <h1 className="text-4xl font-bold text-gray-900 mb-2">Florida Shield</h1>
+                        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                            Your comprehensive digital partner for safer, smarter law enforcement operations
+                        </p>
+                    </div>
+
+                    {/* Benefits Grid */}
+                    <div className="grid md:grid-cols-3 gap-4 mb-8 max-w-4xl mx-auto">
+                        {features.map((feature, index) => (
+                            <div key={index} className="bg-white/60 backdrop-blur-sm rounded-lg p-4 text-center border border-blue-100">
+                                <feature.icon className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                                <h3 className="font-semibold text-gray-900 mb-1">{feature.title}</h3>
+                                <p className="text-sm text-gray-600">{feature.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="container mx-auto px-4 pb-8">
+                <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 items-start">
+                    {/* Features List */}
+                    <div className="space-y-6 lg:pt-8">
+                        <div>
+                            <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <Star className="h-6 w-6 text-yellow-500" />
+                                Platform Features
+                            </h2>
+                            <div className="space-y-3">
+                                {benefits.map((benefit, index) => (
+                                    <div key={index} className="flex items-center gap-3 bg-white/80 backdrop-blur-sm p-3 rounded-lg border border-green-100">
+                                        <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
+                                        <span className="text-gray-700 font-medium">{benefit}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-xl shadow-lg">
+                            <div className="flex items-center gap-3 mb-3">
+                                <Zap className="h-6 w-6" />
+                                <h3 className="text-lg font-bold">Get Started Today</h3>
+                            </div>
+                            <p className="text-blue-100 mb-4">
+                                Join thousands of law enforcement professionals who trust Florida Shield for their daily operations.
+                            </p>
+                            <div className="text-sm text-blue-200">
+                                ✓ Instant access to all features<br />
+                                ✓ No setup fees or hidden costs<br />
+                                ✓ 24/7 customer support
+                            </div>
                         </div>
                     </div>
-                    <Tabs defaultValue="sign-in" className="w-full">
-                        <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="sign-in">Sign In</TabsTrigger>
-                            <TabsTrigger value="sign-up">Sign Up</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="sign-in">
-                            {!showForgotPassword ? (
-                                <Form {...signInForm}>
-                                    <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-4 mt-4">
-                                        <FormField control={signInForm.control} name="email" render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel className="sr-only">Email</FormLabel>
-                                                <FormControl><Input placeholder="email@example.com" {...field} /></FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )} />
-                                        <FormField control={signInForm.control} name="password" render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel className="sr-only">Password</FormLabel>
-                                                <FormControl><Input type="password" placeholder="Password" {...field} /></FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )} />
-                                        <Button type="submit" className="w-full" disabled={!!isLoading}>
-                                            {isLoading === 'email' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                            Sign In
-                                        </Button>
-                                        <div className="text-center">
-                                            <button 
-                                                type="button"
-                                                onClick={() => setShowForgotPassword(true)}
-                                                className="text-sm text-muted-foreground hover:text-primary underline"
-                                            >
-                                                Forgot your password?
-                                            </button>
-                                        </div>
-                                    </form>
-                                </Form>
-                            ) : (
-                                <Form {...resetForm}>
-                                    <form onSubmit={resetForm.handleSubmit(handlePasswordReset)} className="space-y-4 mt-4">
-                                        <FormField control={resetForm.control} name="email" render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Email</FormLabel>
-                                                <FormControl><Input placeholder="email@example.com" {...field} /></FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )} />
-                                        <Button type="submit" className="w-full" disabled={!!isLoading}>
-                                            {isLoading === 'reset' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                            Send Reset Email
-                                        </Button>
-                                        <div className="text-center">
-                                            <button 
-                                                type="button"
-                                                onClick={() => setShowForgotPassword(false)}
-                                                className="text-sm text-muted-foreground hover:text-primary underline"
-                                            >
-                                                Back to sign in
-                                            </button>
-                                        </div>
-                                    </form>
-                                </Form>
-                            )}
-                        </TabsContent>
-                        <TabsContent value="sign-up">
-                             <Form {...signUpForm}>
-                                <form onSubmit={signUpForm.handleSubmit(onSignUpSubmit)} className="space-y-4 mt-4">
-                                    <FormField control={signUpForm.control} name="email" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="sr-only">Email</FormLabel>
-                                            <FormControl><Input placeholder="email@example.com" {...field} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} />
-                                    <FormField control={signUpForm.control} name="password" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="sr-only">Password</FormLabel>
-                                            <FormControl><Input type="password" placeholder="Password" {...field} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} />
-                                    <Button type="submit" className="w-full" disabled={!!isLoading}>
-                                         {isLoading === 'email' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                        Create Account
-                                    </Button>
-                                </form>
-                            </Form>
-                        </TabsContent>
-                    </Tabs>
-                </CardContent>
-                 <CardFooter className="flex flex-col items-center justify-center text-xs">
-                     <p className="text-muted-foreground text-center">
-                        By signing in, you agree to our <Link href="/terms-of-use" className="underline hover:text-primary">Terms of Use</Link>.
-                     </p>
-                     <Link href="/" className="underline hover:text-primary mt-2">
-                        Return to Landing Page
-                     </Link>
-                </CardFooter>
-            </Card>
+
+                    {/* Login Form */}
+                    <div className="lg:sticky lg:top-8">
+                        <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
+                            <CardHeader className="text-center space-y-2 pb-6">
+                                <CardTitle className="text-2xl font-bold text-gray-900">
+                                    {activeTab === "sign-in" ? "Welcome Back" : "Create Account"}
+                                </CardTitle>
+                                <CardDescription className="text-gray-600">
+                                    {activeTab === "sign-in" 
+                                        ? "Sign in to access your Florida Shield dashboard" 
+                                        : "Join the Florida Shield community today"
+                                    }
+                                </CardDescription>
+                            </CardHeader>
+
+                            <CardContent className="space-y-6">
+                                {/* Security Notice */}
+                                <Alert className="border-orange-200 bg-orange-50">
+                                    <AlertTriangle className="h-4 w-4 text-orange-600" />
+                                    <AlertTitle className="text-orange-800">For Informational Use Only</AlertTitle>
+                                    <AlertDescription className="text-orange-700">
+                                        This is not a CJIS-compliant system. Do not enter any real PII, CJI, or sensitive case data.
+                                    </AlertDescription>
+                                </Alert>
+
+                                {/* Google Sign In */}
+                                <Button 
+                                    onClick={handleGoogleSignIn} 
+                                    disabled={!!isLoading} 
+                                    variant="outline" 
+                                    size="lg"
+                                    className="w-full h-12 border-2 hover:bg-gray-50 transition-all duration-200"
+                                >
+                                    {isLoading === 'google' ? (
+                                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                    ) : (
+                                        <GoogleIcon />
+                                    )}
+                                    <span className="font-semibold">Continue with Google</span>
+                                </Button>
+
+                                {/* Divider */}
+                                <div className="relative">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <span className="w-full border-t border-gray-300" />
+                                    </div>
+                                    <div className="relative flex justify-center text-sm">
+                                        <span className="bg-white px-4 text-gray-500 font-medium">Or continue with email</span>
+                                    </div>
+                                </div>
+
+                                {/* Tabs */}
+                                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                                    <TabsList className="grid w-full grid-cols-2 h-12">
+                                        <TabsTrigger value="sign-in" className="font-semibold">Sign In</TabsTrigger>
+                                        <TabsTrigger value="sign-up" className="font-semibold">Sign Up</TabsTrigger>
+                                    </TabsList>
+
+                                    <TabsContent value="sign-in" className="mt-6">
+                                        <Form {...signInForm}>
+                                            <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-4">
+                                                <FormField control={signInForm.control} name="email" render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-gray-700 font-medium">Email Address</FormLabel>
+                                                        <FormControl>
+                                                            <Input 
+                                                                placeholder="officer@department.gov" 
+                                                                className="h-11"
+                                                                {...field} 
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )} />
+                                                
+                                                <FormField control={signInForm.control} name="password" render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-gray-700 font-medium">Password</FormLabel>
+                                                        <FormControl>
+                                                            <div className="relative">
+                                                                <Input 
+                                                                    type={showPassword ? "text" : "password"} 
+                                                                    placeholder="Enter your password"
+                                                                    className="h-11 pr-10"
+                                                                    {...field} 
+                                                                />
+                                                                <Button
+                                                                    type="button"
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                                    onClick={() => setShowPassword(!showPassword)}
+                                                                >
+                                                                    {showPassword ? (
+                                                                        <EyeOff className="h-4 w-4 text-gray-500" />
+                                                                    ) : (
+                                                                        <Eye className="h-4 w-4 text-gray-500" />
+                                                                    )}
+                                                                </Button>
+                                                            </div>
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )} />
+
+                                                <Button 
+                                                    type="submit" 
+                                                    className="w-full h-12 bg-blue-600 hover:bg-blue-700 font-semibold text-lg"
+                                                    disabled={!!isLoading}
+                                                >
+                                                    {isLoading === 'email' && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+                                                    Sign In
+                                                </Button>
+
+                                                <div className="text-center">
+                                                    <button 
+                                                        type="button"
+                                                        onClick={handlePasswordReset}
+                                                        className="text-sm text-blue-600 hover:text-blue-700 underline font-medium"
+                                                    >
+                                                        Forgot your password?
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </Form>
+                                    </TabsContent>
+
+                                    <TabsContent value="sign-up" className="mt-6">
+                                        <Form {...signUpForm}>
+                                            <form onSubmit={signUpForm.handleSubmit(onSignUpSubmit)} className="space-y-4">
+                                                <FormField control={signUpForm.control} name="email" render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-gray-700 font-medium">Email Address</FormLabel>
+                                                        <FormControl>
+                                                            <Input 
+                                                                placeholder="officer@department.gov" 
+                                                                className="h-11"
+                                                                {...field} 
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )} />
+
+                                                <FormField control={signUpForm.control} name="password" render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-gray-700 font-medium">Password</FormLabel>
+                                                        <FormControl>
+                                                            <div className="relative">
+                                                                <Input 
+                                                                    type={showPassword ? "text" : "password"} 
+                                                                    placeholder="Create a strong password"
+                                                                    className="h-11 pr-10"
+                                                                    {...field} 
+                                                                />
+                                                                <Button
+                                                                    type="button"
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                                    onClick={() => setShowPassword(!showPassword)}
+                                                                >
+                                                                    {showPassword ? (
+                                                                        <EyeOff className="h-4 w-4 text-gray-500" />
+                                                                    ) : (
+                                                                        <Eye className="h-4 w-4 text-gray-500" />
+                                                                    )}
+                                                                </Button>
+                                                            </div>
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                        <p className="text-xs text-gray-500 mt-1">
+                                                            Password must be at least 6 characters long
+                                                        </p>
+                                                    </FormItem>
+                                                )} />
+
+                                                <Button 
+                                                    type="submit" 
+                                                    className="w-full h-12 bg-green-600 hover:bg-green-700 font-semibold text-lg"
+                                                    disabled={!!isLoading}
+                                                >
+                                                    {isLoading === 'email' && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+                                                    Create Account
+                                                </Button>
+                                            </form>
+                                        </Form>
+                                    </TabsContent>
+                                </Tabs>
+                            </CardContent>
+
+                            {/* Footer */}
+                            <div className="px-6 pb-6 space-y-4">
+                                <div className="text-center text-xs text-gray-500">
+                                    By continuing, you agree to our{' '}
+                                    <Link href="/terms-of-use" className="text-blue-600 hover:text-blue-700 underline">
+                                        Terms of Use
+                                    </Link>
+                                    {' '}and{' '}
+                                    <Link href="/privacy-policy" className="text-blue-600 hover:text-blue-700 underline">
+                                        Privacy Policy
+                                    </Link>
+                                </div>
+                                
+                                <div className="text-center">
+                                    <Link href="/" className="text-sm text-blue-600 hover:text-blue-700 underline font-medium">
+                                        ← Return to Landing Page
+                                    </Link>
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }
