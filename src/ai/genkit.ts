@@ -1,4 +1,4 @@
-import { gemini15Pro, gemini15Flash, googleAI } from '@genkit-ai/googleai';
+import { gemini20FlashExp, gemini15Pro, gemini15Flash, googleAI } from '@genkit-ai/googleai';
 import { genkit, z } from 'genkit';
 
 const ai = genkit({
@@ -7,7 +7,7 @@ const ai = genkit({
       apiKey: process.env.GOOGLE_GENAI_API_KEY,
     }),
   ],
-  model: gemini15Pro,
+  model: gemini20FlashExp, // Using Gemini 2.0 Flash Experimental (latest available)
 });
 
 export { ai };
@@ -19,12 +19,12 @@ export const enhancedAI = genkit({
       apiKey: process.env.GOOGLE_GENAI_API_KEY,
     }),
   ],
-  model: gemini15Pro,
+  model: gemini20FlashExp, // Using Gemini 2.0 Flash Experimental
 });
 
 // High-capacity configuration for complex scenarios
 export const highCapacityConfig = {
-  model: gemini15Pro,
+  model: gemini20FlashExp,
   config: {
     maxOutputTokens: 8192, // Use supported token limit
     temperature: 0.3, // Slightly lower for more focused responses
@@ -54,7 +54,7 @@ export const highCapacityConfig = {
 
 // Enhanced configuration specifically for command search with maximum capabilities
 export const commandSearchConfig = {
-  model: "gemini-1.5-pro-002", // Latest and most capable model
+  model: "gemini-2.0-flash-exp", // Latest Gemini 2.0 model
   config: {
     maxOutputTokens: 8192, // Use supported token limit for comprehensive responses
     temperature: 0.3, // Lower temperature for more accurate, focused responses
