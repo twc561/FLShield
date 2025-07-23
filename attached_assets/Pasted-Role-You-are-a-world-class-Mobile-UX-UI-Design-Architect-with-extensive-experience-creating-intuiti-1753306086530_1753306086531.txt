@@ -1,0 +1,39 @@
+Role: You are a world-class Mobile UX/UI Design Architect with extensive experience creating intuitive, high-performance applications for mission-critical operations. Your design philosophy prioritizes clarity, speed, and reduced cognitive load for users in high-stress environments.
+
+Task: Generate a comprehensive mobile-first design structure for the main dashboard of "Florida Shield," a new law enforcement application. The goal is to move away from a dated, cluttered, endless-scrolling interface and create a modern, efficient, and visually appealing user experience optimized for officers on duty.
+
+Core Mandate: The design must be intuitive at a glance. An officer should be able to pull out their device and instantly understand the most critical information and access key functions without extensive navigation or thought. The design must be clean, authoritative, and professional.
+
+Key Design Directives:
+Dashboard Architecture: Modular & Nested
+
+Eliminate Endless Scrolling: The main dashboard should not be a single, long feed. Instead, design a modular, card-based layout. Each primary function (e.g., "Active Alerts," "My Cases," "BOLO Reports," "Patrol Log") is represented by a clean, tappable card or a prominent list item.
+
+Hierarchical Navigation: Tapping on a primary module (like "Active Alerts") should navigate the user to a new, dedicated screen for that function, rather than just expanding an item inline. This creates a clear information hierarchy and keeps each screen focused on a single task.
+
+Hero Section: Intelligent Search & Quick Actions
+
+Dominant Search Bar: The top of the dashboard is dedicated to a powerful, predictive search bar. It should be immediately obvious and accessible. Placeholder text could be "Search Records, Plates, Persons..."
+
+Gradient-Blended Quick Links: Directly beneath the search bar, integrate a horizontal row of 3-4 "quick action" links or chips. These are for the most frequent, time-sensitive actions (e.g., "Run Plate," "New Report," "Check Warrant," "Start E-Ticket").
+
+Visual Integration: These links should not feel like separate buttons. Instead, they must blend seamlessly into the UI. The background behind this section should feature a subtle vertical gradient (e.g., transitioning from a dark slate blue to a slightly lighter shade). The links themselves should have a color that shifts with the gradient, making them feel like an integrated part of the interface.
+
+Secondary Navigation: Collapsible & Contextual
+
+Consolidated Menu: Less frequently used but still important tools should be housed within a collapsible, accordion-style menu. This could be labeled "Tools & Resources."
+
+Menu Items: This section would contain items like "Department Directory," "Legal Code Reference," "Training Materials," and "System Settings."
+
+Functionality: Each item in this menu, when tapped, expands to show sub-options or navigates to a new screen. This keeps the primary dashboard view clean and focused on operational priorities.
+
+Visual Language & Tone
+
+Color Palette: Use a professional and serious color palette. Think deep blues, charcoals, and grays, with strategic use of accent colors like amber/yellow for non-critical notifications and a specific, reserved red for high-priority alerts.
+
+Typography: Employ a highly legible, modern sans-serif font like Inter or SF Pro. Ensure clear contrast and font hierarchy.
+
+Iconography: Use clean, universally understood icons to supplement text labels, enhancing glanceability.
+
+Deliverable:
+Provide a detailed breakdown of this new dashboard structure. Describe the layout, the user flow (what happens when a user taps each element), and the design rationale behind your choices. If possible, create a simple text-based wireframe or a visual block diagram to illustrate the layout of the new "Florida Shield" dashboard. Explain how this design specifically addresses the needs of a law enforcement officer in the field.
