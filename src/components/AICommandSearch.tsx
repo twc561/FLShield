@@ -27,10 +27,41 @@ export default function AICommandSearch() {
   const [isShortcutPressed, setIsShortcutPressed] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [contextualSuggestions, setContextualSuggestions] = useState<string[]>([]);
+  const [smartShortcuts, setSmartShortcuts] = useState<{key: string, title: string, href: string}[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   useEffect(() => {
+    // Generate contextual suggestions
+    const generateContextualSuggestions = () => {
+      const hour = new Date().getHours();
+      const suggestions: string[] = [];
+      
+      if (hour >= 6 && hour < 10) {
+        suggestions.push("What's in my briefing today?", "Show me traffic stop procedures", "DUI investigation checklist");
+      } else if (hour >= 14 && hour < 18) {
+        suggestions.push("Help me identify evidence", "What charges apply here?", "Use of force guidelines");
+      } else if (hour >= 22 || hour < 6) {
+        suggestions.push("Baker Act procedures", "Domestic violence protocol", "Emergency response guide");
+      } else {
+        suggestions.push("Legal advice for this situation", "Help me write a report", "Case law lookup");
+      }
+      
+      setContextualSuggestions(suggestions);
+    };
+
+    // Generate smart shortcuts
+    const generateSmartShortcuts = () => {
+      const shortcuts = [
+        { key: "⌘1", title: "AI Legal Advisor", href: "/ai-legal-advisor" },
+        { key: "⌘2", title: "Field Notes", href: "/notes" },
+        { key: "⌘3", title: "Daily Briefing", href: "/daily-briefing" },
+        { key: "⌘4", title: "Evidence ID", href: "/field-procedures/visual-evidence-identifier" }
+      ];
+      setSmartShortcuts(shortcuts);
+    };
+
     const handleKeyDown = (event: KeyboardEvent) => {
       // Cmd+K or Ctrl+K to open overlay
       if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
@@ -39,6 +70,15 @@ export default function AICommandSearch() {
         setIsShortcutPressed(true);
         setTimeout(() => setIsShortcutPressed(false), 200);
         setTimeout(() => inputRef.current?.focus(), 100);
+      }
+
+      // Smart shortcuts
+      if ((event.metaKey || event.ctrlKey) && ['1', '2', '3', '4'].includes(event.key)) {
+        event.preventDefault();
+        const shortcutIndex = parseInt(event.key) - 1;
+        if (smartShortcuts[shortcutIndex]) {
+          router.push(smartShortcuts[shortcutIndex].href);
+        }
       }
 
       // ESC to close overlay
@@ -50,9 +90,12 @@ export default function AICommandSearch() {
       }
     };
 
+    generateContextualSuggestions();
+    generateSmartShortcuts();
     document.addEventListener('keydown', handleKeyDown);
+    
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [router, smartShortcuts]);
 
   // Smart search function
   const performSmartSearch = (searchQuery: string) => {
@@ -231,8 +274,45 @@ export default function AICommandSearch() {
                   </div>
                 )
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  Start typing to search tools and features...
+                <div className="space-y-6">
+                  {/* Smart Shortcuts */}
+                  <div>
+                    <h3 className="text-sm font-medium mb-3 text-muted-foreground">Quick Access</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      {smartShortcuts.map((shortcut) => (
+                        <div
+                          key={shortcut.key}
+                          onClick={() => {
+                            setIsOpen(false);
+                            router.push(shortcut.href);
+                          }}
+                          className="p-2 rounded-md border hover:bg-accent/5 cursor-pointer transition-colors flex items-center justify-between"
+                        >
+                          <span className="text-sm">{shortcut.title}</span>
+                          <kbd className="px-1.5 py-0.5 text-xs bg-muted rounded">{shortcut.key}</kbd>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Contextual Suggestions */}
+                  <div>
+                    <h3 className="text-sm font-medium mb-3 text-muted-foreground">AI Suggestions</h3>
+                    <div className="space-y-2">
+                      {contextualSuggestions.map((suggestion, index) => (
+                        <div
+                          key={index}
+                          onClick={() => setQuery(suggestion)}
+                          className="p-2 rounded-md border-dashed border hover:bg-blue-50/50 dark:hover:bg-blue-950/20 cursor-pointer transition-colors"
+                        >
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="w-3 h-3 text-blue-500" />
+                            <span className="text-sm text-blue-700 dark:text-blue-300">"{suggestion}"</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
 

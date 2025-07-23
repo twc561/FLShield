@@ -160,17 +160,107 @@ export default function DashboardPage() {
   const [userName, setUserName] = useState<string | null>("Officer");
   const { isPro, mounted } = useSubscription()
   const [isClient, setIsClient] = useState(false)
+  const [contextualTools, setContextualTools] = useState<FeatureModule[]>([])
+  const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'evening' | 'night'>('morning')
+  const [weatherContext, setWeatherContext] = useState<string>('')
+  const [frequentlyUsed, setFrequentlyUsed] = useState<FeatureModule[]>([])
+  const [recentlyUsed, setRecentlyUsed] = useState<FeatureModule[]>([])
+  const [aiSuggestions, setAiSuggestions] = useState<string[]>([])
+  const [contextualMessage, setContextualMessage] = useState<string>('')
 
   useEffect(() => {
     setIsClient(true)
     
-    const getGreeting = () => {
+    const getTimeContext = () => {
       const hour = new Date().getHours()
-      if (hour < 12) return "Good morning"
-      else if (hour < 18) return "Good afternoon"
-      else return "Good evening"
+      if (hour >= 5 && hour < 12) {
+        setTimeOfDay('morning')
+        return "Good morning"
+      } else if (hour >= 12 && hour < 17) {
+        setTimeOfDay('afternoon') 
+        return "Good afternoon"
+      } else if (hour >= 17 && hour < 21) {
+        setTimeOfDay('evening')
+        return "Good evening"
+      } else {
+        setTimeOfDay('night')
+        return "Good evening"
+      }
     }
-    setGreeting(getGreeting());
+    setGreeting(getTimeContext());
+
+    // Load usage analytics from localStorage
+    const loadUsageData = () => {
+      try {
+        const usage = JSON.parse(localStorage.getItem('toolUsage') || '{}')
+        const recent = JSON.parse(localStorage.getItem('recentTools') || '[]')
+        
+        // Get frequently used tools (sorted by usage count)
+        const frequentIds = Object.entries(usage)
+          .sort(([,a], [,b]) => (b as number) - (a as number))
+          .slice(0, 6)
+          .map(([id]) => id)
+        
+        const frequent = dashboardFeatureGroups
+          .flatMap(g => g.features)
+          .filter(f => frequentIds.includes(f.id))
+          .sort((a, b) => frequentIds.indexOf(a.id) - frequentIds.indexOf(b.id))
+        
+        // Get recently used tools
+        const recentTools = recent
+          .map((id: string) => dashboardFeatureGroups.flatMap(g => g.features).find(f => f.id === id))
+          .filter(Boolean)
+          .slice(0, 4)
+        
+        setFrequentlyUsed(frequent)
+        setRecentlyUsed(recentTools)
+      } catch (error) {
+        console.error('Error loading usage data:', error)
+      }
+    }
+
+    // Generate contextual recommendations based on time
+    const getContextualTools = () => {
+      const hour = new Date().getHours()
+      let suggestions: FeatureModule[] = []
+      let message = ''
+      
+      if (hour >= 6 && hour < 10) {
+        // Morning shift preparation
+        suggestions = dashboardFeatureGroups
+          .flatMap(g => g.features)
+          .filter(f => ['daily-briefing', 'scenario-checklists', 'field-notes', 'dui-investigation'].includes(f.id))
+        message = "🌅 Start your shift prepared - Check your briefing and review key procedures"
+        setAiSuggestions(['Check daily briefing', 'Review scenario checklists', 'Update field notes'])
+      } else if (hour >= 14 && hour < 18) {
+        // Afternoon - peak activity
+        suggestions = dashboardFeatureGroups
+          .flatMap(g => g.features)
+          .filter(f => ['ai-legal-advisor', 'visual-evidence-identifier', 'use-of-force-wizard'].includes(f.id))
+        message = "⚡ Peak hours - Quick access to AI tools for field decisions"
+        setAiSuggestions(['AI legal guidance', 'Evidence identification', 'Report assistance'])
+      } else if (hour >= 22 || hour < 6) {
+        // Night shift
+        suggestions = dashboardFeatureGroups
+          .flatMap(g => g.features)
+          .filter(f => ['baker-act-guide', 'domestic-violence-protocol', 'first-aid-guide'].includes(f.id))
+        message = "🌙 Night shift essentials - Emergency protocols at your fingertips"
+        setAiSuggestions(['Emergency protocols', 'Mental health procedures', 'Incident reporting'])
+      } else {
+        // General day shift
+        suggestions = dashboardFeatureGroups
+          .flatMap(g => g.features)
+          .filter(f => ['ai-charge-assistant', 'field-interview-contact', 'traffic-enforcement'].includes(f.id))
+        message = "☀️ Day shift active - Common enforcement tools ready"
+        setAiSuggestions(['Charge assistance', 'Interview techniques', 'Traffic enforcement'])
+      }
+      
+      setContextualTools(suggestions.slice(0, 4))
+      setContextualMessage(message)
+    }
+
+    loadUsageData()
+    getContextualTools()
 
     const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
         if (user) {
@@ -189,7 +279,13 @@ export default function DashboardPage() {
         }
     });
 
-    return () => unsubscribe();
+    // Update contextual tools every 30 minutes
+    const contextualInterval = setInterval(getContextualTools, 30 * 60 * 1000)
+
+    return () => {
+      unsubscribe()
+      clearInterval(contextualInterval)
+    }
   }, [])
 
   // Prevent hydration mismatch by ensuring consistent server/client rendering
@@ -256,10 +352,102 @@ export default function DashboardPage() {
                 icon={Shield}
               />
               <StatsCard 
-                title="Categories" 
-                value={`${dashboardFeatureGroups.length}`}
-                icon={Briefcase}
+                title="Most Used" 
+                value={frequentlyUsed.length > 0 ? frequentlyUsed[0]?.title.split(' ')[0] || 'None' : 'None'}
+                icon={TrendingUp}
               />
+            </div>
+          </motion.div>
+
+          {/* Contextual AI Recommendations */}
+          {contextualMessage && (
+            <motion.div variants={itemVariants} className="space-y-3">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-blue-500/10 rounded-lg">
+                  <BrainCircuit className="h-4 w-4 text-blue-500" />
+                </div>
+                <h2 className="font-semibold text-lg">Smart Recommendations</h2>
+              </div>
+              <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
+                <CardContent className="p-4">
+                  <p className="text-sm text-blue-700 dark:text-blue-300 mb-3">{contextualMessage}</p>
+                  <div className="grid grid-cols-1 gap-2">
+                    {contextualTools.map((tool) => (
+                      <QuickActionCard key={tool.id} module={tool} />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* Smart Shortcuts */}
+          <motion.div variants={itemVariants} className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-purple-500/10 rounded-lg">
+                  <Zap className="h-4 w-4 text-purple-500" />
+                </div>
+                <h2 className="font-semibold text-lg">Smart Shortcuts</h2>
+              </div>
+              <Badge variant="secondary" className="text-xs">
+                <Clock className="w-3 h-3 mr-1" />
+                Context-aware
+              </Badge>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              {/* Frequently Used */}
+              {frequentlyUsed.length > 0 && (
+                <Card className="bg-gradient-to-br from-background to-purple-50/30 dark:to-purple-950/10 border border-purple-200/40 dark:border-purple-800/40">
+                  <CardContent className="p-3">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <TrendingUp className="h-3.5 w-3.5 text-purple-500" />
+                      <h3 className="font-medium text-sm">Most Used</h3>
+                    </div>
+                    <div className="space-y-1">
+                      {frequentlyUsed.slice(0, 3).map((tool, index) => (
+                        <Link key={tool.id} href={tool.targetPage}>
+                          <div className="flex items-center space-x-2 p-1.5 rounded-md hover:bg-purple-100/50 dark:hover:bg-purple-900/20 transition-colors group cursor-pointer">
+                            <span className="text-xs text-purple-600 dark:text-purple-400 font-mono bg-purple-100 dark:bg-purple-900/30 px-1.5 py-0.5 rounded">
+                              ⌘{index + 1}
+                            </span>
+                            <span className="text-xs truncate group-hover:text-purple-700 dark:group-hover:text-purple-300">
+                              {tool.title}
+                            </span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Recently Used */}
+              {recentlyUsed.length > 0 && (
+                <Card className="bg-gradient-to-br from-background to-green-50/30 dark:to-green-950/10 border border-green-200/40 dark:border-green-800/40">
+                  <CardContent className="p-3">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Clock className="h-3.5 w-3.5 text-green-500" />
+                      <h3 className="font-medium text-sm">Recent</h3>
+                    </div>
+                    <div className="space-y-1">
+                      {recentlyUsed.slice(0, 3).map((tool, index) => (
+                        <Link key={tool.id} href={tool.targetPage}>
+                          <div className="flex items-center space-x-2 p-1.5 rounded-md hover:bg-green-100/50 dark:hover:bg-green-900/20 transition-colors group cursor-pointer">
+                            <span className="text-xs text-green-600 dark:text-green-400 font-mono bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded">
+                              ⌘⇧{index + 1}
+                            </span>
+                            <span className="text-xs truncate group-hover:text-green-700 dark:group-hover:text-green-300">
+                              {tool.title}
+                            </span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </motion.div>
 
