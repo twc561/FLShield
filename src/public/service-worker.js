@@ -1,6 +1,6 @@
 // A robust service worker for a Next.js PWA
 
-const CACHE_NAME = `florida-shield-v0.5.1`; // IMPORTANT: Bump this version to force cache update.
+const CACHE_NAME = `florida-shield-v${new Date().getTime()}`; // Dynamic versioning for aggressive updates
 
 // List of files to cache on installation
 const urlsToCache = [
@@ -35,8 +35,14 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    }).then(() => self.clients.claim()) // Take control of open clients immediately
+    }).then(() => {
+      console.log('Service worker activated and taking control');
+      return self.clients.claim(); // Take control of open clients immediately
+    })
   );
+  
+  // Skip waiting to activate immediately
+  self.skipWaiting();
 });
 
 // 3. Fetch: Serve from cache or network
