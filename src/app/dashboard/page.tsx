@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { BrainCircuit, Users, AlertTriangle, BookOpen, Shield, Zap, Clock, TrendingUp, MapPin, MessageSquare, FileText, Briefcase, Target, Eye, GraduationCap, Heart, Search, Headphones, Crown, ChevronRight, Star, Bookmark, Plus, ArrowRight } from "lucide-react"
+import { BrainCircuit, Users, AlertTriangle, BookOpen, Shield, Zap, Clock, TrendingUp, MapPin, MessageSquare, FileText, Briefcase, Target, Eye, GraduationCap, Heart, Search, Headphones, Crown, ChevronRight, Star, Bookmark, Plus, ArrowRight, ChevronDown } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { DailyRollCall } from "@/components/DailyRollCall"
 import { BriefingStats } from "@/components/BriefingStats"
@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge"
 import { useSubscription } from "@/hooks/use-subscription"
 import { onAuthStateChanged, type User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
 import AICommandSearch from "@/components/AICommandSearch"
 import { PinButton } from "@/components/PinButton"
@@ -145,6 +146,32 @@ const QuickStatCard = ({ title, value, icon: Icon }: { title: string; value: str
     </CardContent>
   </Card>
 )
+
+const CollapsibleBriefingSection = () => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger className="w-full">
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center space-x-2">
+            <BookOpen className="h-3.5 w-3.5 text-primary" />
+            <h3 className="font-medium text-sm">Today's Briefing</h3>
+          </div>
+          <motion.div
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+          </motion.div>
+        </div>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="mt-3">
+        <DailyRollCall />
+      </CollapsibleContent>
+    </Collapsible>
+  )
+}
 
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("Good day")
@@ -434,15 +461,11 @@ export default function DashboardPage() {
             </motion.div>
           )}
 
-          {/* Compressed Daily Briefing */}
+          {/* Collapsible Daily Briefing */}
           <motion.div variants={itemVariants}>
             <Card className="bg-white/40 dark:bg-gray-900/20 border-0 shadow-sm backdrop-blur-sm">
               <CardContent className="p-3">
-                <div className="flex items-center space-x-2 mb-2">
-                  <BookOpen className="h-3.5 w-3.5 text-primary" />
-                  <h3 className="font-medium text-sm">Today's Briefing</h3>
-                </div>
-                <DailyRollCall />
+                <CollapsibleBriefingSection />
               </CardContent>
             </Card>
           </motion.div>
