@@ -1,15 +1,10 @@
-
 'use client'
 
 import { MarketingHeader } from "@/components/MarketingHeader";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-import { ArrowRight, CheckCircle, DatabaseZap, FileText, Fingerprint, ShieldCheck, TrendingUp, ShieldQuestion } from "lucide-react";
-import Link from 'next/link'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, Brain, Database, Lock, Mail, Shield, Users, Zap } from "lucide-react";
+import Link from 'next/link';
 
 const BenefitCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
     <Card className="bg-card/50">
@@ -41,16 +36,6 @@ const HowItWorksStep = ({ step, title, description }: { step: number, title: str
 );
 
 export default function AgencyIntelligencePage() {
-    const { toast } = useToast()
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        toast({
-            title: "Demo Request Submitted",
-            description: "Thank you! We will contact you shortly to schedule your agency's personalized demonstration.",
-        });
-        (e.target as HTMLFormElement).reset();
-    }
 
     return (
         <>
@@ -120,7 +105,7 @@ export default function AgencyIntelligencePage() {
                             </div>
                         </div>
                     </section>
-                    
+
                     {/* The Benefits Section */}
                     <section>
                         <div className="max-w-4xl mx-auto text-center">
@@ -128,32 +113,32 @@ export default function AgencyIntelligencePage() {
                         </div>
                          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
                             <BenefitCard 
-                                icon={ShieldCheck}
+                                icon={Shield}
                                 title="Reduce Liability and Enhance Legitimacy"
                                 description="By ensuring every action is grounded in approved policy, you create a powerful digital record of due diligence, drastically reducing agency risk."
                             />
                              <BenefitCard 
-                                icon={CheckCircle}
+                                icon={Brain}
                                 title="Standardize Policy Application"
                                 description="Ensure every officer, from a rookie to a 20-year veteran, applies your policies with the same understanding and consistency."
                             />
                             <BenefitCard 
-                                icon={TrendingUp}
+                                icon={Database}
                                 title="Supercharge Training and Remediation"
                                 description="Use Shield FL as a live-training tool. Instantly pull up policies during debriefs and after-action reviews to reinforce key concepts."
                             />
                             <BenefitCard 
-                                icon={FileText}
+                                icon={Lock}
                                 title="Streamline Incident Reporting"
                                 description="Officers can use the AI's output, which cites specific policies and statutes, to help draft more accurate, detailed, and defensible incident reports."
                             />
                              <BenefitCard 
-                                icon={DatabaseZap}
+                                icon={Database}
                                 title="Create a Living Policy Manual"
                                 description="Your policies are no longer a static PDF. They become a dynamic, searchable, and instantly accessible resource for every member of your department."
                             />
                              <BenefitCard 
-                                icon={ShieldQuestion}
+                                icon={Shield}
                                 title="Boost Officer Confidence"
                                 description="Give your officers the confidence that their decisions are backed by policy, law, and best practices, reducing hesitation in critical moments."
                             />
@@ -163,14 +148,14 @@ export default function AgencyIntelligencePage() {
                     {/* Security & Trust Section */}
                     <section className="max-w-4xl mx-auto text-center">
                         <div className="flex justify-center mb-4">
-                           <Fingerprint className="w-12 h-12 text-primary" />
+                           <Lock className="w-12 h-12 text-primary" />
                         </div>
                         <h2 className="text-3xl font-bold tracking-tight">Security & Trust: Our Foundational Commitment</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
                            We understand the sensitive nature of law enforcement technology. Shield FL is built on Google's secure cloud infrastructure, leveraging best-in-class security protocols including end-to-end encryption and role-based access controls. Because we only handle public record information, we provide enterprise-grade security without the high cost and complexity of a CJIS-audited environment, making advanced AI accessible to more agencies.
                         </p>
                     </section>
-                    
+
                     {/* Onboarding Section */}
                     <section className="max-w-4xl mx-auto text-center">
                         <h2 className="text-3xl font-bold tracking-tight">The Onboarding Process: Simple, Secure, and Seamless</h2>
@@ -191,43 +176,66 @@ export default function AgencyIntelligencePage() {
                             </div>
                         </div>
                     </section>
-                    
+
                     {/* Final CTA */}
-                    <section className="max-w-2xl mx-auto">
-                        <Card>
-                            <CardHeader className="text-center p-6">
-                                <CardTitle className="text-2xl">Equip Your Officers with Confidence. Empower Your Agency with Shield FL.</CardTitle>
-                                <CardContent className="p-0 pt-4">
-                                    <p className="text-muted-foreground">Give your team the tool they need to make the right call, every time. Contact us today to schedule a personalized demo and learn how Shield FL can be tailored to your agency's specific needs.</p>
-                                    <form onSubmit={handleSubmit} className="mt-6 space-y-4 text-left">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            <div className="space-y-1.5">
-                                                <Label htmlFor="name">Name</Label>
-                                                <Input id="name" required placeholder="Sgt. Jane Doe" />
+                    {/* Contact Section */}
+                <section className="bg-muted/30 py-16">
+                    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="max-w-3xl mx-auto text-center">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-3xl font-bold">Ready to Transform Your Agency?</CardTitle>
+                                    <CardDescription className="text-lg mt-4">
+                                        Join the growing number of Florida law enforcement agencies leveraging AI-powered intelligence tools to enhance officer safety, improve case outcomes, and streamline operations.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-6">
+                                    <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
+                                        <h3 className="text-xl font-semibold mb-3 text-primary">Get Your Personalized Agency Demo</h3>
+                                        <p className="text-muted-foreground mb-4">
+                                            Our team will work with your department to demonstrate how Shield FL integrates with your existing workflows, policies, and training protocols. We'll show you exactly how our platform can address your agency's specific challenges.
+                                        </p>
+                                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                                            <div className="text-center">
+                                                <p className="text-sm text-muted-foreground mb-2">Contact us directly:</p>
+                                                <Button asChild size="lg" className="font-semibold">
+                                                    <Link href="mailto:admin@shieldfl.app">
+                                                        <Mail className="mr-2 h-5 w-5" />
+                                                        admin@shieldfl.app
+                                                    </Link>
+                                                </Button>
                                             </div>
-                                            <div className="space-y-1.5">
-                                                <Label htmlFor="title">Title</Label>
-                                                <Input id="title" required placeholder="Training Sergeant" />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid md:grid-cols-3 gap-4 pt-6">
+                                        <div className="text-center">
+                                            <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-3">
+                                                <Shield className="h-6 w-6 text-primary" />
                                             </div>
+                                            <h4 className="font-semibold">Rapid Deployment</h4>
+                                            <p className="text-sm text-muted-foreground">Get your officers trained and operational within days, not months</p>
                                         </div>
-                                         <div className="space-y-1.5">
-                                            <Label htmlFor="agency">Agency</Label>
-                                            <Input id="agency" required placeholder="Anytown Police Department" />
+                                        <div className="text-center">
+                                            <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-3">
+                                                <Users className="h-6 w-6 text-primary" />
+                                            </div>
+                                            <h4 className="font-semibold">Dedicated Support</h4>
+                                            <p className="text-sm text-muted-foreground">Full implementation support and ongoing training for your team</p>
                                         </div>
-                                         <div className="space-y-1.5">
-                                            <Label htmlFor="email">Email</Label>
-                                            <Input id="email" type="email" required placeholder="j.doe@anytownpd.gov" />
+                                        <div className="text-center">
+                                            <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-3">
+                                                <Zap className="h-6 w-6 text-primary" />
+                                            </div>
+                                            <h4 className="font-semibold">Immediate ROI</h4>
+                                            <p className="text-sm text-muted-foreground">Measurable improvements in report quality and officer confidence from day one</p>
                                         </div>
-                                         <div className="space-y-1.5">
-                                            <Label htmlFor="message">Message</Label>
-                                            <Textarea id="message" placeholder="We are interested in learning more about policy integration..." />
-                                        </div>
-                                        <Button type="submit" className="w-full">Schedule My Demo</Button>
-                                    </form>
+                                    </div>
                                 </CardContent>
-                            </CardHeader>
-                        </Card>
-                    </section>
+                            </Card>
+                        </div>
+                    </div>
+                </section>
                 </div>
             </main>
         </>
