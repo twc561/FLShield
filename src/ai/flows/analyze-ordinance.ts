@@ -31,62 +31,39 @@ export const analyzeOrdinance = ai.defineFlow(
   {
     name: 'analyzeOrdinance',
     inputSchema: AnalyzeOrdinanceInputSchema,
-    config: {
-      model: 'gemini-1.5-pro',
-      generationConfig: {
-        maxOutputTokens: 8192,
-        temperature: 0.1,
-        topP: 0.95,
-        topK: 40,
-      }
-    }
   },
   async (input) => {
     try {
       console.log('Starting enhanced ordinance analysis...', input);
       
       const { output } = await ai.generate({
-        model: 'gemini-1.5-pro',
+        model: 'googleai/gemini-1.5-flash',
         config: {
           maxOutputTokens: 8192,
           temperature: 0.1,
         },
-        prompt: `You are an elite legal research AI specializing in Florida municipal and county ordinances. You have access to comprehensive databases of local government codes and regulations. Your task is to perform a thorough analysis of ordinances for law enforcement officers.
+        prompt: `You are a specialized Florida municipal ordinance research assistant. Your task is to find and analyze local ordinances for law enforcement officers.
 
-ENHANCED SEARCH METHODOLOGY:
-1. **Primary Search Sources:**
-   - Official municipal/county websites with searchable codes
-   - Municode.com comprehensive database
-   - American Legal Publishing (library.amlegal.com)
-   - Code Publishing Company databases
-   - Franklin Legal Publishing systems
-   - General Code LLC platforms
+SEARCH TASK:
+Jurisdiction: ${input.jurisdiction}
+Query: ${input.query}
 
-2. **Search Strategy:**
-   - For specific ordinance numbers: Find exact match with current text
-   - For keywords: Search multiple related terms and synonyms
-   - Cross-reference with state statutes for consistency
-   - Verify ordinance is current and not repealed
-   - Check for recent amendments or updates
+INSTRUCTIONS:
+1. Search for ordinances related to the query in the specified jurisdiction
+2. For alcohol-related queries, look for open container, public consumption, or liquor license violations
+3. Provide practical enforcement information
+4. If no specific ordinance is found, return "Not Found" for ordinanceNumber and ordinanceTitle
+5. Include realistic confidence scores (0-100)
+6. Focus on common municipal violations that officers encounter
 
-3. **Quality Assurance:**
-   - Verify the ordinance exists in official sources
-   - Ensure text is complete and current
-   - Cross-check penalty information
-   - Validate enforcement procedures
-   - Identify related ordinances
+EXAMPLE ORDINANCES TO CONSIDER:
+- Open container in public places
+- Consumption of alcohol in parks/streets  
+- Disorderly conduct related to alcohol
+- Public intoxication ordinances
+- Noise ordinances related to bars/establishments
 
-CRITICAL REQUIREMENTS:
-- If you cannot find ANY relevant ordinance after exhaustive search, return "Not Found" for ordinanceNumber and ordinanceTitle
-- Provide realistic confidence scores based on source quality
-- Include alternative ordinances when multiple options exist
-- Focus on enforceable violations, not administrative procedures
-- Ensure all information is accurate and up-to-date
-
-JURISDICTION: ${input.jurisdiction}
-QUERY: ${input.query}
-
-Perform a comprehensive search using all available resources. Return valid JSON matching the schema exactly.`,
+Return a complete analysis with enforcement notes, penalties, and related information. If you cannot find a specific ordinance, be honest about limitations and suggest the officer verify with local code enforcement or city attorney.`,
         output: {
           schema: AnalyzeOrdinanceOutputSchema,
         },
@@ -98,18 +75,27 @@ Perform a comprehensive search using all available resources. Return valid JSON 
     } catch (error) {
       console.error('Enhanced ordinance analysis failed:', error);
       
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const isModelError = errorMessage.includes('not found') || errorMessage.includes('NOT_FOUND');
+      
       return {
-        ordinanceNumber: "Analysis Error",
-        ordinanceTitle: "Service Unavailable",
+        ordinanceNumber: "Service Error",
+        ordinanceTitle: isModelError ? "AI Model Configuration Issue" : "Search Service Unavailable", 
         jurisdiction: input.jurisdiction,
-        fullOrdinanceText: "The enhanced AI analysis service encountered a technical error and could not retrieve the ordinance information at this time.",
-        summary: `Failed to analyze ordinance "${input.query}" in ${input.jurisdiction}. This may be due to network issues, database unavailability, or service overload.`,
-        enforcementNotes: "Unable to provide enforcement guidance due to analysis error. Please verify the jurisdiction spelling and ordinance details manually, or try again later.",
-        penalty: "Unknown - Analysis Error",
+        fullOrdinanceText: isModelError 
+          ? "The AI model is not properly configured. Please contact system administrator to resolve the model configuration issue."
+          : "The ordinance search service is temporarily unavailable. This may be due to network connectivity issues or service maintenance.",
+        summary: isModelError
+          ? `AI model configuration error prevented analysis of "${input.query}" in ${input.jurisdiction}. The system needs administrative attention.`
+          : `Failed to analyze ordinance "${input.query}" in ${input.jurisdiction}. Service may be temporarily unavailable.`,
+        enforcementNotes: isModelError
+          ? "System configuration issue detected. Manual verification of ordinances is recommended until service is restored."
+          : "Unable to provide enforcement guidance due to service error. Please verify jurisdiction spelling and try again, or consult local code enforcement directly.",
+        penalty: "Unknown - Service Error",
         relatedStateStatute: "N/A",
         searchConfidence: 0,
         alternativeOrdinances: [],
-        lastUpdated: "Error - Unable to determine"
+        lastUpdated: "Error - Service Unavailable"
       };
     }
   }
