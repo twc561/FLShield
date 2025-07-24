@@ -16,8 +16,12 @@ import { Badge } from "@/components/ui/badge"
 
 export const ScenarioWalkthrough = React.memo(function ScenarioWalkthrough({
   scenario,
+  onProgress,
+  onComplete,
 }: {
   scenario: Scenario
+  onProgress?: (progress: number) => void
+  onComplete?: () => void
 }) {
   const [currentStepId, setCurrentStepId] = React.useState(scenario.initialStepId)
   const [visitedSteps, setVisitedSteps] = React.useState<Set<string>>(new Set([scenario.initialStepId]))

@@ -183,8 +183,8 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
                   }
                   return (
                     <AccordionItem value={scenario.id} key={scenario.id} className="border rounded-md mb-2 bg-card">
-                      <AccordionTrigger className="p-4 hover:no-underline">
-                       <div className="flex items-start gap-4 w-full pr-4">
+                      <div className="p-4">
+                        <div className="flex items-start gap-4 w-full">
                           <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center relative">
                             <Icon className="w-6 h-6 text-primary" />
                             {isCompleted && (
@@ -195,7 +195,9 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
                           </div>
                           <div className="flex-grow min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold text-base">{scenario.name}</h3>
+                              <AccordionTrigger className="font-semibold text-base p-0 hover:no-underline flex-grow text-left">
+                                {scenario.name}
+                              </AccordionTrigger>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation()
@@ -226,7 +228,7 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
                             )}
                           </div>
                         </div>
-                      </AccordionTrigger>
+                      </div>
                       <AccordionContent className="p-4 pt-0">
                         <div className="border-t pt-4">
                            <Tabs defaultValue="interactive" className="w-full">
@@ -235,7 +237,11 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
                                 <TabsTrigger value="static">Static Checklist</TabsTrigger>
                               </TabsList>
                               <TabsContent value="interactive" className="mt-4">
-                                <ScenarioWalkthrough scenario={scenario} />
+                                <ScenarioWalkthrough 
+                                  scenario={scenario} 
+                                  onProgress={(progress) => updateProgress(scenario.id, progress)}
+                                  onComplete={() => markCompleted(scenario.id)}
+                                />
                               </TabsContent>
                               <TabsContent value="static" className="mt-4">
                                  <div className="space-y-4">
