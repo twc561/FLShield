@@ -36,35 +36,81 @@ export default function AICommandSearch() {
   const router = useRouter();
 
   useEffect(() => {
-    // Generate contextual suggestions
     const generateContextualSuggestions = () => {
-      const hour = new Date().getHours();
-      const suggestions: string[] = [];
-      
+      const hour = new Date().getHours()
+      let suggestions: string[] = []
+
       if (hour >= 6 && hour < 10) {
-        suggestions.push("What's in my briefing today?", "Show me traffic stop procedures", "DUI investigation checklist");
+        suggestions = ['Daily briefing', 'Field interview', 'Traffic stop', 'Report writing']
+      } else if (hour >= 10 && hour < 14) {
+        suggestions = ['Evidence collection', 'Suspect interview', 'Legal research', 'Case documentation']
       } else if (hour >= 14 && hour < 18) {
-        suggestions.push("Help me identify evidence", "What charges apply here?", "Use of force guidelines");
-      } else if (hour >= 22 || hour < 6) {
-        suggestions.push("Baker Act procedures", "Domestic violence protocol", "Emergency response guide");
+        suggestions = ['Incident response', 'Use of force', 'Emergency protocols', 'Arrest procedures']
+      } else if (hour >= 18 && hour < 22) {
+        suggestions = ['Domestic violence', 'DUI investigation', 'Mental health crisis', 'Night patrol']
       } else {
-        suggestions.push("Legal advice for this situation", "Help me write a report", "Case law lookup");
+        suggestions = ['Baker Act', 'Emergency response', 'Backup protocols', 'Officer safety']
       }
-      
-      setContextualSuggestions(suggestions);
-    };
 
-    // Generate smart shortcuts
+      setContextualSuggestions(suggestions)
+    }
+
     const generateSmartShortcuts = () => {
-      const shortcuts = [
-        { key: "⌘1", title: "AI Legal Advisor", href: "/ai-legal-advisor" },
-        { key: "⌘2", title: "Field Notes", href: "/notes" },
-        { key: "⌘3", title: "Daily Briefing", href: "/daily-briefing" },
-        { key: "⌘4", title: "Evidence ID", href: "/field-procedures/visual-evidence-identifier" }
-      ];
-      setSmartShortcuts(shortcuts);
-    };
+      // Get usage data from localStorage
+      try {
+        const usage = JSON.parse(localStorage.getItem('toolUsage') || '{}')
+        const recent = JSON.parse(localStorage.getItem('recentTools') || '[]')
 
+        // Get top 4 most used features
+        const topUsed = Object.entries(usage)
+          .sort(([,a], [,b]) => (b as number) - (a as number))
+          .slice(0, 4)
+          .map(([id]) => id)
+
+        // Find corresponding features
+        const shortcuts = topUsed
+          .map(id => {
+            return dashboardFeatureGroups
+              .flatMap(group => group.features)
+              .find(feature => feature.id === id)
+          })
+          .filter(Boolean)
+          .map((feature, index) => ({
+            title: feature!.title,
+            href: feature!.targetPage,
+            shortcut: index + 1
+          }))
+
+        // If we don't have enough usage data, use default shortcuts
+        if (shortcuts.length < 4) {
+          const defaultShortcuts = [
+            { title: 'AI Legal Advisor', href: '/ai-legal-advisor', shortcut: 1 },
+            { title: 'Field Scenarios', href: '/field-procedures/scenario-checklists', shortcut: 2 },
+            { title: 'Statute Search', href: '/legal-reference/statutes', shortcut: 3 },
+            { title: 'Emergency Protocols', href: '/emergency-response/baker-act-guide', shortcut: 4 }
+          ]
+          setSmartShortcuts(defaultShortcuts)
+        } else {
+          setSmartShortcuts(shortcuts)
+        }
+      } catch (error) {
+        console.error('Error loading shortcuts:', error)
+        // Fallback to default shortcuts
+        const defaultShortcuts = [
+          { title: 'AI Legal Advisor', href: '/ai-legal-advisor', shortcut: 1 },
+          { title: 'Field Scenarios', href: '/field-procedures/scenario-checklists', shortcut: 2 },
+          { title: 'Statute Search', href: '/legal-reference/statutes', shortcut: 3 },
+          { title: 'Emergency Protocols', href: '/emergency-response/baker-act-guide', shortcut: 4 }
+        ]
+        setSmartShortcuts(defaultShortcuts)
+      }
+    }
+
+    generateContextualSuggestions();
+    generateSmartShortcuts();
+  }, []);
+
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Cmd+K or Ctrl+K to open overlay
       if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
@@ -93,10 +139,8 @@ export default function AICommandSearch() {
       }
     };
 
-    generateContextualSuggestions();
-    generateSmartShortcuts();
     document.addEventListener('keydown', handleKeyDown);
-    
+
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [router, smartShortcuts]);
 

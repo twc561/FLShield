@@ -1,4 +1,3 @@
-
 'use client'
 
 import React, { useState, useEffect } from "react"
@@ -119,7 +118,7 @@ const CategorySection = ({ group, index }: { group: any, index: number }) => {
             </motion.div>
           </div>
         </button>
-        
+
         <motion.div
           initial={false}
           animate={{ height: isExpanded ? "auto" : 0, opacity: isExpanded ? 1 : 0 }}
@@ -170,7 +169,11 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setIsClient(true)
-    
+  }, [])
+
+  useEffect(() => {
+    if (!isClient) return
+
     const getTimeContext = () => {
       const hour = new Date().getHours()
       if (hour >= 5 && hour < 12) {
@@ -194,24 +197,24 @@ export default function DashboardPage() {
       try {
         const usage = JSON.parse(localStorage.getItem('toolUsage') || '{}')
         const recent = JSON.parse(localStorage.getItem('recentTools') || '[]')
-        
+
         // Get frequently used tools (sorted by usage count)
         const frequentIds = Object.entries(usage)
           .sort(([,a], [,b]) => (b as number) - (a as number))
           .slice(0, 6)
           .map(([id]) => id)
-        
+
         const frequent = dashboardFeatureGroups
           .flatMap(g => g.features)
           .filter(f => frequentIds.includes(f.id))
           .sort((a, b) => frequentIds.indexOf(a.id) - frequentIds.indexOf(b.id))
-        
+
         // Get recently used tools
         const recentTools = recent
           .map((id: string) => dashboardFeatureGroups.flatMap(g => g.features).find(f => f.id === id))
           .filter(Boolean)
           .slice(0, 4)
-        
+
         setFrequentlyUsed(frequent)
         setRecentlyUsed(recentTools)
       } catch (error) {
@@ -224,7 +227,7 @@ export default function DashboardPage() {
       const hour = new Date().getHours()
       let suggestions: FeatureModule[] = []
       let message = ''
-      
+
       if (hour >= 6 && hour < 10) {
         // Morning shift preparation
         suggestions = dashboardFeatureGroups
@@ -254,13 +257,24 @@ export default function DashboardPage() {
         message = "☀️ Day shift active - Common enforcement tools ready"
         setAiSuggestions(['Charge assistance', 'Interview techniques', 'Traffic enforcement'])
       }
-      
+
       setContextualTools(suggestions.slice(0, 4))
       setContextualMessage(message)
     }
 
     loadUsageData()
     getContextualTools()
+
+    // Update contextual tools every 30 minutes
+    const contextualInterval = setInterval(getContextualTools, 30 * 60 * 1000)
+
+    return () => {
+      clearInterval(contextualInterval)
+    }
+  }, [isClient])
+
+  useEffect(() => {
+    if (!isClient) return
 
     const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
         if (user) {
@@ -279,14 +293,10 @@ export default function DashboardPage() {
         }
     });
 
-    // Update contextual tools every 30 minutes
-    const contextualInterval = setInterval(getContextualTools, 30 * 60 * 1000)
-
     return () => {
       unsubscribe()
-      clearInterval(contextualInterval)
     }
-  }, [])
+  }, [isClient])
 
   // Prevent hydration mismatch by ensuring consistent server/client rendering
   if (!isClient || !mounted) {
@@ -311,7 +321,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/5 pb-20">
       <div className="px-4 pt-6 max-w-md mx-auto w-full">
-        
+
         {/* Header Section */}
         <motion.div 
           variants={itemVariants}
@@ -398,7 +408,7 @@ export default function DashboardPage() {
                 Context-aware
               </Badge>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-3">
               {/* Frequently Used */}
               {frequentlyUsed.length > 0 && (
