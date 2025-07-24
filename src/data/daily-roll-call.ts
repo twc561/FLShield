@@ -6,7 +6,7 @@ export interface DailyRollCallModule {
   hook: string;
   interactionType: 'multiple-choice' | 'true-false' | 'legal-not-legal';
   options?: string[];
-  correctAnswer: string | number;
+  correctAnswer: string | number | boolean;
   rationale: string;
   citation: string;
   deepDiveLinks: {
@@ -208,7 +208,7 @@ export const dailyRollCallModules: DailyRollCallModule[] = [
     categoryIcon: "🧠",
     hook: "You respond to a domestic disturbance. The victim has visible injuries but refuses to cooperate. Can you make an arrest?",
     interactionType: "true-false",
-    correctAnswer: "True",
+    correctAnswer: true,
     rationale: "Florida law allows for arrest in domestic violence cases even without victim cooperation if there is probable cause that domestic violence occurred. Visible injuries can provide sufficient probable cause.",
     citation: "F.S. 741.29 - Domestic Violence Arrests",
     deepDiveLinks: [
@@ -254,7 +254,7 @@ export const dailyRollCallModules: DailyRollCallModule[] = [
     categoryIcon: "🎯",
     hook: "A suspect voluntarily comes to the station for questioning. Halfway through, they ask to leave. Are they in custody?",
     interactionType: "true-false",
-    correctAnswer: "False",
+    correctAnswer: false,
     rationale: "Custody for Miranda purposes depends on whether a reasonable person would feel free to leave. If the suspect voluntarily came and can leave when they ask, they are not in custody and Miranda warnings are not required.",
     citation: "Berkemer v. McCarty, 468 U.S. 420 (1984)",
     deepDiveLinks: [
@@ -320,7 +320,7 @@ export const dailyRollCallModules: DailyRollCallModule[] = [
     categoryIcon: "🛡️",
     hook: "A person threatens to harm themselves but is not currently attempting it. They refuse help. Can you Baker Act them?",
     interactionType: "true-false",
-    correctAnswer: "True",
+    correctAnswer: true,
     rationale: "The Baker Act allows involuntary examination if there's reason to believe a person is mentally ill and poses a threat to themselves or others. Threats of self-harm meet this criteria even without immediate action.",
     citation: "F.S. 394.463 - Involuntary Examination",
     deepDiveLinks: [
@@ -340,7 +340,7 @@ export const dailyRollCallModules: DailyRollCallModule[] = [
     categoryIcon: "⚖️",
     hook: "During a consensual vehicle search, the owner says 'I want you to stop searching now.' Must you stop immediately?",
     interactionType: "true-false",
-    correctAnswer: "True",
+    correctAnswer: true,
     rationale: "Consent can be withdrawn at any time during a search. Once consent is clearly withdrawn, the search must stop unless another legal justification exists (warrant, exigent circumstances, etc.).",
     citation: "Florida v. Jimeno, 500 U.S. 248 (1991)",
     deepDiveLinks: [
@@ -386,7 +386,7 @@ export const dailyRollCallModules: DailyRollCallModule[] = [
     categoryIcon: "🧠",
     hook: "You arrive first at a burglary scene. The homeowner wants to check what was stolen. Do you let them enter?",
     interactionType: "true-false",
-    correctAnswer: "False",
+    correctAnswer: false,
     rationale: "Crime scene integrity is paramount. Allowing anyone, including victims, to enter before processing can contaminate evidence. Secure the scene first, then obtain a list of missing items through interview.",
     citation: "Crime Scene Processing Standards",
     deepDiveLinks: [
@@ -432,7 +432,7 @@ export const dailyRollCallModules: DailyRollCallModule[] = [
     categoryIcon: "🎯",
     hook: "A 16-year-old is in custody for theft. They waive Miranda rights but ask for their parents. Can you continue questioning?",
     interactionType: "true-false",
-    correctAnswer: "False",
+    correctAnswer: false,
     rationale: "When a juvenile requests their parents during custodial interrogation, questioning must stop until a parent or guardian is present, even if Miranda rights were initially waived.",
     citation: "F.S. 985.101 - Juvenile Rights During Interrogation",
     deepDiveLinks: [

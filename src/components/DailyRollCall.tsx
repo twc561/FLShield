@@ -35,6 +35,9 @@ export function DailyRollCall({ className }: DailyRollCallProps) {
   }, []);
 
   const handleAnswerSelect = (answer: string | number) => {
+    console.log('Selected answer:', answer, 'Type:', typeof answer);
+    console.log('Correct answer:', module?.correctAnswer, 'Type:', typeof module?.correctAnswer);
+    console.log('Interaction type:', module?.interactionType);
     setSelectedAnswer(answer);
     setCompletionState('answered');
   };
@@ -88,7 +91,24 @@ export function DailyRollCall({ className }: DailyRollCallProps) {
     );
   }
 
-  const isCorrectAnswer = selectedAnswer === module.correctAnswer;
+  // Fix answer comparison to handle different data types properly
+  const isCorrectAnswer = (() => {
+    if (module.interactionType === 'multiple-choice') {
+      // For multiple choice, selectedAnswer is an index number, correctAnswer should be a number
+      return selectedAnswer === module.correctAnswer;
+    } else if (module.interactionType === 'true-false') {
+      // For true/false, both should be boolean or string comparison
+      return selectedAnswer === module.correctAnswer || 
+             (selectedAnswer === 'true' && module.correctAnswer === true) ||
+             (selectedAnswer === 'false' && module.correctAnswer === false) ||
+             (selectedAnswer === true && module.correctAnswer === 'true') ||
+             (selectedAnswer === false && module.correctAnswer === 'false');
+    } else if (module.interactionType === 'legal-not-legal') {
+      // For legal/not-legal, both should be string comparison
+      return selectedAnswer === module.correctAnswer;
+    }
+    return selectedAnswer === module.correctAnswer;
+  })();
   const categoryColors = {
     'legal-update': 'bg-blue-100 text-blue-800 border-blue-200',
     'procedural-refresher': 'bg-green-100 text-green-800 border-green-200',
