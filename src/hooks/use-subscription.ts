@@ -77,7 +77,9 @@ export function useSubscription() {
     return unsubscribe
   }, [user, loading, mounted])
 
-  const isPro = subscription?.status === "active"
+  // Admin override: Always treat osorioecat@gmail.com as pro user
+  const isAdminUser = user?.email === "osorioecat@gmail.com"
+  const isPro = isAdminUser || subscription?.status === "active"
 
   const isFeatureFree = (pathname: string) => {
     const freeFeatures = [
@@ -93,6 +95,8 @@ export function useSubscription() {
   console.log("Subscription status:", {
     isPro,
     subscriptionStatus: subscription?.status,
+    isAdminUser,
+    userEmail: user?.email,
     pathname,
     isFeatureFree: isFeatureFree(pathname),
     requiresSubscription,
