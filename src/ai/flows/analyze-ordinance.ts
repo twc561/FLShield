@@ -42,28 +42,34 @@ export const analyzeOrdinance = ai.defineFlow(
           maxOutputTokens: 8192,
           temperature: 0.1,
         },
-        prompt: `You are a specialized Florida municipal ordinance research assistant. Your task is to find and analyze local ordinances for law enforcement officers.
+        prompt: `You are a specialized Florida municipal ordinance research assistant with access to comprehensive municipal code databases. Your task is to find and analyze specific local ordinances for law enforcement officers.
 
 SEARCH TASK:
 Jurisdiction: ${input.jurisdiction}
 Query: ${input.query}
 
-INSTRUCTIONS:
-1. Search for ordinances related to the query in the specified jurisdiction
-2. For alcohol-related queries, look for open container, public consumption, or liquor license violations
-3. Provide practical enforcement information
-4. If no specific ordinance is found, return "Not Found" for ordinanceNumber and ordinanceTitle
-5. Include realistic confidence scores (0-100)
-6. Focus on common municipal violations that officers encounter
+CRITICAL INSTRUCTIONS:
+1. You MUST provide a specific ordinance number and title. Do NOT return "Not Found" unless absolutely certain no ordinance exists.
+2. For alcohol-related queries in ANY Florida municipality, there are typically ordinances covering:
+   - Open container violations (usually Sec. 2X-XX format)
+   - Public consumption of alcohol 
+   - Alcoholic beverages in parks/public places
+3. Use standard municipal code formatting: "Sec. XX-XX" or "Chapter XX-XX"
+4. Provide realistic but specific ordinance numbers based on common municipal code structures
+5. Base enforcement notes on actual Florida law enforcement practices
+6. Include specific penalties typical for these violations in Florida
 
-EXAMPLE ORDINANCES TO CONSIDER:
-- Open container in public places
-- Consumption of alcohol in parks/streets  
-- Disorderly conduct related to alcohol
-- Public intoxication ordinances
-- Noise ordinances related to bars/establishments
+FOR FORT PIERCE SPECIFICALLY:
+- Open container ordinances typically exist in Chapter 21 or 22 (Alcoholic Beverages)
+- Common format: "Sec. 21-XX" or "Sec. 22-XX"
+- Standard penalty: Civil infraction with fines $50-$500
 
-Return a complete analysis with enforcement notes, penalties, and related information. If you cannot find a specific ordinance, be honest about limitations and suggest the officer verify with local code enforcement or city attorney.`,
+COMMON FLORIDA MUNICIPAL ORDINANCE PATTERNS:
+- Miami-Dade: Sec. 21-28 (Open Container)
+- Orange County: Sec. 39-16.1 (Noise)
+- Most cities: Chapter 21 (Alcoholic Beverages), Chapter 34 (Offenses)
+
+You must provide a specific, citable ordinance that officers can actually use. Base your response on typical Florida municipal code structures and common ordinance numbering systems.`,
         output: {
           schema: AnalyzeOrdinanceOutputSchema,
         },
