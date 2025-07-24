@@ -191,10 +191,19 @@ async function generateSecurityInsights(userId: string): Promise<SecurityInsight
     }
 
     // Check for multiple active sessions
-    const sessionsQuery = await adminDb.collection('user_sessions')
-      .where('userId', '==', userId)
-      .where('isActive', '==', true)
-      .get()
+    let sessionsQuery
+    try {
+      sessionsQuery = await adminDb.collection('user_sessions')
+        .where('userId', '==', userId)
+        .where('isActive', '==', true)
+        .get()
+    } catch (error) {
+      console.log('Sessions query failed, using fallback:', error.message)
+      sessionsQuery = await adminDb.collection('user_sessions')
+        .where('userId', '==', userId)
+        .limit(10)
+        .get()
+    }
 
     if (sessionsQuery.size > 3) {
       insights.push({

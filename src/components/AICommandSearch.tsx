@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
@@ -5,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { SearchIcon, Loader2, Sparkles, Command, ChevronDown, ChevronRight } from "lucide-react";
+import { SearchIcon, Loader2, Sparkles, Command, ChevronDown, ChevronRight, Zap, Shield, Car, ListChecks, Scale, FileText, Gavel, Languages } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -21,6 +22,82 @@ interface SearchResult {
   relevanceScore?: number;
 }
 
+interface QuickShortcut {
+  id: string;
+  title: string;
+  icon: React.ElementType;
+  href: string;
+  color: string;
+  gradient: string;
+}
+
+const quickShortcuts: QuickShortcut[] = [
+  {
+    id: 'dui-guide',
+    title: 'DUI Guide',
+    icon: Car,
+    href: '/traffic-enforcement/dui-investigation',
+    color: 'text-red-600',
+    gradient: 'from-red-100/80 to-orange-100/60 dark:from-red-950/60 dark:to-orange-950/40'
+  },
+  {
+    id: 'field-scenarios',
+    title: 'Field Scenarios',
+    icon: ListChecks,
+    href: '/field-procedures/scenario-checklists',
+    color: 'text-blue-600',
+    gradient: 'from-blue-100/80 to-cyan-100/60 dark:from-blue-950/60 dark:to-cyan-950/40'
+  },
+  {
+    id: 'baker-act',
+    title: 'Baker Act',
+    icon: Shield,
+    href: '/emergency-response/baker-act-guide',
+    color: 'text-purple-600',
+    gradient: 'from-purple-100/80 to-pink-100/60 dark:from-purple-950/60 dark:to-pink-950/40'
+  },
+  {
+    id: 'statutes',
+    title: 'FL Statutes',
+    icon: Scale,
+    href: '/legal-reference/statutes',
+    color: 'text-green-600',
+    gradient: 'from-green-100/80 to-emerald-100/60 dark:from-green-950/60 dark:to-emerald-950/40'
+  },
+  {
+    id: 'charges',
+    title: 'AI Charges',
+    icon: Gavel,
+    href: '/reporting-development/ai-charge-assistant',
+    color: 'text-amber-600',
+    gradient: 'from-amber-100/80 to-yellow-100/60 dark:from-amber-950/60 dark:to-yellow-950/40'
+  },
+  {
+    id: 'report-writer',
+    title: 'AI Reports',
+    icon: FileText,
+    href: '/reporting-development/ai-report-writer',
+    color: 'text-indigo-600',
+    gradient: 'from-indigo-100/80 to-blue-100/60 dark:from-indigo-950/60 dark:to-blue-950/40'
+  },
+  {
+    id: 'translator',
+    title: 'Translator',
+    icon: Languages,
+    href: '/field-translation-guide',
+    color: 'text-teal-600',
+    gradient: 'from-teal-100/80 to-cyan-100/60 dark:from-teal-950/60 dark:to-cyan-950/40'
+  },
+  {
+    id: 'use-of-force',
+    title: 'Use of Force',
+    icon: Zap,
+    href: '/reporting-development/use-of-force-wizard',
+    color: 'text-rose-600',
+    gradient: 'from-rose-100/80 to-pink-100/60 dark:from-rose-950/60 dark:to-pink-950/40'
+  }
+];
+
 export default function AICommandSearch() {
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -29,8 +106,6 @@ export default function AICommandSearch() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [contextualSuggestions, setContextualSuggestions] = useState<string[]>([]);
-  const [smartShortcuts, setSmartShortcuts] = useState<{key: string, title: string, href: string}[]>([]);
-  const [quickAccessOpen, setQuickAccessOpen] = useState(true);
   const [aiSuggestionsOpen, setAiSuggestionsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -55,59 +130,7 @@ export default function AICommandSearch() {
       setContextualSuggestions(suggestions)
     }
 
-    const generateSmartShortcuts = () => {
-      // Get usage data from localStorage
-      try {
-        const usage = JSON.parse(localStorage.getItem('toolUsage') || '{}')
-        const recent = JSON.parse(localStorage.getItem('recentTools') || '[]')
-
-        // Get top 4 most used features
-        const topUsed = Object.entries(usage)
-          .sort(([,a], [,b]) => (b as number) - (a as number))
-          .slice(0, 4)
-          .map(([id]) => id)
-
-        // Find corresponding features
-        const shortcuts = topUsed
-          .map(id => {
-            return dashboardFeatureGroups
-              .flatMap(group => group.features)
-              .find(feature => feature.id === id)
-          })
-          .filter(Boolean)
-          .map((feature, index) => ({
-            title: feature!.title,
-            href: feature!.targetPage,
-            shortcut: index + 1
-          }))
-
-        // If we don't have enough usage data, use default shortcuts
-        if (shortcuts.length < 4) {
-          const defaultShortcuts = [
-            { title: 'AI Legal Advisor', href: '/ai-legal-advisor', shortcut: 1 },
-            { title: 'Field Scenarios', href: '/field-procedures/scenario-checklists', shortcut: 2 },
-            { title: 'Statute Search', href: '/legal-reference/statutes', shortcut: 3 },
-            { title: 'Emergency Protocols', href: '/emergency-response/baker-act-guide', shortcut: 4 }
-          ]
-          setSmartShortcuts(defaultShortcuts)
-        } else {
-          setSmartShortcuts(shortcuts)
-        }
-      } catch (error) {
-        console.error('Error loading shortcuts:', error)
-        // Fallback to default shortcuts
-        const defaultShortcuts = [
-          { title: 'AI Legal Advisor', href: '/ai-legal-advisor', shortcut: 1 },
-          { title: 'Field Scenarios', href: '/field-procedures/scenario-checklists', shortcut: 2 },
-          { title: 'Statute Search', href: '/legal-reference/statutes', shortcut: 3 },
-          { title: 'Emergency Protocols', href: '/emergency-response/baker-act-guide', shortcut: 4 }
-        ]
-        setSmartShortcuts(defaultShortcuts)
-      }
-    }
-
     generateContextualSuggestions();
-    generateSmartShortcuts();
   }, []);
 
   useEffect(() => {
@@ -119,15 +142,6 @@ export default function AICommandSearch() {
         setIsShortcutPressed(true);
         setTimeout(() => setIsShortcutPressed(false), 200);
         setTimeout(() => inputRef.current?.focus(), 100);
-      }
-
-      // Smart shortcuts
-      if ((event.metaKey || event.ctrlKey) && ['1', '2', '3', '4'].includes(event.key)) {
-        event.preventDefault();
-        const shortcutIndex = parseInt(event.key) - 1;
-        if (smartShortcuts[shortcutIndex]) {
-          router.push(smartShortcuts[shortcutIndex].href);
-        }
       }
 
       // ESC to close overlay
@@ -142,7 +156,7 @@ export default function AICommandSearch() {
     document.addEventListener('keydown', handleKeyDown);
 
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [router, smartShortcuts]);
+  }, [router]);
 
   // Smart search function
   const performSmartSearch = (searchQuery: string) => {
@@ -227,6 +241,11 @@ export default function AICommandSearch() {
     router.push(item.path);
   };
 
+  const handleQuickShortcut = (shortcut: QuickShortcut) => {
+    setIsOpen(false);
+    router.push(shortcut.href);
+  };
+
   return (
     <>
       {/* Trigger Button */}
@@ -238,12 +257,6 @@ export default function AICommandSearch() {
         <SearchIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
         <span className="text-muted-foreground bg-gradient-to-r from-gray-600 to-gray-500 dark:from-gray-300 dark:to-gray-400 bg-clip-text text-transparent font-medium">Search everything...</span>
         <div className="ml-auto flex items-center gap-1">
-          {/* Small shortcuts */}
-          <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground mr-2">
-            <kbd className="px-1 py-0.5 bg-gradient-to-br from-blue-100/80 to-purple-100/60 dark:from-blue-900/60 dark:to-purple-900/40 rounded text-[10px] border border-blue-200/50 dark:border-blue-700/50">⌘1</kbd>
-            <kbd className="px-1 py-0.5 bg-gradient-to-br from-purple-100/80 to-pink-100/60 dark:from-purple-900/60 dark:to-pink-900/40 rounded text-[10px] border border-purple-200/50 dark:border-purple-700/50">⌘2</kbd>
-            <kbd className="px-1 py-0.5 bg-gradient-to-br from-pink-100/80 to-blue-100/60 dark:from-pink-900/60 dark:to-blue-900/40 rounded text-[10px] border border-pink-200/50 dark:border-pink-700/50">⌘3</kbd>
-          </div>
           <div className="flex items-center gap-1 text-xs bg-gradient-to-r from-blue-100/90 to-purple-100/70 dark:from-blue-900/70 dark:to-purple-900/50 px-1.5 py-0.5 rounded border border-blue-300/40 dark:border-blue-700/40">
             <Command className="w-3 h-3 text-blue-600 dark:text-blue-400" />
             <span className="text-blue-700 dark:text-blue-300 font-medium">K</span>
@@ -338,39 +351,6 @@ export default function AICommandSearch() {
                 )
               ) : (
                 <div className="space-y-4">
-                  {/* Smart Shortcuts - Collapsible */}
-                  <Collapsible open={quickAccessOpen} onOpenChange={setQuickAccessOpen}>
-                    <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/30 dark:hover:from-blue-950/30 dark:hover:to-purple-950/20 rounded-md transition-all duration-200 backdrop-blur-sm">
-                      <h3 className="text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">Quick Access</h3>
-                      {quickAccessOpen ? (
-                        <ChevronDown className="h-4 w-4 text-blue-500 dark:text-blue-400" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4 text-purple-500 dark:text-purple-400" />
-                      )}
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="space-y-2 mt-2">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {smartShortcuts.map((shortcut, index) => (
-                          <div
-                            key={shortcut.key}
-                            onClick={() => {
-                              setIsOpen(false);
-                              router.push(shortcut.href);
-                            }}
-                            className={`p-2 rounded-md border cursor-pointer transition-all duration-200 flex items-center justify-between bg-gradient-to-r backdrop-blur-sm hover:shadow-md ${
-                              index % 2 === 0
-                                ? 'from-blue-50/60 to-purple-50/40 dark:from-blue-950/40 dark:to-purple-950/30 border-blue-200/40 dark:border-blue-800/40 hover:from-blue-100/80 hover:to-purple-100/60 dark:hover:from-blue-900/60 dark:hover:to-purple-900/40'
-                                : 'from-purple-50/60 to-pink-50/40 dark:from-purple-950/40 dark:to-pink-950/30 border-purple-200/40 dark:border-purple-800/40 hover:from-purple-100/80 hover:to-pink-100/60 dark:hover:from-purple-900/60 dark:hover:to-pink-900/40'
-                            }`}
-                          >
-                            <span className="text-sm truncate font-medium bg-gradient-to-r from-gray-700 to-gray-600 dark:from-gray-200 dark:to-gray-300 bg-clip-text text-transparent">{shortcut.title}</span>
-                            <kbd className="px-1.5 py-0.5 text-xs bg-gradient-to-r from-white/80 to-gray-50/60 dark:from-gray-700/80 dark:to-gray-600/60 rounded flex-shrink-0 border border-gray-200/50 dark:border-gray-600/50 font-medium text-gray-700 dark:text-gray-300">{shortcut.key}</kbd>
-                          </div>
-                        ))}
-                      </div>
-                    </CollapsibleContent>
-                  </Collapsible>
-
                   {/* AI Suggestions - Collapsible */}
                   <Collapsible open={aiSuggestionsOpen} onOpenChange={setAiSuggestionsOpen}>
                     <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-pink-50/30 dark:hover:from-purple-950/30 dark:hover:to-pink-950/20 rounded-md transition-all duration-200 backdrop-blur-sm">
@@ -415,9 +395,33 @@ export default function AICommandSearch() {
             </div>
           </div>
 
+          {/* Quick Shortcuts Bottom Bar */}
+          <div className="flex-shrink-0 p-3 border-t border-gradient-to-r border-blue-200/30 dark:border-blue-800/30 bg-gradient-to-r from-white/90 via-blue-50/50 to-purple-50/40 dark:from-gray-900/90 dark:via-blue-950/50 dark:to-purple-950/40 backdrop-blur-sm">
+            <div className="text-xs text-center mb-2">
+              <span className="bg-gradient-to-r from-gray-600 to-gray-500 dark:from-gray-400 dark:to-gray-300 bg-clip-text text-transparent font-medium">Quick Access</span>
+            </div>
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
+              {quickShortcuts.map((shortcut) => {
+                const IconComponent = shortcut.icon;
+                return (
+                  <div
+                    key={shortcut.id}
+                    onClick={() => handleQuickShortcut(shortcut)}
+                    className={`flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer transition-all duration-200 bg-gradient-to-br ${shortcut.gradient} border border-white/30 dark:border-gray-700/30 hover:shadow-md hover:scale-105 backdrop-blur-sm`}
+                  >
+                    <IconComponent className={`w-4 h-4 ${shortcut.color} mb-1`} />
+                    <span className="text-[10px] font-medium text-center leading-tight bg-gradient-to-r from-gray-700 to-gray-600 dark:from-gray-200 dark:to-gray-300 bg-clip-text text-transparent">
+                      {shortcut.title}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Footer */}
-          <div className="flex-shrink-0 px-4 py-2 border-t border-gradient-to-r border-blue-200/30 dark:border-blue-800/30 bg-gradient-to-r from-white/80 via-blue-50/40 to-purple-50/30 dark:from-gray-900/80 dark:via-blue-950/40 dark:to-purple-950/30 backdrop-blur-sm text-xs text-center">
-            <span className="bg-gradient-to-r from-gray-600 to-gray-500 dark:from-gray-400 dark:to-gray-300 bg-clip-text text-transparent font-medium">Press Enter to select • Esc to close</span>
+          <div className="flex-shrink-0 px-4 py-2 border-t border-gradient-to-r border-gray-200/20 dark:border-gray-700/20 bg-gradient-to-r from-gray-50/60 via-blue-50/30 to-purple-50/20 dark:from-gray-800/60 dark:via-blue-950/30 dark:to-purple-950/20 backdrop-blur-sm text-xs text-center">
+            <span className="bg-gradient-to-r from-gray-600 to-gray-500 dark:from-gray-400 dark:to-gray-300 bg-clip-text text-transparent font-medium">Press Enter to select • Esc to close • Click shortcuts for instant access</span>
           </div>
         </DialogContent>
       </Dialog>

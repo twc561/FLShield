@@ -87,8 +87,25 @@ export default function AccountSecurityPage() {
 
       if (dashboardResponse.ok) {
         const dashboardData = await dashboardResponse.json()
-        setSecurityMetrics(dashboardData.metrics)
-        setSecurityInsights(dashboardData.insights)
+        setSecurityMetrics(dashboardData.metrics || {})
+        setSecurityInsights(dashboardData.insights || [])
+      } else {
+        console.error('Failed to fetch security dashboard data')
+        // Set default empty state
+        setSecurityMetrics({
+          activeAlerts: 0,
+          criticalAlerts: 0,
+          activeSessions: 0,
+          recentLogins: 0,
+          failedLoginAttempts: 0,
+          suspiciousActivity: 0,
+          passwordStrength: 'medium',
+          lastPasswordChange: null,
+          twoFactorEnabled: false,
+          trustedDeviceCount: 0,
+          securityScore: 50
+        })
+        setSecurityInsights([])
       }
 
       if (alertsResponse.ok) {

@@ -49,12 +49,23 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all sessions for the user (active and inactive)
-    const sessionsQuery = await adminDb
-      .collection('user_sessions')
-      .where('userId', '==', userId)
-      .orderBy('createdAt', 'desc')
-      .limit(50)
-      .get()
+    let sessionsQuery
+    try {
+      sessionsQuery = await adminDb
+        .collection('user_sessions')
+        .where('userId', '==', userId)
+        .orderBy('createdAt', 'desc')
+        .limit(50)
+        .get()
+    } catch (indexError) {
+      console.log('Index not ready, falling back to simpler query:', indexError.message)
+      // Fallback to simpler query without ordering if index isn't ready
+      sessionsQuery = await adminDb
+        .collection('user_sessions')
+        .where('userId', '==', userId)
+        .limit(50)
+        .get()
+    }
 
     const sessions: SessionData[] = []
     sessionsQuery.forEach(doc => {
