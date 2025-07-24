@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -20,8 +19,31 @@ export const ScenarioWalkthrough = React.memo(function ScenarioWalkthrough({
 }: {
   scenario: Scenario
 }) {
-  const [currentStepId, setCurrentStepId] = React.useState<string>(scenario.initialStepId)
+  const [currentStepId, setCurrentStepId] = React.useState(scenario.initialStepId)
+  const [visitedSteps, setVisitedSteps] = React.useState<Set<string>>(new Set([scenario.initialStepId]))
+  const [decisionHistory, setDecisionHistory] = React.useState<Array<{stepId: string, choice: string}>>([])
+  const [startTime] = React.useState(Date.now())
+  const [completionTime, setCompletionTime] = React.useState<number | null>(null)
+
   const currentStep = scenario.walkthrough[currentStepId]
+  const totalSteps = Object.keys(scenario.walkthrough).length
+  const currentProgress = Math.round((visitedSteps.size / totalSteps) * 100)
+
+  React.useEffect(() => {
+    if (onProgress) {
+      onProgress(currentProgress)
+    }
+  }, [currentProgress, onProgress])
+
+  React.useEffect(() => {
+    if (currentStep?.isEnd && !completionTime) {
+      const endTime = Date.now()
+      setCompletionTime(endTime - startTime)
+      if (onComplete) {
+        onComplete()
+      }
+    }
+  }, [currentStep?.isEnd, completionTime, startTime, onComplete])
 
   const handleChoice = (nextStepId: string) => {
     setCurrentStepId(nextStepId)

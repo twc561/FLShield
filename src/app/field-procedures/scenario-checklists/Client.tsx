@@ -29,28 +29,125 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
   const [selectedScenario, setSelectedScenario] = React.useState<Scenario | null>(null)
   const [openAccordionItem, setOpenAccordionItem] = React.useState<string | undefined>(undefined)
 
-  const filteredScenarios = React.useMemo(() => {
-    if (!searchTerm) {
-      return initialScenarios
+  const [difficultyFilter, setDifficultyFilter] = React.useState<string>("all")
+  const [categoryFilter, setCategoryFilter] = React.useState<string>("all")
+  const [completedScenarios, setCompletedScenarios] = React.useState<Set<string>>(new Set())
+  const [favoriteScenarios, setFavoriteScenarios] = React.useState<Set<string>>(new Set())
+  const [scenarioProgress, setScenarioProgress] = React.useState<Record<string, number>>({})
+
+  // Load user preferences from localStorage
+  React.useEffect(() => {
+    const completed = localStorage.getItem('completed-scenarios')
+    const favorites = localStorage.getItem('favorite-scenarios')
+    const progress = localStorage.getItem('scenario-progress')
+
+    if (completed) setCompletedScenarios(new Set(JSON.parse(completed)))
+    if (favorites) setFavoriteScenarios(new Set(JSON.parse(favorites)))
+    if (progress) setScenarioProgress(JSON.parse(progress))
+  }, [])
+
+  const toggleFavorite = (scenarioId: string) => {
+    const newFavorites = new Set(favoriteScenarios)
+    if (newFavorites.has(scenarioId)) {
+      newFavorites.delete(scenarioId)
+    } else {
+      newFavorites.add(scenarioId)
     }
-    return initialScenarios.filter(
-      (scenario) =>
+    setFavoriteScenarios(newFavorites)
+    localStorage.setItem('favorite-scenarios', JSON.stringify(Array.from(newFavorites)))
+  }
+
+  const markCompleted = (scenarioId: string) => {
+    const newCompleted = new Set(completedScenarios)
+    newCompleted.add(scenarioId)
+    setCompletedScenarios(newCompleted)
+    localStorage.setItem('completed-scenarios', JSON.stringify(Array.from(newCompleted)))
+  }
+
+  const updateProgress = (scenarioId: string, progress: number) => {
+    const newProgress = { ...scenarioProgress, [scenarioId]: progress }
+    setScenarioProgress(newProgress)
+    localStorage.setItem('scenario-progress', JSON.stringify(newProgress))
+  }
+
+  const getDifficultyLevel = (scenario: Scenario): 'Basic' | 'Intermediate' | 'Advanced' => {
+    const complexityFactors = [
+      scenario.walkthrough ? Object.keys(scenario.walkthrough).length : 0,
+      scenario.keyStatutes.length,
+      scenario.staticChecklist.reduce((sum, section) => sum + section.items.length, 0)
+    ]
+    const totalComplexity = complexityFactors.reduce((sum, factor) => sum + factor, 0)
+
+    if (totalComplexity < 15) return 'Basic'
+    if (totalComplexity < 25) return 'Intermediate'
+    return 'Advanced'
+  }
+
+  const filteredScenarios = React.useMemo(() => {
+    return initialScenarios.filter(scenario => {
+      const matchesSearch = !searchTerm || (
         scenario.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        scenario.goal.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        scenario.subtitle.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  }, [searchTerm, initialScenarios])
+        scenario.subtitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        scenario.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        scenario.goal.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+
+      const matchesCategory = categoryFilter === "all" || scenario.category === categoryFilter
+      const matchesDifficulty = difficultyFilter === "all" || getDifficultyLevel(scenario) === difficultyFilter
+
+      return matchesSearch && matchesCategory && matchesDifficulty
+    })
+  }, [initialScenarios, searchTerm, categoryFilter, difficultyFilter])
 
   return (
     <div className="space-y-6">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-        <Input
-          placeholder="Search scenarios (e.g., DUI, Theft...)"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10"
-        />
+      <div className="space-y-4 mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search scenarios by name, category, or description..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-4">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Category:</label>
+            <select 
+              value={categoryFilter} 
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="border rounded px-3 py-1 text-sm"
+            >
+              <option value="all">All Categories</option>
+              {categoryOrder.map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Difficulty:</label>
+            <select 
+              value={difficultyFilter} 
+              onChange={(e) => setDifficultyFilter(e.target.value)}
+              className="border rounded px-3 py-1 text-sm"
+            >
+              <option value="all">All Levels</option>
+              <option value="Basic">Basic</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-4 ml-auto">
+            <span className="text-sm text-gray-600">
+              Completed: {completedScenarios.size} | Favorites: {favoriteScenarios.size}
+            </span>
+          </div>
+        </div>
       </div>
 
       <Accordion 
@@ -71,16 +168,62 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
                 .filter(s => s.category === category)
                 .map((scenario) => {
                   const Icon = (LucideIcons as any)[scenario.icon] || LucideIcons.HelpCircle
+                  const isCompleted = completedScenarios.has(scenario.id)
+                  const isFavorite = favoriteScenarios.has(scenario.id)
+                  const progress = scenarioProgress[scenario.id] || 0
+                  const difficulty = getDifficultyLevel(scenario)
+
+                  const getDifficultyColor = (level: string) => {
+                    switch(level) {
+                      case 'Basic': return 'text-green-600 bg-green-100'
+                      case 'Intermediate': return 'text-yellow-600 bg-yellow-100'
+                      case 'Advanced': return 'text-red-600 bg-red-100'
+                      default: return 'text-gray-600 bg-gray-100'
+                    }
+                  }
                   return (
                     <AccordionItem value={scenario.id} key={scenario.id} className="border rounded-md mb-2 bg-card">
                       <AccordionTrigger className="p-4 hover:no-underline">
-                        <div className="flex items-center gap-4 flex-1">
-                          <div className="p-2 bg-primary/10 rounded-lg">
+                       <div className="flex items-start gap-4 w-full pr-4">
+                          <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center relative">
                             <Icon className="w-6 h-6 text-primary" />
+                            {isCompleted && (
+                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                                <Check className="w-3 h-3 text-white" />
+                              </div>
+                            )}
                           </div>
-                          <div className="flex-1 text-left">
-                            <p className="font-semibold text-base text-card-foreground">{scenario.name}</p>
-                            <p className="text-xs text-muted-foreground">{scenario.subtitle}</p>
+                          <div className="flex-grow min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-semibold text-base">{scenario.name}</h3>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  toggleFavorite(scenario.id)
+                                }}
+                                className={`p-1 rounded-full hover:bg-gray-100 ${
+                                  isFavorite ? 'text-yellow-500' : 'text-gray-400'
+                                }`}
+                              >
+                                <LucideIcons.Star className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+                              </button>
+                              <span className={`px-2 py-1 rounded text-xs font-medium ${getDifficultyColor(difficulty)}`}>
+                                {difficulty}
+                              </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-2">{scenario.subtitle}</p>
+                            <p className="text-sm text-gray-600 line-clamp-2 mb-2">{scenario.goal}</p>
+                            {progress > 0 && (
+                              <div className="flex items-center gap-2">
+                                <div className="w-24 bg-gray-200 rounded-full h-2">
+                                  <div 
+                                    className="bg-primary h-2 rounded-full transition-all"
+                                    style={{ width: `${progress}%` }}
+                                  />
+                                </div>
+                                <span className="text-xs text-gray-500">{progress}%</span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </AccordionTrigger>

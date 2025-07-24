@@ -1680,4 +1680,673 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
       },
     ]
   },
+  'child-abuse-investigation': {
+    id: 'child-abuse-investigation',
+    name: 'Child Abuse Investigation',
+    subtitle: 'F.S. §39.201, §827.03',
+    category: 'Crimes Against Persons',
+    icon: 'Heart',
+    goal: 'To protect a child from abuse, conduct a thorough investigation, and coordinate with DCF for the child\'s safety.',
+    keyStatutes: ['F.S. §39.201 (Mandatory reporting)', 'F.S. §827.03 (Child abuse)'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Receiving the Report',
+        content: 'You receive a report of suspected child abuse from a school counselor, neighbor, or mandated reporter.',
+        aiTip: 'Child abuse investigations require extreme sensitivity. Your primary concern is the immediate safety of the child. Document everything meticulously.',
+        choices: [
+          { text: "Arrive to assess the child's safety.", nextStepId: "child_safety" }
+        ]
+      },
+      'child_safety': {
+        phase: 'Scene Control & Initial Investigation', 
+        title: 'Immediate Safety Assessment',
+        content: 'You need to determine if the child is in immediate danger.',
+        aiTip: 'Look for visible injuries, signs of fear around caregivers, poor hygiene, or statements from the child. If immediate danger exists, coordinate with DCF for emergency removal.',
+        choices: [
+          { text: "Child appears safe for now.", nextStepId: "interview_prep" },
+          { text: "Child is in immediate danger.", nextStepId: "emergency_removal" }
+        ]
+      },
+      'emergency_removal': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Emergency Protective Custody',
+        content: 'The child needs immediate protection.',
+        aiLegalNote: 'Under F.S. §39.401, you can take a child into protective custody without a court order if there is reasonable cause to believe the child is in imminent danger. You MUST notify DCF immediately.',
+        choices: [
+          { text: "Child is secured. Begin investigation.", nextStepId: "evidence_gathering" }
+        ]
+      },
+      'interview_prep': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Preparing for Child Interview',
+        content: 'You need to interview the child about the alleged abuse.',
+        aiTip: 'Use developmentally appropriate language. Consider having a trained child forensic interviewer conduct the interview. Avoid leading questions. Create a safe, comfortable environment away from the alleged perpetrator.',
+        choices: [
+          { text: "Conduct the interview.", nextStepId: "child_interview" }
+        ]
+      },
+      'child_interview': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Child Interview',
+        content: 'You are interviewing the child victim.',
+        aiTip: 'Document the child\'s exact words. Note their demeanor, emotional state, and any physical indicators. Ask open-ended questions like "Tell me what happened" rather than "Did daddy hurt you?"',
+        choices: [
+          { text: "Child discloses abuse.", nextStepId: "disclosure_response" },
+          { text: "Child denies or cannot communicate abuse.", nextStepId: "physical_evidence" }
+        ]
+      },
+      'disclosure_response': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Responding to Disclosure',
+        content: 'The child has disclosed abuse.',
+        aiTip: 'Thank the child for telling you. Reassure them it\'s not their fault. Explain that adults will help keep them safe. Document exactly what was said and arrange for medical examination if needed.',
+        choices: [
+          { text: "Proceed to gather additional evidence.", nextStepId: "physical_evidence" }
+        ]
+      },
+      'physical_evidence': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Physical Evidence Collection',
+        content: 'You are documenting physical evidence.',
+        aiTip: 'Photograph all injuries with and without scale. Document the scene where abuse occurred. Collect any relevant physical evidence. Arrange for medical examination by trained SANE nurse if sexual abuse is suspected.',
+        choices: [
+          { text: "Evidence collected. Interview suspects.", nextStepId: "suspect_interview" }
+        ]
+      },
+      'suspect_interview': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Suspect Interview',
+        content: 'You need to interview the alleged perpetrator.',
+        aiLegalNote: 'Read Miranda rights before any custodial interrogation. Consider having the interview at the station in a controlled environment. The suspect may provide explanations that are inconsistent with the evidence.',
+        choices: [
+          { text: "Suspect admits to abuse.", nextStepId: "arrest_decision" },
+          { text: "Suspect denies abuse.", nextStepId: "arrest_decision" }
+        ]
+      },
+      'arrest_decision': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Arrest Decision',
+        content: 'Based on your investigation, do you have probable cause for arrest?',
+        aiLegalNote: 'Child abuse arrests require careful consideration of all evidence. The child\'s statement alone may be sufficient if credible and consistent. Consider the totality of circumstances including physical evidence, medical findings, and witness statements.',
+        choices: [
+          { text: "Make arrest for child abuse.", nextStepId: "post_arrest" },
+          { text: "Insufficient evidence for arrest.", nextStepId: "ongoing_investigation" }
+        ]
+      },
+      'post_arrest': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Post-Arrest Procedures',
+        content: 'The suspect is in custody.',
+        aiTip: 'Coordinate with DCF for child placement if not already done. Ensure all evidence is properly documented and submitted. The child may need ongoing counseling and support services.',
+        isEnd: true
+      },
+      'ongoing_investigation': {
+        phase: 'Resolution & Enforcement Action', 
+        title: 'Ongoing Investigation',
+        content: 'The investigation continues without arrest.',
+        aiTip: 'Even without arrest, ensure the child\'s safety through DCF services. The case may develop additional evidence over time. Maintain contact with DCF and document all follow-up actions.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Child Safety & Initial Response',
+        icon: 'Shield',
+        items: [
+          'Assess immediate danger to the child',
+          'Contact DCF hotline to report suspected abuse',
+          'Document the child\'s physical condition with photographs',
+          'Separate the child from the alleged perpetrator for interview',
+          'Consider emergency protective custody if in immediate danger'
+        ]
+      },
+      {
+        section: 'Evidence Collection & Documentation',
+        icon: 'Camera',
+        items: [
+          'Conduct forensic interview using developmentally appropriate techniques',
+          'Document the child\'s exact words and statements',
+          'Photograph all injuries and relevant scene evidence',
+          'Arrange medical examination by trained professionals',
+          'Collect any physical evidence from the scene'
+        ]
+      },
+      {
+        section: 'Investigation & Follow-up',
+        icon: 'FileText',
+        items: [
+          'Interview witnesses and family members separately',
+          'Conduct Miranda-advised interview of suspect if in custody',
+          'Coordinate with DCF for safety planning and services',
+          'Complete detailed offense report with all evidence',
+          'Ensure child has access to victim advocacy and counseling services'
+        ]
+      }
+    ]
+  },
+  'sexual-assault-investigation': {
+    id: 'sexual-assault-investigation',
+    name: 'Sexual Assault Investigation',
+    subtitle: 'F.S. §794.011, §960.001',
+    category: 'Crimes Against Persons',
+    icon: 'UserX',
+    goal: 'To conduct a trauma-informed investigation of sexual assault, preserve evidence, and support the victim throughout the process.',
+    keyStatutes: ['F.S. §794.011 (Sexual battery)', 'F.S. §960.001 (Victim rights)'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Initial Report',
+        content: 'You receive a report of sexual assault. The victim may be at a hospital, their residence, or calling for help.',
+        aiTip: 'Sexual assault investigations require extreme sensitivity and trauma-informed approaches. Your first priority is the victim\'s immediate safety and medical needs.',
+        choices: [
+          { text: "Meet with the victim.", nextStepId: "victim_contact" }
+        ]
+      },
+      'victim_contact': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Initial Victim Contact',
+        content: 'You are making first contact with the victim.',
+        aiTip: 'Approach with compassion and without judgment. Let them know they are safe now. Explain your role and that they control the pace of the interview. Offer victim advocacy services immediately.',
+        choices: [
+          { text: "Victim wants to proceed with report.", nextStepId: "medical_needs" },
+          { text: "Victim is unsure about reporting.", nextStepId: "victim_rights" }
+        ]
+      },
+      'victim_rights': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Explaining Victim Rights',
+        content: 'The victim is hesitant about proceeding.',
+        aiLegalNote: 'Under F.S. §960.001, victims have the right to be informed of their rights, to be treated with dignity, and to have a victim advocate present. They can choose to proceed or not, and can change their mind.',
+        choices: [
+          { text: "Victim decides to proceed.", nextStepId: "medical_needs" },
+          { text: "Victim declines to proceed now.", nextStepId: "preserve_options" }
+        ]
+      },
+      'preserve_options': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Preserving Future Options',
+        content: 'The victim doesn\'t want to proceed with a full report at this time.',
+        aiTip: 'Document what you can without victim identification. Provide them with victim services information and explain they can report later. Preserve any available evidence.',
+        isEnd: true
+      },
+      'medical_needs': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Medical and Evidence Collection',
+        content: 'Addressing the victim\'s medical needs and evidence preservation.',
+        aiTip: 'Time is critical for evidence collection. Coordinate with hospital for SANE examination if the assault was recent. Explain the process and ensure the victim consents to each step.',
+        choices: [
+          { text: "Medical exam completed or arranged.", nextStepId: "detailed_interview" }
+        ]
+      },
+      'detailed_interview': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Detailed Victim Interview',
+        content: 'Conducting a comprehensive interview with the victim.',
+        aiTip: 'Use open-ended questions. Let the victim tell their story in their own words. Document exact quotes. Be patient with delays or emotional responses. Allow breaks as needed.',
+        choices: [
+          { text: "Interview completed.", nextStepId: "scene_processing" }
+        ]
+      },
+      'scene_processing': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Crime Scene Processing',
+        content: 'Processing the location where the assault occurred.',
+        aiTip: 'Photograph the scene, collect any physical evidence, document the condition of items. Look for signs of struggle, DNA evidence, or items that corroborate the victim\'s account.',
+        choices: [
+          { text: "Scene processed. Identify suspect.", nextStepId: "suspect_identification" }
+        ]
+      },
+      'suspect_identification': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Suspect Identification and Location',
+        content: 'Working to identify and locate the suspect.',
+        aiTip: 'Use all available resources - surveillance video, cell phone data, witness interviews, social media. If the suspect is known to the victim, gather background information.',
+        choices: [
+          { text: "Suspect identified and located.", nextStepId: "suspect_interview" },
+          { text: "Suspect not yet located.", nextStepId: "warrant_process" }
+        ]
+      },
+      'suspect_interview': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Suspect Interview',
+        content: 'Interviewing the alleged perpetrator.',
+        aiLegalNote: 'Read Miranda rights if custodial interrogation. The suspect may claim consent or deny the encounter occurred. Document all statements. Consider recorded interview.',
+        choices: [
+          { text: "Suspect admits to non-consensual act.", nextStepId: "arrest_process" },
+          { text: "Suspect denies or claims consent.", nextStepId: "evidence_evaluation" }
+        ]
+      },
+      'warrant_process': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Arrest Warrant Process',
+        content: 'Seeking an arrest warrant for the suspect.',
+        aiTip: 'Prepare a detailed probable cause affidavit including victim statement, physical evidence, medical findings, and witness information. Coordinate with prosecutor\'s office.',
+        isEnd: true
+      },
+      'evidence_evaluation': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Evidence Evaluation',
+        content: 'Evaluating all evidence to determine probable cause.',
+        aiLegalNote: 'Sexual assault cases often involve credibility determinations. Consider all evidence: victim statement consistency, physical evidence, witness testimony, suspect behavior, and corroborating circumstances.',
+        choices: [
+          { text: "Probable cause exists for arrest.", nextStepId: "arrest_process" },
+          { text: "Insufficient evidence for arrest.", nextStepId: "consultation" }
+        ]
+      },
+      'arrest_process': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Arrest and Processing',
+        content: 'Making the arrest for sexual battery.',
+        aiTip: 'Ensure the victim is informed of the arrest. Coordinate with victim services for ongoing support. The victim may need protection if the suspect is released on bond.',
+        isEnd: true
+      },
+      'consultation': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Prosecutor Consultation',
+        content: 'Consulting with prosecutor\'s office on case disposition.',
+        aiTip: 'Even if you don\'t have enough for arrest now, the case may develop additional evidence. Keep the victim informed and maintain contact with victim services.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Victim-Centered Response',
+        icon: 'Heart',
+        items: [
+          'Approach victim with compassion and trauma-informed techniques',
+          'Explain victim rights and available services',
+          'Connect victim with advocate immediately',
+          'Let victim control pace and scope of interview',
+          'Provide regular updates on case status'
+        ]
+      },
+      {
+        section: 'Evidence Preservation & Collection',
+        icon: 'Search',
+        items: [
+          'Coordinate timely SANE examination if recent assault',
+          'Document and photograph all physical evidence',
+          'Process crime scene thoroughly',
+          'Collect clothing and bedding if applicable',
+          'Preserve digital evidence (texts, social media, etc.)'
+        ]
+      },
+      {
+        section: 'Investigation & Prosecution Support',
+        icon: 'FileText',
+        items: [
+          'Conduct comprehensive witness interviews',
+          'Document suspect interview with Miranda advisement',
+          'Coordinate with prosecutor on charging decisions',
+          'Prepare detailed probable cause affidavit',
+          'Ensure victim safety planning if suspect released'
+        ]
+      }
+    ]
+  },
+  'drug-overdose-response': {
+    id: 'drug-overdose-response',
+    name: 'Drug Overdose Response',
+    subtitle: 'F.S. §893.21, §381.887',
+    category: 'Emergency Response',
+    icon: 'Pill',
+    goal: 'To save a life during an overdose emergency while preserving evidence and navigating Good Samaritan law protections.',
+    keyStatutes: ['F.S. §893.21 (Drug-related overdoses)', 'F.S. §381.887 (Good Samaritan Act)'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Overdose Emergency Call',
+        content: 'You are dispatched to a possible drug overdose with EMS.',
+        aiTip: 'Time is critical in overdose responses. Your primary goal is to save the life, not make arrests. The Good Samaritan Act provides protections for overdose situations.',
+        choices: [
+          { text: "Arrive on scene with EMS.", nextStepId: "life_saving" }
+        ]
+      },
+      'life_saving': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Life-Saving Measures',
+        content: 'EMS is working to revive the overdose victim.',
+        aiTip: 'Assist EMS as needed. Secure the scene for their safety. Look for signs of what substances were used - this information helps EMS treat the patient effectively.',
+        choices: [
+          { text: "Victim is revived and conscious.", nextStepId: "conscious_victim" },
+          { text: "Victim is unconscious but breathing.", nextStepId: "unconscious_stable" },
+          { text: "Victim is not responding.", nextStepId: "fatal_overdose" }
+        ]
+      },
+      'conscious_victim': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Conscious Overdose Victim',
+        content: 'The victim has been revived and is conscious.',
+        aiTip: 'Focus on their wellbeing first. They may be confused or combative after Narcan. Explain who you are and that you\'re there to help. Document their condition.',
+        choices: [
+          { text: "Victim accepts medical transport.", nextStepId: "evidence_assessment" },
+          { text: "Victim refuses medical transport.", nextStepId: "refusal_protocol" }
+        ]
+      },
+      'unconscious_stable': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Unconscious but Stable',
+        content: 'The victim is breathing but remains unconscious.',
+        aiTip: 'They will be transported to hospital. While EMS prepares transport, secure any evidence that might help medical staff treat the patient.',
+        choices: [
+          { text: "Victim transported. Process scene.", nextStepId: "evidence_assessment" }
+        ]
+      },
+      'fatal_overdose': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Fatal Overdose',
+        content: 'Despite efforts, the victim has died.',
+        aiTip: 'This is now a death investigation. Secure the scene, notify the Medical Examiner, and document everything. The scene contains evidence of what killed the victim.',
+        choices: [
+          { text: "Scene secured. Begin death investigation.", nextStepId: "death_investigation" }
+        ]
+      },
+      'refusal_protocol': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Medical Refusal',
+        content: 'The conscious victim is refusing medical transport.',
+        aiLegalNote: 'A conscious adult can refuse medical treatment. However, document their mental state. If they appear impaired and lack capacity to make medical decisions, they may need involuntary transport.',
+        choices: [
+          { text: "Victim has capacity, releases medical.", nextStepId: "evidence_assessment" },
+          { text: "Victim lacks capacity due to impairment.", nextStepId: "involuntary_transport" }
+        ]
+      },
+      'involuntary_transport': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Involuntary Medical Transport',
+        content: 'The victim needs medical care but lacks capacity to consent.',
+        aiTip: 'Work with EMS to transport for medical evaluation. This is about saving their life, not punishment. Document the reasons for involuntary transport.',
+        choices: [
+          { text: "Victim transported. Process scene.", nextStepId: "evidence_assessment" }
+        ]
+      },
+      'evidence_assessment': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Evidence and Scene Assessment',
+        content: 'Assessing the scene for evidence and other persons present.',
+        aiTip: 'Look for drug paraphernalia, identify substances involved, and interview any witnesses present. Consider if the drugs that caused the overdose indicate trafficking quantities.',
+        choices: [
+          { text: "Large quantities suggest trafficking.", nextStepId: "trafficking_investigation" },
+          { text: "Personal use quantities only.", nextStepId: "good_samaritan_assessment" },
+          { text: "No controlled substances found.", nextStepId: "resolution" }
+        ]
+      },
+      'trafficking_investigation': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Potential Trafficking Investigation',
+        content: 'The quantities suggest possible drug trafficking.',
+        aiLegalNote: 'The Good Samaritan Act protections are limited. They don\'t protect against trafficking charges or other felonies. Significant quantities may warrant trafficking charges despite the overdose.',
+        choices: [
+          { text: "Proceed with trafficking investigation.", nextStepId: "arrest_decision" }
+        ]
+      },
+      'good_samaritan_assessment': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Good Samaritan Act Consideration',
+        content: 'Determining if Good Samaritan protections apply.',
+        aiLegalNote: 'F.S. §893.21 provides limited immunity for possession charges when someone seeks medical help for an overdose. This applies to the overdose victim and the person who called for help.',
+        choices: [
+          { text: "Good Samaritan protections apply.", nextStepId: "protected_resolution" },
+          { text: "Other charges still applicable.", nextStepId: "arrest_decision" }
+        ]
+      },
+      'death_investigation': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Fatal Overdose Investigation',
+        content: 'Investigating the circumstances of the overdose death.',
+        aiTip: 'Treat this as a potential homicide investigation. If someone provided the fatal dose, they could face murder charges. Document the drug source and any dealers involved.',
+        choices: [
+          { text: "Evidence points to dealer.", nextStepId: "dealer_investigation" },
+          { text: "Self-administered overdose.", nextStepId: "resolution" }
+        ]
+      },
+      'dealer_investigation': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Drug Dealer Investigation',
+        content: 'Investigating the source of the fatal drugs.',
+        aiLegalNote: 'Under F.S. §782.04, causing death by distribution of controlled substances can be charged as murder. The dealer who provided the fatal dose may face homicide charges.',
+        isEnd: true
+      },
+      'arrest_decision': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Arrest Decision',
+        content: 'Determining appropriate charges despite the overdose.',
+        aiTip: 'Consider the totality of circumstances. Balance public safety, the person\'s cooperation in the medical emergency, and the evidence of criminal activity.',
+        isEnd: true
+      },
+      'protected_resolution': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Good Samaritan Protection Applied',
+        content: 'The situation qualifies for Good Samaritan protections.',
+        aiTip: 'No arrest for simple possession. Focus on getting the person connected with treatment resources. Document the decision and legal justification in your report.',
+        isEnd: true
+      },
+      'resolution': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Case Resolution',
+        content: 'Concluding the overdose response.',
+        aiTip: 'Ensure all medical needs are met, evidence is properly documented, and appropriate referrals are made for treatment services. The goal is harm reduction and saving lives.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Life-Saving Priority',
+        icon: 'Heart',
+        items: [
+          'Secure scene for EMS safety',
+          'Assist with life-saving efforts as needed',
+          'Identify substances involved to help medical treatment',
+          'Document vital signs and consciousness level',
+          'Support EMS transport decisions'
+        ]
+      },
+      {
+        section: 'Legal Considerations',
+        icon: 'Scale',
+        items: [
+          'Assess Good Samaritan Act protections under F.S. §893.21',
+          'Distinguish between personal use and trafficking quantities',
+          'Interview person who called for medical help',
+          'Document cooperation with emergency response',
+          'Consider involuntary transport if victim lacks capacity'
+        ]
+      },
+      {
+        section: 'Investigation & Follow-up',
+        icon: 'FileText',
+        items: [
+          'Photograph and collect evidence of substances used',
+          'Interview witnesses present at scene',
+          'Trace source of drugs if fatal overdose',
+          'Connect surviving victim with treatment resources',
+          'Complete detailed report including medical outcomes'
+        ]
+      }
+    ]
+  },
+  'cybercrime-investigation': {
+    id: 'cybercrime-investigation',
+    name: 'Cybercrime Investigation',
+    subtitle: 'F.S. §815.04, §934.03',
+    category: 'General Investigations',
+    icon: 'Laptop',
+    goal: 'To investigate cybercrimes while preserving digital evidence and coordinating with specialized units.',
+    keyStatutes: ['F.S. §815.04 (Computer crimes)', 'F.S. §934.03 (Electronic surveillance)'],
+    initialStepId: 'start',
+    walkthrough: {
+      'start': {
+        phase: 'Initial Information & Arrival',
+        title: 'Cybercrime Report',
+        content: 'You receive a report of cybercrime - this could be identity theft, online fraud, cyber stalking, or computer intrusion.',
+        aiTip: 'Cybercrime investigations require specialized knowledge and tools. Your initial response is crucial for preserving digital evidence that can be easily destroyed.',
+        choices: [
+          { text: "Assess the type of cybercrime.", nextStepId: "crime_classification" }
+        ]
+      },
+      'crime_classification': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Crime Classification',
+        content: 'Determining the specific type of cybercrime.',
+        choices: [
+          { text: "Identity theft/financial fraud", nextStepId: "financial_crime" },
+          { text: "Computer intrusion/hacking", nextStepId: "computer_intrusion" },
+          { text: "Online harassment/cyber stalking", nextStepId: "cyber_stalking" },
+          { text: "Child exploitation", nextStepId: "child_exploitation" }
+        ]
+      },
+      'financial_crime': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Financial Cybercrime',
+        content: 'Investigating online financial fraud or identity theft.',
+        aiTip: 'Time is critical. Work with the victim to secure their accounts. Gather transaction records, IP logs, and communication evidence. Contact financial institutions immediately.',
+        choices: [
+          { text: "Secure victim accounts and gather evidence.", nextStepId: "digital_evidence" }
+        ]
+      },
+      'computer_intrusion': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Computer Intrusion Investigation',
+        content: 'Investigating unauthorized computer access or hacking.',
+        aiTip: 'Do not touch the compromised computer system. Call for cyber crime specialists. Preserve network logs and document any changes to the system.',
+        choices: [
+          { text: "Preserve systems and call specialists.", nextStepId: "specialist_coordination" }
+        ]
+      },
+      'cyber_stalking': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Cyber Stalking Investigation',
+        content: 'Investigating online harassment or stalking.',
+        aiTip: 'Document all threatening communications with screenshots. Preserve social media evidence and obtain victim\'s statement about fear or distress caused.',
+        choices: [
+          { text: "Document communications and assess threat.", nextStepId: "threat_assessment" }
+        ]
+      },
+      'child_exploitation': {
+        phase: 'Scene Control & Initial Investigation',
+        title: 'Child Exploitation Investigation',
+        content: 'Investigating online crimes against children.',
+        aiLegalNote: 'This requires immediate coordination with specialized units. Do not attempt to investigate alone. Preserve any evidence but avoid viewing suspected child exploitation material.',
+        choices: [
+          { text: "Immediately contact specialized unit.", nextStepId: "specialist_coordination" }
+        ]
+      },
+      'digital_evidence': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Digital Evidence Preservation',
+        content: 'Collecting and preserving digital evidence.',
+        aiTip: 'Take screenshots of all relevant communications and transactions. Create forensic images of hard drives if trained. Document chain of custody meticulously.',
+        choices: [
+          { text: "Evidence preserved. Trace suspect.", nextStepId: "suspect_identification" }
+        ]
+      },
+      'threat_assessment': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Threat Assessment',
+        content: 'Evaluating the credibility and immediacy of cyber threats.',
+        aiTip: 'Consider if the threats are specific, if the suspect has means to carry them out, and if the victim is in immediate danger. Document impact on victim\'s life.',
+        choices: [
+          { text: "Credible threat exists.", nextStepId: "protective_measures" },
+          { text: "Lower-level harassment.", nextStepId: "suspect_identification" }
+        ]
+      },
+      'protective_measures': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Protective Measures',
+        content: 'Implementing protection for cyber stalking victim.',
+        aiTip: 'Help victim secure their online accounts, consider restraining orders, and coordinate with social media platforms to remove threatening content.',
+        choices: [
+          { text: "Victim protected. Identify suspect.", nextStepId: "suspect_identification" }
+        ]
+      },
+      'specialist_coordination': {
+        phase: 'Evidence Gathering & Documentation',
+        title: 'Coordination with Specialists',
+        content: 'Working with cybercrime specialists and federal agencies.',
+        aiTip: 'Cybercrime often crosses jurisdictions. FBI, Secret Service, or state cybercrime units may have better resources and expertise for complex cases.',
+        choices: [
+          { text: "Specialists taking lead.", nextStepId: "support_role" },
+          { text: "Continue as primary investigator.", nextStepId: "suspect_identification" }
+        ]
+      },
+      'suspect_identification': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Suspect Identification',
+        content: 'Working to identify the cybercriminal.',
+        aiTip: 'Use IP address tracking, social media investigation, financial records, and communication analysis. Many cybercrimes require cooperation from internet service providers.',
+        choices: [
+          { text: "Suspect identified locally.", nextStepId: "local_arrest" },
+          { text: "Suspect in another jurisdiction.", nextStepId: "interstate_coordination" },
+          { text: "Suspect identity unknown.", nextStepId: "ongoing_investigation" }
+        ]
+      },
+      'local_arrest': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Local Arrest',
+        content: 'Arresting a local cybercrime suspect.',
+        aiLegalNote: 'Cybercrime arrests often require search warrants for digital devices. Coordinate with prosecutors on appropriate charges under F.S. Chapter 815.',
+        isEnd: true
+      },
+      'interstate_coordination': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Interstate Coordination',
+        content: 'Coordinating with other jurisdictions for arrest.',
+        aiTip: 'Work with prosecutors to file charges locally and coordinate with other jurisdictions for arrest and extradition. Federal agencies may be helpful.',
+        isEnd: true
+      },
+      'support_role': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Supporting Specialist Investigation',
+        content: 'Supporting a specialist-led investigation.',
+        aiTip: 'Provide local knowledge, assist with victim interviews, and support any local aspects of the investigation. Learn from the specialists.',
+        isEnd: true
+      },
+      'ongoing_investigation': {
+        phase: 'Resolution & Enforcement Action',
+        title: 'Ongoing Investigation',
+        content: 'Investigation continues with unidentified suspect.',
+        aiTip: 'Document all evidence thoroughly. Cybercriminals may strike again with similar methods. Monitor for pattern crimes and coordinate with other agencies.',
+        isEnd: true
+      }
+    },
+    staticChecklist: [
+      {
+        section: 'Digital Evidence Preservation',
+        icon: 'HardDrive',
+        items: [
+          'Do not touch suspect computer systems without training',
+          'Take screenshots of all relevant digital communications',
+          'Preserve social media posts and online evidence',
+          'Document IP addresses and login information',
+          'Maintain strict chain of custody for digital evidence'
+        ]
+      },
+      {
+        section: 'Victim Protection & Support',
+        icon: 'Shield',
+        items: [
+          'Help victim secure compromised accounts immediately',
+          'Document financial losses and impact on victim',
+          'Assess credibility and immediacy of threats',
+          'Connect victim with appropriate support services',
+          'Coordinate with financial institutions if fraud involved'
+        ]
+      },
+      {
+        section: 'Investigation & Coordination',
+        icon: 'Network',
+        items: [
+          'Determine if case requires specialized cybercrime unit',
+          'Coordinate with federal agencies for interstate crimes',
+          'Work with internet service providers for records',
+          'Prepare detailed warrants for digital device searches',
+          'Consider pattern crimes and multi-jurisdictional aspects'
+        ]
+      }
+    ]
+  },
 };
