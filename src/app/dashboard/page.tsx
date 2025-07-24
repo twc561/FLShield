@@ -161,6 +161,7 @@ export default function DashboardPage() {
   const [isClient, setIsClient] = useState(false)
   const [contextualTools, setContextualTools] = useState<FeatureModule[]>([])
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'evening' | 'night'>('morning')
+  const [usageStats, setUsageStats] = useState<any>(null)
   const [weatherContext, setWeatherContext] = useState<string>('')
   const [frequentlyUsed, setFrequentlyUsed] = useState<FeatureModule[]>([])
   const [recentlyUsed, setRecentlyUsed] = useState<FeatureModule[]>([])
@@ -221,6 +222,29 @@ export default function DashboardPage() {
         console.error('Error loading usage data:', error)
       }
     }
+
+    // Load usage stats from API
+    const loadUsageStats = async () => {
+      if (!auth.currentUser) return
+
+      try {
+        const response = await fetch(`/api/usage?userId=${auth.currentUser.uid}`, {
+          headers: {
+            'Authorization': `Bearer ${await auth.currentUser.getIdToken()}`
+          }
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          setUsageStats(data.summary)
+        }
+      } catch (error) {
+        console.error('Error loading usage stats:', error)
+      }
+    }
+
+    loadUsageData()
+    loadUsageStats()
 
     // Generate contextual recommendations based on time
     const getContextualTools = () => {
@@ -371,6 +395,40 @@ export default function DashboardPage() {
               />
             </div>
           </motion.div>
+
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle className="text-lg">Your Usage This Month</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {usageStats?.totalQueries || 0}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Total Queries</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">
+                    {usageStats?.uniqueFeatures || 0}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Tools Used</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {usageStats?.activeDays || 0}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Active Days</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-orange-600">
+                    {usageStats?.averageQueriesPerDay || 0}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Avg/Day</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Contextual AI Recommendations */}
           {contextualMessage && (

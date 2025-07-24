@@ -12,6 +12,11 @@ interface UsageMetrics {
   voiceCommands: number
   totalRequests: number
   lastResetDate: any
+  featuresUsed: string[]
+  mostUsedFeatures: { feature: string; count: number }[]
+  activeDays: number
+  dailyUsage: { [date: string]: number }
+  featureBreakdown: { [feature: string]: number }
 }
 
 interface QuotaLimits {
@@ -52,6 +57,18 @@ function isNewMonth(lastResetDate: any): boolean {
          now.getFullYear() !== lastReset.getFullYear()
 }
 
+function calculateActiveDays(dailyUsage: { [date: string]: number }): number {
+  const currentMonth = new Date().getMonth()
+  const currentYear = new Date().getFullYear()
+  
+  return Object.keys(dailyUsage).filter(dateStr => {
+    const date = new Date(dateStr)
+    return date.getMonth() === currentMonth && 
+           date.getFullYear() === currentYear &&
+           dailyUsage[dateStr] > 0
+  }).length
+}
+
 export async function GET(request: NextRequest) {
   try {
     const headersList = await headers()
@@ -63,7 +80,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('userId')
-    const period = searchParams.get('period') || 'current' // current, last30days, last90days
+    const period = searchParams.get('period') || 'current'
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID required' }, { status: 400 })
@@ -88,15 +105,18 @@ export async function GET(request: NextRequest) {
       documentsAccessed: 0,
       voiceCommands: 0,
       totalRequests: 0,
-      lastResetDate: null
+      lastResetDate: null,
+      featuresUsed: [],
+      mostUsedFeatures: [],
+      activeDays: 0,
+      dailyUsage: {},
+      featureBreakdown: {}
     }
 
     if (usageDoc.exists) {
       const data = usageDoc.data()
       
-      // Check if we need to reset monthly usage
       if (isNewMonth(data.lastResetDate)) {
-        // Reset usage for new month
         currentUsage = {
           aiRequests: 0,
           searchQueries: 0,
@@ -104,13 +124,26 @@ export async function GET(request: NextRequest) {
           documentsAccessed: 0,
           voiceCommands: 0,
           totalRequests: 0,
-          lastResetDate: FieldValue.serverTimestamp()
+          lastResetDate: FieldValue.serverTimestamp(),
+          featuresUsed: [],
+          mostUsedFeatures: [],
+          activeDays: 0,
+          dailyUsage: {},
+          featureBreakdown: {}
         }
         
-        // Update in database
         await adminDb.collection('usage_metrics').doc(userId).set(currentUsage)
       } else {
         currentUsage = data as UsageMetrics
+        currentUsage.activeDays = calculateActiveDays(currentUsage.dailyUsage || {})
+        
+        // Generate most used features from feature breakdown
+        if (currentUsage.featureBreakdown) {
+          currentUsage.mostUsedFeatures = Object.entries(currentUsage.featureBreakdown)
+            .map(([feature, count]) => ({ feature, count: count as number }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10)
+        }
       }
     }
 
@@ -125,6 +158,8 @@ export async function GET(request: NextRequest) {
 
     // Get historical usage data if requested
     let historicalData = []
+    let usageTrends = []
+    
     if (period !== 'current') {
       const days = period === 'last30days' ? 30 : 90
       const startDate = new Date()
@@ -141,9 +176,31 @@ export async function GET(request: NextRequest) {
         date: doc.data().date,
         ...doc.data().metrics
       }))
+
+      // Generate usage trends for charts
+      usageTrends = historyQuery.docs.map(doc => {
+        const data = doc.data()
+        return {
+          date: data.date.toDate().toISOString().split('T')[0],
+          queries: data.metrics?.aiRequests || 0,
+          features: Object.keys(data.metrics?.featureBreakdown || {}).length
+        }
+      }).reverse()
     }
 
+    // Calculate summary stats
+    const totalQueries = currentUsage.aiRequests + currentUsage.searchQueries + currentUsage.voiceCommands
+    const uniqueFeatures = Object.keys(currentUsage.featureBreakdown || {}).length
+
     return NextResponse.json({
+      // Legacy format for existing components
+      aiQueries: totalQueries,
+      featuresUsed: uniqueFeatures,
+      activeDays: currentUsage.activeDays,
+      mostUsedFeatures: currentUsage.mostUsedFeatures,
+      usageTrends,
+      
+      // Enhanced format
       currentUsage,
       quotaLimits,
       usagePercentages,
@@ -152,6 +209,12 @@ export async function GET(request: NextRequest) {
       billingCycle: {
         resetDate: currentUsage.lastResetDate,
         daysUntilReset: 30 - new Date().getDate()
+      },
+      summary: {
+        totalQueries,
+        uniqueFeatures,
+        activeDays: currentUsage.activeDays,
+        averageQueriesPerDay: currentUsage.activeDays > 0 ? Math.round(totalQueries / currentUsage.activeDays) : 0
       }
     })
   } catch (error) {
@@ -172,7 +235,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid authorization header' }, { status: 401 })
     }
 
-    const { userId, action, metadata } = await request.json()
+    const { userId, action, feature, metadata } = await request.json()
 
     if (!userId || !action) {
       return NextResponse.json({ error: 'User ID and action required' }, { status: 400 })
@@ -189,7 +252,6 @@ export async function POST(request: NextRequest) {
 
     let currentUsage: UsageMetrics
     if (!usageDoc.exists || isNewMonth(usageDoc.data()?.lastResetDate)) {
-      // Create new usage record or reset for new month
       currentUsage = {
         aiRequests: 0,
         searchQueries: 0,
@@ -197,7 +259,12 @@ export async function POST(request: NextRequest) {
         documentsAccessed: 0,
         voiceCommands: 0,
         totalRequests: 0,
-        lastResetDate: FieldValue.serverTimestamp()
+        lastResetDate: FieldValue.serverTimestamp(),
+        featuresUsed: [],
+        mostUsedFeatures: [],
+        activeDays: 0,
+        dailyUsage: {},
+        featureBreakdown: {}
       }
     } else {
       currentUsage = usageDoc.data() as UsageMetrics
@@ -217,6 +284,25 @@ export async function POST(request: NextRequest) {
       (currentUsage[field] as number)++
       currentUsage.totalRequests++
     }
+
+    // Track feature usage
+    if (feature) {
+      if (!currentUsage.featuresUsed.includes(feature)) {
+        currentUsage.featuresUsed.push(feature)
+      }
+      
+      if (!currentUsage.featureBreakdown) {
+        currentUsage.featureBreakdown = {}
+      }
+      currentUsage.featureBreakdown[feature] = (currentUsage.featureBreakdown[feature] || 0) + 1
+    }
+
+    // Track daily usage
+    const today = new Date().toISOString().split('T')[0]
+    if (!currentUsage.dailyUsage) {
+      currentUsage.dailyUsage = {}
+    }
+    currentUsage.dailyUsage[today] = (currentUsage.dailyUsage[today] || 0) + 1
 
     // Check quota limits
     const userDoc = await adminDb.collection('users').doc(userId).get()
@@ -244,6 +330,7 @@ export async function POST(request: NextRequest) {
     await adminDb.collection('usage_events').add({
       userId,
       action,
+      feature: feature || 'unknown',
       timestamp: FieldValue.serverTimestamp(),
       metadata: metadata || {},
       ip: headersList.get('x-forwarded-for') || 'unknown',
@@ -251,7 +338,6 @@ export async function POST(request: NextRequest) {
     })
 
     // Store daily aggregated data
-    const today = new Date().toISOString().split('T')[0]
     const dailyUsageRef = adminDb.collection('usage_history').doc(`${userId}_${today}`)
     
     await dailyUsageRef.set({

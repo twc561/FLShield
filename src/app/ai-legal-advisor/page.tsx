@@ -38,6 +38,7 @@ import {
 import { getAdvisorResponse, type AdvisorOutput } from '@/ai/flows/legalAdvisor';
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from '@/hooks/use-toast';
+import { trackUsage, trackAIQuery } from "@/lib/usage-tracker"
 
 interface ConversationEntry {
     id: string;
@@ -266,6 +267,10 @@ export default function AiLegalAdvisorPage() {
     React.useEffect(() => {
         localStorage.setItem('ai-advisor-history', JSON.stringify(conversationHistory));
     }, [conversationHistory]);
+
+    useEffect(() => {
+        trackUsage('ai-legal-advisor', 'page_view')
+    }, [])
 
     const generateTags = (scenario: string, result: AdvisorOutput): string[] => {
         const tags: string[] = [];
