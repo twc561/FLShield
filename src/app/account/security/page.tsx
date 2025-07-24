@@ -35,6 +35,11 @@ export default function AccountSecurityPage() {
   const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [showDownloadData, setShowDownloadData] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
+  const [securityMetrics, setSecurityMetrics] = useState<any>(null)
+  const [securityInsights, setSecurityInsights] = useState<any[]>([])
+  const [securityAlerts, setSecurityAlerts] = useState<any[]>([])
+  const [auditLogs, setAuditLogs] = useState<any[]>([])
+  const [isLoadingMetrics, setIsLoadingMetrics] = useState(true)
 
   const fetchSessions = async () => {
     if (!user) return
@@ -58,7 +63,48 @@ export default function AccountSecurityPage() {
 
   useEffect(() => {
     fetchSessions()
+    fetchSecurityData()
   }, [user])
+
+  const fetchSecurityData = async () => {
+    if (!user) return
+
+    setIsLoadingMetrics(true)
+    try {
+      const token = await user.getIdToken()
+      
+      const [dashboardResponse, alertsResponse, auditResponse] = await Promise.all([
+        fetch(`/api/security/dashboard?userId=${user.uid}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }),
+        fetch(`/api/security/monitor?userId=${user.uid}&status=active`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }),
+        fetch(`/api/security/audit?userId=${user.uid}&limit=10`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+      ])
+
+      if (dashboardResponse.ok) {
+        const dashboardData = await dashboardResponse.json()
+        setSecurityMetrics(dashboardData.metrics)
+        setSecurityInsights(dashboardData.insights)
+      }
+
+      if (alertsResponse.ok) {
+        const alertsData = await alertsResponse.json()
+        setSecurityAlerts(alertsData.alerts)
+      }
+
+      if (auditResponse.ok) {
+        const auditData = await auditResponse.json()
+        setAuditLogs(auditData.auditLogs)
+      }
+    } catch (error) {
+      console.error('Failed to fetch security data:', error)
+    }
+    setIsLoadingMetrics(false)
+  }
 
   useEffect(() => {
     if (user) {
@@ -306,6 +352,64 @@ export default function AccountSecurityPage() {
       />
 
       <div className="max-w-4xl mx-auto space-y-6">
+        {securityMetrics && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="w-5 h-5" />
+                Security Dashboard
+              </CardTitle>
+              <CardDescription>
+                Your account security overview and recommendations
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center p-3 border rounded-lg">
+                  <div className="text-2xl font-bold text-green-600">{securityMetrics.securityScore}</div>
+                  <div className="text-sm text-muted-foreground">Security Score</div>
+                </div>
+                <div className="text-center p-3 border rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600">{securityMetrics.activeSessions}</div>
+                  <div className="text-sm text-muted-foreground">Active Sessions</div>
+                </div>
+                <div className="text-center p-3 border rounded-lg">
+                  <div className="text-2xl font-bold text-amber-600">{securityMetrics.activeAlerts}</div>
+                  <div className="text-sm text-muted-foreground">Active Alerts</div>
+                </div>
+                <div className="text-center p-3 border rounded-lg">
+                  <div className="text-2xl font-bold text-red-600">{securityMetrics.failedLoginAttempts}</div>
+                  <div className="text-sm text-muted-foreground">Failed Logins (24h)</div>
+                </div>
+              </div>
+              
+              {securityInsights.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="font-medium">Security Recommendations</h4>
+                  {securityInsights.map((insight, index) => (
+                    <div key={index} className={`p-3 rounded-lg border ${
+                      insight.priority === 'high' ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20' :
+                      insight.priority === 'medium' ? 'border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/20' :
+                      'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/20'
+                    }`}>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-sm">{insight.title}</p>
+                          <p className="text-xs text-muted-foreground">{insight.description}</p>
+                        </div>
+                        {insight.action && (
+                          <Button size="sm" variant="outline">
+                            {insight.action}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

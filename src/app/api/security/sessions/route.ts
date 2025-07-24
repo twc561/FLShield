@@ -48,12 +48,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User ID required' }, { status: 400 })
     }
 
-    // Get all active sessions for the user
+    // Get all sessions for the user (active and inactive)
     const sessionsQuery = await adminDb
       .collection('user_sessions')
       .where('userId', '==', userId)
-      .where('isActive', '==', true)
-      .orderBy('lastActivity', 'desc')
+      .orderBy('createdAt', 'desc')
+      .limit(50)
       .get()
 
     const sessions: SessionData[] = []
