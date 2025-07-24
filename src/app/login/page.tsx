@@ -535,10 +535,7 @@ export default function LoginPage({ isSignUp }: { isSignUp?: boolean }) {
 
                                 {/* Footer */}
                                 <div className="mt-8 text-center">
-                                    <p className="text-xs text-muted-foreground">
-                                        Trusted by law enforcement agencies across Florida
-                                    </p>
-                                    <div className="flex justify-center items-center mt-3 space-x-4">
+                                    <div className="flex justify-center items-center space-x-4">
                                         <div className="flex items-center space-x-1">
                                             <Shield className="w-3 h-3 text-primary" />
                                             <span className="text-xs text-muted-foreground">Secure</span>
