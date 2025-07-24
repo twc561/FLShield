@@ -291,7 +291,7 @@ export default function DashboardPage() {
   // Prevent hydration mismatch by ensuring consistent server/client rendering
   if (!isClient || !mounted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/5 pb-20">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/5 pb-20" suppressHydrationWarning>
         <div className="px-3 pt-4 max-w-md mx-auto w-full">
           <div className="text-center mb-4">
             <div className="h-6 bg-muted/20 rounded animate-pulse mb-1" />
@@ -318,18 +318,21 @@ export default function DashboardPage() {
           initial="hidden" 
           animate="show"
           className="text-center mb-6"
+          suppressHydrationWarning
         >
           <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text mb-2">
             {greeting}, {userName}
           </h1>
-          {isClient && mounted && isPro ? (
-            <div className="flex items-center justify-center gap-2 text-amber-400">
-              <Crown className="w-4 h-4" />
-              <span className="text-sm font-medium">Shield FL Pro Active</span>
-            </div>
-          ) : (
-            <p className="text-muted-foreground text-sm">Your command center awaits</p>
-          )}
+          <div suppressHydrationWarning>
+            {isClient && mounted && isPro ? (
+              <div className="flex items-center justify-center gap-2 text-amber-400">
+                <Crown className="w-4 h-4" />
+                <span className="text-sm font-medium">Shield FL Pro Active</span>
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-sm">Your command center awaits</p>
+            )}
+          </div>
         </motion.div>
 
         <motion.div 
