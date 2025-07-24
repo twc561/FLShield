@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChargingStrategy } from "@/components/ChargingStrategy";
-import { suggestChargesEnhanced } from "@/ai/flows/suggest-charges-enhanced";
 import { 
   Gavel, 
   FileText, 
@@ -80,6 +79,9 @@ export default function AIChargeAssistantPage() {
 
     setIsLoading(true);
     try {
+      // Import the server action dynamically to avoid build issues
+      const { suggestChargesEnhanced } = await import("@/ai/flows/suggest-charges-enhanced");
+      
       const result = await suggestChargesEnhanced({
         narrative,
         evidenceDescriptions: evidence.map(e => `${e.type}: ${e.description}`),
@@ -121,6 +123,17 @@ export default function AIChargeAssistantPage() {
         title="AI Charge Assistant"
         description="Advanced AI-powered charge analysis with comprehensive case building capabilities."
       />
+
+      {/* CJIS Compliance Disclaimer */}
+      <Alert className="border-amber-200 bg-amber-50 text-amber-800">
+        <AlertTriangle className="h-4 w-4 text-amber-600" />
+        <AlertTitle className="text-amber-900">⚠️ CJIS COMPLIANCE NOTICE</AlertTitle>
+        <AlertDescription className="text-amber-800">
+          <strong>This application is NOT CJIS compliant.</strong> Do not enter any Criminal Justice Information (CJI), 
+          Personally Identifiable Information (PII), case numbers, names, addresses, or any sensitive data. 
+          Use only anonymized, hypothetical scenarios for training and educational purposes.
+        </AlertDescription>
+      </Alert>
 
       <Alert>
         <AlertTriangle className="h-4 w-4" />
