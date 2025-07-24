@@ -233,39 +233,40 @@ export default function AICommandSearch() {
       <Button
         onClick={() => setIsOpen(true)}
         variant="outline" 
-        className={`w-full justify-start gap-2 transition-all duration-200 ${isShortcutPressed ? 'ring-2 ring-accent scale-[1.02]' : ''}`}
+        className={`w-full justify-start gap-2 transition-all duration-300 bg-gradient-to-r from-blue-50/50 via-purple-50/30 to-pink-50/50 dark:from-blue-950/30 dark:via-purple-950/20 dark:to-pink-950/30 border-gradient-to-r border-blue-200/50 dark:border-blue-800/50 hover:from-blue-100/70 hover:via-purple-100/50 hover:to-pink-100/70 dark:hover:from-blue-900/50 dark:hover:via-purple-900/30 dark:hover:to-pink-900/50 hover:shadow-lg hover:shadow-blue-200/25 dark:hover:shadow-blue-900/25 ${isShortcutPressed ? 'ring-2 ring-blue-400/50 dark:ring-blue-600/50 scale-[1.02] shadow-xl shadow-blue-200/30 dark:shadow-blue-900/30' : ''}`}
       >
-        <SearchIcon className="w-4 h-4" />
-        <span className="text-muted-foreground">Search everything...</span>
+        <SearchIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        <span className="text-muted-foreground bg-gradient-to-r from-gray-600 to-gray-500 dark:from-gray-300 dark:to-gray-400 bg-clip-text text-transparent font-medium">Search everything...</span>
         <div className="ml-auto flex items-center gap-1">
           {/* Small shortcuts */}
           <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground mr-2">
-            <kbd className="px-1 py-0.5 bg-muted/50 rounded text-[10px]">⌘1</kbd>
-            <kbd className="px-1 py-0.5 bg-muted/50 rounded text-[10px]">⌘2</kbd>
-            <kbd className="px-1 py-0.5 bg-muted/50 rounded text-[10px]">⌘3</kbd>
+            <kbd className="px-1 py-0.5 bg-gradient-to-br from-blue-100/80 to-purple-100/60 dark:from-blue-900/60 dark:to-purple-900/40 rounded text-[10px] border border-blue-200/50 dark:border-blue-700/50">⌘1</kbd>
+            <kbd className="px-1 py-0.5 bg-gradient-to-br from-purple-100/80 to-pink-100/60 dark:from-purple-900/60 dark:to-pink-900/40 rounded text-[10px] border border-purple-200/50 dark:border-purple-700/50">⌘2</kbd>
+            <kbd className="px-1 py-0.5 bg-gradient-to-br from-pink-100/80 to-blue-100/60 dark:from-pink-900/60 dark:to-blue-900/40 rounded text-[10px] border border-pink-200/50 dark:border-pink-700/50">⌘3</kbd>
           </div>
-          <div className="flex items-center gap-1 text-xs bg-muted px-1.5 py-0.5 rounded">
-            <Command className="w-3 h-3" />K
+          <div className="flex items-center gap-1 text-xs bg-gradient-to-r from-blue-100/90 to-purple-100/70 dark:from-blue-900/70 dark:to-purple-900/50 px-1.5 py-0.5 rounded border border-blue-300/40 dark:border-blue-700/40">
+            <Command className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+            <span className="text-blue-700 dark:text-blue-300 font-medium">K</span>
           </div>
         </div>
       </Button>
 
       {/* Overlay Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-2xl h-[85vh] flex flex-col p-0 gap-0 overflow-hidden">
+        <DialogContent className="max-w-2xl h-[85vh] flex flex-col p-0 gap-0 overflow-hidden bg-gradient-to-br from-white via-blue-50/30 to-purple-50/20 dark:from-gray-900 dark:via-blue-950/30 dark:to-purple-950/20 border-gradient-to-br border-blue-200/50 dark:border-blue-800/50 backdrop-blur-sm">
           <DialogTitle className="sr-only">Command Search</DialogTitle>
 
           {/* Search Input */}
-          <div className="flex-shrink-0 p-4 border-b">
+          <div className="flex-shrink-0 p-4 border-b border-gradient-to-r border-blue-200/30 dark:border-blue-800/30 bg-gradient-to-r from-white/80 via-blue-50/40 to-purple-50/30 dark:from-gray-900/80 dark:via-blue-950/40 dark:to-purple-950/30 backdrop-blur-sm">
             <div className="flex gap-2">
               <div className="relative flex-1">
-                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500 dark:text-blue-400 h-4 w-4" />
                 <Input
                   ref={inputRef}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search tools, procedures, or ask a question..."
-                  className="pl-10"
+                  className="pl-10 bg-gradient-to-r from-white/90 to-blue-50/60 dark:from-gray-800/90 dark:to-blue-950/60 border-blue-200/50 dark:border-blue-700/50 focus:ring-2 focus:ring-blue-400/50 dark:focus:ring-blue-600/50 focus:border-transparent transition-all duration-200"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !isLoading && query.trim()) {
                       if (searchResults.length > 0) {
@@ -281,6 +282,7 @@ export default function AICommandSearch() {
                 onClick={handleAISearch}
                 disabled={isLoading || !query.trim()}
                 size="sm"
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white border-0 shadow-lg shadow-blue-200/50 dark:shadow-blue-900/30 hover:shadow-xl hover:shadow-blue-300/60 dark:hover:shadow-blue-800/40 transition-all duration-200 disabled:from-gray-400 disabled:to-gray-500 disabled:shadow-none"
               >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -295,27 +297,33 @@ export default function AICommandSearch() {
           </div>
 
           {/* Results */}
-          <div className="flex-1 overflow-y-auto min-h-0">
+          <div className="flex-1 overflow-y-auto min-h-0 bg-gradient-to-b from-transparent via-blue-50/10 to-purple-50/20 dark:via-blue-950/10 dark:to-purple-950/20">
             <div className="p-4">
               {query ? (
                 searchResults.length > 0 ? (
                   <div className="space-y-2">
-                    {searchResults.map((item) => (
+                    {searchResults.map((item, index) => (
                       <div
                         key={item.id}
                         onClick={() => handleItemClick(item)}
-                        className="p-3 rounded-lg border hover:bg-accent/5 cursor-pointer transition-colors"
+                        className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 bg-gradient-to-r hover:shadow-lg backdrop-blur-sm ${
+                          index % 3 === 0
+                            ? 'from-blue-50/60 to-purple-50/40 dark:from-blue-950/40 dark:to-purple-950/30 border-blue-200/30 dark:border-blue-800/30 hover:from-blue-100/80 hover:to-purple-100/60 dark:hover:from-blue-900/60 dark:hover:to-purple-900/40 hover:shadow-blue-200/30 dark:hover:shadow-blue-900/20'
+                            : index % 3 === 1
+                            ? 'from-purple-50/60 to-pink-50/40 dark:from-purple-950/40 dark:to-pink-950/30 border-purple-200/30 dark:border-purple-800/30 hover:from-purple-100/80 hover:to-pink-100/60 dark:hover:from-purple-900/60 dark:hover:to-pink-900/40 hover:shadow-purple-200/30 dark:hover:shadow-purple-900/20'
+                            : 'from-pink-50/60 to-blue-50/40 dark:from-pink-950/40 dark:to-blue-950/30 border-pink-200/30 dark:border-pink-800/30 hover:from-pink-100/80 hover:to-blue-100/60 dark:hover:from-pink-900/60 dark:hover:to-blue-900/40 hover:shadow-pink-200/30 dark:hover:shadow-pink-900/20'
+                        }`}
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="font-medium">{item.title}</span>
+                              <span className="font-medium bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-300 bg-clip-text text-transparent">{item.title}</span>
                               {item.isPremium && (
-                                <Badge variant="secondary" className="text-xs">Pro</Badge>
+                                <Badge variant="secondary" className="text-xs bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900/50 dark:to-amber-900/50 text-yellow-800 dark:text-yellow-200 border-yellow-300/50 dark:border-yellow-700/50">Pro</Badge>
                               )}
                             </div>
                             <p className="text-sm text-muted-foreground mb-2">{item.summary}</p>
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-xs bg-gradient-to-r from-white/60 to-gray-50/40 dark:from-gray-800/60 dark:to-gray-700/40 border-gray-300/50 dark:border-gray-600/50">
                               {item.category}
                             </Badge>
                           </div>
@@ -324,7 +332,7 @@ export default function AICommandSearch() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-muted-foreground">
+                  <div className="text-center py-8 text-muted-foreground bg-gradient-to-r from-gray-50/50 to-blue-50/30 dark:from-gray-800/50 dark:to-blue-950/30 rounded-lg border border-gray-200/30 dark:border-gray-700/30">
                     No results found for "{query}"
                   </div>
                 )
@@ -332,27 +340,31 @@ export default function AICommandSearch() {
                 <div className="space-y-4">
                   {/* Smart Shortcuts - Collapsible */}
                   <Collapsible open={quickAccessOpen} onOpenChange={setQuickAccessOpen}>
-                    <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-accent/5 rounded-md transition-colors">
-                      <h3 className="text-sm font-medium text-muted-foreground">Quick Access</h3>
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/30 dark:hover:from-blue-950/30 dark:hover:to-purple-950/20 rounded-md transition-all duration-200 backdrop-blur-sm">
+                      <h3 className="text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">Quick Access</h3>
                       {quickAccessOpen ? (
-                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        <ChevronDown className="h-4 w-4 text-blue-500 dark:text-blue-400" />
                       ) : (
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        <ChevronRight className="h-4 w-4 text-purple-500 dark:text-purple-400" />
                       )}
                     </CollapsibleTrigger>
                     <CollapsibleContent className="space-y-2 mt-2">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {smartShortcuts.map((shortcut) => (
+                        {smartShortcuts.map((shortcut, index) => (
                           <div
                             key={shortcut.key}
                             onClick={() => {
                               setIsOpen(false);
                               router.push(shortcut.href);
                             }}
-                            className="p-2 rounded-md border hover:bg-accent/5 cursor-pointer transition-colors flex items-center justify-between"
+                            className={`p-2 rounded-md border cursor-pointer transition-all duration-200 flex items-center justify-between bg-gradient-to-r backdrop-blur-sm hover:shadow-md ${
+                              index % 2 === 0
+                                ? 'from-blue-50/60 to-purple-50/40 dark:from-blue-950/40 dark:to-purple-950/30 border-blue-200/40 dark:border-blue-800/40 hover:from-blue-100/80 hover:to-purple-100/60 dark:hover:from-blue-900/60 dark:hover:to-purple-900/40'
+                                : 'from-purple-50/60 to-pink-50/40 dark:from-purple-950/40 dark:to-pink-950/30 border-purple-200/40 dark:border-purple-800/40 hover:from-purple-100/80 hover:to-pink-100/60 dark:hover:from-purple-900/60 dark:hover:to-pink-900/40'
+                            }`}
                           >
-                            <span className="text-sm truncate">{shortcut.title}</span>
-                            <kbd className="px-1.5 py-0.5 text-xs bg-muted rounded flex-shrink-0">{shortcut.key}</kbd>
+                            <span className="text-sm truncate font-medium bg-gradient-to-r from-gray-700 to-gray-600 dark:from-gray-200 dark:to-gray-300 bg-clip-text text-transparent">{shortcut.title}</span>
+                            <kbd className="px-1.5 py-0.5 text-xs bg-gradient-to-r from-white/80 to-gray-50/60 dark:from-gray-700/80 dark:to-gray-600/60 rounded flex-shrink-0 border border-gray-200/50 dark:border-gray-600/50 font-medium text-gray-700 dark:text-gray-300">{shortcut.key}</kbd>
                           </div>
                         ))}
                       </div>
@@ -361,12 +373,12 @@ export default function AICommandSearch() {
 
                   {/* AI Suggestions - Collapsible */}
                   <Collapsible open={aiSuggestionsOpen} onOpenChange={setAiSuggestionsOpen}>
-                    <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-accent/5 rounded-md transition-colors">
-                      <h3 className="text-sm font-medium text-muted-foreground">Smart Recommendations</h3>
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-pink-50/30 dark:hover:from-purple-950/30 dark:hover:to-pink-950/20 rounded-md transition-all duration-200 backdrop-blur-sm">
+                      <h3 className="text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">Smart Recommendations</h3>
                       {aiSuggestionsOpen ? (
-                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        <ChevronDown className="h-4 w-4 text-purple-500 dark:text-purple-400" />
                       ) : (
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        <ChevronRight className="h-4 w-4 text-pink-500 dark:text-pink-400" />
                       )}
                     </CollapsibleTrigger>
                     <CollapsibleContent className="space-y-2 mt-2">
@@ -374,11 +386,19 @@ export default function AICommandSearch() {
                         <div
                           key={index}
                           onClick={() => setQuery(suggestion)}
-                          className="p-2 rounded-md border-dashed border hover:bg-blue-50/50 dark:hover:bg-blue-950/20 cursor-pointer transition-colors"
+                          className={`p-2 rounded-md border-dashed border cursor-pointer transition-all duration-200 bg-gradient-to-r backdrop-blur-sm hover:shadow-md ${
+                            index % 4 === 0
+                              ? 'from-blue-50/50 to-purple-50/30 dark:from-blue-950/30 dark:to-purple-950/20 border-blue-300/50 dark:border-blue-700/50 hover:from-blue-100/70 hover:to-purple-100/50 dark:hover:from-blue-900/50 dark:hover:to-purple-900/30'
+                              : index % 4 === 1
+                              ? 'from-purple-50/50 to-pink-50/30 dark:from-purple-950/30 dark:to-pink-950/20 border-purple-300/50 dark:border-purple-700/50 hover:from-purple-100/70 hover:to-pink-100/50 dark:hover:from-purple-900/50 dark:hover:to-pink-900/30'
+                              : index % 4 === 2
+                              ? 'from-pink-50/50 to-blue-50/30 dark:from-pink-950/30 dark:to-blue-950/20 border-pink-300/50 dark:border-pink-700/50 hover:from-pink-100/70 hover:to-blue-100/50 dark:hover:from-pink-900/50 dark:hover:to-blue-900/30'
+                              : 'from-green-50/50 to-blue-50/30 dark:from-green-950/30 dark:to-blue-950/20 border-green-300/50 dark:border-green-700/50 hover:from-green-100/70 hover:to-blue-100/50 dark:hover:from-green-900/50 dark:hover:to-blue-900/30'
+                          }`}
                         >
                           <div className="flex items-center gap-2">
-                            <Sparkles className="w-3 h-3 text-blue-500 flex-shrink-0" />
-                            <span className="text-sm text-blue-700 dark:text-blue-300">"{suggestion}"</span>
+                            <Sparkles className="w-3 h-3 text-blue-500 dark:text-blue-400 flex-shrink-0" />
+                            <span className="text-sm bg-gradient-to-r from-blue-700 to-purple-700 dark:from-blue-300 dark:to-purple-300 bg-clip-text text-transparent font-medium">"{suggestion}"</span>
                           </div>
                         </div>
                       ))}
@@ -388,16 +408,16 @@ export default function AICommandSearch() {
               )}
 
               {result && (
-                <div className="mt-4 p-4 rounded-lg bg-accent/10 border border-accent/20">
-                  <div className="whitespace-pre-wrap">{result}</div>
+                <div className="mt-4 p-4 rounded-lg bg-gradient-to-r from-blue-50/80 via-purple-50/60 to-pink-50/40 dark:from-blue-950/60 dark:via-purple-950/40 dark:to-pink-950/30 border border-gradient-to-r border-blue-200/50 dark:border-blue-800/50 backdrop-blur-sm shadow-lg shadow-blue-200/20 dark:shadow-blue-900/10">
+                  <div className="whitespace-pre-wrap bg-gradient-to-r from-gray-800 to-gray-700 dark:from-gray-200 dark:to-gray-300 bg-clip-text text-transparent leading-relaxed">{result}</div>
                 </div>
               )}
             </div>
           </div>
 
           {/* Footer */}
-          <div className="flex-shrink-0 px-4 py-2 border-t bg-muted/20 text-xs text-muted-foreground text-center">
-            Press Enter to select • Esc to close
+          <div className="flex-shrink-0 px-4 py-2 border-t border-gradient-to-r border-blue-200/30 dark:border-blue-800/30 bg-gradient-to-r from-white/80 via-blue-50/40 to-purple-50/30 dark:from-gray-900/80 dark:via-blue-950/40 dark:to-purple-950/30 backdrop-blur-sm text-xs text-center">
+            <span className="bg-gradient-to-r from-gray-600 to-gray-500 dark:from-gray-400 dark:to-gray-300 bg-clip-text text-transparent font-medium">Press Enter to select • Esc to close</span>
           </div>
         </DialogContent>
       </Dialog>
