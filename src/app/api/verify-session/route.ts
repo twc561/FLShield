@@ -3,11 +3,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { adminDb } from '@/lib/firebase-admin'
 
-// Validate Stripe configuration
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not configured');
-}
-
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-12-18.acacia',
 })
@@ -16,39 +11,38 @@ export async function POST(request: NextRequest) {
   try {
     const { sessionId, userId } = await request.json()
 
-    const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ['subscription']
-    })
-
-    if (session.payment_status === 'paid' && session.subscription) {
-      const subscription = session.subscription as Stripe.Subscription
-      
-      // Store subscription data in Firebase
-      await adminDb.collection('users').doc(userId).set({
-        subscription: {
-          id: subscription.id,
-          customerId: session.customer,
-          status: subscription.status,
-          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-          priceId: subscription.items.data[0].price.id,
-          plan: 'pro'
-        },
-        updatedAt: new Date()
-      }, { merge: true })
-      
-      return NextResponse.json({ 
-        success: true, 
-        customerId: session.customer,
-        subscriptionId: session.subscription 
-      })
+    if (!sessionId || !userId) {
+      return NextResponse.json({ success: false, error: 'Missing required parameters' }, { status: 400 })
     }
 
-    return NextResponse.json({ success: false })
+    // Retrieve the checkout session from Stripe
+    const session = await stripe.checkout.sessions.retrieve(sessionId)
+
+    if (session.payment_status === 'paid' && session.metadata?.userId === userId) {
+      // Get the subscription from the session
+      if (session.subscription) {
+        const subscription = await stripe.subscriptions.retrieve(session.subscription as string)
+        
+        // Update user's subscription in Firestore
+        await adminDb.collection('users').doc(userId).set({
+          subscription: {
+            id: subscription.id,
+            customerId: subscription.customer as string,
+            status: subscription.status,
+            currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+            priceId: subscription.items.data[0].price.id,
+            plan: 'pro'
+          },
+          updatedAt: new Date()
+        }, { merge: true })
+
+        return NextResponse.json({ success: true })
+      }
+    }
+
+    return NextResponse.json({ success: false, error: 'Session not valid' }, { status: 400 })
   } catch (error) {
     console.error('Error verifying session:', error)
-    return NextResponse.json(
-      { error: 'Error verifying session' },
-      { status: 500 }
-    )
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })
   }
 }

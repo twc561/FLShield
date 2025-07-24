@@ -51,11 +51,26 @@ export function useSubscription() {
           const data = doc.data();
           const subscriptionData = data.subscription || null;
           console.log('User subscription data:', subscriptionData)
+          
+          // Validate subscription data
+          if (subscriptionData) {
+            const currentPeriodEnd = subscriptionData.currentPeriodEnd?.toDate()
+            const isExpired = currentPeriodEnd && new Date() > currentPeriodEnd
+            
+            if (isExpired && subscriptionData.status === 'active') {
+              console.log('Subscription appears expired, should be updated by webhook')
+            }
+          }
+          
           setSubscription(subscriptionData)
         } else {
           console.log('User document does not exist, creating free user status')
           setSubscription(null)
         }
+      },
+      (error) => {
+        console.error('Error listening to subscription changes:', error)
+        // Don't set subscription to null on error, keep current state
       }
     )
 

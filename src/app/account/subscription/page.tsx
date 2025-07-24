@@ -19,18 +19,31 @@ export default function SubscriptionManagementPage() {
   const { isPro, mounted } = useSubscription()
 
   const handleManageSubscription = async () => {
-    if (!user) return
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to manage your subscription.",
+        variant: "destructive",
+      })
+      return
+    }
     
     setIsLoading(true)
     try {
+      const idToken = await user.getIdToken()
       const response = await fetch('/api/subscription/manage', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await user.getIdToken()}`
+          'Authorization': `Bearer ${idToken}`
         },
         body: JSON.stringify({ userId: user.uid })
       })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to create portal session')
+      }
 
       const data = await response.json()
 
@@ -39,10 +52,11 @@ export default function SubscriptionManagementPage() {
       } else {
         throw new Error('No portal URL received')
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Subscription management error:', error)
       toast({
         title: "Error",
-        description: "Failed to open billing portal. Please try again.",
+        description: error.message || "Failed to open billing portal. Please try again.",
         variant: "destructive",
       })
     } finally {
@@ -87,16 +101,35 @@ export default function SubscriptionManagementPage() {
                 <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-950/20 rounded-lg">
                   <div>
                     <p className="font-medium text-green-800 dark:text-green-200">Active Subscription</p>
-                    <p className="text-sm text-green-600 dark:text-green-400">Next billing: January 15, 2025</p>
+                    <p className="text-sm text-green-600 dark:text-green-400">
+                      Status: Active • Plan: Shield FL Pro
+                    </p>
                   </div>
                   <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                    Pro Annual
+                    Pro
                   </Badge>
                 </div>
-                <Button onClick={handleManageSubscription} disabled={isLoading}>
-                  <CreditCard className="w-4 h-4 mr-2" />
-                  Manage Billing
-                </Button>
+                
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-muted-foreground">Monthly Quota</p>
+                    <p className="font-medium">1,000 AI Requests</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Features</p>
+                    <p className="font-medium">All Premium Tools</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button onClick={handleManageSubscription} disabled={isLoading} className="flex-1">
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    {isLoading ? "Loading..." : "Manage Billing"}
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <a href="/account/usage">View Usage</a>
+                  </Button>
+                </div>
               </>
             ) : (
               <div className="text-center py-6">
