@@ -11,6 +11,7 @@ import { useMobile } from "@/hooks/use-mobile"
 import { useState, useEffect } from "react"
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '@/lib/firebase'
+import { TimeBasedThemeProvider } from "@/components/TimeBasedThemeProvider"
 
 export function ClientLayout({
   children,
@@ -48,28 +49,30 @@ export function ClientLayout({
   }
 
   return (
-    <AuthWrapper>
-      <div className="min-h-screen bg-background" suppressHydrationWarning>
-        {!isPublicPage && user && !loading ? (
-          <SubscriptionGate>
-            <SidebarProvider>
-              <div className="flex h-screen w-full">
-                <AppSidebar />
-                <main className="flex-1 flex flex-col overflow-hidden">
-                  <div className={`flex-1 overflow-y-auto ${isMobile ? 'pb-16' : ''}`} suppressHydrationWarning>
-                    {children}
-                  </div>
-                  {isMobile && <MobileBottomNav />}
-                </main>
-              </div>
-            </SidebarProvider>
-          </SubscriptionGate>
-        ) : (
-          children
-        )}
-      </div>
-      <Toaster />
-    </AuthWrapper>
+    <TimeBasedThemeProvider>
+      <AuthWrapper>
+        <div className="min-h-screen bg-background" suppressHydrationWarning>
+          {!isPublicPage && user && !loading ? (
+            <SubscriptionGate>
+              <SidebarProvider>
+                <div className="flex h-screen w-full">
+                  <AppSidebar />
+                  <main className="flex-1 flex flex-col overflow-hidden">
+                    <div className={`flex-1 overflow-y-auto ${isMobile ? 'pb-16' : ''}`} suppressHydrationWarning>
+                      {children}
+                    </div>
+                    {isMobile && <MobileBottomNav />}
+                  </main>
+                </div>
+              </SidebarProvider>
+            </SubscriptionGate>
+          ) : (
+            children
+          )}
+        </div>
+        <Toaster />
+      </AuthWrapper>
+    </TimeBasedThemeProvider>
   )
 }
 
