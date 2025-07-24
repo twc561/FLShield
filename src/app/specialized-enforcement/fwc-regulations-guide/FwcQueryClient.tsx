@@ -7,7 +7,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog"
@@ -75,7 +74,7 @@ export function FwcQueryClient() {
             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Fish className="mr-2 h-4 w-4" />}
             {isLoading ? "Searching..." : "Get Answer"}
           </Button>
-          
+
           {error && (
             <Alert variant="destructive">
               <AlertTitle>Error</AlertTitle>
