@@ -167,42 +167,86 @@ export function getSmartSuggestions(): {
   let aiPrompts: string[] = []
   let shortcuts: { key: string; action: string; href: string }[] = []
 
-  if (hour >= 6 && hour < 10) {
-    // Morning shift
+  // Night shift: 18:00 (6 PM) to 05:00 (5 AM) next day
+  const isNightShift = hour >= 18 || hour < 5
+  
+  if (isNightShift) {
+    if (hour >= 18 && hour < 20) {
+      // Evening start of night shift
+      quickActions = ['Daily Briefing', 'Field Notes', 'Scenario Checklists']
+      aiPrompts = [
+        'What should I know for tonight\'s shift?',
+        'Any incidents from day shift?',
+        'Review night shift procedures'
+      ]
+      shortcuts = [
+        { key: '⌘1', action: 'Daily Briefing', href: '/daily-briefing' },
+        { key: '⌘2', action: 'Field Notes', href: '/notes' },
+        { key: '⌘3', action: 'Scenario Checklists', href: '/field-procedures/scenario-checklists' }
+      ]
+    } else {
+      // Late night/early morning (20:00 - 05:00)
+      quickActions = ['Baker Act', 'DV Protocol', 'Emergency Response']
+      aiPrompts = [
+        'Walk me through Baker Act procedures',
+        'Domestic violence response checklist',
+        'Emergency medical protocols'
+      ]
+      shortcuts = [
+        { key: '⌘1', action: 'Baker Act', href: '/emergency-response/baker-act-guide' },
+        { key: '⌘2', action: 'DV Protocol', href: '/field-procedures/domestic-violence-protocol' },
+        { key: '⌘3', action: 'First Aid', href: '/emergency-response/first-aid-guide' }
+      ]
+    }
+  } else if (hour >= 5 && hour < 8) {
+    // Day shift start
     quickActions = ['Daily Briefing', 'Field Notes', 'Equipment Check']
     aiPrompts = [
       'What should I know for today\'s shift?',
       'Any overnight incidents in my area?',
-      'Review common traffic violations'
+      'Review day shift procedures'
     ]
     shortcuts = [
       { key: '⌘1', action: 'Daily Briefing', href: '/daily-briefing' },
       { key: '⌘2', action: 'Field Notes', href: '/notes' },
       { key: '⌘3', action: 'Scenario Checklists', href: '/field-procedures/scenario-checklists' }
     ]
-  } else if (hour >= 14 && hour < 18) {
-    // Peak activity hours
-    quickActions = ['AI Legal Advisor', 'Evidence ID', 'Charge Assistant']
+  } else if (hour >= 8 && hour < 14) {
+    // Morning day shift
+    quickActions = ['AI Legal Advisor', 'Traffic Enforcement', 'Charge Assistant']
     aiPrompts = [
       'Help me analyze this situation legally',
-      'What evidence should I collect?',
+      'Review traffic violation procedures',
       'What charges might apply here?'
     ]
     shortcuts = [
       { key: '⌘1', action: 'AI Legal Advisor', href: '/ai-legal-advisor' },
-      { key: '⌘2', action: 'Evidence ID', href: '/field-procedures/visual-evidence-identifier' },
+      { key: '⌘2', action: 'Traffic Guide', href: '/traffic-enforcement/traffic-statutes-schedules' },
       { key: '⌘3', action: 'Charge Assistant', href: '/reporting-development/ai-charge-assistant' }
     ]
-  } else if (hour >= 22 || hour < 6) {
-    // Night shift
-    quickActions = ['Baker Act', 'DV Protocol', 'Emergency Response']
+  } else {
+    // Afternoon day shift (14:00 - 18:00)
+    quickActions = ['AI Legal Advisor', 'Evidence ID', 'Report Writer']
     aiPrompts = [
-      'Walk me through Baker Act procedures',
-      'Domestic violence response checklist',
-      'Emergency medical protocols'
+      'Help me analyze this situation legally',
+      'What evidence should I collect?',
+      'Assist with report writing'
     ]
     shortcuts = [
-      { key: '⌘1', action: 'Baker Act', href: '/emergency-response/baker-act-guide' },
+      { key: '⌘1', action: 'AI Legal Advisor', href: '/ai-legal-advisor' },
+      { key: '⌘2', action: 'Evidence ID', href: '/field-procedures/visual-evidence-identifier' },
+      { key: '⌘3', action: 'Report Writer', href: '/reporting-development/ai-report-writer' }
+    ]
+  } else {
+    // Fallback for any edge cases
+    quickActions = ['Daily Briefing', 'AI Legal Advisor', 'Field Notes']
+    aiPrompts = [
+      'How can I assist you today?',
+      'What tools do you need?',
+      'Review procedures'
+    ]
+    shortcuts = [
+      { key: '⌘1', action: 'Daily Briefing', href: '/daily-briefing-act-guide' },
       { key: '⌘2', action: 'DV Protocol', href: '/field-procedures/domestic-violence-protocol' },
       { key: '⌘3', action: 'First Aid', href: '/emergency-response/first-aid-guide' }
     ]

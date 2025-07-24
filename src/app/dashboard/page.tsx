@@ -177,18 +177,23 @@ export default function DashboardPage() {
 
     const getTimeContext = () => {
       const hour = new Date().getHours()
-      if (hour >= 5 && hour < 12) {
+      
+      // Night shift: 18:00 (6 PM) to 05:00 (5 AM) next day
+      const isNightShift = hour >= 18 || hour < 5
+      
+      if (isNightShift) {
+        setTimeOfDay('night')
+        if (hour >= 18) {
+          return "Good evening"
+        } else {
+          return "Good morning" // Early morning hours of night shift
+        }
+      } else if (hour >= 5 && hour < 12) {
         setTimeOfDay('morning')
         return "Good morning"
-      } else if (hour >= 12 && hour < 17) {
+      } else if (hour >= 12 && hour < 18) {
         setTimeOfDay('afternoon') 
         return "Good afternoon"
-      } else if (hour >= 17 && hour < 21) {
-        setTimeOfDay('evening')
-        return "Good evening"
-      } else {
-        setTimeOfDay('night')
-        return "Good evening"
       }
     }
     setGreeting(getTimeContext());
@@ -261,34 +266,47 @@ export default function DashboardPage() {
       let suggestions: FeatureModule[] = []
       let message = ''
 
-      if (hour >= 6 && hour < 10) {
-        // Morning shift preparation
+      // Night shift: 18:00 (6 PM) to 05:00 (5 AM) next day
+      const isNightShift = hour >= 18 || hour < 5
+      
+      if (isNightShift) {
+        // Night shift (18:00 - 05:00)
+        if (hour >= 18 && hour < 20) {
+          // Evening start of night shift
+          suggestions = dashboardFeatureGroups
+            .flatMap(g => g.features)
+            .filter(f => ['daily-briefing', 'scenario-checklists', 'field-notes', 'ai-legal-advisor'].includes(f.id))
+          message = "🌅 Night shift beginning - Check briefing and prepare for evening activity"
+          setAiSuggestions(['Check daily briefing', 'Review scenario checklists', 'Update field notes'])
+        } else {
+          // Late night/early morning (20:00 - 05:00)
+          suggestions = dashboardFeatureGroups
+            .flatMap(g => g.features)
+            .filter(f => ['baker-act-guide', 'domestic-violence-protocol', 'first-aid-guide', 'use-of-force-wizard'].includes(f.id))
+          message = "🌙 Night shift active - Emergency protocols and crisis response tools ready"
+          setAiSuggestions(['Emergency protocols', 'Mental health procedures', 'Incident reporting'])
+        }
+      } else if (hour >= 5 && hour < 8) {
+        // Day shift start (05:00 - 08:00)
         suggestions = dashboardFeatureGroups
           .flatMap(g => g.features)
           .filter(f => ['daily-briefing', 'scenario-checklists', 'field-notes', 'dui-investigation'].includes(f.id))
-        message = "🌅 Start your shift prepared - Check your briefing and review key procedures"
+        message = "🌅 Day shift starting - Check briefing and review procedures"
         setAiSuggestions(['Check daily briefing', 'Review scenario checklists', 'Update field notes'])
-      } else if (hour >= 14 && hour < 18) {
-        // Afternoon - peak activity
+      } else if (hour >= 8 && hour < 14) {
+        // Morning day shift (08:00 - 14:00)
         suggestions = dashboardFeatureGroups
           .flatMap(g => g.features)
-          .filter(f => ['ai-legal-advisor', 'visual-evidence-identifier', 'use-of-force-wizard'].includes(f.id))
-        message = "⚡ Peak hours - Quick access to AI tools for field decisions"
-        setAiSuggestions(['AI legal guidance', 'Evidence identification', 'Report assistance'])
-      } else if (hour >= 22 || hour < 6) {
-        // Night shift
-        suggestions = dashboardFeatureGroups
-          .flatMap(g => g.features)
-          .filter(f => ['baker-act-guide', 'domestic-violence-protocol', 'first-aid-guide'].includes(f.id))
-        message = "🌙 Night shift essentials - Emergency protocols at your fingertips"
-        setAiSuggestions(['Emergency protocols', 'Mental health procedures', 'Incident reporting'])
-      } else {
-        // General day shift
-        suggestions = dashboardFeatureGroups
-          .flatMap(g => g.features)
-          .filter(f => ['ai-charge-assistant', 'field-interview-contact', 'traffic-enforcement'].includes(f.id))
-        message = "☀️ Day shift active - Common enforcement tools ready"
+          .filter(f => ['ai-charge-assistant', 'field-interview-contact', 'traffic-enforcement', 'ai-legal-advisor'].includes(f.id))
+        message = "☀️ Morning patrol - Standard enforcement and legal guidance tools"
         setAiSuggestions(['Charge assistance', 'Interview techniques', 'Traffic enforcement'])
+      } else {
+        // Afternoon day shift (14:00 - 18:00)
+        suggestions = dashboardFeatureGroups
+          .flatMap(g => g.features)
+          .filter(f => ['ai-legal-advisor', 'visual-evidence-identifier', 'use-of-force-wizard', 'ai-report-writer'].includes(f.id))
+        message = "⚡ Afternoon patrol - Peak activity tools and evidence processing"
+        setAiSuggestions(['AI legal guidance', 'Evidence identification', 'Report assistance'])
       }
 
       setContextualTools(suggestions.slice(0, 4))
