@@ -246,15 +246,18 @@ export default function LoginPage({ isSignUp }: { isSignUp?: boolean }) {
                         <div className="bg-gradient-to-r from-primary to-accent text-primary-foreground p-6 rounded-xl shadow-lg">
                             <div className="flex items-center gap-3 mb-3">
                                 <Zap className="h-6 w-6" />
-                                <h3 className="text-lg font-bold">Get Started Today</h3>
+                                <h3 className="text-lg font-bold">Explore Florida Shield</h3>
                             </div>
                             <p className="text-blue-100 mb-4">
-                                Join thousands of law enforcement professionals who trust Florida Shield for their daily operations.
+                                Experience our comprehensive law enforcement platform designed to support officers in the field.
                             </p>
-                            <div className="text-sm text-blue-200">
-                                ✓ Instant access to all features<br />
-                                ✓ No setup fees or hidden costs<br />
-                                ✓ 24/7 customer support
+                            <div className="text-sm text-blue-200 mb-3">
+                                ✓ AI-powered legal research tools<br />
+                                ✓ Interactive training scenarios<br />
+                                ✓ Comprehensive reference guides
+                            </div>
+                            <div className="text-xs text-blue-200 bg-blue-900/30 p-3 rounded-lg border border-blue-400/20">
+                                <strong>Development Notice:</strong> This application is currently in development and has no guarantees of functionality. Features may change or be unavailable. Not for use with sensitive or classified information.
                             </div>
                         </div>
                     </div>
