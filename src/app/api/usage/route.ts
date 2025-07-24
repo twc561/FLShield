@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
 
     // Get user's usage data from Firebase
     const userDoc = await adminDb.collection('users').doc(userId).get()
-    const userData = userDoc.exists() ? userDoc.data() : {}
+    const userData = userDoc.exists ? userDoc.data() : {}
     const usage = userData?.usage || {}
 
     // Ensure all values are serializable

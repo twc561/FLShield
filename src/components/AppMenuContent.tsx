@@ -17,7 +17,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
-import { menuItems } from "@/lib/menu-items"
+import { menuSections } from "@/lib/menu-items"
 import { useSubscription } from "@/hooks/use-subscription"
 import { Badge } from "@/components/ui/badge"
 import * as LucideIcons from "lucide-react"
@@ -46,13 +46,15 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
   // Initialize sections based on active routes
   useEffect(() => {
     const initialState: Record<string, boolean> = {}
-    menuItems.forEach(item => {
-      if (item.items) {
-        initialState[item.label] = item.items.some((subItem) => isActive(subItem.href))
-      }
+    menuSections.forEach(section => {
+      section.items.forEach(item => {
+        if (item.items) {
+          initialState[item.label] = item.items.some((subItem) => isActive(subItem.href))
+        }
+      })
     })
     setOpenSections(initialState)
-  }, [pathname]) // Add pathname dependency back
+  }, [pathname])
 
   const handleMenuItemClick = () => {
     if (isMobile) {
@@ -111,94 +113,123 @@ export function AppMenuContent({ onLinkClick }: AppMenuContentProps) {
   if (!mounted) {
     return (
       <SidebarMenu className="p-0">
-        {menuItems.map((item) => (
-          <SidebarMenuItem key={item.label}>
-            <SidebarMenuButton variant="ghost" className="w-full">
-              <div className="flex items-center gap-2">
-                <item.icon className="size-5" />
-                <span className="group-data-[collapsible=icon]:hidden">
-                  {item.label}
-                </span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
+        {menuSections.map((section) => 
+          section.items.map((item) => (
+            <SidebarMenuItem key={item.label}>
+              <SidebarMenuButton variant="ghost" className="w-full">
+                <div className="flex items-center gap-2">
+                  <item.icon className="size-5" />
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    {item.label}
+                  </span>
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))
+        )}
       </SidebarMenu>
     )
   }
 
   return (
     <SidebarMenu className="p-0">
-      {menuItems.map((item) =>
-        item.items ? (
-          <Collapsible
-            key={item.label}
-            open={openSections[item.label] ?? false}
-            onOpenChange={() => toggleSection(item.label)}
-            className="w-full"
-          >
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
+      {menuSections.map((section) => (
+        <div key={section.title} className="mb-6">
+          {/* Section Header */}
+          <div className="px-3 mb-2">
+            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              {section.title}
+            </h4>
+          </div>
+          
+          {/* Section Items */}
+          {section.items.map((item) =>
+            item.items ? (
+              <Collapsible
+                key={item.label}
+                open={openSections[item.label] ?? false}
+                onOpenChange={() => toggleSection(item.label)}
+                className="w-full"
+              >
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      className="w-full justify-between"
+                      variant="ghost"
+                      data-active={item.items.some((subItem) =>
+                        isActive(subItem.href)
+                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                        <item.icon className="size-5" />
+                        <span className="group-data-[collapsible=icon]:hidden">
+                          {item.label}
+                        </span>
+                      </div>
+                      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200 group-data-[collapsible=icon]:hidden data-[state=open]:rotate-180" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                </SidebarMenuItem>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    {item.items.map((subItem) => (
+                      <SidebarMenuSubItem key={subItem.label}>
+                        <Link
+                          href={subItem.href}
+                          onClick={handleSubMenuClick}
+                          className={cn(
+                            "flex h-full w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-sidebar-foreground/80 outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2",
+                            isActive(subItem.href) &&
+                              "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                          )}
+                        >
+                          <subItem.icon className="size-4 shrink-0" />
+                          <span className="truncate">{subItem.label}</span>
+                          {subItem.isPremium && (
+                            <Badge variant="secondary" className="text-xs ml-auto">
+                              Pro
+                            </Badge>
+                          )}
+                          {subItem.isNew && (
+                            <Badge variant="default" className="text-xs ml-auto bg-blue-500">
+                              New
+                            </Badge>
+                          )}
+                          {subItem.isPopular && !subItem.isNew && !subItem.isPremium && (
+                            <Badge variant="outline" className="text-xs ml-auto">
+                              Popular
+                            </Badge>
+                          )}
+                        </Link>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </Collapsible>
+            ) : (
+              <SidebarMenuItem key={item.label}>
                 <SidebarMenuButton
-                  className="w-full justify-between"
-                  variant="ghost"
-                  data-active={item.items.some((subItem) =>
-                    isActive(subItem.href)
+                  asChild
+                  isActive={pathname === item.href}
+                  tooltip={{ children: item.label, side: "right" }}
+                  className={cn(
+                    pathname === item.href &&
+                      "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary"
                   )}
+                  onClick={handleMenuItemClick}
                 >
-                  <div className="flex items-center gap-2">
+                  <Link href={item.href!}>
                     <item.icon className="size-5" />
                     <span className="group-data-[collapsible=icon]:hidden">
                       {item.label}
                     </span>
-                  </div>
-                  <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200 group-data-[collapsible=icon]:hidden data-[state=open]:rotate-180" />
+                  </Link>
                 </SidebarMenuButton>
-              </CollapsibleTrigger>
-            </SidebarMenuItem>
-            <CollapsibleContent>
-              <SidebarMenuSub>
-                {item.items.map((subItem) => (
-                  <SidebarMenuSubItem key={subItem.label}>
-                    <Link
-                      href={subItem.href}
-                      onClick={handleSubMenuClick}
-                      className={cn(
-                        "flex h-full w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-sidebar-foreground/80 outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2",
-                        isActive(subItem.href) &&
-                          "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                      )}
-                    >
-                      <subItem.icon className="size-4 shrink-0" />
-                      <span className="truncate">{subItem.label}</span>
-                    </Link>
-                  </SidebarMenuSubItem>
-                ))}
-              </SidebarMenuSub>
-            </CollapsibleContent>
-          </Collapsible>
-        ) : (
-          <SidebarMenuItem key={item.label}>
-            <SidebarMenuButton
-              asChild
-              isActive={pathname === item.href}
-              tooltip={{ children: item.label, side: "right" }}
-              className={cn(
-                pathname === item.href &&
-                  "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary"
-              )}
-              onClick={handleMenuItemClick}
-            >
-              <Link href={item.href!}>
-                <item.icon className="size-5" />
-                <span className="group-data-[collapsible=icon]:hidden">
-                  {item.label}
-                </span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        )
-      )}
+              </SidebarMenuItem>
+            )
+          )}
+        </div>
+      ))}
       
       {/* Sign Out Option */}
       <SidebarMenuItem>
