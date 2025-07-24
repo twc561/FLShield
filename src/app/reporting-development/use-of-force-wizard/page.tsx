@@ -152,16 +152,57 @@ export default function UseOfForceWizardPage() {
     },
   })
 
-  // Calculate completion progress
+  // Calculate completion progress and auto-adjust threat level
   useEffect(() => {
     const values = form.getValues()
     const totalFields = Object.keys(values).length
     const completedFields = Object.values(values).filter(value => value && value.length > 0).length
     setCompletionProgress((completedFields / totalFields) * 100)
-  }, [form.watch()])
+    
+    // Auto-adjust threat level based on narrative content
+    const narrativeText = `${values.threat} ${values.resistance} ${values.crime}`.toLowerCase()
+    const deadlyForceKeywords = [
+      'gun', 'weapon', 'knife', 'firearm', 'pistol', 'rifle', 'armed', 'shooting', 'shot',
+      'killed', 'murder', 'death', 'deadly', 'life threatening', 'great bodily harm',
+      'stabbing', 'stabbed', 'machete', 'sword', 'hatchet', 'axe', 'imminent threat'
+    ]
+    
+    const hasDeadlyForceIndicators = deadlyForceKeywords.some(keyword => 
+      narrativeText.includes(keyword)
+    )
+    
+    if (hasDeadlyForceIndicators && threatLevel[0] < 5) {
+      setThreatLevel([5])
+    }
+  }, [form.watch(), threatLevel])
 
   const getForceRecommendation = () => {
     const currentThreatLevel = threatLevel[0]
+    const formValues = form.getValues()
+    
+    // Check for deadly force indicators in the narrative
+    const narrativeText = `${formValues.threat} ${formValues.resistance} ${formValues.crime}`.toLowerCase()
+    const deadlyForceKeywords = [
+      'gun', 'weapon', 'knife', 'firearm', 'pistol', 'rifle', 'armed', 'shooting', 'shot',
+      'killed', 'murder', 'death', 'deadly', 'life threatening', 'great bodily harm',
+      'stabbing', 'stabbed', 'machete', 'sword', 'hatchet', 'axe', 'imminent threat'
+    ]
+    
+    const hasDeadlyForceIndicators = deadlyForceKeywords.some(keyword => 
+      narrativeText.includes(keyword)
+    )
+    
+    // If deadly force indicators are present, recommend deadly force
+    if (hasDeadlyForceIndicators || currentThreatLevel >= 5) {
+      return forceOptions.find(f => f.level === 5) // Deadly Force
+    }
+    
+    // For high threat situations without deadly weapons
+    if (currentThreatLevel >= 4) {
+      return forceOptions.find(f => f.level === 4) // Less-lethal tools
+    }
+    
+    // Standard progression for lower threats
     const recommendedForce = Math.min(currentThreatLevel + 1, 5)
     return forceOptions.find(f => f.level === recommendedForce)
   }
@@ -176,7 +217,30 @@ export default function UseOfForceWizardPage() {
   const getForceJustification = () => {
     const threat = threatLevel[0]
     const force = forceLevel[0]
+    const formValues = form.getValues()
     
+    // Check for deadly force scenarios
+    const narrativeText = `${formValues.threat} ${formValues.resistance} ${formValues.crime}`.toLowerCase()
+    const deadlyForceKeywords = [
+      'gun', 'weapon', 'knife', 'firearm', 'pistol', 'rifle', 'armed', 'shooting', 'shot',
+      'killed', 'murder', 'death', 'deadly', 'life threatening', 'great bodily harm',
+      'stabbing', 'stabbed', 'machete', 'sword', 'hatchet', 'axe', 'imminent threat'
+    ]
+    
+    const hasDeadlyForceIndicators = deadlyForceKeywords.some(keyword => 
+      narrativeText.includes(keyword)
+    )
+    
+    // Special handling for deadly force scenarios
+    if (hasDeadlyForceIndicators) {
+      if (force === 5) {
+        return { status: "justified", message: "Deadly force is justified given the imminent threat to life", color: "text-green-600" }
+      } else if (force < 5) {
+        return { status: "insufficient", message: "Higher force level may be necessary for this threat", color: "text-orange-600" }
+      }
+    }
+    
+    // Standard force justification logic
     if (force > threat + 1) {
       return { status: "excessive", message: "Force level may be excessive for threat level", color: "text-red-600" }
     } else if (force === threat + 1 || force === threat) {
@@ -662,10 +726,10 @@ and should be reviewed for accuracy and completeness before submission.
                         Threat Level {threatLevel[0]}
                       </AlertTitle>
                       <AlertDescription>
-                        {threatLevel[0] <= 2 && "Low threat situation. Minimal force considerations."}
-                        {threatLevel[0] === 3 && "Moderate threat. Standard control measures may be appropriate."}
-                        {threatLevel[0] === 4 && "High threat. Enhanced force options should be considered."}
-                        {threatLevel[0] === 5 && "Critical threat. All force options may be justified."}
+                        {threatLevel[0] <= 2 && "Low threat situation. Officer presence and verbal commands typically sufficient."}
+                        {threatLevel[0] === 3 && "Moderate threat. Physical control techniques may be necessary."}
+                        {threatLevel[0] === 4 && "High threat. Less-lethal tools (Taser, OC spray) should be considered."}
+                        {threatLevel[0] === 5 && "CRITICAL THREAT: Imminent danger of death or great bodily harm. Deadly force is justified."}
                       </AlertDescription>
                     </Alert>
 
