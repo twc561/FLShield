@@ -15,6 +15,7 @@ import { useSubscription } from "@/hooks/use-subscription"
 import { onAuthStateChanged, type User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 import AICommandSearch from "@/components/AICommandSearch"
 import { PinButton } from "@/components/PinButton"
@@ -389,6 +390,15 @@ export default function DashboardPage() {
             )}
           </div>
         </motion.div>
+		<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+            <p className="text-muted-foreground text-sm sm:text-base">
+              Welcome back, Officer. Here's your command center.
+            </p>
+          </div>
+          <ThemeToggle />
+        </div>
 
         <motion.div 
           className="space-y-4"
