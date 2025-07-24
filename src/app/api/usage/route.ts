@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from 'next/server'
 import { adminDb } from '@/lib/firebase-admin'
 import { headers } from 'next/headers'
@@ -49,10 +48,10 @@ function getQuotaLimits(subscriptionPlan: string): QuotaLimits {
 
 function isNewMonth(lastResetDate: any): boolean {
   if (!lastResetDate) return true
-  
+
   const now = new Date()
   const lastReset = lastResetDate.toDate()
-  
+
   return now.getMonth() !== lastReset.getMonth() || 
          now.getFullYear() !== lastReset.getFullYear()
 }
@@ -60,7 +59,7 @@ function isNewMonth(lastResetDate: any): boolean {
 function calculateActiveDays(dailyUsage: { [date: string]: number }): number {
   const currentMonth = new Date().getMonth()
   const currentYear = new Date().getFullYear()
-  
+
   return Object.keys(dailyUsage).filter(dateStr => {
     const date = new Date(dateStr)
     return date.getMonth() === currentMonth && 
@@ -73,155 +72,54 @@ export async function GET(request: NextRequest) {
   try {
     const headersList = await headers()
     const authHeader = headersList.get('authorization')
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Invalid authorization header' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
-    const period = searchParams.get('period') || 'current'
+    const url = new URL(request.url)
+    const userId = url.searchParams.get('userId')
 
     if (!userId) {
-      return NextResponse.json({ error: 'User ID required' }, { status: 400 })
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 })
     }
 
-    // Get user subscription info
+    // Get user's usage data from Firebase
     const userDoc = await adminDb.collection('users').doc(userId).get()
-    if (!userDoc.exists) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    const userData = userDoc.exists() ? userDoc.data() : {}
+    const usage = userData?.usage || {}
+
+    // Ensure all values are serializable
+    const usageMetrics: UsageMetrics = {
+      aiRequests: Number(usage.aiRequests) || 0,
+      searchQueries: Number(usage.searchQueries) || 0,
+      reportGenerations: Number(usage.reportGenerations) || 0,
+      documentsAccessed: Number(usage.documentsAccessed) || 0,
+      voiceCommands: Number(usage.voiceCommands) || 0,
+      totalRequests: Number(usage.totalRequests) || 0,
+      lastResetDate: usage.lastResetDate?.toDate?.()?.toISOString() || null,
+      featuresUsed: Array.isArray(usage.featuresUsed) ? usage.featuresUsed : [],
+      mostUsedFeatures: Array.isArray(usage.mostUsedFeatures) ? usage.mostUsedFeatures : [],
+      activeDays: Number(usage.activeDays) || 0,
+      dailyUsage: typeof usage.dailyUsage === 'object' ? usage.dailyUsage : {},
+      featureBreakdown: typeof usage.featureBreakdown === 'object' ? usage.featureBreakdown : {}
     }
 
-    const userData = userDoc.data()
-    const subscriptionPlan = userData?.subscription?.plan || 'free'
-    const quotaLimits = getQuotaLimits(subscriptionPlan)
-
-    // Get current month usage
-    const usageDoc = await adminDb.collection('usage_metrics').doc(userId).get()
-    let currentUsage: UsageMetrics = {
-      aiRequests: 0,
-      searchQueries: 0,
-      reportGenerations: 0,
-      documentsAccessed: 0,
-      voiceCommands: 0,
-      totalRequests: 0,
-      lastResetDate: null,
-      featuresUsed: [],
-      mostUsedFeatures: [],
-      activeDays: 0,
-      dailyUsage: {},
-      featureBreakdown: {}
-    }
-
-    if (usageDoc.exists) {
-      const data = usageDoc.data()
-      
-      if (isNewMonth(data.lastResetDate)) {
-        currentUsage = {
-          aiRequests: 0,
-          searchQueries: 0,
-          reportGenerations: 0,
-          documentsAccessed: 0,
-          voiceCommands: 0,
-          totalRequests: 0,
-          lastResetDate: FieldValue.serverTimestamp(),
-          featuresUsed: [],
-          mostUsedFeatures: [],
-          activeDays: 0,
-          dailyUsage: {},
-          featureBreakdown: {}
-        }
-        
-        await adminDb.collection('usage_metrics').doc(userId).set(currentUsage)
-      } else {
-        currentUsage = data as UsageMetrics
-        currentUsage.activeDays = calculateActiveDays(currentUsage.dailyUsage || {})
-        
-        // Generate most used features from feature breakdown
-        if (currentUsage.featureBreakdown) {
-          currentUsage.mostUsedFeatures = Object.entries(currentUsage.featureBreakdown)
-            .map(([feature, count]) => ({ feature, count: count as number }))
-            .sort((a, b) => b.count - a.count)
-            .slice(0, 10)
-        }
-      }
-    }
-
-    // Calculate usage percentages
-    const usagePercentages = {
-      aiRequests: Math.round((currentUsage.aiRequests / quotaLimits.aiRequests) * 100),
-      searchQueries: Math.round((currentUsage.searchQueries / quotaLimits.searchQueries) * 100),
-      reportGenerations: Math.round((currentUsage.reportGenerations / quotaLimits.reportGenerations) * 100),
-      documentsAccessed: Math.round((currentUsage.documentsAccessed / quotaLimits.documentsAccessed) * 100),
-      voiceCommands: Math.round((currentUsage.voiceCommands / quotaLimits.voiceCommands) * 100)
-    }
-
-    // Get historical usage data if requested
-    let historicalData = []
-    let usageTrends = []
-    
-    if (period !== 'current') {
-      const days = period === 'last30days' ? 30 : 90
-      const startDate = new Date()
-      startDate.setDate(startDate.getDate() - days)
-
-      const historyQuery = await adminDb
-        .collection('usage_history')
-        .where('userId', '==', userId)
-        .where('date', '>=', startDate)
-        .orderBy('date', 'desc')
-        .get()
-
-      historicalData = historyQuery.docs.map(doc => ({
-        date: doc.data().date,
-        ...doc.data().metrics
-      }))
-
-      // Generate usage trends for charts
-      usageTrends = historyQuery.docs.map(doc => {
-        const data = doc.data()
-        return {
-          date: data.date.toDate().toISOString().split('T')[0],
-          queries: data.metrics?.aiRequests || 0,
-          features: Object.keys(data.metrics?.featureBreakdown || {}).length
-        }
-      }).reverse()
-    }
-
-    // Calculate summary stats
-    const totalQueries = currentUsage.aiRequests + currentUsage.searchQueries + currentUsage.voiceCommands
-    const uniqueFeatures = Object.keys(currentUsage.featureBreakdown || {}).length
-
-    return NextResponse.json({
-      // Legacy format for existing components
-      aiQueries: totalQueries,
-      featuresUsed: uniqueFeatures,
-      activeDays: currentUsage.activeDays,
-      mostUsedFeatures: currentUsage.mostUsedFeatures,
-      usageTrends,
-      
-      // Enhanced format
-      currentUsage,
-      quotaLimits,
-      usagePercentages,
-      subscriptionPlan,
-      historicalData,
-      billingCycle: {
-        resetDate: currentUsage.lastResetDate,
-        daysUntilReset: 30 - new Date().getDate()
+    return NextResponse.json(usageMetrics, {
+      headers: {
+        'Content-Type': 'application/json',
       },
-      summary: {
-        totalQueries,
-        uniqueFeatures,
-        activeDays: currentUsage.activeDays,
-        averageQueriesPerDay: currentUsage.activeDays > 0 ? Math.round(totalQueries / currentUsage.activeDays) : 0
-      }
     })
   } catch (error) {
     console.error('Error fetching usage data:', error)
     return NextResponse.json(
       { error: 'Failed to fetch usage data' },
-      { status: 500 }
+      { status: 500 },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
     )
   }
 }
@@ -230,7 +128,7 @@ export async function POST(request: NextRequest) {
   try {
     const headersList = await headers()
     const authHeader = headersList.get('authorization')
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Invalid authorization header' }, { status: 401 })
     }
@@ -290,7 +188,7 @@ export async function POST(request: NextRequest) {
       if (!currentUsage.featuresUsed.includes(feature)) {
         currentUsage.featuresUsed.push(feature)
       }
-      
+
       if (!currentUsage.featureBreakdown) {
         currentUsage.featureBreakdown = {}
       }
@@ -339,7 +237,7 @@ export async function POST(request: NextRequest) {
 
     // Store daily aggregated data
     const dailyUsageRef = adminDb.collection('usage_history').doc(`${userId}_${today}`)
-    
+
     await dailyUsageRef.set({
       userId,
       date: new Date(),

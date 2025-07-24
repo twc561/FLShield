@@ -235,8 +235,17 @@ export default function DashboardPage() {
         })
 
         if (response.ok) {
-          const data = await response.json()
-          setUsageStats(data.summary)
+          const text = await response.text();
+          if (text) {
+            try {
+              const data = JSON.parse(text);
+              setUsageStats(data.summary)
+            } catch (parseError) {
+              console.error('Failed to parse usage stats JSON:', parseError, 'Response text:', text);
+            }
+          }
+        } else {
+          console.error('Usage API response not ok:', response.status, response.statusText);
         }
       } catch (error) {
         console.error('Error loading usage stats:', error)
