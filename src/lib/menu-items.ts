@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { 
   Shield, 
@@ -292,6 +291,13 @@ export const menuSections: MenuSection[] = [
             isPremium: true,
             tags: ["jury instructions", "elements", "standard"]
           },
+        {
+          href: "/legal-reference/local-ordinances-guide",
+          label: "Local Ordinances Guide",
+          icon: Building,
+          isPremium: true,
+          tags: ["ordinances", "local laws", "municipalities"]
+        },
         ],
       },
     ]
@@ -405,7 +411,7 @@ export const menuSections: MenuSection[] = [
         priority: 'high',
         category: 'daily',
         items: [
-          
+
           { 
             href: "/officer-wellness-rights/police-officers-bill-of-rights", 
             label: "Police Officer's Bill of Rights", 

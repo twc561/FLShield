@@ -1,17 +1,14 @@
+
 'use server';
 /**
- * @fileOverview Analyzes a local ordinance using AI based on a jurisdiction and a keyword or ordinance number.
- *
- * - analyzeOrdinance - A function that fetches and parses a local ordinance.
- * - AnalyzeOrdinanceInput - The input type for the function.
- * - AnalyzeOrdinanceOutput - The return type for the function.
+ * @fileOverview Enhanced AI ordinance analyzer with comprehensive search capabilities
  */
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 const AnalyzeOrdinanceInputSchema = z.object({
   jurisdiction: z.string().describe('The jurisdiction of the ordinance, e.g., "City of Miami" or "Orange County".'),
-  query: z.string().describe('The specific ordinance number (e.g., "Sec. 37-28") or a keyword description of the ordinance (e.g., "loud music" or "open container").'),
+  query: z.string().describe('The specific ordinance number (e.g., "Sec. 37-28") or a keyword description (e.g., "loud music", "open container").'),
 });
 export type AnalyzeOrdinanceInput = z.infer<typeof AnalyzeOrdinanceInputSchema>;
 
@@ -21,12 +18,14 @@ const AnalyzeOrdinanceOutputSchema = z.object({
   jurisdiction: z.string().describe("The jurisdiction, e.g., 'City of Fort Pierce'."),
   fullOrdinanceText: z.string().describe("The full, most current and complete text of the ordinance."),
   summary: z.string().describe("A concise, plain-language summary of what the ordinance prohibits or requires."),
-  enforcementNotes: z.string().describe("Practical advice for enforcement, key elements to prove for a violation, and common scenarios for a law enforcement officer related to this ordinance."),
-  penalty: z.string().describe("A description of the penalty (e.g., 'Non-criminal infraction, fine up to $500', 'Second-degree misdemeanor')."),
-  relatedStateStatute: z.string().describe("The corresponding Florida Statute number, if applicable (e.g., 'F.S. § 316.1925'). If not directly applicable, return 'N/A'."),
+  enforcementNotes: z.string().describe("Practical advice for enforcement, key elements to prove for a violation, and common scenarios."),
+  penalty: z.string().describe("A description of the penalty (e.g., 'Non-criminal infraction, fine up to $500')."),
+  relatedStateStatute: z.string().describe("The corresponding Florida Statute number, if applicable. If not applicable, return 'N/A'."),
+  searchConfidence: z.number().describe("Confidence score from 0-100 indicating how certain the AI is about the result."),
+  alternativeOrdinances: z.array(z.string()).describe("List of related ordinances that might also be relevant."),
+  lastUpdated: z.string().describe("When this ordinance was last updated or verified, if available."),
 });
 export type AnalyzeOrdinanceOutput = z.infer<typeof AnalyzeOrdinanceOutputSchema>;
-
 
 export const analyzeOrdinance = ai.defineFlow(
   {
@@ -36,59 +35,82 @@ export const analyzeOrdinance = ai.defineFlow(
       model: 'gemini-1.5-pro',
       generationConfig: {
         maxOutputTokens: 8192,
-        temperature: 0.3,
+        temperature: 0.1,
         topP: 0.95,
         topK: 40,
       }
     }
   },
   async (input) => {
-  try {
-    const { output } = await ai.generate({
-      model: 'gemini-1.5-pro',
-      config: {
-        maxOutputTokens: 8192,
-        temperature: 0.1,
-      },
-      prompt: `You are an expert local government legal analyst AI specializing in Florida municipal and county codes. Your primary user is a law enforcement officer who needs to understand and enforce local laws. Your task is to find the single most relevant, chargeable ordinance based on a user's query and provide a detailed, structured analysis for that officer.
+    try {
+      console.log('Starting enhanced ordinance analysis...', input);
+      
+      const { output } = await ai.generate({
+        model: 'gemini-1.5-pro',
+        config: {
+          maxOutputTokens: 8192,
+          temperature: 0.1,
+        },
+        prompt: `You are an elite legal research AI specializing in Florida municipal and county ordinances. You have access to comprehensive databases of local government codes and regulations. Your task is to perform a thorough analysis of ordinances for law enforcement officers.
 
-CRITICAL INSTRUCTIONS:
-1.  **Focus on Enforceable Violations:** Prioritize ordinances that define a specific, chargeable violation that a patrol officer would cite or make an arrest for. Avoid purely administrative or zoning ordinances unless they are directly relevant to a common enforcement action.
-2.  **Prioritize Specificity:** If the user's query looks like an ordinance number (e.g., "Sec. 32-101", "16-31"), you MUST find that exact ordinance. Ensure the \`ordinanceNumber\` in the output is the full, precise number.
-3.  **Handle Keywords Carefully:** If the user's query is a keyword (e.g., "loud music", "alcohol"), find the single most specific and primary ordinance that directly addresses that keyword for the given jurisdiction. For "alcohol", this is likely the "open container" ordinance.
-4.  **Handle 'Not Found' Gracefully**: If after a thorough search you genuinely cannot find a relevant, chargeable ordinance for the user's keyword or number in the specified jurisdiction, you must return a valid JSON object where the 'ordinanceNumber' and 'ordinanceTitle' fields are 'Not Found' and the 'summary' field explains that no specific ordinance could be located for the query. Do not invent an ordinance.
+ENHANCED SEARCH METHODOLOGY:
+1. **Primary Search Sources:**
+   - Official municipal/county websites with searchable codes
+   - Municode.com comprehensive database
+   - American Legal Publishing (library.amlegal.com)
+   - Code Publishing Company databases
+   - Franklin Legal Publishing systems
+   - General Code LLC platforms
 
-SEARCH METHODOLOGY:
-- Use comprehensive web search to find the jurisdiction's municipal code
-- Look for official city/county websites, municode.com, library.amlegal.com
-- Search for the specific ordinance number or relevant keywords within the code
-- Verify the ordinance is current and enforceable
-- Extract the complete text and relevant details
+2. **Search Strategy:**
+   - For specific ordinance numbers: Find exact match with current text
+   - For keywords: Search multiple related terms and synonyms
+   - Cross-reference with state statutes for consistency
+   - Verify ordinance is current and not repealed
+   - Check for recent amendments or updates
 
-For the given jurisdiction and query, retrieve the most current and complete text of the most relevant law. Then, parse this information and return it ONLY as a single, well-formed JSON object adhering strictly to the required schema.
+3. **Quality Assurance:**
+   - Verify the ordinance exists in official sources
+   - Ensure text is complete and current
+   - Cross-check penalty information
+   - Validate enforcement procedures
+   - Identify related ordinances
 
-Jurisdiction: ${input.jurisdiction}
-Query: ${input.query}
+CRITICAL REQUIREMENTS:
+- If you cannot find ANY relevant ordinance after exhaustive search, return "Not Found" for ordinanceNumber and ordinanceTitle
+- Provide realistic confidence scores based on source quality
+- Include alternative ordinances when multiple options exist
+- Focus on enforceable violations, not administrative procedures
+- Ensure all information is accurate and up-to-date
 
-Remember: You must return valid JSON that matches the schema exactly. If you cannot find a specific ordinance, use "Not Found" for ordinanceNumber and ordinanceTitle fields.`,
-      output: {
-        schema: AnalyzeOrdinanceOutputSchema,
-      },
-    });
-    return output;
-  } catch (error) {
-    console.error('Error analyzing ordinance:', error);
-    // Return a fallback response if the AI fails
-    return {
-      ordinanceNumber: "Not Found",
-      ordinanceTitle: "Analysis Error",
-      jurisdiction: input.jurisdiction,
-      fullOrdinanceText: "The AI analysis service encountered an error and could not retrieve the ordinance text.",
-      summary: `Unable to analyze the ordinance for "${input.query}" in ${input.jurisdiction} due to a technical error. Please try again or contact support if the issue persists.`,
-      enforcementNotes: "No enforcement information available due to analysis error.",
-      penalty: "Unknown",
-      relatedStateStatute: "N/A"
-    };
+JURISDICTION: ${input.jurisdiction}
+QUERY: ${input.query}
+
+Perform a comprehensive search using all available resources. Return valid JSON matching the schema exactly.`,
+        output: {
+          schema: AnalyzeOrdinanceOutputSchema,
+        },
+      });
+
+      console.log('Enhanced ordinance analysis completed:', output);
+      return output;
+      
+    } catch (error) {
+      console.error('Enhanced ordinance analysis failed:', error);
+      
+      return {
+        ordinanceNumber: "Analysis Error",
+        ordinanceTitle: "Service Unavailable",
+        jurisdiction: input.jurisdiction,
+        fullOrdinanceText: "The enhanced AI analysis service encountered a technical error and could not retrieve the ordinance information at this time.",
+        summary: `Failed to analyze ordinance "${input.query}" in ${input.jurisdiction}. This may be due to network issues, database unavailability, or service overload.`,
+        enforcementNotes: "Unable to provide enforcement guidance due to analysis error. Please verify the jurisdiction spelling and ordinance details manually, or try again later.",
+        penalty: "Unknown - Analysis Error",
+        relatedStateStatute: "N/A",
+        searchConfidence: 0,
+        alternativeOrdinances: [],
+        lastUpdated: "Error - Unable to determine"
+      };
+    }
   }
-}
 );
