@@ -194,7 +194,7 @@ export function ScenarioClient({
                 'emotionally_distraught': "*breaking down* I'm sorry, I just can't handle any more right now.",
                 'juvenile_contact': "*panic in voice* Oh no, oh no... am I in big trouble? Is something wrong with the system?",
                 'elderly_confused': "*very confused* I don't understand what's happening. Is everything alright, officer?",
-                'language_barrier': "*frustrated* No comprendo... system no work? Computer broken?",
+                'language_barrier': "*frustrated* No comprendo... sorry, no understand good.",
                 'agitated_uncooperative': "*angry* Great, now even the computer's not working! This day just keeps getting worse!",
                 'domestic_dispute': "*worried* Is there a problem with the system? Are you recording this?",
                 'calm_cooperative': "I'm sorry, there seems to be a technical issue. Should we try again?",
