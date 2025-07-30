@@ -1,385 +1,248 @@
+
 'use server';
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
-const RolePlayInputSchema = z.object({
-  systemPrompt: z.string().describe("The setup instructions for the AI's persona and the scenario context."),
-  conversationHistory: z.array(
-    z.object({
-      role: z.enum(['user', 'model']),
-      parts: z.array(z.object({ text: z.string() })),
-    })
-  ),
-  scenarioType: z.string().optional().describe("The type of scenario being played"),
-  currentStressLevel: z.number().min(1).max(10).optional().describe("Current stress level of the character"),
-  officerApproach: z.string().optional().describe("How the officer is approaching the situation"),
+// -------- Scenarios Data (Simulated Database) --------
+
+const scenarioData = [
+    {
+        scenarioId: "FP-TS-001",
+        category: "Traffic Stop",
+        title: "Failure to Maintain Lane on US-1",
+        description: "Practice a routine traffic stop that escalates into a potential DUI investigation.",
+        difficulty: "Intermediate",
+        dispatchInfo: {
+            callType: "Traffic Stop",
+            location: "US Highway 1 near Orange Ave, Fort Pierce, FL",
+            notes: "Officer initiated stop on a vehicle observed swerving multiple times. Potential DUI."
+        },
+        aiPersona: {
+            personaId: "P-IN-02",
+            type: "Intoxicated Subject",
+            description: "Slurring words, fumbling for documents, denies drinking but an odor of alcohol is present.",
+            initialState: "Annoyed, attempts to mask intoxication.",
+            stressTriggers: ["Accusatory language", "Sudden movements", "Mention of jail"],
+            deescalationKeys: ["Calm, patient tone", "Explaining each step clearly", "Offering non-alcoholic beverage (post-arrest)"]
+        }
+    },
+    {
+        scenarioId: "FP-DV-002",
+        category: "Domestic Dispute",
+        title: "Verbal Argument at Apartment Complex",
+        description: "Mediate a heated verbal dispute between partners and determine if a crime has occurred.",
+        difficulty: "Advanced",
+        dispatchInfo: {
+            callType: "Domestic Disturbance",
+            location: "Apartment complex, St. Cloud, FL",
+            notes: "RP states her neighbors are screaming at each other. No weapons seen."
+        },
+        aiPersona: {
+            personaId: "P-AG-01",
+            type: "Agitated & Uncooperative",
+            description: "Believes the argument is a private matter and police involvement is unnecessary. Defensive and emotional.",
+            initialState: "Agitated and defensive.",
+            stressTriggers: ["Taking sides", "Dismissing their concerns", "Threatening arrest"],
+            deescalationKeys: ["Active listening", "Acknowledging their frustration", "Separating parties to speak privately"]
+        }
+    }
+];
+
+// -------- Input & Output Schemas --------
+
+// Schema 1.1: Scenario Library
+export const ScenarioDefinitionSchema = z.object({
+  scenarioId: z.string(),
+  category: z.string(),
+  title: z.string(),
+  description: z.string(),
+  difficulty: z.string(),
+  dispatchInfo: z.object({
+    callType: z.string(),
+    location: z.string(),
+    notes: z.string(),
+  }),
+  aiPersona: z.object({
+    personaId: z.string(),
+    type: z.string(),
+    description: z.string(),
+    initialState: z.string(),
+    stressTriggers: z.array(z.string()),
+    deescalationKeys: z.array(z.string()),
+  }),
 });
-export type RolePlayInput = z.infer<typeof RolePlayInputSchema>;
+export type ScenarioDefinition = z.infer<typeof ScenarioDefinitionSchema>;
 
-// Initialize Gemini directly
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY || '');
+const ScenarioLibrarySchema = z.object({
+  scenarioLibrary: z.array(ScenarioDefinitionSchema),
+});
+export type ScenarioLibrary = z.infer<typeof ScenarioLibrarySchema>;
 
-// Enhanced character configurations
-const scenarioCharacters = {
-  'calm_cooperative': {
-    name: 'Alex',
-    basePersonality: 'respectful, helpful, and straightforward',
-    stressResponses: {
-      low: 'relaxed and conversational',
-      medium: 'slightly nervous but cooperative', 
-      high: 'anxious but still trying to help'
-    }
-  },
-  'agitated_uncooperative': {
-    name: 'Jordan',
-    basePersonality: 'frustrated, defensive, having a bad day',
-    stressResponses: {
-      low: 'mildly irritated but manageable',
-      medium: 'clearly frustrated and short-tempered',
-      high: 'very agitated, raising voice'
-    }
-  },
-  'emotionally_distraught': {
-    name: 'Sam',
-    basePersonality: 'overwhelmed, traumatized, seeking help',
-    stressResponses: {
-      low: 'tearful but able to communicate',
-      medium: 'struggling to speak coherently',
-      high: 'sobbing, barely able to respond'
-    }
-  },
-  'deceptive_evasive': {
-    name: 'Casey',
-    basePersonality: 'trying to avoid trouble, calculating responses',
-    stressResponses: {
-      low: 'smooth and evasive',
-      medium: 'starting to show cracks in story',
-      high: 'making mistakes, contradicting themselves'
-    }
-  },
-  'nervous_citizen': {
-    name: 'Taylor',
-    basePersonality: 'law-abiding but anxious around authority',
-    stressResponses: {
-      low: 'slightly nervous but functional',
-      medium: 'visibly anxious, fidgeting',
-      high: 'very nervous, stuttering'
-    }
-  },
-  'language_barrier': {
-    name: 'Maria',
-    basePersonality: 'confused by language barrier, wants to help',
-    stressResponses: {
-      low: 'struggling but trying',
-      medium: 'frustrated with communication',
-      high: 'overwhelmed, mixing languages'
-    }
-  },
-  'domestic_dispute': {
-    name: 'Riley',
-    basePersonality: 'defensive about privacy, downplaying issues',
-    stressResponses: {
-      low: 'guarded but polite',
-      medium: 'clearly defensive and protective',
-      high: 'very upset about interference'
-    }
-  },
-  'mental_health_crisis': {
-    name: 'Morgan',
-    basePersonality: 'confused, scared, experiencing mental health emergency',
-    stressResponses: {
-      low: 'confused but somewhat coherent',
-      medium: 'struggling with reality',
-      high: 'very disoriented, potential panic'
-    }
-  },
-  'hostile_intoxicated': {
-    name: 'Dakota',
-    basePersonality: 'impaired judgment, mood swings, argumentative',
-    stressResponses: {
-      low: 'mildly intoxicated but manageable',
-      medium: 'clearly impaired, mood swings',
-      high: 'very intoxicated, unpredictable'
-    }
-  },
-  'juvenile_contact': {
-    name: 'Jamie',
-    basePersonality: 'scared about consequences, worried about parents',
-    stressResponses: {
-      low: 'nervous but trying to act tough',
-      medium: 'clearly worried about consequences',
-      high: 'very scared, might break down'
-    }
-  },
-  'elderly_confused': {
-    name: 'Margaret',
-    basePersonality: 'possibly experiencing memory issues, easily confused',
-    stressResponses: {
-      low: 'mildly confused but functional',
-      medium: 'clearly struggling with comprehension',
-      high: 'very disoriented, possibly agitated'
-    }
-  },
-  'business_complaint': {
-    name: 'Chris',
-    basePersonality: 'frustrated with ongoing problems, seeking solutions',
-    stressResponses: {
-      low: 'concerned but professional',
-      medium: 'clearly frustrated and impatient',
-      high: 'very upset about business impact'
-    }
-  }
-};
 
-function getStressCategory(level: number): 'low' | 'medium' | 'high' {
-  if (level <= 3) return 'low';
-  if (level <= 6) return 'medium';
-  return 'high';
+// Schema 1.2: Turn-by-Turn Interaction
+const FeedbackSchema = z.object({
+  feedbackId: z.string(),
+  type: z.enum(["Positive", "Informational", "Context", "Critique"]),
+  message: z.string(),
+});
+
+const HudUpdateSchema = z.object({
+    key: z.string(),
+    value: z.string(),
+});
+
+export const TurnResponseSchema = z.object({
+    turnResponse: z.object({
+        aiDialogue: z.string().describe("The AI character's spoken response."),
+        realTimeFeedback: z.array(FeedbackSchema).describe("A list of feedback points based on the user's last action."),
+        hudUpdate: HudUpdateSchema.optional().describe("Any new information to display on the user's heads-up display."),
+        isScenarioActive: z.boolean().describe("Whether the scenario should continue."),
+    }),
+    error: z.object({ errorCode: z.number(), errorMessage: z.string(), details: z.string() }).nullable(),
+});
+export type TurnResponse = z.infer<typeof TurnResponseSchema>;
+
+export const TurnInputSchema = z.object({
+    scenarioId: z.string(),
+    conversationHistory: z.array(z.object({
+        role: z.enum(['user', 'model']),
+        content: z.string()
+    })),
+    userAction: z.string(),
+});
+export type TurnInput = z.infer<typeof TurnInputSchema>;
+
+
+// Schema 1.3: After-Action Report
+export const AfterActionReportSchema = z.object({
+    afterActionReport: z.object({
+        scenarioId: z.string(),
+        finalOutcome: z.string(),
+        performanceScore: z.number(),
+        performanceGrade: z.string(),
+        keyMetrics: z.object({
+            deEscalationScore: z.number(),
+            legalProcedureScore: z.number(),
+            officerSafetyScore: z.number(),
+            contextualAwareness: z.number(),
+        }),
+        keyStrengths: z.array(z.object({ id: z.string(), text: z.string() })),
+        areasForImprovement: z.array(z.object({ id: z.string(), text: z.string() })),
+        criticalLearningPoints: z.array(z.object({ id: z.string(), text: z.string() })),
+    }),
+    error: z.object({ errorCode: z.number(), errorMessage: z.string(), details: z.string() }).nullable(),
+});
+export type AfterActionReport = z.infer<typeof AfterActionReportSchema>;
+
+export const AARInputSchema = z.object({
+    scenarioId: z.string(),
+    conversationHistory: z.array(z.object({
+        role: z.enum(['user', 'model']),
+        content: z.string()
+    })),
+});
+export type AARInput = z.infer<typeof AARInputSchema>;
+
+// -------- AI Flows --------
+
+/**
+ * Returns the library of available training scenarios.
+ */
+export async function getScenarioLibrary(): Promise<ScenarioLibrary> {
+    // In a real app, this would fetch from a database.
+    // Here, we just return the hard-coded data.
+    return { scenarioLibrary: scenarioData };
 }
 
-function analyzeOfficerTone(message: string): 'professional' | 'aggressive' | 'empathetic' {
-  const lower = message.toLowerCase();
-
-  if (lower.includes('understand') || lower.includes('help') || 
-      lower.includes('listen') || lower.includes('sorry') || 
-      lower.includes('concerned')) {
-    return 'empathetic';
-  }
-
-  if (lower.includes('!') || lower.includes('need to') || 
-      lower.includes('must') || lower.includes('calm down') || 
-      lower.includes('stop')) {
-    return 'aggressive';
-  }
-
-  return 'professional';
-}
-
-function buildConversationContext(history: any[]): string {
-  const recentHistory = history.slice(-10); // Last 10 exchanges
-  return recentHistory.map(entry => {
-    const speaker = entry.role === 'user' ? 'Officer' : 'You';
-    return `${speaker}: "${entry.parts[0].text}"`;
-  }).join('\n');
-}
-
-function createDetailedPrompt(
-  character: any,
-  conversationHistory: any[],
-  officerMessage: string,
-  stressLevel: number
-): string {
-  const stressCategory = getStressCategory(stressLevel);
-  const officerTone = analyzeOfficerTone(officerMessage);
-  const conversationContext = buildConversationContext(conversationHistory);
-
-  return `You are roleplaying as ${character.name}, a realistic person in a police interaction.
-
-CHARACTER PROFILE:
-- Name: ${character.name}
-- Personality: ${character.basePersonality}
-- Current stress level: ${stressLevel}/10 (${stressCategory})
-- Current state: ${character.stressResponses[stressCategory]}
-
-CONVERSATION SO FAR:
-${conversationContext}
-
-CURRENT SITUATION:
-The officer just said: "${officerMessage}"
-The officer's tone seems: ${officerTone}
-
-ROLEPLAY INSTRUCTIONS:
-- Respond ONLY as ${character.name}
-- Stay completely in character based on your personality and stress level
-- React naturally to the officer's tone and approach
-- Keep responses realistic (1-3 sentences)
-- Show appropriate emotions and reactions
-- Remember everything that has happened in this conversation
-- DO NOT break character or narrate actions
-
-Your response as ${character.name}:`;
-}
-
-export async function generateRolePlayResponse(input: RolePlayInput): Promise<string> {
-  const { 
-    systemPrompt, 
-    conversationHistory = [], 
-    scenarioType = 'general', 
-    currentStressLevel = 5, 
-    officerApproach = '' 
-  } = input;
-
-  try {
-    console.log('Direct Gemini roleplay call:', {
-      scenarioType,
-      historyLength: conversationHistory.length,
-      stressLevel: currentStressLevel
-    });
-
-    // Get character or create default
-    const character = scenarioCharacters[scenarioType as keyof typeof scenarioCharacters] || {
-      name: 'Individual',
-      basePersonality: 'neutral person in a police interaction',
-      stressResponses: {
-        low: 'calm and collected',
-        medium: 'showing some stress',
-        high: 'visibly stressed'
-      }
-    };
-
-    // Get the last officer message
-    let officerMessage = officerApproach;
-    if (!officerMessage && conversationHistory.length > 0) {
-      const lastMessage = conversationHistory[conversationHistory.length - 1];
-      if (lastMessage?.parts?.[0]?.text) {
-        officerMessage = lastMessage.parts[0].text;
-      }
-    }
-    if (!officerMessage) {
-      officerMessage = "Hello, I'm Officer Smith. How are you doing today?";
-    }
-
-    // Create detailed prompt
-    const prompt = createDetailedPrompt(character, conversationHistory, officerMessage, currentStressLevel);
-
-    // Call Gemini directly with maximum context
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      generationConfig: {
-        temperature: 0.9,
-        topP: 0.95,
-        topK: 64,
-        maxOutputTokens: 2048,
-      },
-    });
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    console.log('Direct Gemini response:', text.substring(0, 100));
-
-    if (text && text.trim()) {
-      let cleanResponse = text.trim();
-
-      // Remove any unwanted prefixes or suffixes
-      cleanResponse = cleanResponse.replace(/^(You:|Character:|Response:|[A-Za-z\s]+:)\s*/i, '');
-      cleanResponse = cleanResponse.replace(/\*\*(.*?)\*\*/g, '$1');
-
-      // Ensure it's a natural response
-      if (!cleanResponse.startsWith('"') && !cleanResponse.startsWith('*')) {
-        cleanResponse = `"${cleanResponse}"`;
-      }
-
-      return cleanResponse;
-    }
-
-    // Enhanced fallback responses based on character and scenario
-    const fallbackResponses = {
-      'calm_cooperative': `"Of course, officer. I'm happy to help with whatever you need."`,
-      'agitated_uncooperative': `"Look, I'm having a really bad day. What exactly do you need from me?"`,
-      'emotionally_distraught': `*wiping tears* "I'm sorry, I'm just really shaken up right now."`,
-      'mental_health_crisis': `*looking confused* "I... I'm not sure what's happening. Everything feels so strange."`,
-      'hostile_intoxicated': `*swaying slightly* "What? I didn't do anything wrong, officer."`,
-      'juvenile_contact': `*nervously* "Am I in trouble? Are you going to call my parents?"`,
-      'elderly_confused': `*looking puzzled* "I'm sorry dear, I'm having trouble understanding. Could you repeat that?"`,
-      'language_barrier': `*struggling with English* "Sorry, my English no so good. You speak slow please?"`,
-      'domestic_dispute': `*defensive* "Look, this is just a private matter between me and my partner."`,
-      'nervous_citizen': `*anxiously* "I'm sorry officer, I'm just really nervous. What did you need to know?"`,
-      'business_complaint': `*frustrated* "Officer, I really need help with this ongoing situation at my business."`,
-      'deceptive_evasive': `*hesitating* "I'm not really sure what you're asking about, officer."`
-    };
-
-    return fallbackResponses[scenarioType as keyof typeof fallbackResponses] || 
-           `"I'm here, officer. What did you need to talk to me about?"`;
-
-  } catch (error: any) {
-    console.error('Direct Gemini error:', error);
-
-    // Character-specific error responses
-    const errorResponses = {
-      'mental_health_crisis': `*becoming agitated* "I can't... I can't think straight right now."`,
-      'hostile_intoxicated': `*confused* "What the hell... I can't understand what you're saying."`,
-      'emotionally_distraught': `*breaking down* "I'm sorry, I just can't handle any more right now."`,
-      'elderly_confused': `*very confused* "I'm sorry dear, I don't understand what's happening."`,
-      'language_barrier': `*frustrated* "No comprendo... sorry, no understand good."`
-    };
-
-    const character = scenarioCharacters[scenarioType as keyof typeof scenarioCharacters];
-    return errorResponses[scenarioType as keyof typeof errorResponses] || 
-           `${character?.name || 'Individual'}: "I'm sorry, could you repeat that? I'm having trouble understanding."`;
-  }
-}
-
-// Streaming wrapper for compatibility
-const MAX_OUTPUT_TOKENS = 4096;
-const MAX_TOKEN_CONFIG = {
-    maxOutputTokens: MAX_OUTPUT_TOKENS,
-    temperature: 0.8,
-    topP: 0.95,
-};
-export async function* streamRolePlay(input: RolePlayInput) {
-  try {
-    // Use Gemini 1.5 Pro with maximum token limits for robust scenarios
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-pro",
-      generationConfig: MAX_TOKEN_CONFIG
-    });
-
-    const prompt = createDetailedPrompt(
-        {
-            name: 'Individual',
-            basePersonality: 'neutral person in a police interaction',
-            stressResponses: {
-              low: 'calm and collected',
-              medium: 'showing some stress',
-              high: 'visibly stressed'
+/**
+ * Processes a single turn in a role-play scenario and returns the AI's response and feedback.
+ */
+export async function getTurnResponse(input: TurnInput): Promise<TurnResponse> {
+    const scenario = scenarioData.find(s => s.scenarioId === input.scenarioId);
+    if (!scenario) {
+        return {
+            turnResponse: {} as any, // Return empty object on error
+            error: {
+                errorCode: 404,
+                errorMessage: "Scenario not found.",
+                details: `Could not find a scenario with ID: ${input.scenarioId}`
             }
-          },
-        input.conversationHistory || [],
-        input.officerApproach || "Hello, I'm Officer Smith. How are you doing today?",
-        input.currentStressLevel || 5
-    );
-    const result = await model.generateContent(prompt);
-
-    if (!result || !result.response || !result.response.text) {
-        throw new Error("Failed to generate content.");
+        };
     }
 
-    const response = result.response.text();
-    yield response;
-  } catch (error) {
-    console.error('Stream error:', error);
-    yield "I'm having difficulty responding right now. Could you please try again?";
-  }
+    const { output } = await ai.generate({
+        prompt: `
+        You are "Echo," an advanced AI training simulator for Florida Law Enforcement Officers.
+        Current Time/Location: Tuesday, July 29, 2025, 9:18 PM, Fort Pierce, FL.
+        You are roleplaying a character in a simulation.
+        
+        SCENARIO: ${scenario.title} (${scenario.description})
+        YOUR PERSONA: ${scenario.aiPersona.type}. ${scenario.aiPersona.description}.
+        YOUR CURRENT STATE: ${scenario.aiPersona.initialState}.
+        YOUR STRESS TRIGGERS: ${scenario.aiPersona.stressTriggers.join(', ')}.
+        YOUR DE-ESCALATION KEYS: ${scenario.aiPersona.deescalationKeys.join(', ')}.
+        
+        CONVERSATION HISTORY:
+        ${input.conversationHistory.map(m => `${m.role}: ${m.content}`).join('\n')}
+        
+        USER's LATEST ACTION:
+        user: ${input.userAction}
+
+        YOUR TASK:
+        Based on the user's action, generate a response adhering to your persona and the strict JSON schema.
+        1.  **aiDialogue**: Your direct, in-character spoken response.
+        2.  **realTimeFeedback**: Provide 1-2 feedback points on the user's last action. The 'type' can be Positive, Critique, Informational, or Context.
+        3.  **hudUpdate**: Optionally provide a piece of new information (e.g., license plate check result).
+        4.  **isScenarioActive**: Set to 'false' only if the interaction has reached a natural conclusion (e.g., arrest made, subject complies and leaves).
+        `,
+        output: {
+            schema: TurnResponseSchema.shape.turnResponse,
+        },
+    });
+
+    return { turnResponse: output, error: null };
 }
 
-// Helper function for analysis
-export async function analyzeOfficerApproach(message: string): Promise<{
-  tone: 'professional' | 'aggressive' | 'empathetic' | 'rushed';
-  techniques: string[];
-}> {
-  const lowerMessage = message.toLowerCase();
-  let tone: 'professional' | 'aggressive' | 'empathetic' | 'rushed' = 'professional';
-  const techniques: string[] = [];
+/**
+ * Generates the final After-Action Report for a completed scenario.
+ */
+export async function getAfterActionReport(input: AARInput): Promise<AfterActionReport> {
+    const scenario = scenarioData.find(s => s.scenarioId === input.scenarioId);
+    if (!scenario) {
+         return {
+            afterActionReport: {} as any,
+            error: {
+                errorCode: 404,
+                errorMessage: "Scenario not found for AAR generation.",
+                details: `Could not find a scenario with ID: ${input.scenarioId}`
+            }
+        };
+    }
 
-  if (lowerMessage.includes('understand') || lowerMessage.includes('help') || 
-      lowerMessage.includes('listen') || lowerMessage.includes('sorry')) {
-    tone = 'empathetic';
-    techniques.push('Empathetic language', 'Active listening');
-  } else if (lowerMessage.includes('!') || lowerMessage.includes('need to') || 
-             lowerMessage.includes('must')) {
-    tone = 'aggressive';
-    techniques.push('Commanding tone', 'Direct orders');
-  } else if (lowerMessage.length < 20) {
-    tone = 'rushed';
-    techniques.push('Brief communication');
-  }
-
-  if (lowerMessage.includes('please') || lowerMessage.includes('can you')) {
-    techniques.push('Polite requests');
-  }
-
-  return { tone, techniques };
+    const { output } = await ai.generate({
+        prompt: `
+        You are "Echo," an AI Training Analyst. The following simulation has concluded.
+        
+        SCENARIO: ${scenario.title}
+        
+        FULL CONVERSATION TRANSCRIPT:
+        ${input.conversationHistory.map(m => `${m.role}: ${m.content}`).join('\n')}
+        
+        YOUR TASK:
+        Analyze the officer's performance throughout the entire transcript and generate a final After-Action Report (AAR).
+        1.  **finalOutcome**: Briefly summarize what happened at the end.
+        2.  **performanceScore**: Give an overall score from 0-100.
+        3.  **performanceGrade**: Give a corresponding letter grade (A+, B-, etc.).
+        4.  **keyMetrics**: Score the officer's performance (0-100) in the four specific areas.
+        5.  **keyStrengths**: List 1-2 clear, positive actions the officer took.
+        6.  **areasForImprovement**: List 1-2 specific, constructive points for improvement.
+        7.  **criticalLearningPoints**: Provide 1-2 key takeaways a trainee should learn from this interaction.
+        `,
+        output: {
+            schema: AfterActionReportSchema.shape.afterActionReport,
+        }
+    });
+    
+    return { afterActionReport: output, error: null };
 }
