@@ -1,16 +1,17 @@
-
 // Helper function to analyze officer's approach
 export function analyzeOfficerApproach(message: string): {
-  tone: 'professional' | 'aggressive' | 'empathetic' | 'rushed';
+  tone: 'professional' | 'aggressive' | 'empathetic' | 'rushed' | 'commanding';
   techniques: string[];
 } {
   const msg = message.toLowerCase();
-  let tone: 'professional' | 'aggressive' | 'empathetic' | 'rushed' = 'professional';
+  let tone: 'professional' | 'aggressive' | 'empathetic' | 'rushed' | 'commanding' = 'professional';
   const techniques: string[] = [];
 
   // Tone analysis
-  if (msg.includes('need to') || msg.includes('have to') || msg.includes('!')) {
+  if (msg.includes('now!') || msg.includes('do it now') || msg.split('!').length > 2) {
     tone = 'aggressive';
+  } else if (/\b(get on the ground|show me your hands|turn around)\b/.test(msg)) {
+    tone = 'commanding';
   } else if (msg.includes('understand') || msg.includes('sorry') || msg.includes('help')) {
     tone = 'empathetic';
   } else if (msg.length < 20 || msg.split(' ').length < 4) {

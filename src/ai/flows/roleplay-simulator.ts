@@ -3,6 +3,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
+import { analyzeOfficerApproach } from '@/lib/roleplay-utils';
 
 // -------- Scenarios Data (Simulated Database) --------
 
@@ -171,6 +172,10 @@ export async function getTurnResponse(input: TurnInput): Promise<TurnResponse> {
         };
     }
 
+    const { tone } = analyzeOfficerApproach(input.userAction);
+    const feedbackType = tone === 'empathetic' ? 'Positive' : tone === 'aggressive' ? 'Critique' : 'Informational';
+    const feedbackMessage = `Your tone was perceived as ${tone}. This is likely to ${tone === 'empathetic' ? 'de-escalate' : 'escalate'} the situation.`;
+
     const { output } = await ai.generate({
         prompt: `
         You are "Echo," an advanced AI training simulator for Florida Law Enforcement Officers.
@@ -200,6 +205,13 @@ export async function getTurnResponse(input: TurnInput): Promise<TurnResponse> {
             schema: TurnResponseSchema.shape.turnResponse,
         },
     });
+    
+     output.realTimeFeedback.push({
+        feedbackId: `RTF-${Date.now()}`,
+        type: feedbackType,
+        message: feedbackMessage,
+    });
+
 
     return { turnResponse: output, error: null };
 }
