@@ -23,17 +23,10 @@ const getDifficultyColor = (difficulty: string) => {
     }
 };
 
-const categoryColors = {
-    'basic': 'bg-green-100 text-green-800 border-green-200',
-    'intermediate': 'bg-amber-100 text-amber-800 border-amber-200',
-    'advanced': 'bg-red-100 text-red-800 border-red-200'
-};
-
 const categories = [
     { id: 'all', name: 'All Scenarios', icon: '🎯' },
-    { id: 'basic', name: 'Basic Training', icon: '📚' },
-    { id: 'intermediate', name: 'Intermediate', icon: '⚡' },
-    { id: 'advanced', name: 'Advanced', icon: '🧠' }
+    { id: 'Traffic Stop', name: 'Traffic Stops', icon: '🚗' },
+    { id: 'Domestic Dispute', name: 'Domestics', icon: '🏠' },
 ];
 
 export default function RolePlaySimulatorPage() {
@@ -69,7 +62,7 @@ export default function RolePlaySimulatorPage() {
     const filteredScenarios = scenarios.filter(scenario => {
         const matchesSearch = scenario.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                              scenario.description.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = selectedCategory === 'all' || scenario.difficulty.toLowerCase() === selectedCategory;
+        const matchesCategory = selectedCategory === 'all' || scenario.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });
 
