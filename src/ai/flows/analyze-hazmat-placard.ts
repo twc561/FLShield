@@ -15,7 +15,7 @@ const AnalyzeHazmatPlacardInputSchema = z.object({
 });
 export type AnalyzeHazmatPlacardInput = z.infer<typeof AnalyzeHazmatPlacardInputSchema>;
 
-const AnalyzeHazmatPlacardOutputSchema = z.object({
+export const AnalyzeHazmatPlacardOutputSchema = z.object({
   unID: z.string().describe("The 4-digit ID requested."),
   materialName: z.string().describe("The proper shipping name of the material."),
   ergGuideNumber: z.string().describe("The corresponding guide number from the Emergency Response Guidebook (ERG)."),
@@ -61,5 +61,8 @@ UN/NA ID: ${input.unID}`,
       schema: AnalyzeHazmatPlacardOutputSchema,
     },
   });
+  if (!output) {
+    throw new Error("Failed to generate HAZMAT placard analysis.");
+  }
   return output;
 }

@@ -14,7 +14,7 @@ const LiveDebriefInputSchema = z.object({
   officerStressLevel: z.number().min(1).max(10).optional().describe("Current stress level of the officer"),
   incidentType: z.string().optional().describe("Type of incident being debriefed"),
   sessionProgress: z.enum(['opening', 'exploration', 'processing', 'closure']).optional(),
-}) as const;
+});
 export type LiveDebriefInput = z.infer<typeof LiveDebriefInputSchema>;
 
 // Initialize Gemini directly like the roleplay simulator

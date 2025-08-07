@@ -62,5 +62,8 @@ ${instructionData.fullText}
       schema: AnalyzeInstructionOutputSchema,
     },
   });
+  if (!output) {
+    throw new Error("Failed to generate jury instruction analysis.");
+  }
   return output;
 }

@@ -14,7 +14,7 @@ const AdvisorInputSchema = z.object({
   analysisMode: z.enum(['standard', 'comprehensive']).optional().default('standard').describe("The depth of analysis to perform."),
   includeRiskFactors: z.boolean().optional().default(false).describe("Whether to include risk assessment."),
   includePracticalGuidance: z.boolean().optional().default(false).describe("Whether to include practical guidance."),
-}) as const;
+});
 export type AdvisorInput = z.infer<typeof AdvisorInputSchema>;
 
 const AdvisorOutputItemSchema = z.object({

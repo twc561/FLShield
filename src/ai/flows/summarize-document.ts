@@ -30,5 +30,8 @@ ${input.documentText}`,
       schema: SummarizeDocumentOutputSchema,
     },
   });
+  if (!output) {
+    throw new Error("Failed to generate document summary.");
+  }
   return output;
 }

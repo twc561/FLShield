@@ -67,5 +67,8 @@ Substance ID: ${input.substanceId}`,
       ],
     },
   });
+  if (!output) {
+    throw new Error("Failed to generate substance analysis.");
+  }
   return output;
 }

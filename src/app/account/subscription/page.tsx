@@ -1,9 +1,8 @@
-
 "use client"
 
 import { useState, useEffect } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '@/lib/firebase'
+import { auth, isFirebaseConfigured } from '@/lib/firebase'
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -12,10 +11,10 @@ import { CreditCard, Crown, Calendar, DollarSign } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useSubscription } from "@/hooks/use-subscription"
 
-export default function SubscriptionManagementPage() {
+function SubscriptionManagementContent() {
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
-  const [user] = useAuthState(auth)
+  const [user] = useAuthState(auth!)
   const { isPro, mounted } = useSubscription()
 
   const handleManageSubscription = async () => {
@@ -177,4 +176,11 @@ export default function SubscriptionManagementPage() {
       </div>
     </div>
   )
+}
+
+export default function SubscriptionManagementPage() {
+    if (!isFirebaseConfigured) {
+        return <div>Firebase not configured</div>
+    }
+    return <SubscriptionManagementContent />
 }

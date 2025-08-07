@@ -23,7 +23,7 @@ import {
 
 const QueryFwcRegulationsInputSchema = z.object({
   question: z.string().describe('The user\'s question about FWC regulations.'),
-}) as const;
+});
 export type QueryFwcRegulationsInput = z.infer<typeof QueryFwcRegulationsInputSchema>;
 
 const QueryFwcRegulationsOutputSchema = z.object({
@@ -61,5 +61,8 @@ Provide the direct answer now.`,
       schema: QueryFwcRegulationsOutputSchema,
     },
   });
-  return output!;
+  if (!output) {
+    throw new Error("Failed to generate FWC regulations answer.");
+  }
+  return output;
 }

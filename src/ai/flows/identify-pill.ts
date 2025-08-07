@@ -59,7 +59,8 @@ export const identifyPill = ai.defineFlow(
   },
   async (input) => {
     const { output } = await ai.generate({
-      prompt: `You are an expert forensic pharmacologist analyzing a pill/substance for law enforcement identification. 
+      prompt: [
+        { text: `You are an expert forensic pharmacologist analyzing a pill/substance for law enforcement identification.
 
 Analyze the image and provide:
 1. drugName: The most likely substance name, or "Unknown" if unidentifiable
@@ -69,10 +70,9 @@ Analyze the image and provide:
 
 Focus on officer safety and accurate identification. If uncertain, state "Unknown" for drugName.
 
-ADDITIONAL CONTEXT: ${input.additionalContext || 'No additional context provided'}`,
-      media: {
-        url: `data:image/jpeg;base64,${input.imageBase64}`,
-      },
+ADDITIONAL CONTEXT: ${input.additionalContext || 'No additional context provided'}`},
+        { media: { url: `data:image/jpeg;base64,${input.imageBase64}` } },
+      ],
       output: {
         schema: IdentifyPillOutputSchema,
       },

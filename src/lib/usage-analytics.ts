@@ -237,19 +237,6 @@ export function getSmartSuggestions(): {
       { key: '⌘2', action: 'Evidence ID', href: '/field-procedures/visual-evidence-identifier' },
       { key: '⌘3', action: 'Report Writer', href: '/reporting-development/ai-report-writer' }
     ]
-  } else {
-    // Fallback for any edge cases
-    quickActions = ['Daily Briefing', 'AI Legal Advisor', 'Field Notes']
-    aiPrompts = [
-      'How can I assist you today?',
-      'What tools do you need?',
-      'Review procedures'
-    ]
-    shortcuts = [
-      { key: '⌘1', action: 'Daily Briefing', href: '/daily-briefing-act-guide' },
-      { key: '⌘2', action: 'DV Protocol', href: '/field-procedures/domestic-violence-protocol' },
-      { key: '⌘3', action: 'First Aid', href: '/emergency-response/first-aid-guide' }
-    ]
   }
 
   return { quickActions, aiPrompts, shortcuts }

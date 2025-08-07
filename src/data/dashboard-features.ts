@@ -407,6 +407,15 @@ export const dashboardFeatureGroups: FeatureGroup[] = [
     icon: GraduationCap,
     features: [
       {
+        id: "deco-simulator",
+        title: "DECO Simulator",
+        summary: "Realistic, Florida-specific scenarios with real-time feedback and scoring.",
+        icon: "ShieldCheck",
+        targetPage: "/training-development/deco-simulator",
+        category: "Training & Professional Development",
+        isPremium: true,
+      },
+      {
         id: "knowledge-check",
         title: "Knowledge Assessment Drills",
         summary: "Test your knowledge on law, procedure, and case studies.",

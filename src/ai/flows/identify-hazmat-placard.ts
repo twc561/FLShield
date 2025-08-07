@@ -31,10 +31,10 @@ const UnIdSchema = z.object({
 export async function identifyHazmatPlacardFromImage(input: IdentifyHazmatPlacardInput): Promise<IdentifyHazmatPlacardOutput> {
   // Step 1: Analyze the image to get the UN/NA ID
   const { output: idAnalysis } = await ai.generate({
-    prompt: `You are an expert HAZMAT placard recognition system. Analyze the following image of a placard and extract ONLY the 4-digit UN/NA number. Disregard any other numbers like the hazard class at the bottom. The number is the most important piece of information.
-    
-    Image: {{media url=imageDataUri}}`,
-    input: { imageDataUri: input.imageDataUri },
+    prompt: [
+        { text: `You are an expert HAZMAT placard recognition system. Analyze the following image of a placard and extract ONLY the 4-digit UN/NA number. Disregard any other numbers like the hazard class at the bottom. The number is the most important piece of information.`},
+        { media: { url: input.imageDataUri } },
+    ],
     output: {
       schema: UnIdSchema,
     },

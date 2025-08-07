@@ -10,7 +10,7 @@ const SummarizeDebriefInputSchema = z.object({
   difficulties: z.string().describe("Most difficult aspects for the officer"),
   stressLevel: z.number().min(1).max(10).optional().describe("Officer's current stress level"),
   incidentType: z.string().optional().describe("Type of incident"),
-}) as const;
+});
 export type SummarizeDebriefInput = z.infer<typeof SummarizeDebriefInputSchema>;
 
 const SummarizeDebriefOutputSchema = z.object({
@@ -18,7 +18,7 @@ const SummarizeDebriefOutputSchema = z.object({
   insights: z.array(z.string()).describe("Key insights about resilience and growth"),
   recommendations: z.array(z.string()).describe("Gentle suggestions for self-care and processing"),
   riskLevel: z.enum(['low', 'moderate', 'high']).describe("Assessment of stress/trauma impact"),
-}) as const;
+});
 export type SummarizeDebriefOutput = z.infer<typeof SummarizeDebriefOutputSchema>;
 
 // Initialize Gemini with the same approach as roleplay simulator

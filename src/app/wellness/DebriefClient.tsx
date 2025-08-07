@@ -153,7 +153,7 @@ export function DebriefClient() {
                 className="min-h-[150px]"
               />
             </div>
-          )}
+          ) : null}
            {error && (
             <Alert variant="destructive">
               <AlertTitle>Error</AlertTitle>

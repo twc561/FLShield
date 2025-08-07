@@ -1,9 +1,8 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
 import { useAuthState } from "react-firebase-hooks/auth"
-import { auth } from "@/lib/firebase"
+import { auth, isFirebaseConfigured } from "@/lib/firebase"
 import { PageHeader } from "@/components/PageHeader"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
@@ -57,8 +56,8 @@ interface UsageData {
   }
 }
 
-export default function UsageAnalyticsPage() {
-  const [user] = useAuthState(auth)
+function UsageAnalyticsContent() {
+  const [user] = useAuthState(auth!)
   const [usageData, setUsageData] = useState<UsageData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedPeriod, setSelectedPeriod] = useState('current')
@@ -332,4 +331,11 @@ export default function UsageAnalyticsPage() {
       </div>
     </SubscriptionGate>
   )
+}
+
+export default function UsageAnalyticsPage() {
+    if (!isFirebaseConfigured) {
+        return <div>Firebase not configured</div>
+    }
+    return <UsageAnalyticsContent />
 }

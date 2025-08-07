@@ -47,5 +47,8 @@ Rule ID: ${input.ruleId}`,
       schema: AnalyzeRuleOutputSchema,
     },
   });
+  if (!output) {
+    throw new Error("Failed to generate criminal procedure rule analysis.");
+  }
   return output;
 }
