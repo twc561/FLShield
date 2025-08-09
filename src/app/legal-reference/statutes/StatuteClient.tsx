@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Summarizer } from "@/components/Summarizer";
 import type { Statute } from "@/data/statutes";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, ExternalLink, BookOpen, Loader2, Sparkles, Scale } from "lucide-react";
+import { Search, ExternalLink, BookOpen, Loader2, Sparkles, Scale, Badge } from "lucide-react";
 import { findStatute } from "@/ai/flows/find-statute";
 import { generateElementsOfCrime } from "@/ai/flows/generate-elements-flow";
 import {
@@ -19,7 +19,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 
 type StatuteIndexItem = Omit<Statute, 'description' | 'fullText' | 'practicalSummary' | 'example' | 'elementsOfTheCrime' | 'url'>;
 
@@ -153,7 +152,7 @@ export const StatuteClient = memo(function StatuteClient({
     const uniqueCategories = [...new Set(initialStatuteIndex.map((s) => s.category))];
     return uniqueCategories.sort((a, b) => {
         const indexA = categoryOrder.indexOf(a);
-        const indexB = order.indexOf(b);
+        const indexB = categoryOrder.indexOf(b);
         if (indexA === -1 && indexB === -1) return a.localeCompare(b);
         if (indexA === -1) return 1;
         if (indexB === -1) return -1;
