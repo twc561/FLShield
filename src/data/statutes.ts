@@ -174,6 +174,18 @@ const allStatutes: Statute[] = [
     example: 'A home health aide uses an elderly patient\'s debit card to make unauthorized purchases. This is financial exploitation of an elderly person, a felony under this statute.',
     url: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0800-0899/0825/Sections/0825.102.html'
   },
+  {
+    id: 's741-31',
+    code: 'F.S. § 741.31',
+    title: 'Violation of an injunction for protection against domestic violence',
+    category: 'Crimes Against Persons',
+    description: 'Makes it a first-degree misdemeanor to willfully violate an injunction for protection against domestic violence.',
+    fullText: 'A person who willfully violates an injunction for protection against domestic violence...by refusing to vacate the dwelling...going to...the residence, school, place of employment...or committing an act of domestic violence...commits a misdemeanor of the first degree.',
+    degreeOfCharge: 'First-degree Misdemeanor',
+    practicalSummary: 'This is the enforcement statute for domestic violence injunctions. If you have confirmed a valid, served injunction is in place and have probable cause that the respondent has violated its terms (e.g., by contacting the petitioner or going to their home), you SHALL arrest them. This is a mandatory arrest situation.',
+    example: 'A victim with a valid injunction calls to report her ex-husband is parked outside her house. The injunction specifies he must stay 500 feet away. You arrive, confirm his identity and the injunction status, and arrest him for violating the injunction.',
+    url: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0700-0799/0741/Sections/0741.31.html'
+  },
   
   // --- Property Crimes ---
   {
@@ -385,6 +397,18 @@ const allStatutes: Statute[] = [
     example: 'A defendant is out on bond for a felony charge. He is properly notified of his court date but decides to go to the beach instead. When he fails to appear, the judge issues a new warrant for his arrest for Failure to Appear on a Felony charge.',
     url: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0800-0899/0843/Sections/0843.15.html'
   },
+  {
+    id: 's901-15',
+    code: 'F.S. § 901.15',
+    title: 'When arrest by officer without warrant is lawful',
+    category: 'Public Order & Obstruction',
+    description: 'Outlines the specific circumstances under which a law enforcement officer may make a lawful arrest without a warrant.',
+    fullText: 'A law enforcement officer may arrest a person without a warrant when: (1) The person has committed a felony or misdemeanor or violated a municipal or county ordinance in the presence of the officer... (2) A felony has in fact been committed, and the officer has probable cause to believe that the person committed it... (3) The officer has probable cause to believe that a felony has been or is being committed and has probable cause to believe that the person to be arrested has committed or is committing it... (9)(a) The officer has probable cause to believe that the person has committed an act of domestic violence...',
+    degreeOfCharge: 'Procedural Statute',
+    practicalSummary: 'This statute is the basis of your arrest authority. The key takeaway for patrol is the "in the presence" requirement for most misdemeanors. However, you must know the exceptions listed in the statute, such as for domestic violence, retail theft, and carrying a concealed weapon, which allow for a warrantless misdemeanor arrest based on probable cause even if not committed in your presence.',
+    example: 'You respond to a domestic disturbance. The suspect is gone, but the victim has visible injuries and gives a credible statement that her boyfriend (who lives with her) caused them. Even though you did not witness the battery, this statute gives you the authority to arrest the boyfriend for misdemeanor domestic battery based on probable cause.',
+    url: 'http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0900-0999/0901/Sections/0901.15.html'
+  },
   
   // --- Traffic Offenses ---
   {
@@ -446,6 +470,18 @@ const allStatutes: Statute[] = [
     practicalSummary: 'The key elements are: 1) You are a recognizable law enforcement officer, 2) You gave a lawful order to stop (lights and sirens), and 3) The driver willfully refused to stop. Your report must document your patrol car\'s emergency equipment was active and that the driver had a clear opportunity to stop but chose not to.',
     example: 'You attempt to stop a car for speeding by activating your lights and siren. The driver makes eye contact with you in their mirror, then accelerates rapidly and begins weaving through traffic to get away. This constitutes Fleeing and Eluding.',
     url: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0300-0399/0316/Sections/0316.1935.html'
+  },
+  {
+    id: 's316-1932',
+    code: 'F.S. § 316.1932',
+    title: 'Implied Consent for Breath/Blood/Urine Tests',
+    category: 'Traffic Offenses',
+    description: 'Establishes that any person who accepts the privilege of driving in Florida is deemed to have given their consent to submit to an approved chemical or physical test of their breath, blood, or urine for the purpose of determining alcohol or drug content.',
+    fullText: 'Any person who accepts the privilege extended by the laws of this state of operating a motor vehicle within this state is, by so operating such vehicle, deemed to have given his or her consent to submit to an approved chemical test or physical test... for the purpose of determining the alcoholic content of his or her blood or breath or the presence of a chemical substance or controlled substance...',
+    degreeOfCharge: 'Civil/Criminal Penalty for Refusal',
+    practicalSummary: 'This is the legal foundation for requiring a breath test after a DUI arrest. You must read the Implied Consent warnings verbatim from your agency card or manual. A first refusal results in a 1-year license suspension; a second refusal is a separate criminal misdemeanor.',
+    example: 'After making a DUI arrest, you read the suspect the Implied Consent warning. The suspect says, "I\'m not blowing." You document this as a refusal, which carries its own penalties separate from the DUI charge itself.',
+    url: 'http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0300-0399/0316/Sections/0316.1932.html'
   },
 
   // --- Drug Offenses ---
@@ -559,31 +595,6 @@ const allStatutes: Statute[] = [
     example: 'During a search, you find a small, rectangular device known to be an auto sear for a Glock pistol. The suspect is charged with possession of a machine gun, as the device can "readily" make a firearm operable as one.',
     url: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0700-0799/0790/Sections/0790.222.html'
   },
-  // Add 75 more statutes to reach the goal of over 75+25 = 100 total
-  ...Array.from({ length: 75 }).map((_, i) => ({
-    id: `s-new-${i}`,
-    code: `F.S. § ${900 + i}.${10 + i}`,
-    title: `Additional Statute ${i + 1}`,
-    category: i % 2 === 0 ? 'Public Order & Obstruction' : 'Miscellaneous Offenses',
-    description: `This is a placeholder for additional statute ${i + 1}.`,
-    fullText: `Full legal text for additional statute ${i + 1}.`,
-    degreeOfCharge: i % 3 === 0 ? 'Third-degree Felony' : 'First-degree Misdemeanor',
-    practicalSummary: `Practical summary for officers regarding additional statute ${i + 1}.`,
-    example: `Example scenario for additional statute ${i + 1}.`,
-    url: 'https://www.leg.state.fl.us/statutes/',
-  })),
-  {
-    id: 's741-31',
-    code: 'F.S. § 741.31',
-    title: 'Violation of an injunction for protection against domestic violence',
-    category: 'Crimes Against Persons',
-    description: 'Makes it a first-degree misdemeanor to willfully violate an injunction for protection against domestic violence.',
-    fullText: 'A person who willfully violates an injunction for protection against domestic violence...by refusing to vacate the dwelling...going to...the residence, school, place of employment...or committing an act of domestic violence...commits a misdemeanor of the first degree.',
-    degreeOfCharge: 'First-degree Misdemeanor',
-    practicalSummary: 'This is the enforcement statute for domestic violence injunctions. If you have confirmed a valid, served injunction is in place and have probable cause that the respondent has violated its terms (e.g., by contacting the petitioner or going to their home), you SHALL arrest them. This is a mandatory arrest situation.',
-    example: 'A victim with a valid injunction calls to report her ex-husband is parked outside her house. The injunction specifies he must stay 500 feet away. You arrive, confirm his identity and the injunction status, and arrest him for violating the injunction.',
-    url: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0700-0799/0741/Sections/0741.31.html'
-  },
   {
     id: 's828-12',
     code: 'F.S. § 828.12',
@@ -595,30 +606,6 @@ const allStatutes: Statute[] = [
     practicalSummary: 'Document the condition of the animal and its environment thoroughly with photos. The key distinction for a felony charge is intent and the severity/repetition of the suffering. Coordinate with Animal Control, as they are often the primary investigators and caregivers for the animal victims.',
     example: 'A dog is found tied in a yard with no food or water, severely emaciated. This is misdemeanor animal cruelty. In contrast, a witness sees a person repeatedly and intentionally beating a dog with an object, causing severe injuries; this is felony aggravated animal cruelty.',
     url: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0800-0899/0828/Sections/0828.12.html'
-  },
-   {
-    id: 's316-1932',
-    code: 'F.S. § 316.1932',
-    title: 'Implied Consent for Breath/Blood/Urine Tests',
-    category: 'Traffic Offenses',
-    description: 'Establishes that any person who accepts the privilege of driving in Florida is deemed to have given their consent to submit to an approved chemical or physical test of their breath, blood, or urine for the purpose of determining alcohol or drug content.',
-    fullText: 'Any person who accepts the privilege extended by the laws of this state of operating a motor vehicle within this state is, by so operating such vehicle, deemed to have given his or her consent to submit to an approved chemical test or physical test... for the purpose of determining the alcoholic content of his or her blood or breath or the presence of a chemical substance or controlled substance...',
-    degreeOfCharge: 'Civil/Criminal Penalty for Refusal',
-    practicalSummary: 'This is the legal foundation for requiring a breath test after a DUI arrest. You must read the Implied Consent warnings verbatim from your agency card or manual. A first refusal results in a 1-year license suspension; a second refusal is a separate criminal misdemeanor.',
-    example: 'After making a DUI arrest, you read the suspect the Implied Consent warning. The suspect says, "I\'m not blowing." You document this as a refusal, which carries its own penalties separate from the DUI charge itself.',
-    url: 'http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0300-0399/0316/Sections/0316.1932.html'
-  },
-  {
-    id: 's901-15',
-    code: 'F.S. § 901.15',
-    title: 'When arrest by officer without warrant is lawful',
-    category: 'Public Order & Obstruction',
-    description: 'Outlines the specific circumstances under which a law enforcement officer may make a lawful arrest without a warrant.',
-    fullText: 'A law enforcement officer may arrest a person without a warrant when: (1) The person has committed a felony or misdemeanor or violated a municipal or county ordinance in the presence of the officer... (2) A felony has in fact been committed, and the officer has probable cause to believe that the person committed it... (3) The officer has probable cause to believe that a felony has been or is being committed and has probable cause to believe that the person to be arrested has committed or is committing it... (9)(a) The officer has probable cause to believe that the person has committed an act of domestic violence...',
-    degreeOfCharge: 'Procedural Statute',
-    practicalSummary: 'This statute is the basis of your arrest authority. The key takeaway for patrol is the "in the presence" requirement for most misdemeanors. However, you must know the exceptions listed in the statute, such as for domestic violence, retail theft, and carrying a concealed weapon, which allow for a warrantless misdemeanor arrest based on probable cause even if not committed in your presence.',
-    example: 'You respond to a domestic disturbance. The suspect is gone, but the victim has visible injuries and gives a credible statement that her boyfriend (who lives with her) caused them. Even though you did not witness the battery, this statute gives you the authority to arrest the boyfriend for misdemeanor domestic battery based on probable cause.',
-    url: 'http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0900-0999/0901/Sections/0901.15.html'
   }
 ];
 
