@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Summarizer } from "@/components/Summarizer";
 import type { Statute } from "@/data/statutes";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, ExternalLink, BookOpen, Loader2, Sparkles, Scale, Badge } from "lucide-react";
+import { Search, ExternalLink, BookOpen, Loader2, Sparkles, Scale } from "lucide-react";
 import { findStatute } from "@/ai/flows/find-statute";
 import { generateElementsOfCrime } from "@/ai/flows/generate-elements-flow";
 import {
@@ -19,6 +19,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 
 type StatuteIndexItem = Omit<Statute, 'description' | 'fullText' | 'practicalSummary' | 'example' | 'elementsOfTheCrime' | 'url'>;
 
@@ -152,7 +153,7 @@ export const StatuteClient = memo(function StatuteClient({
     const uniqueCategories = [...new Set(initialStatuteIndex.map((s) => s.category))];
     return uniqueCategories.sort((a, b) => {
         const indexA = categoryOrder.indexOf(a);
-        const indexB = categoryOrder.indexOf(b);
+        const indexB = order.indexOf(b);
         if (indexA === -1 && indexB === -1) return a.localeCompare(b);
         if (indexA === -1) return 1;
         if (indexB === -1) return -1;
@@ -298,6 +299,13 @@ export const StatuteClient = memo(function StatuteClient({
       >
         <AccordionTrigger className="p-4 hover:no-underline w-full text-left">
           <div className="flex items-center gap-4 flex-1">
+             <div className={`p-2 rounded-lg ${isAiResult ? 'bg-accent/10' : 'bg-primary/10'}`}>
+              {isAiResult ? (
+                <Sparkles className="w-6 h-6 text-accent" />
+              ) : (
+                <Scale className="w-6 w-6 text-primary" />
+              )}
+            </div>
             <div className="flex-1 text-left">
               <p className="font-semibold text-base text-card-foreground text-wrap">{statute.title}</p>
               <div className="flex items-center gap-2 mt-1">
