@@ -23,7 +23,7 @@ import type {
 
 type Message = {
     id: string;
-    role: 'user' | 'model';
+    role: 'user' | 'model' | 'narrator';
     content: string;
 };
 
@@ -50,7 +50,7 @@ export function RolePlaySimulatorClient({
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        setMessages([{ id: 'init-1', role: 'model', content: scenario.dispatchInfo.notes }]);
+        setMessages([{ id: 'init-1', role: 'narrator', content: scenario.dispatchInfo.notes }]);
     }, [scenario]);
     
     const scrollToBottom = () => {
@@ -73,7 +73,7 @@ export function RolePlaySimulatorClient({
         setMessages(prev => [...prev, userMessage]);
         
         const conversationHistory = [...messages, userMessage].map(msg => ({
-            role: msg.role,
+            role: msg.role === 'narrator' ? 'model' : msg.role, // Treat narrator as model for history
             content: msg.content
         }));
 
@@ -88,18 +88,27 @@ export function RolePlaySimulatorClient({
             };
             const response = await getTurnResponse(turnInput);
 
-            const { aiDialogue, realTimeFeedback, hudUpdate, isScenarioActive: active } = response;
+            const { narratorText, aiDialogue, realTimeFeedback, hudUpdate, isScenarioActive: active } = response;
 
-            setMessages(prev => [...prev, { id: `model-${Date.now()}`, role: 'model', content: aiDialogue }]);
+            const newAiMessages: Message[] = [];
+            if (narratorText) {
+                newAiMessages.push({ id: `narrator-${Date.now()}`, role: 'narrator', content: narratorText });
+            }
+            if (aiDialogue) {
+                newAiMessages.push({ id: `model-${Date.now()}`, role: 'model', content: aiDialogue });
+            }
+
+            setMessages(prev => [...prev, ...newAiMessages]);
             setFeedback(prev => [...prev, ...realTimeFeedback].slice(-3)); // Keep last 3 feedback items
             if(hudUpdate) setHudInfo(hudUpdate.value);
             setIsScenarioActive(active);
 
             if (!active && !aar) {
                 // Scenario ended, fetch AAR
+                const finalHistory = [...conversationHistory, ...newAiMessages.map(m => ({ role: m.role === 'narrator' ? 'model' : m.role, content: m.content}))];
                 const aarInput: AARInput = {
                     scenarioId: scenario.scenarioId,
-                    conversationHistory: [...conversationHistory, { role: 'model', content: aiDialogue }]
+                    conversationHistory: finalHistory,
                 };
                 const finalReport = await getAfterActionReport(aarInput);
                 setAar(finalReport);
@@ -107,7 +116,7 @@ export function RolePlaySimulatorClient({
 
         } catch (error) {
             console.error("AI Role-Play Error:", error);
-            setMessages(prev => [...prev, { id: `error-${Date.now()}`, role: 'model', content: "[Error: The AI model could not respond.]" }]);
+            setMessages(prev => [...prev, { id: `error-${Date.now()}`, role: 'narrator', content: "[Error: The AI model could not respond.]" }]);
         } finally {
             setIsLoading(false);
         }
@@ -200,20 +209,34 @@ export function RolePlaySimulatorClient({
                     <CardContent className="flex-1 p-0">
                         <ScrollArea className="h-[calc(100vh-30rem)]" ref={scrollAreaRef as any}>
                             <div className="p-6 space-y-4">
-                                {messages.map(message => (
-                                    <motion.div
-                                        key={message.id}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className={cn("flex items-start gap-3", message.role === 'user' ? 'justify-end' : 'justify-start')}
-                                    >
-                                        {message.role === 'model' && <div className="p-2 bg-primary/10 rounded-full"><Bot className="w-5 h-5 text-primary" /></div>}
-                                        <div className={cn("max-w-xs md:max-w-md lg:max-w-lg p-3 rounded-lg flex items-center gap-2", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
-                                            <p className="whitespace-pre-wrap">{message.content}</p>
-                                        </div>
-                                        {message.role === 'user' && <div className="p-2 bg-muted rounded-full"><User className="w-5 h-5" /></div>}
-                                    </motion.div>
-                                ))}
+                                {messages.map(message => {
+                                    if (message.role === 'narrator') {
+                                        return (
+                                            <motion.div
+                                                key={message.id}
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="my-4"
+                                            >
+                                                <p className="text-sm italic text-muted-foreground text-center border-x-4 border-transparent px-4">{message.content}</p>
+                                            </motion.div>
+                                        );
+                                    }
+                                    return (
+                                        <motion.div
+                                            key={message.id}
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className={cn("flex items-start gap-3", message.role === 'user' ? 'justify-end' : 'justify-start')}
+                                        >
+                                            {message.role === 'model' && <div className="p-2 bg-primary/10 rounded-full"><Bot className="w-5 h-5 text-primary" /></div>}
+                                            <div className={cn("max-w-xs md:max-w-md lg:max-w-lg p-3 rounded-lg flex items-center gap-2", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
+                                                <p className="whitespace-pre-wrap">{message.content}</p>
+                                            </div>
+                                            {message.role === 'user' && <div className="p-2 bg-muted rounded-full"><User className="w-5 h-5" /></div>}
+                                        </motion.div>
+                                    );
+                                })}
                                 {isLoading && <Loader2 className="w-5 h-5 animate-spin text-primary" />}
                             </div>
                         </ScrollArea>

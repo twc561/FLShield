@@ -1,3 +1,4 @@
+
 import { z } from 'zod';
 
 export const schemaVersion = '1.2';
@@ -47,6 +48,7 @@ const HudUpdateSchema = z.object({
 });
 
 export const TurnResponseSchema = z.object({
+    narratorText: z.string().describe("Third-person description of the scene or character's actions."),
     aiDialogue: z.string().describe("The AI character's spoken response."),
     realTimeFeedback: z.array(FeedbackSchema).describe("A list of feedback points based on the user's last action."),
     hudUpdate: HudUpdateSchema.optional().describe("Any new information to display on the user's heads-up display."),
