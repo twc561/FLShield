@@ -298,13 +298,6 @@ export const StatuteClient = memo(function StatuteClient({
       >
         <AccordionTrigger className="p-4 hover:no-underline w-full text-left">
           <div className="flex items-center gap-4 flex-1">
-            <div className={`p-2 rounded-lg ${isAiResult ? 'bg-accent/10' : 'bg-primary/10'}`}>
-              {isAiResult ? (
-                <Sparkles className="h-6 w-6 text-accent" />
-              ) : (
-                <Scale className="w-6 w-6 text-primary" />
-              )}
-            </div>
             <div className="flex-1 text-left">
               <p className="font-semibold text-base text-card-foreground text-wrap">{statute.title}</p>
               <div className="flex items-center gap-2 mt-1">
