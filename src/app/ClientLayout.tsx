@@ -3,13 +3,11 @@
 
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
-import { SidebarProvider } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/AppSidebar"
-import { ContextualPanel } from "@/components/ContextualPanel"
 import { Toaster } from "@/components/ui/toaster"
-import { MobileBottomNav } from "@/components/MobileBottomNav"
 import { AuthWrapper } from "@/components/AuthWrapper"
 import { SubscriptionGate } from "@/components/SubscriptionGate"
+import { AppShell } from "@/components/shell/AppShell"
+import { MainNav } from "@/components/nav/MainNav"
 
 export function ClientLayout({
   children,
@@ -53,19 +51,14 @@ export function ClientLayout({
           <Toaster />
         </>
       ) : (
-        <SidebarProvider>
-          <SubscriptionGate>
-            <div className="flex min-h-screen bg-background">
-              <AppSidebar />
-              <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto pb-20 md:pb-6">
-                {children}
-              </main>
-              <ContextualPanel />
-            </div>
-            <MobileBottomNav />
-          </SubscriptionGate>
+        <SubscriptionGate>
+          <AppShell navigation={<MainNav />}>
+            <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+              {children}
+            </main>
+          </AppShell>
           <Toaster />
-        </SidebarProvider>
+        </SubscriptionGate>
       )}
     </AuthWrapper>
   )

@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { AlertCircle, Biohazard, Bot, BrainCircuit, Camera, Car, ClipboardEdit, Dog, FileCheck, FileText, Fish, FlaskConical, Gavel, GraduationCap, Heart, HeartPulse, Home, Languages, ListChecks, Lock, MapPin, MessageSquare, Mic, Newspaper, Scale, Search, ShieldAlert, ShieldCheck, ShieldQuestion, Siren, Stethoscope, Truck, Users, Wind, Footprints, CreditCard, Building } from 'lucide-react'
 
@@ -87,7 +88,7 @@ export const menuItems: MenuItem[] = [
   },
     {
     label: "Account & Billing",
-    icon: Heart,
+    icon: CreditCard,
     items: [
       { href: "/subscription", label: "Upgrade to Pro", icon: CreditCard },
     ],
