@@ -19,6 +19,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 
 type StatuteIndexItem = Omit<Statute, 'description' | 'fullText' | 'practicalSummary' | 'example' | 'elementsOfTheCrime' | 'url'>;
 
@@ -152,7 +153,7 @@ export const StatuteClient = memo(function StatuteClient({
     const uniqueCategories = [...new Set(initialStatuteIndex.map((s) => s.category))];
     return uniqueCategories.sort((a, b) => {
         const indexA = categoryOrder.indexOf(a);
-        const indexB = categoryOrder.indexOf(b);
+        const indexB = order.indexOf(b);
         if (indexA === -1 && indexB === -1) return a.localeCompare(b);
         if (indexA === -1) return 1;
         if (indexB === -1) return -1;
@@ -307,7 +308,10 @@ export const StatuteClient = memo(function StatuteClient({
             </div>
             <div className="flex-1 text-left">
               <p className="font-semibold text-base text-card-foreground text-wrap">{statute.title}</p>
-              <p className="text-xs text-muted-foreground">{statute.code} &bull; {statute.degreeOfCharge}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <Badge variant="secondary">{statute.code}</Badge>
+                <Badge variant="outline">{statute.degreeOfCharge}</Badge>
+              </div>
             </div>
           </div>
         </AccordionTrigger>
