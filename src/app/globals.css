@@ -4,28 +4,37 @@
 
 @layer base {
   :root {
-    --background: 215 28% 95%; /* Light Surface */
-    --foreground: 215 28% 10%; /* On Surface */
-    --card: 215 28% 100%; /* Surface Container */
+    --background: 215 28% 98%;
+    --foreground: 215 28% 10%;
+    
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 217 33% 92%;
+    --secondary-foreground: 217 25% 35%;
+    
+    --accent: 170 64% 54%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 359 82% 59%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --muted: 215 28% 95%;
+    --muted-foreground: 215 20% 65%;
+
+    --card: 215 28% 98%;
     --card-foreground: 215 28% 10%;
-    --popover: 215 28% 100%;
+
+    --popover: 215 28% 98%;
     --popover-foreground: 215 28% 10%;
-    --primary: 217 91% 60%; /* Primary Blue */
-    --primary-foreground: 0 0% 100%; /* On Primary */
-    --secondary: 217 33% 92%; /* Secondary Container */
-    --secondary-foreground: 217 25% 35%; /* On Secondary Container */
-    --muted: 215 28% 85%; /* Surface Container High */
-    --muted-foreground: 215 28% 45%; /* On Surface Variant */
-    --accent: 170 64% 54%; /* Accent Teal -> Tertiary */
-    --accent-foreground: 0 0% 100%; /* On Tertiary */
-    --destructive: 359 82% 59%; /* Error */
-    --destructive-foreground: 0 0% 100%; /* On Error */
-    --border: 215 28% 88%; /* Outline */
-    --input: 215 28% 88%; /* Outline Variant */
-    --ring: 217 91% 60%; /* Primary */
+    
+    --border: 215 20% 88%;
+    --input: 215 20% 88%;
+    --ring: 217 91% 60%;
+
     --radius: 0.75rem;
 
-    --sidebar-background: 215 28% 98%;
+    --sidebar-background: 215 28% 95%;
     --sidebar-foreground: 215 28% 10%;
     --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -34,32 +43,41 @@
     --sidebar-border: 215 28% 88%;
     --sidebar-ring: 217 91% 60%;
   }
-  .dark {
-    --background: 215 28% 10%; /* Dark Surface */
-    --foreground: 210 40% 90%; /* On Surface */
-    --card: 215 28% 17%; /* Surface Container */
-    --card-foreground: 210 40% 90%;
-    --popover: 215 28% 17%;
-    --popover-foreground: 210 40% 90%;
-    --primary: 217 91% 60%; /* Primary Blue */
-    --primary-foreground: 0 0% 100%; /* On Primary */
-    --secondary: 217 25% 35%; /* Secondary Container */
-    --secondary-foreground: 217 33% 92%; /* On Secondary Container */
-    --muted: 215 28% 25%; /* Surface Container High */
-    --muted-foreground: 215 20% 65%; /* On Surface Variant */
-    --accent: 170 64% 54%; /* Accent Teal -> Tertiary */
-    --accent-foreground: 215 28% 10%; /* On Tertiary */
-    --destructive: 359 82% 59%; /* Error */
-    --destructive-foreground: 0 0% 100%; /* On Error */
-    --border: 217 28% 25%; /* Outline */
-    --input: 217 28% 25%; /* Outline Variant */
-    --ring: 217 91% 60%; /* Primary */
 
-    --sidebar-background: 215 28% 17%;
+  .dark {
+    --background: 215 28% 10%;
+    --foreground: 210 40% 98%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 25% 35%;
+    --secondary-foreground: 217 33% 92%;
+
+    --accent: 170 64% 54%;
+    --accent-foreground: 215 28% 10%;
+    
+    --destructive: 359 82% 59%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --muted: 215 28% 20%;
+    --muted-foreground: 215 20% 65%;
+    
+    --card: 215 28% 15%;
+    --card-foreground: 210 40% 98%;
+    
+    --popover: 215 28% 15%;
+    --popover-foreground: 210 40% 98%;
+    
+    --border: 215 28% 25%;
+    --input: 215 28% 25%;
+    --ring: 217 91% 60%;
+
+    --sidebar-background: 215 28% 12%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 217 28% 25%;
+    --sidebar-accent: 217 28% 22%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 217 28% 25%;
     --sidebar-ring: 217 91% 60%;
