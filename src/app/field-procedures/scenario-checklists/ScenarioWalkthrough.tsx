@@ -68,10 +68,10 @@ export const ScenarioWalkthrough = React.memo(function ScenarioWalkthrough({
                 <div className="flex items-start gap-3">
                 <Bot className="h-5 w-5 text-accent mt-1 flex-shrink-0" />
                 <div>
-                    <h4 className="font-semibold text-accent-foreground/90">
+                    <h4 className="font-semibold text-accent">
                     AI Tactical Tip
                     </h4>
-                    <p className="text-accent-foreground/80 text-sm">{currentStep.aiTip}</p>
+                    <p className="text-accent/90 text-sm">{currentStep.aiTip}</p>
                 </div>
                 </div>
               </div>
@@ -82,10 +82,10 @@ export const ScenarioWalkthrough = React.memo(function ScenarioWalkthrough({
                 <div className="flex items-start gap-3">
                 <AlertTriangle className="h-5 w-5 text-destructive mt-1 flex-shrink-0" />
                 <div>
-                    <h4 className="font-semibold text-destructive-foreground/90">
+                    <h4 className="font-semibold text-destructive">
                     Legal Note
                     </h4>
-                    <p className="text-destructive-foreground/80 text-sm">{currentStep.aiLegalNote}</p>
+                    <p className="text-destructive/90 text-sm">{currentStep.aiLegalNote}</p>
                 </div>
                 </div>
               </div>
