@@ -1,3 +1,4 @@
+
 export type WalkthroughStep = {
   phase: string;
   title: string;
@@ -1173,7 +1174,7 @@ export const scenarioChecklistsData: Record<string, Scenario> = {
         phase: 'Evidence Gathering & Documentation',
         title: 'Forced Entry & Search',
         content: 'After announcing your purpose and being denied entry, you force the door open.',
-        aiTip: 'Once entry is made, your priority is locating and securing the suspect. Conduct a methodical search of the structure for the person named in the warrant. This is a search for a person, not for evidence.',
+        aiTip: "Once entry is made, your priority is locating and securing the suspect. Conduct a methodical search of the structure for the person named in the warrant. This is a search for a person, not for evidence.",
         aiLegalNote: 'The arrest warrant only authorizes you to search for the person named in it, in places where a person could reasonably be hiding. It is not a search warrant for the entire premises.',
         choices: [
           { text: "The suspect is located and arrested.", nextStepId: "resolution" }
