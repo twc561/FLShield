@@ -76,11 +76,8 @@ export function useSubscription() {
     return unsubscribe
   }, [user, mounted])
 
-  // Hardcoded pro access for specific users
-  const hardcodedProEmails = ['osorioecat@gmail.com', 'rdc561@gmail.com']
-  const hasHardcodedAccess = user?.email && hardcodedProEmails.includes(user.email)
-  
-  const isPro = hasHardcodedAccess || (subscription?.status === 'active' && subscription.currentPeriodEnd && new Date() < subscription.currentPeriodEnd)
+  // Temporarily grant Pro access to all users
+  const isPro = true;
 
   // Define free features that don't require subscription
   const freeFeatures = [
