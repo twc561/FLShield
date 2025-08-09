@@ -1,9 +1,17 @@
-
 'use server';
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { analyzeOfficerApproach } from '@/lib/roleplay-utils';
+import { 
+    ScenarioDefinitionSchema, 
+    TurnResponseSchema, 
+    AfterActionReportSchema, 
+    TurnInputSchema, 
+    AARInputSchema,
+    SystemLoadSchema,
+    schemaVersion
+} from '@/lib/echo/types';
 
 // -------- Scenarios Data (Simulated Database) --------
 
@@ -50,126 +58,28 @@ const scenarioData = [
     }
 ];
 
-// -------- Input & Output Schemas --------
-
-// Schema 1.1: Scenario Library
-export const ScenarioDefinitionSchema = z.object({
-  scenarioId: z.string(),
-  category: z.string(),
-  title: z.string(),
-  description: z.string(),
-  difficulty: z.string(),
-  dispatchInfo: z.object({
-    callType: z.string(),
-    location: z.string(),
-    notes: z.string(),
-  }),
-  aiPersona: z.object({
-    personaId: z.string(),
-    type: z.string(),
-    description: z.string(),
-    initialState: z.string(),
-    stressTriggers: z.array(z.string()),
-    deescalationKeys: z.array(z.string()),
-  }),
-});
-export type ScenarioDefinition = z.infer<typeof ScenarioDefinitionSchema>;
-
-const ScenarioLibrarySchema = z.object({
-  scenarioLibrary: z.array(ScenarioDefinitionSchema),
-});
-export type ScenarioLibrary = z.infer<typeof ScenarioLibrarySchema>;
-
-
-// Schema 1.2: Turn-by-Turn Interaction
-const FeedbackSchema = z.object({
-  feedbackId: z.string(),
-  type: z.enum(["Positive", "Informational", "Context", "Critique"]),
-  message: z.string(),
-});
-
-const HudUpdateSchema = z.object({
-    key: z.string(),
-    value: z.string(),
-});
-
-export const TurnResponseSchema = z.object({
-    turnResponse: z.object({
-        aiDialogue: z.string().describe("The AI character's spoken response."),
-        realTimeFeedback: z.array(FeedbackSchema).describe("A list of feedback points based on the user's last action."),
-        hudUpdate: HudUpdateSchema.optional().describe("Any new information to display on the user's heads-up display."),
-        isScenarioActive: z.boolean().describe("Whether the scenario should continue."),
-    }),
-    error: z.object({ errorCode: z.number(), errorMessage: z.string(), details: z.string() }).nullable(),
-});
-export type TurnResponse = z.infer<typeof TurnResponseSchema>;
-
-export const TurnInputSchema = z.object({
-    scenarioId: z.string(),
-    conversationHistory: z.array(z.object({
-        role: z.enum(['user', 'model']),
-        content: z.string()
-    })),
-    userAction: z.string(),
-});
-export type TurnInput = z.infer<typeof TurnInputSchema>;
-
-
-// Schema 1.3: After-Action Report
-export const AfterActionReportSchema = z.object({
-    afterActionReport: z.object({
-        scenarioId: z.string(),
-        finalOutcome: z.string(),
-        performanceScore: z.number(),
-        performanceGrade: z.string(),
-        keyMetrics: z.object({
-            deEscalationScore: z.number(),
-            legalProcedureScore: z.number(),
-            officerSafetyScore: z.number(),
-            contextualAwareness: z.number(),
-        }),
-        keyStrengths: z.array(z.object({ id: z.string(), text: z.string() })),
-        areasForImprovement: z.array(z.object({ id: z.string(), text: z.string() })),
-        criticalLearningPoints: z.array(z.object({ id: z.string(), text: z.string() })),
-    }),
-    error: z.object({ errorCode: z.number(), errorMessage: z.string(), details: z.string() }).nullable(),
-});
-export type AfterActionReport = z.infer<typeof AfterActionReportSchema>;
-
-export const AARInputSchema = z.object({
-    scenarioId: z.string(),
-    conversationHistory: z.array(z.object({
-        role: z.enum(['user', 'model']),
-        content: z.string()
-    })),
-});
-export type AARInput = z.infer<typeof AARInputSchema>;
-
 // -------- AI Flows --------
 
 /**
  * Returns the library of available training scenarios.
  */
-export async function getScenarioLibrary(): Promise<ScenarioLibrary> {
+export async function getScenarioLibrary(): Promise<z.infer<typeof SystemLoadSchema>> {
     // In a real app, this would fetch from a database.
     // Here, we just return the hard-coded data.
-    return { scenarioLibrary: scenarioData };
+    return { 
+        schemaVersion,
+        systemStatus: 'OK',
+        scenarioLibrary: scenarioData 
+    };
 }
 
 /**
  * Processes a single turn in a role-play scenario and returns the AI's response and feedback.
  */
-export async function getTurnResponse(input: TurnInput): Promise<TurnResponse> {
+export async function getTurnResponse(input: z.infer<typeof TurnInputSchema>): Promise<z.infer<typeof TurnResponseSchema>> {
     const scenario = scenarioData.find(s => s.scenarioId === input.scenarioId);
     if (!scenario) {
-        return {
-            turnResponse: {} as any, // Return empty object on error
-            error: {
-                errorCode: 404,
-                errorMessage: "Scenario not found.",
-                details: `Could not find a scenario with ID: ${input.scenarioId}`
-            }
-        };
+        throw new Error(`Scenario not found: ${input.scenarioId}`);
     }
 
     const { tone } = analyzeOfficerApproach(input.userAction);
@@ -202,34 +112,26 @@ export async function getTurnResponse(input: TurnInput): Promise<TurnResponse> {
         4.  **isScenarioActive**: Set to 'false' only if the interaction has reached a natural conclusion (e.g., arrest made, subject complies and leaves).
         `,
         output: {
-            schema: TurnResponseSchema.shape.turnResponse,
+            schema: TurnResponseSchema,
         },
     });
     
-     output.realTimeFeedback.push({
+    output.realTimeFeedback.push({
         feedbackId: `RTF-${Date.now()}`,
         type: feedbackType,
         message: feedbackMessage,
     });
 
-
-    return { turnResponse: output, error: null };
+    return output;
 }
 
 /**
  * Generates the final After-Action Report for a completed scenario.
  */
-export async function getAfterActionReport(input: AARInput): Promise<AfterActionReport> {
+export async function getAfterActionReport(input: z.infer<typeof AARInputSchema>): Promise<z.infer<typeof AfterActionReportSchema>> {
     const scenario = scenarioData.find(s => s.scenarioId === input.scenarioId);
     if (!scenario) {
-         return {
-            afterActionReport: {} as any,
-            error: {
-                errorCode: 404,
-                errorMessage: "Scenario not found for AAR generation.",
-                details: `Could not find a scenario with ID: ${input.scenarioId}`
-            }
-        };
+         throw new Error(`Scenario not found for AAR generation: ${input.scenarioId}`);
     }
 
     const { output } = await ai.generate({
@@ -252,9 +154,9 @@ export async function getAfterActionReport(input: AARInput): Promise<AfterAction
         7.  **criticalLearningPoints**: Provide 1-2 key takeaways a trainee should learn from this interaction.
         `,
         output: {
-            schema: AfterActionReportSchema.shape.afterActionReport,
+            schema: AfterActionReportSchema,
         }
     });
     
-    return { afterActionReport: output, error: null };
+    return output;
 }
