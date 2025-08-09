@@ -1,8 +1,10 @@
+
 "use client"
 
 import React, { memo } from "react"
 import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { motion } from "framer-motion"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { PinButton } from "@/components/PinButton"
 import * as LucideIcons from "lucide-react"
