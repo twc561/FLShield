@@ -7,6 +7,7 @@ export type Statute = {
   fullText: string;
   degreeOfCharge: string;
   practicalSummary: string;
+  enhancements?: string[];
   example: string;
   url: string;
   elementsOfTheCrime?: string | null;
@@ -36,6 +37,7 @@ const allStatutes: Statute[] = [
     fullText: 'An “aggravated assault” is an assault: (a) With a deadly weapon without intent to kill; or (b) With an intent to commit a felony.',
     degreeOfCharge: 'Third-degree Felony',
     practicalSummary: "The key difference from simple assault is the presence of a 'deadly weapon' or the intent to commit another felony. A 'deadly weapon' is anything likely to produce death or great bodily harm. Your report must clearly describe the weapon and how it was used to threaten the victim.",
+    enhancements: ["Upgrades to a higher felony level if committed against a law enforcement officer, firefighter, or EMS provider under F.S. § 784.07.", "Committing the offense in furtherance of a riot or aggravated riot also enhances the penalty under F.S. § 870.01."],
     example: "A suspect pulls out a knife during an argument and points it at the victim, saying 'I'll cut you.' This is Aggravated Assault because the knife is a deadly weapon used to create fear of imminent violence, elevating it from a misdemeanor to a felony.",
     url: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0700-0799/0784/Sections/0784.021.html'
   },
@@ -48,6 +50,7 @@ const allStatutes: Statute[] = [
     fullText: 'The offense of battery occurs when a person: 1. Actually and intentionally touches or strikes another person against the will of the other; or 2. Intentionally causes bodily harm to another person.',
     degreeOfCharge: 'First-degree Misdemeanor',
     practicalSummary: "This is unwanted physical contact. Unlike assault, battery requires touching. It can be as minor as an unwanted poke or as serious as a punch, as long as it's intentional and against the victim's will. Documenting any visible injuries or lack thereof is important, as is the victim's statement that the contact was unwanted.",
+    enhancements: ["Becomes a first-degree felony (Aggravated Battery) if a deadly weapon is used.", "Becomes a third-degree felony (Felony Battery) if it causes great bodily harm, permanent disability, or permanent disfigurement.", "Becomes a felony if the victim is a law enforcement officer, firefighter, or other specified personnel under F.S. § 784.07.", "Elevated to a felony if the victim is pregnant and the offender knew or should have known.", "Penalty is enhanced if the offender has a prior battery conviction."],
     example: "During a heated argument, one person intentionally shoves another. The shove is an intentional, unwanted touching, which constitutes a battery. The severity of injury is not required, only the intentional, unwanted contact.",
     url: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0700-0799/0784/Sections/0784.03.html'
   },
@@ -193,6 +196,7 @@ const allStatutes: Statute[] = [
     description: 'Defines burglary as entering a dwelling, a structure, or a conveyance with the intent to commit an offense therein, unless the premises are at the time open to the public or the defendant is licensed or invited to enter.',
     fullText: '“Burglary” means: (a) Entering a dwelling, a structure, or a conveyance with the intent to commit an offense therein... (b) Notwithstanding a licensed or invited entry, remaining in a dwelling, structure, or conveyance: 1. Surreptitiously, with the intent to commit an offense therein; 2. After permission to remain has been withdrawn, with the intent to commit an offense therein; or 3. To commit or attempt to commit a forcible felony.',
     degreeOfCharge: 'Varies (typically Felony)',
+    enhancements: ["Becomes a first-degree felony if the offender commits an assault or battery upon any person, is or becomes armed, or uses a motor vehicle to cause damage.", "Becomes a Life Felony if offender is armed with explosives or a dangerous weapon.", "Severity increases if the dwelling is occupied or if it occurs during a state of emergency."],
     practicalSummary: "The core of burglary is 'intent.' The person enters without permission *with the goal of committing another crime inside* (usually theft). This intent can be inferred from the circumstances, like forced entry or entering at night. Note the 'remaining in' clause: a person who enters legally but then hides to commit a crime later is also guilty of burglary.",
     example: "A suspect breaks a window and climbs into a closed convenience store after midnight. Even if you catch them before they have taken anything, the act of forced entry into a closed business is sufficient evidence to infer they entered 'with the intent to commit an offense therein' (theft), thus completing the crime of burglary.",
     url: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0800-0899/0810/Sections/0810.02.html'
@@ -205,6 +209,7 @@ const allStatutes: Statute[] = [
     description: 'Prohibits willfully entering or remaining in any structure or conveyance without being authorized, licensed, or invited.',
     fullText: 'Whoever, without being authorized, licensed, or invited, willfully enters or remains in any structure or conveyance...commits the offense of trespass in a structure or conveyance.',
     degreeOfCharge: 'Second-degree Misdemeanor',
+    enhancements: ["Upgrades to a first-degree misdemeanor if another person is in the structure/conveyance at the time.", "Can be enhanced if a firearm is carried."],
     practicalSummary: 'This is a lesser offense than burglary. The key difference is the lack of "intent to commit an offense therein." This charge is used when someone is in a place they shouldn\'t be, but you cannot prove they intended to commit another crime like theft. It becomes a felony if a human being is in the structure/conveyance at the time.',
     example: 'A homeless person enters an abandoned building to sleep for the night. They have not forced entry and do not intend to steal anything. This would be Trespass, not Burglary.',
     url: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0800-0899/0810/Sections/0810.08.html'
@@ -241,6 +246,7 @@ const allStatutes: Statute[] = [
     description: 'Defines robbery as the taking of money or other property which may be the subject of larceny from the person or custody of another, with intent to either permanently or temporarily deprive the person or the owner of the money or other property, when in the course of the taking there is the use of force, violence, assault, or putting in fear.',
     fullText: '“Robbery” means the taking of money or other property...from the person or custody of another...when in the course of the taking there is the use of force, violence, assault, or putting in fear.',
     degreeOfCharge: 'Varies (Felony)',
+    enhancements: ["Becomes a first-degree felony if the offender carries a firearm or other deadly weapon."],
     practicalSummary: "Robbery is theft by force or threat of force. The key distinction from theft is the 'force, violence, assault, or putting in fear' element. It must happen 'in the course of the taking.' This includes the act of taking itself, as well as the flight immediately after. Robbery is always a felony, and the severity increases if a weapon is carried or used.",
     example: "A suspect snatches a purse from a victim's shoulder. The act of using force to pull the purse away from the victim's resistance elevates the crime from a simple theft to a robbery. If the suspect had simply picked up a purse the victim had left on a bench, it would be theft.",
     url: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0800-0899/0812/Sections/0812.13.html'
@@ -617,7 +623,7 @@ const allStatutes: Statute[] = [
 ];
 
 
-type StatuteIndexItem = Omit<Statute, 'description' | 'fullText' | 'practicalSummary' | 'example' | 'elementsOfTheCrime' | 'url'>;
+type StatuteIndexItem = Omit<Statute, 'description' | 'fullText' | 'practicalSummary' | 'example' | 'elementsOfTheCrime' | 'url' | 'enhancements'>;
 
 export const statuteIndex: StatuteIndexItem[] = allStatutes.map(s => ({
   id: s.id,
