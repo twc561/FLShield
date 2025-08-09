@@ -14,6 +14,7 @@ import { fishingRegulations, huntingRegulations, boatingTopics, protectedSpecies
 import { commonMisperceptionsData } from '@/data/officer-wellness-rights/common-misperceptions';
 import { menuItems } from '@/lib/menu-items';
 import { handcuffingData } from './restraint-techniques/handcuffing';
+import { commonCrimesMap } from '@/data/legal-reference/common-crimes-map';
 
 export type SearchableItem = {
   id: string;
@@ -43,6 +44,15 @@ const statuteItems: SearchableItem[] = statuteIndex.map(s => ({
   href: '/legal-reference/statutes',
   keywords: [s.title, s.code, s.category, 'statute', 'law', s.degreeOfCharge].filter(Boolean) as string[],
 }));
+
+// Add common crimes map to statutes keywords for better searching
+commonCrimesMap.forEach(crime => {
+    const statute = statuteItems.find(s => s.code.includes(crime.statuteNumber));
+    if (statute) {
+        statute.keywords.push(...crime.keywords);
+    }
+});
+
 
 // Transform Scenario Checklist data
 const scenarioItems: SearchableItem[] = Object.values(scenarioChecklistsData).map(s => ({

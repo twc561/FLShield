@@ -121,6 +121,12 @@ export const commonCrimesMap: CommonCrimeMapEntry[] = [
     instructionID: "FL_JI_CRIM_25_17",
     keywords: ["paraphernalia", "drug paraphernalia"],
   },
+  {
+    crimeName: "Escape",
+    statuteNumber: "944.40",
+    instructionID: "FL_JI_CRIM_21_1",
+    keywords: ["escape", "fleeing confinement"],
+  },
 
   // --- Common Misdemeanors ---
   {

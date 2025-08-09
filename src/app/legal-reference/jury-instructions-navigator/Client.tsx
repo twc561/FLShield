@@ -11,15 +11,17 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, Sparkles, Gavel, FileText, AlertTriangle } from "lucide-react"
+import { Loader2, Sparkles, Gavel, FileText, AlertTriangle, Search as SearchIcon } from "lucide-react"
 import type { AnalyzeInstructionOutput as InstructionDetail } from "@/ai/flows/analyze-jury-instruction"
 import { analyzeInstruction } from "@/ai/flows/analyze-jury-instruction"
-import type { JuryInstructionIndexItem } from "@/data/legal-reference/jury-instructions-index"
+import { findJuryInstruction, FindJuryInstructionOutput } from "@/ai/flows/find-jury-instruction";
+import { JuryInstructionIndexItem } from "@/data/legal-reference/jury-instructions-index"
 
 import { Input } from "@/components/ui/input"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Button } from "@/components/ui/button"
 
 const InstructionDetailView = React.memo(({ detail }: { detail: InstructionDetail }) => {
     if (!detail.id) {
@@ -69,6 +71,8 @@ const InstructionDetailView = React.memo(({ detail }: { detail: InstructionDetai
     </div>
   )
 })
+InstructionDetailView.displayName = 'InstructionDetailView';
+
 
 export const JuryInstructionsClient = React.memo(function JuryInstructionsClient({
   initialInstructions,
@@ -81,34 +85,30 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
   const [loadingId, setLoadingId] = React.useState<string | null>(null);
   const [error, setError] = React.useState<Record<string, string | null>>({});
 
-  const filteredInstructions = React.useMemo(() => {
-    if (!searchTerm) {
-      return initialInstructions;
+  const [isAiSearching, setIsAiSearching] = React.useState(false);
+  const [aiSearchResult, setAiSearchResult] = React.useState<FindJuryInstructionOutput | null>(null);
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchTerm.trim()) return;
+    
+    setIsAiSearching(true);
+    setAiSearchResult(null);
+    setActiveItem(undefined);
+
+    try {
+        const result = await findJuryInstruction({ query: searchTerm });
+        setAiSearchResult(result);
+        // If a single definitive ID is returned, automatically open it.
+        if (result.instructionID) {
+            handleAccordionChange(result.instructionID);
+        }
+    } catch (err) {
+        setError(prev => ({...prev, 'ai-search': err instanceof Error ? err.message : 'An unknown error occurred.' }));
+    } finally {
+        setIsAiSearching(false);
     }
-    const lowercasedTerm = searchTerm.toLowerCase();
-    return initialInstructions.filter(
-      (item) =>
-        item.instructionTitle.toLowerCase().includes(lowercasedTerm) ||
-        item.instructionNumber.toLowerCase().includes(lowercasedTerm)
-    );
-  }, [searchTerm, initialInstructions]);
-
-  const groupedInstructions = React.useMemo(() => {
-    const categoryOrder = ["Crimes Against Persons", "Property Crimes", "Drug Offenses", "Inchoate Crimes", "Public Order & Obstruction", "Defenses"];
-    const grouped = filteredInstructions.reduce((acc, item) => {
-      const { category } = item;
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(item);
-      return acc;
-    }, {} as Record<string, JuryInstructionIndexItem[]>);
-
-    return categoryOrder
-      .map(category => ({ category, items: grouped[category] || [] }))
-      .filter(g => g.items.length > 0);
-
-  }, [filteredInstructions]);
+  }
 
   const handleAccordionChange = async (value: string | undefined) => {
     setActiveItem(value);
@@ -130,64 +130,68 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
 
   return (
     <div className="space-y-6 h-full flex flex-col">
-       <div className="relative">
-        <LucideIcons.Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+       <form onSubmit={handleSearch} className="relative">
+        <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
-          placeholder="Search instructions..."
+          placeholder="Search for a crime (e.g., 'Burglary', 'ROWV')..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10"
         />
-      </div>
+      </form>
       
       <ScrollArea className="flex-1 -mr-4 pr-4">
-        <Accordion type="single" collapsible className="w-full space-y-2" value={activeItem} onValueChange={handleAccordionChange}>
-          {groupedInstructions.map(({ category, items }) => (
-            <div key={category}>
-              <h2 className="text-lg font-bold tracking-tight my-4 px-1">{category}</h2>
-              {items.map(item => {
-                const Icon = (LucideIcons as any)[item.icon] || LucideIcons.Gavel;
-                return (
-                    <AccordionItem value={item.id} key={item.id} className="border rounded-md bg-card">
-                      <AccordionTrigger className="p-4 hover:no-underline">
-                        <div className="flex items-center gap-4 flex-1">
-                          <div className="p-2 bg-primary/10 rounded-lg">
-                            <Icon className="w-6 h-6 text-primary" />
-                          </div>
-                          <div className="flex-1 text-left">
-                            <p className="font-semibold text-base text-card-foreground">{item.instructionTitle}</p>
-                            <p className="text-xs text-muted-foreground">Instruction {item.instructionNumber}</p>
-                          </div>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="p-4 pt-0">
-                        <div className="border-t pt-4">
-                          {loadingId === item.id && (
-                            <div className="flex items-center justify-center space-x-2 text-muted-foreground">
-                              <Loader2 className="h-5 w-5 animate-spin" />
-                              <Sparkles className="h-5 w-5 text-accent" />
-                              <span>AI is analyzing instruction...</span>
-                            </div>
-                          )}
-                          {error[item.id] && (
-                            <Alert variant="destructive">
-                                <AlertTitle>Error</AlertTitle>
-                                <AlertDescription>{error[item.id]}</AlertDescription>
-                            </Alert>
-                          )}
-                          {cachedDetails[item.id] && (
-                            <InstructionDetailView detail={cachedDetails[item.id]} />
-                          )}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                )
-              })}
+        {isAiSearching && (
+            <div className="flex items-center justify-center space-x-2 text-muted-foreground py-8">
+                <Loader2 className="h-5 w-5 animate-spin" />
+                <span>AI is searching for the best match...</span>
             </div>
-          ))}
-        </Accordion>
-        {filteredInstructions.length === 0 && <p className="text-center text-muted-foreground py-8">No instructions found.</p>}
+        )}
+
+        {aiSearchResult && (
+            <div>
+                <h2 className="text-lg font-bold tracking-tight my-4 px-1">AI Search Results for "{searchTerm}"</h2>
+                {aiSearchResult.disambiguationOptions && aiSearchResult.disambiguationOptions.length > 0 && (
+                     <Accordion type="single" collapsible className="w-full space-y-2" value={activeItem} onValueChange={handleAccordionChange}>
+                        {aiSearchResult.disambiguationOptions.map(item => (
+                             <AccordionItem value={item.instructionID} key={item.instructionID} className="border rounded-md bg-card">
+                                <AccordionTrigger className="p-4 hover:no-underline font-semibold text-base text-card-foreground">
+                                    {item.instructionTitle}
+                                </AccordionTrigger>
+                                <AccordionContent className="p-4 pt-0">
+                                    <div className="border-t pt-4">
+                                        {loadingId === item.instructionID && <div className="flex items-center justify-center space-x-2 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /><Sparkles className="h-5 w-5 text-accent" /><span>AI is analyzing instruction...</span></div>}
+                                        {error[item.instructionID] && <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error[item.instructionID]}</AlertDescription></Alert>}
+                                        {cachedDetails[item.instructionID] && <InstructionDetailView detail={cachedDetails[item.instructionID]} />}
+                                    </div>
+                                </AccordionContent>
+                             </AccordionItem>
+                        ))}
+                     </Accordion>
+                )}
+                 {aiSearchResult.instructionID && (
+                      <Accordion type="single" collapsible className="w-full space-y-2" value={activeItem} onValueChange={handleAccordionChange}>
+                          <AccordionItem value={aiSearchResult.instructionID} className="border rounded-md bg-card">
+                            <AccordionTrigger className="p-4 hover:no-underline font-semibold text-base text-card-foreground">
+                                Definitive Match Found
+                            </AccordionTrigger>
+                            <AccordionContent className="p-4 pt-0">
+                                <div className="border-t pt-4">
+                                    {loadingId === aiSearchResult.instructionID && <div className="flex items-center justify-center space-x-2 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /><Sparkles className="h-5 w-5 text-accent" /><span>AI is analyzing instruction...</span></div>}
+                                    {error[aiSearchResult.instructionID] && <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error[aiSearchResult.instructionID]}</AlertDescription></Alert>}
+                                    {cachedDetails[aiSearchResult.instructionID] && <InstructionDetailView detail={cachedDetails[aiSearchResult.instructionID]} />}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                 )}
+            </div>
+        )}
+
       </ScrollArea>
     </div>
   );
 });
+InstructionDetailView.displayName = 'InstructionDetailView';
+JuryInstructionsClient.displayName = 'JuryInstructionsClient';
+

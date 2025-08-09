@@ -10,17 +10,17 @@
  */
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { instructionMap } from '@/data/legal-reference/instruction-map';
+import { commonCrimesMap } from '@/data/legal-reference/common-crimes-map';
 
 // This represents the corpus of documents we would search in a real vector database.
-const instructionDatabase = instructionMap.map(item => ({
+const instructionDatabase = commonCrimesMap.map(item => ({
     id: item.instructionID,
     text: `ID: ${item.instructionID}, Crime: ${item.crimeName}, Statute: ${item.statuteNumber}, Keywords: ${item.keywords.join(', ')}`,
     title: item.crimeName,
 }));
 
 const FindJuryInstructionInputSchema = z.object({
-  query: z.string().describe('The user\'s plain-language crime description.'),
+  query: z.string().describe('The user\'s plain-language crime description or colloquial term.'),
 });
 export type FindJuryInstructionInput = z.infer<typeof FindJuryInstructionInputSchema>;
 
@@ -50,7 +50,7 @@ I have the following full database of available jury instructions:
 
 Follow these rules with absolute precision:
 
-1.  **Strict Initial Filtering:** First, create a mental shortlist of instructions from the database where the crime name or keywords are a DIRECT match to the user's query. A query for "murder" MUST only result in murder-related instructions. A query for "robbery" MUST only result in robbery instructions. You MUST IGNORE all other instructions, no matter how semantically similar they might seem.
+1.  **Strict Initial Filtering:** First, create a mental shortlist of instructions from the database where the crime name or keywords are a DIRECT match to the user's query. A query for "murder" MUST only result in murder-related instructions. A query for "robbery" MUST only result in robbery instructions. A query for "escape" MUST only result in the escape instruction. You MUST IGNORE all other instructions, no matter how semantically similar they might seem.
 
 2.  **DEFAULT BEHAVIOR: PROVIDE OPTIONS.** If your shortlist contains multiple related items (e.g., a search for "battery" matches "Battery", "Felony Battery", and "Aggravated Battery"), your response MUST be a 'disambiguationOptions' array containing ALL of the relevant matches from your shortlist. This empowers the user to make the final, correct selection.
 

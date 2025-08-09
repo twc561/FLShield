@@ -409,6 +409,18 @@ const allStatutes: Statute[] = [
     example: 'You respond to a domestic disturbance. The suspect is gone, but the victim has visible injuries and gives a credible statement that her boyfriend (who lives with her) caused them. Even though you did not witness the battery, this statute gives you the authority to arrest the boyfriend for misdemeanor domestic battery based on probable cause.',
     url: 'http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0900-0999/0901/Sections/0901.15.html'
   },
+   {
+    id: 's944-40',
+    code: 'F.S. § 944.40',
+    title: 'Escape',
+    category: 'Public Order & Obstruction',
+    description: 'Defines the crime of escaping from lawful confinement.',
+    fullText: 'Any prisoner confined in any prison, jail, road camp, or other penal institution, state, county, or municipal, working upon the public roads, or being transported to or from a place of confinement who escapes or attempts to escape from such confinement commits a felony of the second degree.',
+    degreeOfCharge: 'Second-degree Felony',
+    practicalSummary: 'This statute applies to any person who escapes from a place of lawful confinement. This includes not just jails and prisons, but also while being transported. If an arrestee breaks free and runs after being placed in your patrol car, this statute applies.',
+    example: 'You have a lawfully arrested person in the back of your patrol car. While you are completing paperwork, they manage to kick out a window and flee on foot. They have committed the crime of Escape.',
+    url: 'https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0900-0999/0944/Sections/0944.40.html'
+  },
   
   // --- Traffic Offenses ---
   {
