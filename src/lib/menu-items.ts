@@ -72,7 +72,7 @@ export const menuItems: MenuItem[] = [
       { href: "/legal-reference/statutory-case-law-updates", label: "Legal Updates & Changes", icon: Newspaper },
       { href: "/legal-reference/local-ordinances-guide", label: "Local Ordinances", icon: Home },
       { href: "/legal-reference/jury-instructions-navigator", label: "Standard Jury Instructions", icon: Users },
-      { href: "/legal-reference/tenant-rights-guide", label: "Tenant Rights Guide", icon: Home },
+      { href: "/legal-reference/tenant-rights-guide", label: "Landlord-Tenant Law", icon: Home },
     ],
   },
   {
@@ -100,6 +100,7 @@ export const menuItems: MenuItem[] = [
       { href: "/notes", label: "Digital Field Notes", icon: ClipboardEdit },
       { href: "/reporting-development/shift-report-generator", label: "Shift Report Generator", icon: ClipboardEdit },
       { href: "/reporting-development/use-of-force-wizard", label: "Use of Force Articulation", icon: ShieldCheck },
+      { href: "/field-procedures/digital-evidence-field-guide", label: "Digital Evidence Guide", icon: Camera },
     ],
   },
   {

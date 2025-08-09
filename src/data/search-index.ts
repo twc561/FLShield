@@ -184,5 +184,13 @@ export const unifiedSearchIndex: SearchableItem[] = [
     category: 'AI Assistant Tools',
     href: '/ai-tools',
     keywords: ['ai', 'tools', 'assistant', 'hub', 'artificial intelligence']
+  },
+  {
+    id: 'feature-role-play-simulator',
+    title: 'AI Role-Play Simulator',
+    description: 'Practice de-escalation with a variety of AI personas.',
+    category: 'AI Assistant Tools',
+    href: '/training-development/role-play-simulator',
+    keywords: ['role-play', 'simulator', 'training', 'de-escalation', 'ai', 'persona']
   }
 ];
