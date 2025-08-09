@@ -1,6 +1,7 @@
 
+
 import * as React from "react"
-import { AlertCircle, Biohazard, Bot, BrainCircuit, Camera, Car, ClipboardEdit, Dog, FileCheck, FileText, Fish, FlaskConical, Gavel, GraduationCap, Heart, HeartPulse, Home, Languages, ListChecks, Lock, MapPin, MessageSquare, Mic, Newspaper, Scale, Search, ShieldAlert, ShieldCheck, ShieldQuestion, Siren, Stethoscope, Truck, Users, Wind, Footprints, CreditCard, Building } from 'lucide-react'
+import { AlertCircle, Biohazard, Bot, BrainCircuit, Camera, Car, ClipboardEdit, Dog, FileCheck, FileText, Fish, FlaskConical, Gavel, GraduationCap, Heart, HeartPulse, Home, Languages, ListChecks, Lock, MessageSquare, Mic, Newspaper, Scale, Search, ShieldAlert, ShieldCheck, ShieldQuestion, Siren, Stethoscope, Truck, Users, Wind, Footprints, CreditCard, Building, Download } from 'lucide-react'
 
 type SubMenuItem = {
   href: string
@@ -91,6 +92,7 @@ export const menuItems: MenuItem[] = [
     icon: CreditCard,
     items: [
       { href: "/subscription", label: "Upgrade to Pro", icon: CreditCard },
+      { href: "/install", label: "Install App", icon: Download },
     ],
   },
   {
