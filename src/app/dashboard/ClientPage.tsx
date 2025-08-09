@@ -140,14 +140,6 @@ const FeaturedTools = ({ isClient }: { isClient: boolean }) => {
   );
 };
 
-const PinnedTools = ({ isClient }: { isClient: boolean }) => {
-  return (
-    <motion.div variants={itemVariants}>
-      <PinnedToolsGrid isClient={isClient} />
-    </motion.div>
-  );
-};
-
 export function DashboardClient({ featureGroups }: { featureGroups: FeatureGroup[] }) {
   const [greeting, setGreeting] = useState('Good day');
   const [userName, setUserName] = useState<string | null>('Officer');
@@ -223,9 +215,11 @@ export function DashboardClient({ featureGroups }: { featureGroups: FeatureGroup
         <BriefingStats />
       </div>
 
-      <FeaturedTools isClient={isClient} />
+      <motion.div variants={itemVariants}>
+        <PinnedToolsGrid isClient={isClient} />
+      </motion.div>
 
-      <PinnedTools isClient={isClient} />
+      <FeaturedTools isClient={isClient} />
 
       <motion.div variants={itemVariants}>
         <h2 className="text-lg font-bold tracking-tight mb-3 px-1">All Tools Library</h2>

@@ -33,7 +33,10 @@ export const FeatureCard = memo(function FeatureCard({ module, showPinButton = t
         href={module.targetPage}
         className="block group h-full"
       >
-        <Card className="h-full flex flex-col hover:border-primary transition-colors duration-200">
+        <Card className="h-full flex flex-col hover:border-primary transition-colors duration-200 relative">
+          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+             {showPinButton && <PinButton module={module} />}
+          </div>
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -42,7 +45,6 @@ export const FeatureCard = memo(function FeatureCard({ module, showPinButton = t
                 </div>
                 <CardTitle className="text-base">{module.title}</CardTitle>
               </div>
-              {showPinButton && <PinButton module={module} />}
             </div>
           </CardHeader>
           <CardContent className="flex-grow">
