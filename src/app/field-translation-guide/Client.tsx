@@ -138,6 +138,7 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
       </Button>
     );
   });
+  AudioButton.displayName = 'AudioButton';
 
   return (
     <div className="space-y-6">
@@ -213,3 +214,4 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
     </div>
   )
 })
+FieldTranslationClient.displayName = "FieldTranslationClient";
