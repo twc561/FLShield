@@ -1,3 +1,4 @@
+
 export interface FeatureModule {
   id: string
   title: string
@@ -5,4 +6,5 @@ export interface FeatureModule {
   icon: string // Corresponds to a name in the lucide-react library
   targetPage: string
   category: string
+  isPremium?: boolean
 }

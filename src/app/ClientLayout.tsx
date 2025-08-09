@@ -39,28 +39,34 @@ export function ClientLayout({
 
   const isPublicPage = publicPages.includes(pathname);
 
+  // Render a loading state or null on the server and initial client render
+  // to prevent hydration mismatches, especially with auth/sub checks.
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <AuthWrapper>
-      {mounted && isPublicPage ? (
+      {isPublicPage ? (
         <>
           {children}
           <Toaster />
         </>
-      ) : mounted ? (
+      ) : (
         <SidebarProvider>
           <SubscriptionGate>
-            <div className="flex min-h-screen">
+            <div className="flex min-h-screen bg-background">
               <AppSidebar />
               <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto pb-20 md:pb-6">
                 {children}
               </main>
               <ContextualPanel />
             </div>
+            <MobileBottomNav />
           </SubscriptionGate>
-          <MobileBottomNav />
           <Toaster />
         </SidebarProvider>
-      ) : null}
+      )}
     </AuthWrapper>
   )
 }

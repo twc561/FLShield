@@ -1,11 +1,24 @@
+
 import type { Metadata } from "next"
+import { Inter } from 'next/font/google'
 import "@/app/globals.css"
 import { cn } from "@/lib/utils"
 import { ClientLayout } from "./ClientLayout"
 
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+})
+
 export const metadata: Metadata = {
-  title: "Shield FL - Law Enforcement Assistant",
-  description: "AI-powered law enforcement assistant for Florida officers",
+  title: "Florida Shield",
+  description: "The essential digital partner for the modern Florida officer.",
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/logo.svg",
+    apple: "/icons/icon-192x192.png",
+  }
 }
 
 export default function RootLayout({
@@ -14,19 +27,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className={cn("dark", inter.variable)} suppressHydrationWarning>
       <head>
-        <title>Florida Shield</title>
-        <meta name="description" content="The essential digital partner for the modern Florida officer." />
-        <link rel="icon" href="/logo.svg" type="image/svg+xml" sizes="any" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
+        {/* The theme-color meta tags will be managed by the AppShell or a dedicated component */}
       </head>
-      <body className={cn("antialiased min-h-screen")} suppressHydrationWarning={true}>
+      <body className={cn("antialiased min-h-screen font-body")} suppressHydrationWarning={true}>
         <ClientLayout>
           {children}
         </ClientLayout>

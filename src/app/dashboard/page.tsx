@@ -1,3 +1,4 @@
+
 'use client'
 
 import React, { useState, useEffect } from "react"
@@ -14,7 +15,6 @@ import { Badge } from "@/components/ui/badge"
 import { useSubscription } from "@/hooks/use-subscription"
 import { onAuthStateChanged, type User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
-
 import AICommandSearch from "@/components/AICommandSearch"
 import { PinButton } from "@/components/PinButton"
 import Link from 'next/link'
@@ -198,10 +198,7 @@ export default function DashboardPage() {
         }
         description={
           isClient && mounted && isPro ? (
-            <div className="flex items-center gap-2 text-amber-600">
-              <Crown className="w-4 h-4" />
-              <span>Pro Member - All premium features unlocked</span>
-            </div>
+            "All premium AI features unlocked. Thank you for your support!"
           ) : (
             "Welcome to your Mission Hub. How can I help?"
           )
@@ -211,31 +208,7 @@ export default function DashboardPage() {
       <motion.div variants={itemVariants}>
         <AICommandSearch />
       </motion.div>
-
-      {/* Pro Status Card */}
-      {isClient && mounted && isPro && (
-        <motion.div variants={itemVariants}>
-          <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full">
-                    <Crown className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-amber-900">Shield FL Pro Active</h3>
-                    <p className="text-sm text-amber-700">Access to all premium AI tools and features</p>
-                  </div>
-                </div>
-                <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0">
-                  Premium
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
-
+      
       {/* Daily Roll Call - Primary focal point */}
         <div className="mb-6">
           <DailyRollCall />
