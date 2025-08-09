@@ -7,18 +7,20 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Send, Bot, User, Loader2, RefreshCw, BarChart3, Clock, Target, Info, CheckCircle, XCircle } from 'lucide-react';
+import { Send, Bot, User, Loader2, ArrowLeft, Info, CheckCircle, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
     getTurnResponse, 
     getAfterActionReport,
-    type ScenarioDefinition,
-    type TurnResponse,
-    type AfterActionReport
 } from '@/ai/flows/roleplay-simulator';
+import type { 
+    ScenarioDefinition, 
+    AfterActionReport, 
+    TurnInput, 
+    AARInput 
+} from '@/lib/echo/types';
 
 type Message = {
     id: string;
@@ -80,15 +82,14 @@ export function RolePlaySimulatorClient({
         setIsLoading(true);
 
         try {
-            const response = await getTurnResponse({
+            const turnInput: TurnInput = {
                 scenarioId: scenario.scenarioId,
                 conversationHistory,
                 userAction: userInput,
-            });
+            };
+            const response = await getTurnResponse(turnInput);
 
-            if (response.error) throw new Error(response.error.errorMessage);
-
-            const { aiDialogue, realTimeFeedback, hudUpdate, isScenarioActive: active } = response.turnResponse;
+            const { aiDialogue, realTimeFeedback, hudUpdate, isScenarioActive: active } = response;
 
             setMessages(prev => [...prev, { id: `model-${Date.now()}`, role: 'model', content: aiDialogue }]);
             setFeedback(prev => [...prev, ...realTimeFeedback].slice(-3)); // Keep last 3 feedback items
@@ -97,11 +98,12 @@ export function RolePlaySimulatorClient({
 
             if (!active && !aar) {
                 // Scenario ended, fetch AAR
-                const finalReport = await getAfterActionReport({
+                const aarInput: AARInput = {
                     scenarioId: scenario.scenarioId,
                     conversationHistory: [...conversationHistory, { role: 'model', content: aiDialogue }]
-                });
-                setAar(finalReport.afterActionReport);
+                };
+                const finalReport = await getAfterActionReport(aarInput);
+                setAar(finalReport);
             }
 
         } catch (error) {
@@ -272,4 +274,3 @@ export function RolePlaySimulatorClient({
         </motion.div>
     );
 }
-
