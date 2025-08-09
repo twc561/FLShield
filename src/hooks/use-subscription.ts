@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -41,7 +42,10 @@ export function useSubscription() {
   }, [mounted])
 
   useEffect(() => {
-    if (!mounted || !user) return
+    if (!mounted || !user) {
+        if(!user) setLoading(false)
+        return
+    }
 
     const unsubscribe = onSnapshot(
       doc(db, 'users', user.uid),
@@ -70,37 +74,35 @@ export function useSubscription() {
     )
 
     return unsubscribe
-  }, [user])
+  }, [user, mounted])
 
   // Hardcoded pro access for specific users
   const hardcodedProEmails = ['osorioecat@gmail.com', 'rdc561@gmail.com']
   const hasHardcodedAccess = user?.email && hardcodedProEmails.includes(user.email)
   
-  const isPro = hasHardcodedAccess || (subscription?.status === 'active' && new Date() < subscription.currentPeriodEnd)
+  const isPro = hasHardcodedAccess || (subscription?.status === 'active' && subscription.currentPeriodEnd && new Date() < subscription.currentPeriodEnd)
 
   // Define free features that don't require subscription
   const freeFeatures = [
-    '/legal-reference/statutes',
-    '/legal-reference/case-law',
     '/dashboard',
+    '/login',
     '/subscription',
     '/subscription/success',
     '/',
-    '/login',
     '/features',
+    '/agency-intelligence',
+    '/cjis-compliance',
     '/support',
+    '/request-demo',
     '/terms-of-use',
     '/privacy-policy',
     '/security',
     '/for-officers',
-    '/agency-intelligence',
-    '/cjis-compliance',
-    '/cjis-compliance',
-    '/request-demo'
+    '/install'
   ]
 
   const isFeatureFree = (path: string) => {
-    return freeFeatures.some(freePath => path.startsWith(freePath))
+    return freeFeatures.some(freePath => path === freePath || (freePath !== '/' && path.startsWith(freePath)))
   }
 
   const requiresSubscription = (path: string) => {
