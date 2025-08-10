@@ -4,8 +4,7 @@
  * This file contains the logic for the AI to adopt a supportive, non-judgmental persona
  * and respond to an officer's inputs using reflective listening techniques.
  */
-import { generateObject } from 'ai';
-import { google } from '@ai-sdk/google';
+import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -30,14 +29,17 @@ const ActiveListenerOutputSchema = z.object({
 export type ActiveListenerOutput = z.infer<typeof ActiveListenerOutputSchema>;
 
 export async function getActiveListeningResponse(input: ActiveListenerInput): Promise<ActiveListenerOutput> {
-  const { object } = await generateObject({
-    model: google('gemini-1.5-pro'),
-    system: activeListenerPromptTemplate.replace(
-      /{{{conversationHistory\..+}}}/,
-      input.conversationHistory.map(h => `${h.role === 'user' ? 'Officer' : 'Listener'}: ${h.content}`).join('\n')
-    ),
-    prompt: `Officer: "${input.userUtterance}"`,
-    schema: ActiveListenerOutputSchema,
+  const history = input.conversationHistory.map(h => `${h.role === 'user' ? 'Officer' : 'Listener'}: ${h.content}`).join('\n');
+  const prompt = activeListenerPromptTemplate
+    .replace('{{history}}', history)
+    .replace('{{prompt}}', `Officer: "${input.userUtterance}"`);
+
+  const { output } = await ai.generate({
+    prompt,
+    output: {
+        schema: ActiveListenerOutputSchema
+    }
   });
-  return object;
+
+  return output!;
 }

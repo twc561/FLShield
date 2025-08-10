@@ -6,8 +6,7 @@
  * - CommandSearchInput - The input type for the function.
  * - CommandSearchOutput - The return type for the function.
  */
-import { generateObject } from 'ai';
-import { google } from '@ai-sdk/google';
+import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 const CommandSearchInputSchema = z.object({
@@ -23,10 +22,11 @@ export type CommandSearchOutput = z.infer<typeof CommandSearchOutputSchema>;
 export async function commandSearch(
   input: CommandSearchInput
 ): Promise<CommandSearchOutput> {
-  const { object } = await generateObject({
-    model: google('gemini-1.5-pro'),
+  const { output } = await ai.generate({
     prompt: `You are 'Shield FL,' an AI partner for Florida law enforcement. Your purpose is to provide immediate, clear, and practical answers to questions from front-line patrol officers. The answer should be concise, easy to understand during a high-stakes situation, and grounded in Florida statutes and common police procedures. Do not provide legal advice, but rather operational guidance and factual information. Prioritize officer safety and legal accuracy. Now, answer the following question for an officer on patrol: ${input.query}`,
-    schema: CommandSearchOutputSchema,
+    output: {
+      schema: CommandSearchOutputSchema,
+    },
   });
-  return object;
+  return output!;
 }
