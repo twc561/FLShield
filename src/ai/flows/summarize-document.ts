@@ -7,9 +7,9 @@
  * - SummarizeDocumentInput - The input type for the summarizeDocument function.
  * - SummarizeDocumentOutput - The return type for the summarizeDocument function.
  */
-
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { generateObject } from 'ai';
+import { google } from '@ai-sdk/google';
+import { z } from 'zod';
 
 const SummarizeDocumentInputSchema = z.object({
   documentText: z.string().describe('The text content of the document to summarize.'),
@@ -22,13 +22,12 @@ const SummarizeDocumentOutputSchema = z.object({
 export type SummarizeDocumentOutput = z.infer<typeof SummarizeDocumentOutputSchema>;
 
 export async function summarizeDocument(input: SummarizeDocumentInput): Promise<SummarizeDocumentOutput> {
-  const { output } = await ai.generate({
+  const { object } = await generateObject({
+    model: google('gemini-1.5-pro'),
     prompt: `Summarize the following document, extracting the key information and insights:
 
 ${input.documentText}`,
-    output: {
-      schema: SummarizeDocumentOutputSchema,
-    },
+    schema: SummarizeDocumentOutputSchema,
   });
-  return output;
+  return object;
 }

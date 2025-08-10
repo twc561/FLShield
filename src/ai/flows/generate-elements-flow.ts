@@ -8,7 +8,8 @@
  * - GenerateElementsOfCrimeOutput - The return type for the function.
  */
 
-import { ai } from '@/ai/genkit';
+import { generateObject } from 'ai';
+import { google } from '@ai-sdk/google';
 import { z } from 'zod';
 
 const GenerateElementsOfCrimeInputSchema = z.object({
@@ -26,7 +27,8 @@ export type GenerateElementsOfCrimeOutput = z.infer<typeof GenerateElementsOfCri
 export async function generateElementsOfCrime(
   input: GenerateElementsOfCrimeInput
 ): Promise<GenerateElementsOfCrimeOutput> {
-  const { output } = await ai.generate({
+  const { object } = await generateObject({
+    model: google('gemini-1.5-pro'),
     prompt: `You are an expert paralegal specializing in Florida criminal law. Your task is to analyze the provided Florida Statute and extract its essential elements. The output must be a valid JSON object matching the requested schema.
 
 Statute Code: ${input.statuteCode}
@@ -36,29 +38,25 @@ Statute Description: ${input.statuteText}
 Based on the provided information, generate a concise, bulleted or numbered list of the essential elements of the crime that a prosecutor must prove beyond a reasonable doubt for the 'elements' field.
 
 CRITICAL RULE: Your response must always contain the 'elements' key. If the provided statute does not define a criminal offense (e.g., it is a definition or classification statute), the 'elements' field MUST contain the string "This statute does not define a criminal offense." Do not invent elements or return an empty string or null.`,
-    output: {
-      schema: GenerateElementsOfCrimeOutputSchema,
-    },
-    config: {
-      safetySettings: [
-        {
-          category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-          threshold: 'BLOCK_NONE',
-        },
-        {
-          category: 'HARM_CATEGORY_HATE_SPEECH',
-          threshold: 'BLOCK_ONLY_HIGH',
-        },
-        {
-          category: 'HARM_CATEGORY_HARASSMENT',
-          threshold: 'BLOCK_ONLY_HIGH',
-        },
-        {
-          category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-          threshold: 'BLOCK_ONLY_HIGH',
-        },
-      ],
-    },
+    schema: GenerateElementsOfCrimeOutputSchema,
+    safetySettings: [
+      {
+        category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+        threshold: 'BLOCK_NONE',
+      },
+      {
+        category: 'HARM_CATEGORY_HATE_SPEECH',
+        threshold: 'BLOCK_ONLY_HIGH',
+      },
+      {
+        category: 'HARM_CATEGORY_HARASSMENT',
+        threshold: 'BLOCK_ONLY_HIGH',
+      },
+      {
+        category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+        threshold: 'BLOCK_ONLY_HIGH',
+      },
+    ],
   });
-  return output!;
+  return object;
 }

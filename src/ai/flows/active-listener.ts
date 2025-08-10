@@ -4,7 +4,8 @@
  * This file contains the logic for the AI to adopt a supportive, non-judgmental persona
  * and respond to an officer's inputs using reflective listening techniques.
  */
-import { ai } from '@/ai/genkit';
+import { generateObject } from 'ai';
+import { google } from '@ai-sdk/google';
 import { z } from 'zod';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -18,7 +19,7 @@ const ActiveListenerInputSchema = z.object({
   userUtterance: z.string(),
   conversationHistory: z.array(z.object({
       role: z.enum(['user', 'model']),
-      parts: z.array(z.object({text: z.string()}))
+      content: z.string(),
   })),
 });
 export type ActiveListenerInput = z.infer<typeof ActiveListenerInputSchema>;
@@ -28,33 +29,15 @@ const ActiveListenerOutputSchema = z.object({
 });
 export type ActiveListenerOutput = z.infer<typeof ActiveListenerOutputSchema>;
 
-export const activeListener = ai.defineFlow(
-  {
-    name: 'activeListener', 
-    inputSchema: ActiveListenerInputSchema,
-    config: {
-      model: 'gemini-1.5-pro',
-      generationConfig: {
-        maxOutputTokens: 8192,
-        temperature: 0.7,
-        topP: 0.95,
-        topK: 50,
-      }
-    }
-  },
-  async (input) => {
-  const prompt = ai.definePrompt({
-    name: 'activeListenerPrompt',
-    input: { schema: ActiveListenerInputSchema },
-    output: { schema: ActiveListenerOutputSchema },
-    prompt: activeListenerPromptTemplate,
-  });
-
-  const { output } = await prompt(input);
-  return output!;
-}
-);
 export async function getActiveListeningResponse(input: ActiveListenerInput): Promise<ActiveListenerOutput> {
-  const { output } = await activeListener(input);
-  return output!;
+  const { object } = await generateObject({
+    model: google('gemini-1.5-pro'),
+    system: activeListenerPromptTemplate.replace(
+      /{{{conversationHistory\..+}}}/,
+      input.conversationHistory.map(h => `${h.role === 'user' ? 'Officer' : 'Listener'}: ${h.content}`).join('\n')
+    ),
+    prompt: `Officer: "${input.userUtterance}"`,
+    schema: ActiveListenerOutputSchema,
+  });
+  return object;
 }
