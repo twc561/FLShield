@@ -1,6 +1,6 @@
 
 import type { Metadata } from "next"
-import { Inter } from 'next/font/google'
+import { Inter, Roboto_Slab } from 'next/font/google'
 import "@/app/globals.css"
 import { cn } from "@/lib/utils"
 import { ClientLayout } from "./ClientLayout"
@@ -9,6 +9,12 @@ const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
+})
+
+const roboto_slab = Roboto_Slab({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-roboto-slab',
 })
 
 export const metadata: Metadata = {
@@ -27,11 +33,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={cn("dark", inter.variable)} suppressHydrationWarning>
+    <html lang="en" className={cn("dark", inter.variable, roboto_slab.variable)} suppressHydrationWarning>
       <head>
         {/* The theme-color meta tags will be managed by the AppShell or a dedicated component */}
       </head>
-      <body className={cn("antialiased min-h-screen font-body")} suppressHydrationWarning={true}>
+      <body className={cn("antialiased min-h-screen")} suppressHydrationWarning={true}>
         <ClientLayout>
           {children}
         </ClientLayout>
