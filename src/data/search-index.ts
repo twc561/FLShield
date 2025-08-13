@@ -23,6 +23,8 @@ export type SearchableItem = {
   category: string;
   href: string;
   keywords: string[];
+  // Adding code for statute items for better keyword mapping
+  code?: string;
 };
 
 // Transform Case Law data
@@ -43,11 +45,13 @@ const statuteItems: SearchableItem[] = statuteIndex.map(s => ({
   category: 'Legal Reference',
   href: '/legal-reference/statutes',
   keywords: [s.title, s.code, s.category, 'statute', 'law', s.degreeOfCharge].filter(Boolean) as string[],
+  code: s.code, // Ensure the code is part of the object
 }));
 
 // Add common crimes map to statutes keywords for better searching
 commonCrimesMap.forEach(crime => {
-    const statute = statuteItems.find(s => s.code.includes(crime.statuteNumber));
+    // Find the statute item using the `code` property which is now guaranteed to exist
+    const statute = statuteItems.find(s => s.code && s.code.includes(crime.statuteNumber));
     if (statute) {
         statute.keywords.push(...crime.keywords);
     }
