@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '@/lib/firebase'
 import { Loader2 } from 'lucide-react'
+import { useSubscription } from '@/hooks/use-subscription'
 
 const LoadingScreen = () => (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background">
@@ -15,48 +16,25 @@ const LoadingScreen = () => (
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
     const [user, isLoading] = useAuthState(auth);
-    const [clientMounted, setClientMounted] = useState(false);
+    const { isFeatureFree } = useSubscription();
     const pathname = usePathname();
     const router = useRouter();
 
-    const publicPages = [
-        "/",
-        "/login",
-        "/features",
-        "/agency-intelligence",
-        "/cjis-compliance",
-        "/support",
-        "/request-demo",
-        "/terms-of-use",
-        "/privacy-policy",
-        "/security",
-        "/for-officers",
-    ];
-
-    const isPublicPage = publicPages.includes(pathname);
+    const isPublicPage = isFeatureFree(pathname);
 
     useEffect(() => {
-        setClientMounted(true);
-    }, []);
-
-    useEffect(() => {
-        if (!clientMounted || isLoading) return;
+        if (isLoading) return;
 
         // If not authenticated and trying to access a protected page, redirect
         if (!user && !isPublicPage) {
             router.push('/login');
         }
 
-        // If authenticated and trying to access the marketing homepage or login page, redirect to dashboard
-        if (user && (pathname === '/' || pathname === '/login')) {
+        // If authenticated and trying to access a public-only page like login, redirect to dashboard
+        if (user && pathname === '/login') {
             router.push('/dashboard');
         }
-    }, [user, isLoading, isPublicPage, pathname, router, clientMounted]);
-
-    // Prevent hydration issues by not rendering anything until fully mounted
-    if (!clientMounted) {
-        return <LoadingScreen />;
-    }
+    }, [user, isLoading, isPublicPage, pathname, router]);
 
     if (isLoading) {
         return <LoadingScreen />;
@@ -66,8 +44,8 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     if (!user && !isPublicPage) {
         return <LoadingScreen />;
     }
-
-    if (user && (pathname === '/' || pathname === '/login')) {
+    
+    if (user && pathname === '/login') {
         return <LoadingScreen />;
     }
 

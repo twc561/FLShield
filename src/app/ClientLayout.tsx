@@ -8,6 +8,7 @@ import { AuthWrapper } from "@/components/AuthWrapper"
 import { SubscriptionGate } from "@/components/SubscriptionGate"
 import { AppShell } from "@/components/shell/AppShell"
 import { MainNav } from "@/components/nav/MainNav"
+import { useSubscription } from "@/hooks/use-subscription"
 
 export function ClientLayout({
   children,
@@ -15,27 +16,14 @@ export function ClientLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const { isFeatureFree } = useSubscription();
   const [mounted, setMounted] = useState(false)
-
-  const publicPages = [
-    "/",
-    "/login",
-    "/features",
-    "/agency-intelligence",
-    "/cjis-compliance",
-    "/support",
-    "/request-demo",
-    "/terms-of-use",
-    "/privacy-policy",
-    "/security",
-    "/for-officers",
-  ];
-
+  
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  const isPublicPage = publicPages.includes(pathname);
+  const isPublicPage = isFeatureFree(pathname);
 
   // Render a loading state or null on the server and initial client render
   // to prevent hydration mismatches, especially with auth/sub checks.

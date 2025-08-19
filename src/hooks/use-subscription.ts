@@ -79,33 +79,40 @@ export function useSubscription() {
   // Temporarily grant Pro access to all users
   const isPro = true;
 
-  // Define free features that don't require subscription
-  const freeFeatures = [
-    '/dashboard',
-    '/login',
-    '/subscription',
-    '/subscription/success',
-    '/',
-    '/features',
-    '/agency-intelligence',
-    '/cjis-compliance',
-    '/support',
-    '/request-demo',
-    '/terms-of-use',
-    '/privacy-policy',
-    '/security',
-    '/for-officers',
-    '/install'
+  // Define public pages that don't require any authentication.
+  const publicPages = [
+    "/",
+    "/login",
+    "/features",
+    "/agency-intelligence",
+    "/cjis-compliance",
+    "/support",
+    "/request-demo",
+    "/terms-of-use",
+    "/privacy-policy",
+    "/security",
+    "/for-officers",
+    "/subscription/success"
   ]
-
+  
+  // A feature is considered free if it's a public page OR a page accessible to any logged-in user.
   const isFeatureFree = (path: string) => {
-    return freeFeatures.some(freePath => path === freePath || (freePath !== '/' && path.startsWith(freePath)))
+    if (publicPages.includes(path)) return true;
+
+    // These pages require login but not a Pro subscription
+    const freeLoggedInPages = [
+      '/dashboard',
+      '/install',
+      '/subscription',
+    ];
+    
+    return freeLoggedInPages.some(freePath => path === freePath || (freePath !== '/' && path.startsWith(freePath)));
   }
 
+  // A feature requires a subscription if it's NOT free and the user is logged in.
   const requiresSubscription = (path: string) => {
-    // Only check subscription requirements after mounting to avoid hydration issues
-    if (!mounted) return false
-    return !isFeatureFree(path) && !!user
+    if (!mounted || !user) return false;
+    return !isFeatureFree(path)
   }
 
   return { subscription, loading, isPro, mounted, isFeatureFree, requiresSubscription }
