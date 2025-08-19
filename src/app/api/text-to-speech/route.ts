@@ -3,8 +3,10 @@
 import { textToSpeech } from '@/ai/flows/text-to-speech';
 import { NextResponse } from 'next/server';
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+export const config = {
+  runtime: 'nodejs',
+  dynamic: 'force-dynamic',
+};
 
 export async function POST(req: Request) {
   try {
