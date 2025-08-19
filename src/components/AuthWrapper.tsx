@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -52,7 +53,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
         }
     }, [user, isLoading, isPublicPage, pathname, router, clientMounted]);
 
-    // Prevent hydration issues by not rendering anything during initial load
+    // Prevent hydration issues by not rendering anything until fully mounted
     if (!clientMounted) {
         return <LoadingScreen />;
     }
