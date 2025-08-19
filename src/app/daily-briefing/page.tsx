@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -25,11 +26,14 @@ export default function DailyBriefingPage() {
   });
 
   const getCompletionStatus = (moduleId: string) => {
+    if (typeof window === 'undefined') {
+      return 'not-completed';
+    }
     const completionKey = `daily-roll-call-${moduleId}`;
     return localStorage.getItem(completionKey) ? 'completed' : 'not-completed';
   };
 
-  const categoryColors = {
+  const categoryColors: Record<string, string> = {
     'legal-update': 'bg-blue-100 text-blue-800 border-blue-200',
     'procedural-refresher': 'bg-green-100 text-green-800 border-green-200',
     'scenario-based': 'bg-purple-100 text-purple-800 border-purple-200',
@@ -53,11 +57,8 @@ export default function DailyBriefingPage() {
         description="Review past Daily Roll Call modules and enhance your knowledge with interactive micro-learning content."
       />
 
-      
-/>
-
       {/* Search and Filter Controls */}
-      <div className="bg-card rounded-lg p-6 space-y-4">
+      <Card className="p-6 space-y-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -161,7 +162,7 @@ export default function DailyBriefingPage() {
             )}
           </div>
         </Tabs>
-      </div>
+      </Card>
     </div>
   );
 }

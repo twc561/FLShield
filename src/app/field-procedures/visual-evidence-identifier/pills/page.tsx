@@ -8,17 +8,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Loader2, Sparkles, Camera, Pill as PillIcon, AlertTriangle, Info, ShieldAlert } from 'lucide-react';
-import { identifyPillFromImage, type IdentifyPillOutput } from '@/ai/flows/identify-pill';
+import { identifyPill, type IdentifyPillOutput } from '@/ai/flows/identify-pill';
 import Image from 'next/image';
 
 function PillResult({ result }: { result: IdentifyPillOutput }) {
-  if (result.drugName === "Unknown") {
+  const primaryId = result.identification.primaryIdentification;
+  if (!primaryId || primaryId.substanceName === "Unable to identify - requires lab analysis") {
     return (
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Unable to Identify</AlertTitle>
         <AlertDescription>
-            {result.keyWarnings || "The AI could not confidently identify the substance from the provided image. This could be due to a poor quality image, a non-standard pill, or an illicit substance. Do not ingest."}
+            {result.disclaimer || "The AI could not confidently identify the substance from the provided image. This could be due to a poor quality image, a non-standard pill, or an illicit substance. Do not ingest."}
         </AlertDescription>
       </Alert>
     )
@@ -29,26 +30,25 @@ function PillResult({ result }: { result: IdentifyPillOutput }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
             <PillIcon className="h-6 w-6 text-primary"/>
-            {result.drugName}
+            {primaryId.substanceName}
+            <Badge variant={primaryId.confidence === 'High' ? 'default' : 'secondary'}>{primaryId.confidence} Confidence</Badge>
         </CardTitle>
         <CardDescription>
-            Visual Description: {result.visualDescription}
+            {result.disclaimer}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-            <h3 className="font-semibold text-foreground/90">Primary Use</h3>
-            <p className="text-muted-foreground">{result.primaryUse}</p>
-        </div>
-        <div>
-            <h3 className="font-semibold text-foreground/90">Key Warnings / Side Effects</h3>
-            <p className="text-muted-foreground">{result.keyWarnings}</p>
+            <h3 className="font-semibold text-foreground/90">Reasoning</h3>
+            <p className="text-muted-foreground text-sm">{primaryId.reasoning}</p>
         </div>
         <Alert>
-            <Info className="h-4 w-4"/>
-            <AlertTitle>Source Information</AlertTitle>
+            <ShieldAlert className="h-4 w-4"/>
+            <AlertTitle>Field Safety Notes</AlertTitle>
             <AlertDescription>
-                This information was summarized by AI from publicly available data from sources like Drugs.com, WebMD, and the NLM. Always confirm with official sources.
+                <ul className="list-disc pl-5">
+                    {result.identification.fieldSafetyNotes.map((note, i) => <li key={i}>{note}</li>)}
+                </ul>
             </AlertDescription>
         </Alert>
       </CardContent>
@@ -108,9 +108,10 @@ export default function PillIdentifierPage() {
     const reader = new FileReader();
     reader.readAsDataURL(imageFile);
     reader.onloadend = async () => {
-      const base64data = reader.result as string;
+      const base64dataWithHeader = reader.result as string;
+      const base64data = base64dataWithHeader.split(',')[1];
       try {
-        const response = await identifyPillFromImage({ imageDataUri: base64data });
+        const response = await identifyPill({ imageBase64: base64data });
         setResult(response);
       } catch (err) {
         console.error('Pill Identification Error:', err);
