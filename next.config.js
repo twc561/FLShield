@@ -22,10 +22,10 @@ const nextConfig = {
         '9000-firebase-studio-1751928450615.cluster-f4iwdviaqvc2ct6pgytzw4xqy4.cloudworkstations.dev',
       ]
     },
-    allowedDevOrigins: [
-        '9000-firebase-studio-1751928450615.cluster-f4iwdviaqvc2ct6pgytzw4xqy4.cloudworkstations.dev',
-    ]
   },
+  allowedDevOrigins: [
+      '9000-firebase-studio-1751928450615.cluster-f4iwdviaqvc2ct6pgytzw4xqy4.cloudworkstations.dev',
+  ],
   async headers() {
     return [
       {
