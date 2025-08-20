@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast"
 export default function SubscriptionPage() {
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
-  const [user] = useAuthState(auth)
+  const [user] = useAuthState(auth!)
 
   const handleSubscribe = async (priceId: string) => {
     if (!user) {

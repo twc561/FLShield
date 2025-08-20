@@ -161,6 +161,8 @@ export function DashboardClient({ featureGroups }: { featureGroups: FeatureGroup
     };
     setGreeting(getGreeting());
 
+    if (!auth) return;
+    
     const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
       if (user) {
         if (user.displayName) {
@@ -184,17 +186,7 @@ export function DashboardClient({ featureGroups }: { featureGroups: FeatureGroup
   return (
     <motion.div className="space-y-8" variants={containerVariants} initial="hidden" animate="show">
       <PageHeader
-        title={
-          <div className="flex items-center gap-3">
-            {`${greeting}, ${userName || 'Officer'}.`}
-            {isClient && mounted && isPro && (
-              <Badge className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0 shadow-lg text-sm px-3 py-1">
-                <Crown className="w-4 h-4 mr-2" />
-                Shield FL Pro
-              </Badge>
-            )}
-          </div>
-        }
+        title={`${greeting}, ${userName || 'Officer'}.`}
         description={
           isClient && mounted && isPro
             ? 'All premium AI features unlocked. Thank you for your support!'
@@ -226,7 +218,7 @@ export function DashboardClient({ featureGroups }: { featureGroups: FeatureGroup
         <div className="space-y-6">
           {Array.isArray(featureGroups) &&
             featureGroups.map((group) => {
-              const GroupIcon = (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle;
+              const GroupIcon = group.icon || LucideIcons.HelpCircle;
               return (
                 <Card key={group.category} className="bg-card/50">
                   <CardHeader>

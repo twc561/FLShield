@@ -44,5 +44,10 @@ Provision ID: ${input.provisionId}`,
       schema: AnalyzeConstitutionOutputSchema,
     },
    });
+   
+   if (!output) {
+     throw new Error('Failed to generate constitutional analysis');
+   }
+   
    return output;
 }

@@ -30,7 +30,7 @@ export function useSubscription() {
   useEffect(() => {
     if (!mounted) return
 
-    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribeAuth = onAuthStateChanged(auth!, (currentUser) => {
       setUser(currentUser)
       if (!currentUser) {
         setSubscription(null)
@@ -48,7 +48,7 @@ export function useSubscription() {
     }
 
     const unsubscribe = onSnapshot(
-      doc(db, 'users', user.uid),
+      doc(db!, 'users', user.uid),
       (doc) => {
         const data = doc.data()
         if (data?.subscription) {

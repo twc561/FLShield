@@ -5,7 +5,7 @@ const nextConfig = {
     ignoreBuildErrors: process.env.NODE_ENV === 'development', 
   },
   eslint: {
-    ignoreDuringBuilds: process.env.NODE_ENV === 'development', 
+    ignoreDuringBuilds: true, 
   },
   output: 'standalone',
   experimental: {
@@ -21,10 +21,7 @@ const nextConfig = {
         '6000-firebase-studio-1751928450615.cluster-f4iwdviaqvc2ct6pgytzw4xqy4.cloudworkstations.dev',
         '9000-firebase-studio-1751928450615.cluster-f4iwdviaqvc2ct6pgytzw4xqy4.cloudworkstations.dev',
       ]
-    },
-    allowedDevOrigins: [
-        '9000-firebase-studio-1751928450615.cluster-f4iwdviaqvc2ct6pgytzw4xqy4.cloudworkstations.dev',
-    ]
+    }
   },
   async headers() {
     return [

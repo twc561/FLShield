@@ -59,11 +59,10 @@ export function LiveDebriefClient() {
 
     try {
       const historyForAI = newMessages
-        .filter(msg => msg.role !== 'system') // Assuming no system messages for now
         .map(msg => ({
-          role: msg.role as 'user' | 'model',
+          role: msg.role,
           parts: [{ text: msg.content }],
-      }));
+        }));
 
       const stream = streamDebrief({ conversationHistory: historyForAI });
 

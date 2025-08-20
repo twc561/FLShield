@@ -3,6 +3,14 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 
+// Simple type declarations for Speech Recognition API
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
 type SpeechRecognitionHook = {
   isListening: boolean;
   interimTranscript: string;
@@ -18,7 +26,7 @@ export function useSpeechRecognition(): SpeechRecognitionHook {
   const [interimTranscript, setInterimTranscript] = useState('');
   const [finalTranscript, setFinalTranscript] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any | null>(null);
   const [isSupported, setIsSupported] = useState(false);
 
   useEffect(() => {
@@ -35,7 +43,7 @@ export function useSpeechRecognition(): SpeechRecognitionHook {
         recognition.interimResults = true;
         recognition.lang = 'en-US';
 
-        recognition.onresult = (event) => {
+        recognition.onresult = (event: any) => {
           let interim = '';
           let final = '';
           for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -51,7 +59,7 @@ export function useSpeechRecognition(): SpeechRecognitionHook {
           }
         };
       
-        recognition.onerror = (event) => {
+        recognition.onerror = (event: any) => {
           setError(event.error);
           console.error('Speech recognition error', event.error);
           setIsListening(false);

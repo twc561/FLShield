@@ -42,5 +42,10 @@ Update ID: ${input.updateID}`,
       schema: AnalyzeLegalUpdateOutputSchema,
     },
   });
+  
+  if (!output) {
+    throw new Error('Failed to generate legal update analysis');
+  }
+  
   return output;
 }

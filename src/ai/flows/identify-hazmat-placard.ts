@@ -9,7 +9,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { analyzeHazmatPlacard, AnalyzeHazmatPlacardOutputSchema } from './analyze-hazmat-placard';
+import { analyzeHazmatPlacard, AnalyzeHazmatPlacardOutput } from './analyze-hazmat-placard';
 
 // Input for the entire flow
 const IdentifyHazmatPlacardInputSchema = z.object({
@@ -21,24 +21,25 @@ const IdentifyHazmatPlacardInputSchema = z.object({
 });
 export type IdentifyHazmatPlacardInput = z.infer<typeof IdentifyHazmatPlacardInputSchema>;
 
-export type IdentifyHazmatPlacardOutput = z.infer<typeof AnalyzeHazmatPlacardOutputSchema>;
+export type IdentifyHazmatPlacardOutput = AnalyzeHazmatPlacardOutput;
 
 // Intermediate schema for the first AI call (identifying the UN ID)
 const UnIdSchema = z.object({
     unID: z.string().describe("The 4-digit UN/NA number identified from the placard image. If no number is clearly visible, return '0000'."),
 });
 
+const identifyUnPrompt = ai.definePrompt({
+  name: 'identifyUnPrompt',
+  input: { schema: z.object({ imageDataUri: z.string() }) },
+  output: { schema: UnIdSchema },
+  prompt: `You are an expert HAZMAT placard recognition system. Analyze the following image of a placard and extract ONLY the 4-digit UN/NA number. Disregard any other numbers like the hazard class at the bottom. The number is the most important piece of information.
+    
+Image: {{media url=imageDataUri}}`
+});
+
 export async function identifyHazmatPlacardFromImage(input: IdentifyHazmatPlacardInput): Promise<IdentifyHazmatPlacardOutput> {
   // Step 1: Analyze the image to get the UN/NA ID
-  const { output: idAnalysis } = await ai.generate({
-    prompt: `You are an expert HAZMAT placard recognition system. Analyze the following image of a placard and extract ONLY the 4-digit UN/NA number. Disregard any other numbers like the hazard class at the bottom. The number is the most important piece of information.
-    
-    Image: {{media url=imageDataUri}}`,
-    input: { imageDataUri: input.imageDataUri },
-    output: {
-      schema: UnIdSchema,
-    },
-  });
+  const { output: idAnalysis } = await identifyUnPrompt({ imageDataUri: input.imageDataUri });
 
   if (!idAnalysis || !idAnalysis.unID || idAnalysis.unID === '0000') {
     // Return a structured error response if no ID could be found.

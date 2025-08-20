@@ -123,7 +123,7 @@ export const FieldTranslationClient = React.memo(function FieldTranslationClient
     return (
       <Button
         variant="ghost"
-        size={size}
+        size={size === "xs" ? "sm" : size}
         onClick={() => handleAudioPlay(text, language, phraseId)}
         disabled={isCurrentlyLoading}
         className="h-8 w-8 p-0 hover:bg-primary/10"

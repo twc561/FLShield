@@ -61,5 +61,10 @@ UN/NA ID: ${input.unID}`,
       schema: AnalyzeHazmatPlacardOutputSchema,
     },
   });
+  
+  if (!output) {
+    throw new Error('Failed to generate hazmat placard analysis');
+  }
+  
   return output;
 }

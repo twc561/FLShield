@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/accordion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import type { TrafficViolation, TrafficViolationIndexItem, Statute } from "@/data"
+import type { TrafficViolation, TrafficViolationIndexItem } from "@/data/traffic-enforcement/traffic-violations"
+import type { Statute } from "@/data/statutes"
 import { Search, Gavel, FileText, Ban, AlertTriangle, User, Car, Loader2, Sparkles, ExternalLink } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { findStatute } from "@/ai/flows/find-statute"
@@ -218,7 +219,7 @@ export const TrafficStatutesClient = React.memo(function TrafficStatutesClient({
             <CardDescription>{aiResult.code} &bull; {aiResult.degreeOfCharge}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Accordion type="multiple" collapsible className="w-full space-y-2" defaultValue={['description']}>
+            <Accordion type="multiple" className="w-full space-y-2" defaultValue={['description']}>
               <AccordionItem value="description" className="border-b-0">
                 <Card className="bg-muted/50">
                   <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">Practical Summary for Officers</AccordionTrigger>

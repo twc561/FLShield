@@ -138,14 +138,14 @@ export function DailyRollCall({ className }: DailyRollCallProps) {
                 <Button
                   variant="outline"
                   className="flex-1"
-                  onClick={() => handleAnswerSelect(true)}
+                  onClick={() => handleAnswerSelect("true")}
                 >
                   True
                 </Button>
                 <Button
                   variant="outline"
                   className="flex-1"
-                  onClick={() => handleAnswerSelect(false)}
+                  onClick={() => handleAnswerSelect("false")}
                 >
                   False
                 </Button>

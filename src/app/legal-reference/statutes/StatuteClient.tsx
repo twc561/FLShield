@@ -39,7 +39,7 @@ const FullStatuteContent = memo(function FullStatuteContent({
 }) {
   return (
     <div className="border-t pt-4">
-      <Accordion type="multiple" collapsible className="w-full space-y-2" defaultValue={['description']}>
+      <Accordion type="multiple" className="w-full space-y-2" defaultValue={['description']}>
           <AccordionItem value="description" className="border-b-0">
           <Card className="bg-muted/50">
               <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">

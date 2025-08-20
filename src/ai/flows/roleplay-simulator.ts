@@ -522,6 +522,10 @@ export async function getTurnResponse(input: z.infer<typeof TurnInputSchema>): P
         },
     });
     
+    if (!output) {
+        throw new Error('Failed to generate turn response');
+    }
+    
     output.realTimeFeedback.push({
         feedbackId: `RTF-${Date.now()}`,
         type: feedbackType,
@@ -563,6 +567,10 @@ export async function getAfterActionReport(input: z.infer<typeof AARInputSchema>
             schema: AfterActionReportSchema,
         }
     });
+    
+    if (!output) {
+        throw new Error('Failed to generate after-action report');
+    }
     
     return output;
 }

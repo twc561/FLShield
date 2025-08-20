@@ -13,7 +13,7 @@ const LoadingScreen = () => (
 )
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
-    const [user, isLoading] = useAuthState(auth);
+    const [user, isLoading] = useAuthState(auth!);
     const [clientMounted, setClientMounted] = useState(false);
     const pathname = usePathname();
     const router = useRouter();

@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Card, CardDescription, CardTitle } from "@/components/ui/card"
-import type { InterviewTechnique } from "@/data"
+import type { InterviewTechnique } from "@/data/field-procedures/interview-techniques"
 
 export const InterviewTechniquesClient = React.memo(function InterviewTechniquesClient({ data }: { data: InterviewTechnique[] }) {
   return (

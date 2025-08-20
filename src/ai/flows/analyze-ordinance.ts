@@ -32,15 +32,7 @@ export const analyzeOrdinance = ai.defineFlow(
   {
     name: 'analyzeOrdinance',
     inputSchema: AnalyzeOrdinanceInputSchema,
-    config: {
-      model: 'gemini-1.5-pro',
-      generationConfig: {
-        maxOutputTokens: 8192,
-        temperature: 0.3,
-        topP: 0.95,
-        topK: 40,
-      }
-    }
+    outputSchema: AnalyzeOrdinanceOutputSchema,
   },
   async (input) => {
   try {
@@ -75,6 +67,11 @@ Remember: You must return valid JSON that matches the schema exactly. If you can
         schema: AnalyzeOrdinanceOutputSchema,
       },
     });
+    
+    if (!output) {
+      throw new Error('Failed to generate ordinance analysis');
+    }
+    
     return output;
   } catch (error) {
     console.error('Error analyzing ordinance:', error);

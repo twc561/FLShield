@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Card, CardDescription, CardTitle } from "@/components/ui/card"
-import type { RpoGuideline } from "@/data"
+import type { RpoGuideline } from "@/data/field-procedures/risk-protection-orders"
 import { Badge } from "@/components/ui/badge"
 
 export const RiskProtectionOrdersClient = React.memo(function RiskProtectionOrdersClient({ data }: { data: RpoGuideline[] }) {

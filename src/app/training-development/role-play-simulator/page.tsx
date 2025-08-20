@@ -11,7 +11,8 @@ import { PageHeader } from '@/components/PageHeader';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, MessageSquare, ShieldAlert, Clock, Target, TrendingUp, Users, Brain, Zap, Award, CheckCircle2, Search } from 'lucide-react';
-import { getScenarioLibrary, type ScenarioDefinition } from '@/ai/flows/roleplay-simulator';
+import { getScenarioLibrary } from '@/ai/flows/roleplay-simulator';
+import { type ScenarioDefinition } from '@/lib/echo/types';
 import { RolePlaySimulatorClient } from './ScenarioClient';
 
 const getDifficultyColor = (difficulty: string) => {

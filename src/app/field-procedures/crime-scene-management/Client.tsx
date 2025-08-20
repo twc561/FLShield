@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import type { ProcedureStep } from "@/data"
+import type { ProcedureStep } from "@/data/field-procedures/crime-scene-management"
 
 export const CrimeSceneManagementClient = React.memo(function CrimeSceneManagementClient({ data }: { data: ProcedureStep[] }) {
   return (

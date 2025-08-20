@@ -38,5 +38,10 @@ Alert ID: ${input.alertId}`,
       schema: AnalyzeAlertGuideOutputSchema,
     },
   });
+  
+  if (!output) {
+    throw new Error('Failed to generate alert guide analysis');
+  }
+  
   return output;
 }

@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Card, CardDescription, CardTitle } from "@/components/ui/card"
-import type { DigitalEvidencePrinciple } from "@/data"
+import type { DigitalEvidencePrinciple } from "@/data/field-procedures/digital-evidence"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Terminal } from "lucide-react"
 

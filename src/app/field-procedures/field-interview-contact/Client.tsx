@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Card, CardDescription, CardTitle } from "@/components/ui/card"
-import type { EncounterType } from "@/data"
+import type { EncounterType } from "@/data/field-procedures/field-interview-contact"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Terminal } from "lucide-react"
 import { Badge } from "@/components/ui/badge"

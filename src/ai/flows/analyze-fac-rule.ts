@@ -42,5 +42,10 @@ F.A.C. Rule ID: ${input.ruleId}`,
       schema: AnalyzeFacRuleOutputSchema,
     },
   });
+  
+  if (!output) {
+    throw new Error('Failed to generate FAC rule analysis');
+  }
+  
   return output;
 }

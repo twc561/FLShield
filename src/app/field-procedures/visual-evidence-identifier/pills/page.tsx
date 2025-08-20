@@ -12,13 +12,13 @@ import { identifyPillFromImage, type IdentifyPillOutput } from '@/ai/flows/ident
 import Image from 'next/image';
 
 function PillResult({ result }: { result: IdentifyPillOutput }) {
-  if (result.drugName === "Unknown") {
+  if (result.identification.primaryIdentification.substanceName === "Unknown") {
     return (
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Unable to Identify</AlertTitle>
         <AlertDescription>
-            {result.keyWarnings || "The AI could not confidently identify the substance from the provided image. This could be due to a poor quality image, a non-standard pill, or an illicit substance. Do not ingest."}
+            {result.identification.warningFlags?.[0] || "The AI could not confidently identify the substance from the provided image. This could be due to a poor quality image, a non-standard pill, or an illicit substance. Do not ingest."}
         </AlertDescription>
       </Alert>
     )
@@ -29,26 +29,26 @@ function PillResult({ result }: { result: IdentifyPillOutput }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
             <PillIcon className="h-6 w-6 text-primary"/>
-            {result.drugName}
+            {result.identification.primaryIdentification.substanceName}
         </CardTitle>
         <CardDescription>
-            Visual Description: {result.visualDescription}
+            Visual Description: {result.identification.physicalCharacteristics.shape} {result.identification.physicalCharacteristics.color} pill
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-            <h3 className="font-semibold text-foreground/90">Primary Use</h3>
-            <p className="text-muted-foreground">{result.primaryUse}</p>
+            <h3 className="font-semibold text-foreground/90">Identification Confidence</h3>
+            <p className="text-muted-foreground">{result.identification.primaryIdentification.confidence}</p>
         </div>
         <div>
-            <h3 className="font-semibold text-foreground/90">Key Warnings / Side Effects</h3>
-            <p className="text-muted-foreground">{result.keyWarnings}</p>
+            <h3 className="font-semibold text-foreground/90">Safety Warnings</h3>
+            <p className="text-muted-foreground">{result.identification.warningFlags.join(', ') || 'No specific warnings'}</p>
         </div>
         <Alert>
             <Info className="h-4 w-4"/>
-            <AlertTitle>Source Information</AlertTitle>
+            <AlertTitle>Disclaimer</AlertTitle>
             <AlertDescription>
-                This information was summarized by AI from publicly available data from sources like Drugs.com, WebMD, and the NLM. Always confirm with official sources.
+                {result.disclaimer}
             </AlertDescription>
         </Alert>
       </CardContent>

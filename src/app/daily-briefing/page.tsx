@@ -53,9 +53,6 @@ export default function DailyBriefingPage() {
         description="Review past Daily Roll Call modules and enhance your knowledge with interactive micro-learning content."
       />
 
-      
-/>
-
       {/* Search and Filter Controls */}
       <div className="bg-card rounded-lg p-6 space-y-4">
         <div className="flex flex-col sm:flex-row gap-4">

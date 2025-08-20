@@ -57,10 +57,12 @@ export function ActiveListenerClient() {
     setIsLoading(true);
 
     try {
-      const historyForAI = newMessages.map(msg => ({
-          role: msg.role,
-          parts: [{ text: msg.content }],
-      }));
+      const historyForAI = newMessages
+        .filter(msg => msg.role === 'user' || msg.role === 'model')
+        .map(msg => ({
+          role: msg.role as 'user' | 'model',
+          content: msg.content,
+        }));
       
       const aiInput: ActiveListenerInput = {
         userUtterance: currentInput,

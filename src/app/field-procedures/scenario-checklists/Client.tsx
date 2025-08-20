@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/accordion"
 import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
-import type { Scenario } from "@/data"
+import type { Scenario } from "@/data/field-procedures/scenario-checklists"
 import * as LucideIcons from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScenarioWalkthrough } from "./ScenarioWalkthrough"

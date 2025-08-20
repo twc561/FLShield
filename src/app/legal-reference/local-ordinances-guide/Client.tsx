@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import type { OrdinanceDetail, OrdinancePlaceholder } from "@/data";
+import type { OrdinanceDetail, OrdinancePlaceholder } from "@/data/legal-reference/local-ordinances";
 import {
   Search,
   Loader2,

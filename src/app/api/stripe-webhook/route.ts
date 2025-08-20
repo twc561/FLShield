@@ -3,10 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { adminDb } from '@/lib/firebase-admin'
 import { headers } from 'next/headers'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-})
+import { getStripe, safeHasStripe } from '@/lib/stripe'
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -16,9 +13,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
   }
   const body = await request.text()
-  const headersList = headers()
+  const headersList = await headers()
   const sig = headersList.get('stripe-signature')
 
+  if (!safeHasStripe()) {
+    return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
+  }
+  const stripe = getStripe()
   let event: Stripe.Event
 
   try {
@@ -43,8 +44,9 @@ export async function POST(request: NextRequest) {
 
       case 'invoice.payment_succeeded':
         const invoice = event.data.object as Stripe.Invoice
-        if (invoice.subscription) {
-          const sub = await stripe.subscriptions.retrieve(invoice.subscription as string)
+        if ((invoice as any).subscription && typeof (invoice as any).subscription === 'string') {
+          const stripe = getStripe()
+          const sub = await stripe.subscriptions.retrieve((invoice as any).subscription)
           await handleSubscriptionUpdate(sub)
         }
         break
@@ -79,7 +81,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
         id: subscription.id,
         customerId: customerId,
         status: subscription.status,
-        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+        currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
         priceId: subscription.items.data[0].price.id,
         plan: 'pro'
       },
@@ -103,7 +105,7 @@ async function handleSubscriptionCancellation(subscription: Stripe.Subscription)
         id: subscription.id,
         customerId: customerId,
         status: 'canceled',
-        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+        currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
         priceId: subscription.items.data[0].price.id,
         plan: 'free'
       },

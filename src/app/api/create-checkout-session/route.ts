@@ -1,15 +1,15 @@
 
 import { NextRequest, NextResponse } from 'next/server'
-import Stripe from 'stripe'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-})
+import { getStripe, safeHasStripe } from '@/lib/stripe'
 
 export async function POST(request: NextRequest) {
   try {
     const { priceId, userId } = await request.json()
 
+    if (!safeHasStripe()) {
+      return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 })
+    }
+    const stripe = getStripe()
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],

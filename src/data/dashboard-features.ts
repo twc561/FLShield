@@ -1,5 +1,6 @@
 
 import type { FeatureModule } from "@/types"
+export type { FeatureModule } from "@/types"
 import {
   Book,
   ListChecks,

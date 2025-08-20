@@ -52,5 +52,10 @@ Topic ID: ${input.topicId}`,
       schema: AnalyzeK9TopicOutputSchema,
     },
   });
+  
+  if (!output) {
+    throw new Error('Failed to generate K9 topic analysis');
+  }
+  
   return output;
 }

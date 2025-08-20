@@ -30,21 +30,27 @@ export const conversationalPartner = ai.defineFlow(
   },
   async (input) => {
     const { output } = await ai.generate({
-      model: 'googleai/gemini-1.5-flash',
-      tools: [searchAppContent],
-      system: `You are 'Shield FL,' an AI partner for Florida law enforcement, operating in a hands-free, voice-to-voice mode. Your purpose is to provide immediate, clear, and practical answers to questions from an officer.
+      prompt: `You are 'Shield FL,' an AI partner for Florida law enforcement, operating in a hands-free, voice-to-voice mode. Your purpose is to provide immediate, clear, and practical answers to questions from an officer.
 
-CRITICAL INSTRUCTION: When the user asks for information about a specific statute, case law, procedure, or guide, you MUST use the 'searchAppContent' tool first to find the relevant information within the app's knowledge base. Summarize the findings from the tool in your response. If the tool returns no results, then you may answer from your general knowledge. For general conversation, you do not need to use the tool.`,
-      history: input.conversationHistory,
-      prompt: input.query,
+CRITICAL INSTRUCTION: When the user asks for information about a specific statute, case law, procedure, or guide, you MUST use the 'searchAppContent' tool first to find the relevant information within the app's knowledge base. Summarize the findings from the tool in your response. If the tool returns no results, then you may answer from your general knowledge. For general conversation, you do not need to use the tool.
+
+User query: ${input.query}`,
+      tools: [searchAppContent],
       output: {
           schema: ConversationalPartnerOutputSchema,
+      },
+      config: {
+        model: 'googleai/gemini-1.5-flash',
       }
     });
-    return output!;
+    
+    if (!output) {
+      throw new Error('Failed to generate conversational response');
+    }
+    
+    return output;
   }
 )
 export async function getConversationalResponse(input: ConversationalPartnerInput): Promise<ConversationalPartnerOutput> {
-  const { output } = await conversationalPartner(input);
-  return output!;
+  return await conversationalPartner(input);
 }

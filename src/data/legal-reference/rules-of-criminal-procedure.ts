@@ -78,14 +78,14 @@ export const rulesOfCriminalProcedurePlaceholders: RulePlaceholder[] = [
     id: "FL_CRIM_PRO_3_190_G",
     ruleNumber: "Rule 3.190(g)",
     ruleTitle: "Motion to Suppress Evidence",
-    category: "Search and Seizure",
+    category: "Search & Seizure",
     icon: "ShieldOff",
   },
    {
     id: "FL_CRIM_PRO_3_190_H",
     ruleNumber: "Rule 3.190(h)",
     ruleTitle: "Motion to Suppress Confession",
-    category: "Search and Seizure",
+    category: "Search & Seizure",
     icon: "MicOff",
   }
 ];
