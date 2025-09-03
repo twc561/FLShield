@@ -38,5 +38,10 @@ Alert ID: ${input.alertId}`,
       schema: AnalyzeAlertGuideOutputSchema,
     },
   });
+  
+  if (!output) {
+    throw new Error('AI model returned a null response for analyzeAlertGuide.');
+  }
+
   return output;
 }
