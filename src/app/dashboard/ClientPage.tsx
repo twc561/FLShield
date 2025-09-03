@@ -197,7 +197,7 @@ export function DashboardClient({ featureGroups }: { featureGroups: FeatureGroup
         }
         description={
           isClient && mounted && isPro
-            ? 'All premium AI features unlocked. Thank you for your support!'
+            ? 'All premium AI features unlocked.'
             : 'Welcome to your Mission Hub. How can I help?'
         }
       />

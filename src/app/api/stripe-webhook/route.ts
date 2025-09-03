@@ -1,120 +1,79 @@
-
-import { NextRequest, NextResponse } from 'next/server'
-import Stripe from 'stripe'
-import { adminDb } from '@/lib/firebase-admin'
-import { headers } from 'next/headers'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-})
-
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-export async function POST(request: NextRequest) {
-  if (!endpointSecret) {
-    console.error('STRIPE_WEBHOOK_SECRET is not configured');
-    return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
+{
+  "name": "flshield",
+  "version": "0.5.1",
+  "private": true,
+  "description": "The essential digital partner for the modern Florida officer.",
+  "scripts": {
+    "dev": "next dev",
+    "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
+    "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@genkit-ai/core": "1.16.1",
+    "@genkit-ai/firebase": "1.16.1",
+    "@genkit-ai/googleai": "1.16.1",
+    "@hookform/resolvers": "^4.1.3",
+    "@opentelemetry/exporter-jaeger": "^1.26.0",
+    "@opentelemetry/winston-transport": "^0.9.0",
+    "@radix-ui/react-accordion": "^1.2.3",
+    "@radix-ui/react-alert-dialog": "^1.1.6",
+    "@radix-ui/react-avatar": "^1.1.3",
+    "@radix-ui/react-checkbox": "^1.1.4",
+    "@radix-ui/react-collapsible": "^1.1.11",
+    "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-dropdown-menu": "^2.1.6",
+    "@radix-ui/react-label": "^2.1.2",
+    "@radix-ui/react-menubar": "^1.1.6",
+    "@radix-ui/react-popover": "^1.1.6",
+    "@radix-ui/react-progress": "^1.1.2",
+    "@radix-ui/react-radio-group": "^1.2.3",
+    "@radix-ui/react-scroll-area": "^1.2.3",
+    "@radix-ui/react-select": "^2.1.6",
+    "@radix-ui/react-separator": "^1.1.2",
+    "@radix-ui/react-slider": "^1.2.3",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-switch": "^1.1.3",
+    "@radix-ui/react-tabs": "^1.1.3",
+    "@radix-ui/react-toast": "^1.2.6",
+    "@radix-ui/react-tooltip": "^1.1.8",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^3.6.0",
+    "embla-carousel-react": "^8.6.0",
+    "firebase": "^11.9.1",
+    "firebase-admin": "^13.4.0",
+    "framer-motion": "^11.2.12",
+    "genkit": "1.16.1",
+    "lucide-react": "^0.475.0",
+    "next": "15.3.3",
+    "patch-package": "^8.0.0",
+    "react": "^18.3.1",
+    "react-day-picker": "^8.10.1",
+    "react-dom": "^18.3.1",
+    "react-firebase-hooks": "^5.1.1",
+    "react-hook-form": "^7.54.2",
+    "recharts": "^2.15.1",
+    "tailwind-merge": "^3.0.1",
+    "tailwindcss-animate": "^1.0.7",
+    "wav": "^1.0.2",
+    "winston": "^3.13.1",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/wav": "^1.0.4",
+    "eslint": "9.9.0",
+    "eslint-config-next": "15.3.3",
+    "genkit-cli": "1.16.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
   }
-  const body = await request.text()
-  const headersList = headers()
-  const sig = headersList.get('stripe-signature')
-
-  let event: Stripe.Event
-
-  try {
-    event = stripe.webhooks.constructEvent(body, sig!, endpointSecret)
-  } catch (err: any) {
-    console.error('Webhook signature verification failed:', err.message)
-    return NextResponse.json({ error: 'Webhook signature verification failed' }, { status: 400 })
-  }
-
-  try {
-    switch (event.type) {
-      case 'customer.subscription.created':
-      case 'customer.subscription.updated':
-        const subscription = event.data.object as Stripe.Subscription
-        await handleSubscriptionUpdate(subscription)
-        break
-
-      case 'customer.subscription.deleted':
-        const deletedSubscription = event.data.object as Stripe.Subscription
-        await handleSubscriptionCancellation(deletedSubscription)
-        break
-
-      case 'invoice.payment_succeeded':
-        const invoice = event.data.object as Stripe.Invoice
-        if (invoice.subscription) {
-          const sub = await stripe.subscriptions.retrieve(invoice.subscription as string)
-          await handleSubscriptionUpdate(sub)
-        }
-        break
-
-      case 'invoice.payment_failed':
-        const failedInvoice = event.data.object as Stripe.Invoice
-        await handlePaymentFailure(failedInvoice)
-        break
-
-      default:
-        console.log(`Unhandled event type ${event.type}`)
-    }
-
-    return NextResponse.json({ received: true })
-  } catch (error) {
-    console.error('Error handling webhook:', error)
-    return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 })
-  }
-}
-
-async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
-  const customerId = subscription.customer as string
-  
-  // Find user by customer ID
-  const usersRef = adminDb.collection('users')
-  const query = await usersRef.where('subscription.customerId', '==', customerId).get()
-  
-  if (!query.empty) {
-    const userDoc = query.docs[0]
-    await userDoc.ref.set({
-      subscription: {
-        id: subscription.id,
-        customerId: customerId,
-        status: subscription.status,
-        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-        priceId: subscription.items.data[0].price.id,
-        plan: 'pro'
-      },
-      updatedAt: new Date()
-    }, { merge: true })
-    
-    console.log(`Updated subscription for user ${userDoc.id}`)
-  }
-}
-
-async function handleSubscriptionCancellation(subscription: Stripe.Subscription) {
-  const customerId = subscription.customer as string
-  
-  const usersRef = adminDb.collection('users')
-  const query = await usersRef.where('subscription.customerId', '==', customerId).get()
-  
-  if (!query.empty) {
-    const userDoc = query.docs[0]
-    await userDoc.ref.set({
-      subscription: {
-        id: subscription.id,
-        customerId: customerId,
-        status: 'canceled',
-        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-        priceId: subscription.items.data[0].price.id,
-        plan: 'free'
-      },
-      updatedAt: new Date()
-    }, { merge: true })
-    
-    console.log(`Cancelled subscription for user ${userDoc.id}`)
-  }
-}
-
-async function handlePaymentFailure(invoice: Stripe.Invoice) {
-  console.log(`Payment failed for invoice ${invoice.id}`)
-  // You could send an email notification or take other actions here
 }

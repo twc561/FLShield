@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Toaster } from "@/components/ui/toaster"
 import { AuthWrapper } from "@/components/AuthWrapper"
-import { SubscriptionGate } from "@/components/SubscriptionGate"
 import { AppShell } from "@/components/shell/AppShell"
 import { MainNav } from "@/components/nav/MainNav"
 import { useSubscription } from "@/hooks/use-subscription"
@@ -15,8 +14,8 @@ export function ClientLayout({
 }: {
   children: React.ReactNode
 }) {
-  const pathname = usePathname()
   const { isFeatureFree } = useSubscription();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false)
   
   useEffect(() => {
@@ -39,14 +38,11 @@ export function ClientLayout({
           <Toaster />
         </>
       ) : (
-        <SubscriptionGate>
-          <AppShell navigation={<MainNav />}>
-            <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
-              {children}
-            </main>
-          </AppShell>
-          <Toaster />
-        </SubscriptionGate>
+        <AppShell navigation={<MainNav />}>
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+            {children}
+          </main>
+        </AppShell>
       )}
     </AuthWrapper>
   )
