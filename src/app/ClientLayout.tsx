@@ -39,7 +39,7 @@ export function ClientLayout({
         </>
       ) : (
         <AppShell navigation={<MainNav />}>
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto pb-24 md:pb-8">
             {children}
           </main>
         </AppShell>

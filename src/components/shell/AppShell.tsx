@@ -11,7 +11,7 @@ export function AppShell({
   navigation: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-background pb-20 md:pb-0">
       {/* Navigation Rail for Desktop */}
       <div className="hidden md:block w-24 flex-shrink-0">
         {navigation}

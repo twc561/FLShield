@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { AppMenuContent } from "../AppMenuContent"
+import { ScrollArea } from "../ui/scroll-area"
 
 const mainNavItems = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
@@ -63,9 +64,11 @@ export function MainNav() {
             <div className="p-4 border-b">
               <h2 className="text-lg font-semibold">All Tools</h2>
             </div>
-            <div className="overflow-y-auto flex-1 p-2">
-              <AppMenuContent onLinkClick={handleLinkClick} />
-            </div>
+            <ScrollArea className="flex-1">
+                <div className="p-2">
+                    <AppMenuContent onLinkClick={handleLinkClick} />
+                </div>
+            </ScrollArea>
           </SheetContent>
         </Sheet>
       </nav>
@@ -101,9 +104,11 @@ export function MainNav() {
              <div className="p-4 border-b">
               <h2 className="text-lg font-semibold">All Tools</h2>
             </div>
-            <div className="overflow-y-auto flex-1 p-2">
-              <AppMenuContent onLinkClick={handleLinkClick} />
-            </div>
+            <ScrollArea className="flex-1">
+                <div className="p-2">
+                    <AppMenuContent onLinkClick={handleLinkClick} />
+                </div>
+            </ScrollArea>
           </SheetContent>
         </Sheet>
       </nav>

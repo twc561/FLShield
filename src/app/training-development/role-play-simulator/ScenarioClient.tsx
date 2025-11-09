@@ -207,7 +207,7 @@ export function RolePlaySimulatorClient({
                         <CardDescription>Respond to the AI persona below.</CardDescription>
                     </CardHeader>
                     <CardContent className="flex-1 p-0">
-                        <ScrollArea className="h-[calc(100vh-30rem)]" ref={scrollAreaRef as any}>
+                        <ScrollArea className="h-full" ref={scrollAreaRef as any}>
                             <div className="p-6 space-y-4">
                                 {messages.map(message => {
                                     if (message.role === 'narrator') {
