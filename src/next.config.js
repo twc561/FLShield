@@ -9,6 +9,9 @@ const nextConfig = {
   },
   output: 'standalone',
   experimental: {
+    allowedDevOrigins: [
+        '*.cloudworkstations.dev',
+    ],
     optimizePackageImports: ['lucide-react'],
     serverActions: {
       allowedOrigins: [
