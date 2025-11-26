@@ -19,6 +19,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 
 type StatuteIndexItem = Omit<Statute, 'description' | 'fullText' | 'practicalSummary' | 'example' | 'elementsOfTheCrime' | 'url'>;
 
@@ -38,7 +39,7 @@ const FullStatuteContent = memo(function FullStatuteContent({
 }) {
   return (
     <div className="border-t pt-4">
-      <Accordion type="multiple" collapsible className="w-full space-y-2" defaultValue={['description']}>
+      <Accordion type="multiple" className="w-full space-y-2" defaultValue={['description']}>
           <AccordionItem value="description" className="border-b-0">
           <Card className="bg-muted/50">
               <AccordionTrigger className="px-4 py-3 text-sm font-semibold hover:no-underline">
@@ -152,7 +153,8 @@ export const StatuteClient = memo(function StatuteClient({
     const uniqueCategories = [...new Set(initialStatuteIndex.map((s) => s.category))];
     return uniqueCategories.sort((a, b) => {
         const indexA = categoryOrder.indexOf(a);
-        const indexB = categoryOrder.indexOf(b); // BUG FIX: Was 'order.indexOf(b)'
+        const indexB = categoryOrder.indexOf(b);
+        if (indexA === -1 && indexB === -1) return a.localeCompare(b);
         if (indexA === -1) return 1;
         if (indexB === -1) return -1;
         return indexA - indexB;
@@ -297,16 +299,19 @@ export const StatuteClient = memo(function StatuteClient({
       >
         <AccordionTrigger className="p-4 hover:no-underline w-full text-left">
           <div className="flex items-center gap-4 flex-1">
-            <div className={`p-2 rounded-lg ${isAiResult ? 'bg-accent/10' : 'bg-primary/10'}`}>
+             <div className={`p-2 rounded-lg ${isAiResult ? 'bg-accent/10' : 'bg-primary/10'}`}>
               {isAiResult ? (
-                <Sparkles className="h-6 w-6 text-accent" />
+                <Sparkles className="w-6 h-6 text-accent" />
               ) : (
                 <Scale className="w-6 w-6 text-primary" />
               )}
             </div>
             <div className="flex-1 text-left">
               <p className="font-semibold text-base text-card-foreground text-wrap">{statute.title}</p>
-              <p className="text-xs text-muted-foreground">{statute.code} &bull; {statute.degreeOfCharge}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <Badge variant="secondary">{statute.code}</Badge>
+                <Badge variant="outline">{statute.degreeOfCharge}</Badge>
+              </div>
             </div>
           </div>
         </AccordionTrigger>
@@ -390,8 +395,5 @@ export const StatuteClient = memo(function StatuteClient({
 });
 StatuteClient.displayName = 'StatuteClient';
 
-declare module "react" {
-  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-    style?: React.CSSProperties & { [key: string]: string | number };
-  }
-}
+
+    
