@@ -8,8 +8,10 @@
  * - TextToSpeechOutput - The return type for the textToSpeech function.
  */
 
+import { config } from 'dotenv';
+config();
+
 import { ai } from '@/ai/genkit';
-import { googleAI } from '@genkit-ai/googleai';
 import { z } from 'zod';
 import wav from 'wav';
 
@@ -56,7 +58,7 @@ async function toWav(
 
 export async function textToSpeech(input: TextToSpeechInput): Promise<TextToSpeechOutput> {
     const { media } = await ai.generate({
-        model: googleAI.model('gemini-2.5-flash-preview-tts'),
+        model: 'googleai/gemini-2.5-flash-preview-tts',
         config: {
           responseModalities: ['AUDIO'],
           speechConfig: {

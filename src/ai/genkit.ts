@@ -1,4 +1,4 @@
-import { gemini15Pro, googleAI } from '@genkit-ai/googleai';
+import { gemini15Pro, googleAI } from '@genkit-ai/google-genai';
 import { genkit, z } from 'genkit';
 
 const ai = genkit({
