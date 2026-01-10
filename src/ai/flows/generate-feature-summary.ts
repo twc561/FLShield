@@ -36,5 +36,8 @@ export async function generateFeatureSummary(
       schema: GenerateFeatureSummaryOutputSchema,
     },
   });
-  return output!;
+    if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }

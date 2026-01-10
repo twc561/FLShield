@@ -41,10 +41,16 @@ CRITICAL INSTRUCTION: When the user asks for information about a specific statut
           schema: ConversationalPartnerOutputSchema,
       }
     });
-    return output!;
+      if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
   }
 )
 export async function getConversationalResponse(input: ConversationalPartnerInput): Promise<ConversationalPartnerOutput> {
   const { output } = await conversationalPartner(input);
-  return output!;
+    if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }

@@ -49,7 +49,10 @@ Focus on constructive, actionable feedback to improve report quality and legal s
         schema: ProofreadReportOutputSchema,
       },
     });
-    return output!;
+      if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
   }
 );
 

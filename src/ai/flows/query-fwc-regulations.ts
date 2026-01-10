@@ -61,5 +61,8 @@ Provide the direct answer now.`,
       schema: QueryFwcRegulationsOutputSchema,
     },
   });
-  return output!;
+    if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }

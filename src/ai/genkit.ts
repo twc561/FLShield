@@ -1,12 +1,17 @@
 import { gemini15Pro, googleAI } from '@genkit-ai/googleai';
 import { genkit, z } from 'genkit';
 
+const plugins = [];
+if (process.env.GOOGLE_GENAI_API_KEY) {
+  plugins.push(googleAI({
+    apiKey: process.env.GOOGLE_GENAI_API_KEY,
+  }));
+} else {
+  console.warn("GOOGLE_GENAI_API_KEY is not set. AI features will not function correctly.");
+}
+
 const ai = genkit({
-  plugins: [
-    googleAI({
-      apiKey: process.env.GOOGLE_GENAI_API_KEY,
-    }),
-  ],
+  plugins,
   model: gemini15Pro,
 });
 
@@ -14,11 +19,7 @@ export { ai };
 
 // Export enhanced model configurations with maximum token limits
 export const enhancedAI = genkit({
-  plugins: [
-    googleAI({
-      apiKey: process.env.GOOGLE_GENAI_API_KEY,
-    }),
-  ],
+  plugins,
   model: gemini15Pro,
 });
 

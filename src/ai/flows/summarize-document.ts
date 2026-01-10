@@ -27,5 +27,8 @@ export async function summarizeDocument(input: SummarizeDocumentInput): Promise<
 ${input.documentText}`,
         output: { schema: SummarizeDocumentOutputSchema }
     });
-    return output!;
+      if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }

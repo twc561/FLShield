@@ -41,5 +41,8 @@ export async function getActiveListeningResponse(input: ActiveListenerInput): Pr
     }
   });
 
-  return output!;
+    if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }

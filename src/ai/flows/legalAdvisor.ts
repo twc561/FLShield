@@ -66,5 +66,8 @@ Analyze the user's scenario. Synthesize the relevant information from the knowle
       schema: AdvisorOutputSchema,
     },
   });
-  return output!;
+    if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }
