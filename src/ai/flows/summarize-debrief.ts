@@ -40,5 +40,8 @@ export async function summarizeDebrief(
       schema: SummarizeDebriefOutputSchema,
     },
   });
-  return { summary: output!.summary };
+  if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return { summary: output.summary };
 }

@@ -57,5 +57,8 @@ CRITICAL RULE: Your response must always contain the 'elements' key. If the prov
       },
     ],
   });
-  return output!;
+    if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }

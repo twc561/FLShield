@@ -39,5 +39,8 @@ Generate the narrative paragraph now.`,
       schema: GenerateUofNarrativeOutputSchema,
     },
   });
-  return output!;
+    if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }

@@ -37,5 +37,8 @@ Crime Description: ${input.crimeDescription}`,
       schema: IdentifyCrimeStatuteOutputSchema,
     },
   });
-  return output!;
+    if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }

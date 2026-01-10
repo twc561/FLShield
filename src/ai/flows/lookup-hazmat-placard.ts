@@ -27,5 +27,8 @@ export async function lookupHazmatPlacards(): Promise<LookupHazmatPlacardsOutput
       schema: LookupHazmatPlacardsOutputSchema,
     },
   });
-  return output!;
+    if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }

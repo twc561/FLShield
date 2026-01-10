@@ -45,5 +45,8 @@ Generate the formal incident report narrative now.
       schema: GenerateReportNarrativeOutputSchema,
     },
   });
-  return output!;
+    if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }

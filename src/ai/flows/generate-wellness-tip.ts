@@ -37,5 +37,8 @@ Return the tip and the general topic it falls under (e.g., Stress Management, Nu
       schema: GenerateWellnessTipOutputSchema,
     },
   });
-  return output!;
+    if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }

@@ -28,5 +28,8 @@ export async function commandSearch(
       schema: CommandSearchOutputSchema,
     },
   });
-  return output!;
+    if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }

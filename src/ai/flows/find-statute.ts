@@ -72,5 +72,8 @@ CRITICAL RULE: Every key in the required JSON schema MUST be present in your res
       schema: FindStatuteOutputSchema,
     },
   });
-  return output!;
+    if (!output) {
+    throw new Error("AI response was empty.");
+  }
+  return output;
 }
