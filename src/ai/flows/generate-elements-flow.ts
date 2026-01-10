@@ -10,7 +10,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { gemini15Pro } from '@genkit-ai/google-genai';
 
 const GenerateElementsOfCrimeInputSchema = z.object({
   statuteCode: z.string().describe('The code of the statute, e.g., "F.S. § 812.014".'),
@@ -28,7 +27,7 @@ export async function generateElementsOfCrime(
   input: GenerateElementsOfCrimeInput
 ): Promise<GenerateElementsOfCrimeOutput> {
   const { output } = await ai.generate({
-    model: gemini15Pro,
+    model: 'googleai/gemini-1.5-pro',
     prompt: `You are an expert paralegal specializing in Florida criminal law. Your task is to analyze the provided Florida Statute and extract its essential elements. The output must be a valid JSON object matching the requested schema.
 
 Statute Code: ${input.statuteCode}

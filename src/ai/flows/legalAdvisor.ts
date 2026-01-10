@@ -38,6 +38,7 @@ Policy 502.3: Vehicle Pursuits - A pursuit may only be initiated when the office
 
 export async function getAdvisorResponse(input: AdvisorInput): Promise<AdvisorOutput> {
   const { output } = await ai.generate({
+    model: 'googleai/gemini-1.5-pro',
     prompt: `You are an AI Legal Information Synthesizer for law enforcement. Your role is to analyze a scenario and provide structured, source-attributed information. You are NOT a legal advisor.
 
 CRITICAL RULES:

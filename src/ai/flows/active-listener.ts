@@ -35,6 +35,7 @@ export async function getActiveListeningResponse(input: ActiveListenerInput): Pr
     .replace('{{prompt}}', `Officer: "${input.userUtterance}"`);
 
   const { output } = await ai.generate({
+    model: 'googleai/gemini-1.5-pro',
     prompt,
     output: {
         schema: ActiveListenerOutputSchema

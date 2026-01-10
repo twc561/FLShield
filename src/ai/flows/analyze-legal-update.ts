@@ -35,6 +35,7 @@ export type AnalyzeLegalUpdateOutput = z.infer<typeof AnalyzeLegalUpdateOutputSc
 
 export async function analyzeLegalUpdate(input: AnalyzeLegalUpdateInput): Promise<AnalyzeLegalUpdateOutput> {
   const { output } = await ai.generate({
+    model: 'googleai/gemini-1.5-pro',
     prompt: `You are a Legal Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific legal update (either a court decision or a statutory change). For the given ID, retrieve the full source document, then parse it into a practical format for a patrol officer. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the following schema.
 
 Update ID: ${input.updateID}`,
@@ -42,5 +43,8 @@ Update ID: ${input.updateID}`,
       schema: AnalyzeLegalUpdateOutputSchema,
     },
   });
+  if (!output) {
+    throw new Error("AI model returned a null response for analyzeLegalUpdate.");
+  }
   return output;
 }

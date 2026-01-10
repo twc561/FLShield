@@ -24,6 +24,7 @@ export type IdentifyCrimeStatuteOutput = z.infer<typeof IdentifyCrimeStatuteOutp
 
 export async function identifyCrimeStatute(input: IdentifyCrimeStatuteInput): Promise<IdentifyCrimeStatuteOutput> {
   const { output } = await ai.generate({
+    model: 'googleai/gemini-1.5-pro',
     prompt: `You are an AI paralegal for Florida law. Your task is to identify the single most probable Florida Statute number for the described crime.
 
 Follow these steps:
@@ -37,5 +38,8 @@ Crime Description: ${input.crimeDescription}`,
       schema: IdentifyCrimeStatuteOutputSchema,
     },
   });
-  return output!;
+  if (!output) {
+    throw new Error("AI model returned a null response for identifyCrimeStatute.");
+  }
+  return output;
 }

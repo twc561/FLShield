@@ -47,7 +47,7 @@ export async function generateSubstanceImage(input: GenerateSubstanceImageInput)
         model: 'googleai/gemini-2.0-flash-preview-image-generation',
         prompt: promptText,
         config: {
-            responseModalities: ['TEXT', 'IMAGE'],
+            responseModalities: ['IMAGE'],
             safetySettings: [
                 {
                     category: 'HARM_CATEGORY_DANGEROUS_CONTENT',

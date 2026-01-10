@@ -22,10 +22,14 @@ export type LookupHazmatPlacardsOutput = z.infer<typeof LookupHazmatPlacardsOutp
 
 export async function lookupHazmatPlacards(): Promise<LookupHazmatPlacardsOutput> {
   const { output } = await ai.generate({
+    model: 'googleai/gemini-1.5-pro',
     prompt: `You are a Hazardous Materials Specialist AI. Generate a database of at least 10-15 common HAZMAT placards found on North American roadways based on the DOT ERG. The output must be an array of 'Placard' objects. Include common materials like Gasoline (1203), Diesel Fuel (1993), Propane (1075), Chlorine (1017), Anhydrous Ammonia (1005), and Sulfuric Acid (1830).`,
     output: {
       schema: LookupHazmatPlacardsOutputSchema,
     },
   });
-  return output!;
+  if (!output) {
+    throw new Error("AI model returned a null response for lookupHazmatPlacards.");
+  }
+  return output;
 }

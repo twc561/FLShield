@@ -52,6 +52,7 @@ export type AnalyzeSubstanceOutput = z.infer<typeof AnalyzeSubstanceOutputSchema
 
 export async function analyzeSubstance(input: AnalyzeSubstanceInput): Promise<AnalyzeSubstanceOutput> {
   const { output } = await ai.generate({
+    model: 'googleai/gemini-1.5-pro',
     prompt: `You are a Narcotics Identification and Legal Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific controlled substance according to Florida law. For the given ID, retrieve all relevant data and parse it into a practical format for a patrol officer. Your descriptions must be detailed and textual. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema.
 
 Substance ID: ${input.substanceId}`,
@@ -67,5 +68,8 @@ Substance ID: ${input.substanceId}`,
       ],
     },
   });
+  if (!output) {
+    throw new Error("AI model returned a null response for analyzeSubstance.");
+  }
   return output;
 }

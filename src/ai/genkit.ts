@@ -1,5 +1,5 @@
-import { gemini15Pro, googleAI } from '@genkit-ai/google-genai';
-import { genkit, z } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
+import { genkit } from 'genkit';
 
 const ai = genkit({
   plugins: [
@@ -7,7 +7,7 @@ const ai = genkit({
       apiKey: process.env.GOOGLE_GENAI_API_KEY,
     }),
   ],
-  model: gemini15Pro,
+  model: 'googleai/gemini-1.5-pro',
 });
 
 export { ai };
@@ -19,12 +19,12 @@ export const enhancedAI = genkit({
       apiKey: process.env.GOOGLE_GENAI_API_KEY,
     }),
   ],
-  model: gemini15Pro,
+  model: 'googleai/gemini-1.5-pro',
 });
 
 // High-capacity configuration for complex scenarios
 export const highCapacityConfig = {
-  model: gemini15Pro,
+  model: 'googleai/gemini-1.5-pro',
   config: {
     maxOutputTokens: 8192,
     temperature: 0.7,

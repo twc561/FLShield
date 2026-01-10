@@ -522,13 +522,13 @@ export async function getTurnResponse(input: z.infer<typeof TurnInputSchema>): P
         },
     });
     
-    output.realTimeFeedback.push({
+    output!.realTimeFeedback.push({
         feedbackId: `RTF-${Date.now()}`,
         type: feedbackType,
         message: feedbackMessage,
     });
 
-    return output;
+    return output!;
 }
 
 /**
@@ -564,6 +564,6 @@ export async function getAfterActionReport(input: z.infer<typeof AARInputSchema>
         }
     });
     
-    return output;
+    return output!;
 }
 

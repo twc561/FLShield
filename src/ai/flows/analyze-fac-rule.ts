@@ -35,6 +35,7 @@ export type AnalyzeFacRuleOutput = z.infer<typeof AnalyzeFacRuleOutputSchema>;
 
 export async function analyzeFacRule(input: AnalyzeFacRuleInput): Promise<AnalyzeFacRuleOutput> {
   const { output } = await ai.generate({
+    model: 'googleai/gemini-1.5-pro',
     prompt: `You are a Regulatory Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific rule from the Florida Administrative Code. For the given ID, retrieve the full text and then parse it into a practical format for a patrol officer. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the following schema.
 
 F.A.C. Rule ID: ${input.ruleId}`,
@@ -42,5 +43,8 @@ F.A.C. Rule ID: ${input.ruleId}`,
       schema: AnalyzeFacRuleOutputSchema,
     },
   });
+  if (!output) {
+    throw new Error("AI model returned a null response for analyzeFacRule.");
+  }
   return output;
 }

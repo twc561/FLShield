@@ -37,6 +37,7 @@ export type AnalyzeConstitutionOutput = z.infer<typeof AnalyzeConstitutionOutput
 
 export async function analyzeConstitution(input: AnalyzeConstitutionInput): Promise<AnalyzeConstitutionOutput> {
    const { output } = await ai.generate({
+    model: 'googleai/gemini-1.5-pro',
     prompt: `You are a Constitutional Law Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific constitutional provision. For the given ID, retrieve the full text and leading case law, then parse this information into a structured format for a patrol officer. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema.
 
 Provision ID: ${input.provisionId}`,
@@ -44,5 +45,8 @@ Provision ID: ${input.provisionId}`,
       schema: AnalyzeConstitutionOutputSchema,
     },
    });
+   if (!output) {
+     throw new Error("AI model returned a null response for analyzeConstitution.");
+   }
    return output;
 }

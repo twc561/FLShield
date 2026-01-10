@@ -19,10 +19,14 @@ export type GenerateFirstAidProtocolOutput = z.infer<typeof GenerateFirstAidProt
 
 export async function generateFirstAidProtocol(): Promise<GenerateFirstAidProtocolOutput> {
   const { output } = await ai.generate({
+    model: 'googleai/gemini-1.5-pro',
     prompt: `You are a Tactical Medical Specialist AI. Generate a quick-reference first aid guide for a law enforcement officer covering at least 6 common traumatic injuries based on TECC/TCCC principles. The output must be an array of 'Injury Protocol' objects. Include protocols for Severe Bleeding (Extremity), Sucking Chest Wound, Burns, Seizure, Opioid Overdose (Naloxone Admin), and Cardiac Arrest (CPR/AED).`,
     output: {
       schema: GenerateFirstAidProtocolOutputSchema,
     },
   });
+  if (!output) {
+    throw new Error("AI model returned a null response for generateFirstAidProtocol.");
+  }
   return output;
 }

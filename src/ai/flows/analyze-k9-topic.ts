@@ -45,6 +45,7 @@ export type AnalyzeK9TopicOutput = z.infer<typeof AnalyzeK9TopicOutputSchema>;
 
 export async function analyzeK9Topic(input: AnalyzeK9TopicInput): Promise<AnalyzeK9TopicOutput> {
   const { output } = await ai.generate({
+    model: 'googleai/gemini-1.5-pro',
     prompt: `You are a K-9 Operations & Legal Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific K-9 topic. For the given ID, retrieve the relevant procedures and case law, then parse this information into a practical format for an officer. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the following schema.
 
 Topic ID: ${input.topicId}`,
@@ -52,5 +53,8 @@ Topic ID: ${input.topicId}`,
       schema: AnalyzeK9TopicOutputSchema,
     },
   });
+  if (!output) {
+    throw new Error("AI model returned a null response for analyzeK9Topic.");
+  }
   return output;
 }

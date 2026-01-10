@@ -65,10 +65,12 @@ export function VoiceAssistantClient() {
     setStatus('processing');
 
     try {
-      const historyForAI = conversation.map(msg => ({
-        role: msg.role as 'user' | 'model',
-        parts: [{ text: msg.text }],
-      }));
+      const historyForAI = conversation
+        .filter(msg => msg.role === 'user' || msg.role === 'model')
+        .map(msg => ({
+          role: msg.role as 'user' | 'model',
+          content: [{ text: msg.text }],
+        }));
 
       const aiResponse = await getConversationalResponse({ 
           query: transcript,
