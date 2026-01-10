@@ -9,7 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { Misperception } from "@/data/officer-wellness-rights/common-misperceptions"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
@@ -61,7 +61,7 @@ export const CommonMisperceptionsClient = React.memo(function CommonMisperceptio
                                     </ul>
                                 </div>
                                 <div className="space-y-2">
-                                     <h4 className="font-semibold text-destructive flex items-center gap-2"><LucideIcons.XCircle className="h-5 w-5"/> Don't</h4>
+                                     <h4 className="font-semibold text-destructive flex items-center gap-2"><LucideIcons.XCircle className="h-5 w-5"/> Don&apos;t</h4>
                                     <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
                                         {item.tacticalGuidance.dont.map((point, i) => <li key={i}>{point}</li>)}
                                     </ul>

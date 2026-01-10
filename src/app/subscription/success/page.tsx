@@ -14,7 +14,7 @@ import Link from 'next/link'
 export default function SubscriptionSuccessPage() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
-  const [isVerified, setIsVerified] = useState(false)
+  const [, setIsVerified] = useState(false)
   const [user] = useAuthState(auth)
   const [countdown, setCountdown] = useState(30)
   const router = useRouter()

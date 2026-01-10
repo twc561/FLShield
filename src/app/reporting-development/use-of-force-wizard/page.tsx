@@ -109,7 +109,7 @@ export default function UseOfForceWizardPage() {
                   name="resistance"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Suspect's Resistance/Evasion</FormLabel>
+                      <FormLabel>Suspect&apos;s Resistance/Evasion</FormLabel>
                       <FormControl>
                         <Textarea placeholder="e.g., 'Actively resisted arrest by pulling arms away and attempting to flee.'" {...field} />
                       </FormControl>

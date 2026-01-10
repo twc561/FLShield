@@ -4,8 +4,7 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Trophy, Target, Calendar, TrendingUp } from 'lucide-react';
+import { Trophy, Target, Calendar } from 'lucide-react';
 import { dailyRollCallModules } from '@/data/daily-roll-call';
 
 interface BriefingStatsProps {

@@ -42,7 +42,7 @@ export function useGeolocation() {
             setState(s => ({...s, hasPermission: false, position: null, error: 'Location access was denied.'}));
         }
       };
-    } catch (error) {
+    } catch {
         // Some browsers might not support permissions.query, fallback to direct request
         setState(s => ({ ...s, hasPermission: false, isLoading: false }));
     }

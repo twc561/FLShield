@@ -2,7 +2,6 @@
 import { PageHeader } from "@/components/PageHeader"
 import { FeatureCard } from "@/components/FeatureCard"
 import { dashboardFeatureGroups } from "@/data/dashboard-features"
-import type { FeatureModule } from "@/types"
 
 export default function AiToolsPage() {
   const aiFeatures = dashboardFeatureGroups.flatMap(group => 

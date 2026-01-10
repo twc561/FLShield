@@ -128,7 +128,7 @@ export default function HazmatIdentifierPage() {
             <ShieldAlertIcon className="h-4 w-4" />
             <AlertTitle>For Emergency Reference Only</AlertTitle>
             <AlertDescription>
-                This tool is for quick identification in the field. Always confirm with the official Emergency Response Guidebook (ERG) and follow your agency's HAZMAT protocols.
+                This tool is for quick identification in the field. Always confirm with the official Emergency Response Guidebook (ERG) and follow your agency&apos;s HAZMAT protocols.
             </AlertDescription>
         </Alert>
 

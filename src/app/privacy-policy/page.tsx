@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
 
                             <div className="space-y-2">
                                 <h2 id="confidentiality" className="text-xl font-semibold border-b pb-2">3. Confidentiality of AI Interactions</h2>
-                                <p>Certain features, such as the "Active Listener" chatbot and "Report Proofreader," are designed for absolute confidentiality. We affirm the following:</p>
+                                <p>Certain features, such as the &quot;Active Listener&quot; chatbot and &quot;Report Proofreader,&quot; are designed for absolute confidentiality. We affirm the following:</p>
                                 <ul className="list-disc pl-5 space-y-1">
                                     <li>Text and voice inputs into these designated confidential features are processed in memory and are <strong>never logged, stored, or recorded</strong> on our servers.</li>
                                     <li>These interactions are ephemeral and cannot be reviewed by Shield FL staff or any third party.</li>

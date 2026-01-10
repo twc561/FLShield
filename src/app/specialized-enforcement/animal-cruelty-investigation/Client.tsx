@@ -9,7 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { AnimalCrueltyGuide, AgencyContact } from "@/data/specialized-enforcement/animal-cruelty"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -86,6 +86,7 @@ export const AnimalCrueltyClient = React.memo(function AnimalCrueltyClient({ dat
           <AccordionContent className="px-6 pb-6 pt-0">
             <div className="border-t pt-4 space-y-4">
               {recognitionGuide.map(item => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const Icon = (LucideIcons as any)[item.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle
                 return (
                   <div key={item.category}>
@@ -120,6 +121,7 @@ export const AnimalCrueltyClient = React.memo(function AnimalCrueltyClient({ dat
                 <TabsContent value="static" className="mt-4">
                   <div className="space-y-4">
                     {investigativePlaybook.staticChecklist.map((section, index) => {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         const SectionIcon = (LucideIcons as any)[section.icon] || Check
                         return (
                             <Card key={index} className="bg-muted/50">
@@ -165,7 +167,7 @@ export const AnimalCrueltyClient = React.memo(function AnimalCrueltyClient({ dat
                     <LucideIcons.PenSquare className="h-4 w-4" />
                     <AlertTitle>Example Narrative</AlertTitle>
                     <AlertDescription className="italic">
-                      "{tip.content}"
+                      &quot;{tip.content}&quot;
                     </AlertDescription>
                   </Alert>
                 </div>

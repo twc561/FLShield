@@ -29,14 +29,24 @@ const AnalyzeAlertGuideOutputSchema = z.object({
 export type AnalyzeAlertGuideOutput = z.infer<typeof AnalyzeAlertGuideOutputSchema>;
 
 
-export async function analyzeAlertGuide(input: AnalyzeAlertGuideInput): Promise<AnalyzeAlertGuideOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are a public safety systems analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured procedural guide for a specific public alert system. For the given ID, retrieve the official FDLE criteria, procedures, and contact information. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema. Ensure the keyInformationForLEO field contains a checklist of essential details an officer needs before making the call.
+export const analyzeAlertGuide = ai.defineFlow(
+  {
+    name: 'analyzeAlertGuide',
+    inputSchema: AnalyzeAlertGuideInputSchema,
+    outputSchema: AnalyzeAlertGuideOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are a public safety systems analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured procedural guide for a specific public alert system. For the given ID, retrieve the official FDLE criteria, procedures, and contact information. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema. Ensure the keyInformationForLEO field contains a checklist of essential details an officer needs before making the call.
 
 Alert ID: ${input.alertId}`,
-    output: {
-      schema: AnalyzeAlertGuideOutputSchema,
-    },
-  });
-  return output;
-}
+      output: {
+        schema: AnalyzeAlertGuideOutputSchema,
+      },
+    });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
+    return output;
+  }
+);

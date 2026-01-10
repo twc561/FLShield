@@ -16,6 +16,7 @@ export const CourtTestimonyClient = React.memo(function CourtTestimonyClient({ d
   return (
     <Accordion type="single" collapsible className="w-full space-y-4" defaultValue={data[0].id}>
       {data.map((item, index) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const Icon = (LucideIcons as any)[item.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle
         return (
           <AccordionItem value={item.id} key={item.id} className="border-b-0">

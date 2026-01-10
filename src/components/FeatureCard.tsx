@@ -5,11 +5,8 @@ import React, { memo } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { PinButton } from "@/components/PinButton"
 import * as LucideIcons from "lucide-react"
-import { Crown } from "lucide-react"
-import { useSubscription } from "@/hooks/use-subscription"
 import type { FeatureModule } from "@/types"
 import { ArrowRight } from "lucide-react"
 
@@ -19,8 +16,7 @@ type FeatureCardProps = {
 }
 
 export const FeatureCard = memo(function FeatureCard({ module, showPinButton = true }: FeatureCardProps) {
-  const { isPro, mounted } = useSubscription()
-  const Icon = (LucideIcons as any)[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle
+  const Icon = (LucideIcons as { [key: string]: React.ElementType })[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle
 
   return (
     <motion.div

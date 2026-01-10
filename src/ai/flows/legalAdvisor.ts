@@ -36,9 +36,15 @@ Policy 401.5: Mental Health Calls - When responding to a person in apparent cris
 Policy 502.3: Vehicle Pursuits - A pursuit may only be initiated when the officer reasonably believes the suspect has committed a violent felony.
 `;
 
-export async function getAdvisorResponse(input: AdvisorInput): Promise<AdvisorOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are an AI Legal Information Synthesizer for law enforcement. Your role is to analyze a scenario and provide structured, source-attributed information. You are NOT a legal advisor.
+export const getAdvisorResponse = ai.defineFlow(
+  {
+    name: 'getAdvisorResponse',
+    inputSchema: AdvisorInputSchema,
+    outputSchema: AdvisorOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are an AI Legal Information Synthesizer for law enforcement. Your role is to analyze a scenario and provide structured, source-attributed information. You are NOT a legal advisor.
 
 CRITICAL RULES:
 1.  **DO NOT GIVE ADVICE.** Never use imperative language like "you should," "the correct action is," or "you must." Use informational language like "Agency policy states," "Considerations include," or "Relevant statutes are."
@@ -62,9 +68,13 @@ CRITICAL RULES:
 // YOUR TASK //
 Analyze the user's scenario. Synthesize the relevant information from the knowledge base and structure it into the required JSON output. Ensure every point is sourced and you follow all critical rules.
 `,
-    output: {
-      schema: AdvisorOutputSchema,
-    },
-  });
-  return output!;
-}
+      output: {
+        schema: AdvisorOutputSchema,
+      },
+    });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
+    return output;
+  }
+);

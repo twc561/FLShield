@@ -29,23 +29,30 @@ const prompts: Record<string, string> = {
     'Cardiac Arrest (CPR/AED)': 'Generate a high-resolution instructional image for a first aid guide about using an AED during Cardiac Arrest. The image must be a clean, minimalist vector illustration with a white background and no text. The illustration should show a person\'s bare torso with the two AED pads correctly placed: one pad on the upper right side of the chest and the other on the lower left side of the chest, below the armpit. The style must be an accurate and easy-to-understand medical diagram.'
 };
 
-export async function generateFirstAidProtocolImage(input: GenerateFirstAidProtocolImageInput): Promise<GenerateFirstAidProtocolImageOutput> {
-  const promptText = prompts[input.injuryType];
-  if (!promptText) {
-    throw new Error(`No prompt found for injury type: ${input.injuryType}`);
+export const generateFirstAidProtocolImage = ai.defineFlow(
+  {
+    name: 'generateFirstAidProtocolImage',
+    inputSchema: GenerateFirstAidProtocolImageInputSchema,
+    outputSchema: GenerateFirstAidProtocolImageOutputSchema,
+  },
+  async (input) => {
+    const promptText = prompts[input.injuryType];
+    if (!promptText) {
+      throw new Error(`No prompt found for injury type: ${input.injuryType}`);
+    }
+
+    const { media } = await ai.generate({
+      model: 'googleai/gemini-2.0-flash-preview-image-generation',
+      prompt: promptText,
+      config: {
+        responseModalities: ['TEXT', 'IMAGE'],
+      },
+    });
+
+    if (!media?.url) {
+      throw new Error('Image generation failed to return a valid image URL.');
+    }
+
+    return { imageUrl: media.url };
   }
-
-  const { media } = await ai.generate({
-    model: 'googleai/gemini-2.0-flash-preview-image-generation',
-    prompt: promptText,
-    config: {
-      responseModalities: ['TEXT', 'IMAGE'],
-    },
-  });
-
-  if (!media?.url) {
-    throw new Error('Image generation failed to return a valid image URL.');
-  }
-
-  return { imageUrl: media.url };
-}
+);

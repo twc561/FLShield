@@ -4,7 +4,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Scale, ListChecks, Bot, Menu as MenuIcon, User } from "lucide-react"
+import { Home, Scale, ListChecks, Bot, Menu as MenuIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"

@@ -2,7 +2,6 @@
 "use client"
 
 import { useState, useMemo, memo, useCallback } from "react"
-import Link from "next/link"
 import * as LucideIcons from "lucide-react"
 import { Input } from "@/components/ui/input"
 import {
@@ -106,6 +105,7 @@ export const CaseLawClient = memo(function CaseLawClient({
                     {Array.isArray(filteredCaseIndex) && filteredCaseIndex
                       .filter(c => c.category === category)
                       .map(c => {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         const Icon = (LucideIcons as any)[c.icon] || Gavel;
                         return (
                           <AccordionItem value={c.id} key={c.id} className="border rounded-md bg-card">

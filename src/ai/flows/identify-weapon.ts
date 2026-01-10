@@ -60,40 +60,47 @@ CRITICAL INSTRUCTIONS:
 Image: {{media url=imageDataUri}}`
 });
 
-export async function identifyWeaponFromImage(input: IdentifyWeaponInput): Promise<IdentifyWeaponOutput> {
-  // Step 1: Get the weapon identification from the AI model
-  const { output: identification } = await identifyWeaponPrompt({ imageDataUri: input.imageDataUri });
+export const identifyWeaponFromImage = ai.defineFlow(
+  {
+    name: 'identifyWeaponFromImage',
+    inputSchema: IdentifyWeaponInputSchema,
+    outputSchema: IdentifyWeaponOutputSchema,
+  },
+  async (input) => {
+    // Step 1: Get the weapon identification from the AI model
+    const { output: identification } = await identifyWeaponPrompt({ imageDataUri: input.imageDataUri });
 
-  if (!identification) {
-      throw new Error("AI weapon identification model failed to return a response.");
+    if (!identification) {
+        throw new Error("AI weapon identification model failed to return a response.");
+    }
+
+    // Step 2: Programmatically determine relevant statutes based on the AI's output
+    const relevantStatutes: { statuteNumber: string; title: string }[] = [];
+    const itemType = identification.itemType || "Unknown";
+    const hasGlockSwitch = identification.illegalModifications?.some(mod => mod.includes("Glock Switch")) || false;
+
+    if (itemType.includes("Handgun") || itemType.includes("Rifle") || itemType.includes("Shotgun") || itemType.includes("Firearm")) {
+      relevantStatutes.push(
+        { statuteNumber: "F.S. § 790.01", title: "Carrying concealed weapons" },
+        { statuteNumber: "F.S. § 790.053", title: "Open carrying of weapons" },
+        { statuteNumber: "F.S. § 790.23", title: "Possession of firearm by felon" },
+        { statuteNumber: "F.S. § 790.10", title: "Improper exhibition of dangerous weapons" }
+      );
+    } else if (itemType.includes("Switchblade") || itemType.includes("Brass Knuckles")) {
+      relevantStatutes.push({ statuteNumber: "F.S. § 790.01", title: "Carrying concealed weapons" });
+    }
+
+    if (hasGlockSwitch) {
+      // Add the specific statute for machine guns if a switch is detected
+      relevantStatutes.unshift({ statuteNumber: "F.S. § 790.222", title: "Possession of machine guns" });
+    }
+
+    // Step 3: Combine the AI identification with the determined statutes
+    const finalOutput: IdentifyWeaponOutput = {
+      ...identification,
+      relevantStatutes: relevantStatutes
+    };
+
+    return finalOutput;
   }
-
-  // Step 2: Programmatically determine relevant statutes based on the AI's output
-  const relevantStatutes: { statuteNumber: string; title: string }[] = [];
-  const itemType = identification.itemType || "Unknown";
-  const hasGlockSwitch = identification.illegalModifications?.some(mod => mod.includes("Glock Switch")) || false;
-
-  if (itemType.includes("Handgun") || itemType.includes("Rifle") || itemType.includes("Shotgun") || itemType.includes("Firearm")) {
-    relevantStatutes.push(
-      { statuteNumber: "F.S. § 790.01", title: "Carrying concealed weapons" },
-      { statuteNumber: "F.S. § 790.053", title: "Open carrying of weapons" },
-      { statuteNumber: "F.S. § 790.23", title: "Possession of firearm by felon" },
-      { statuteNumber: "F.S. § 790.10", title: "Improper exhibition of dangerous weapons" }
-    );
-  } else if (itemType.includes("Switchblade") || itemType.includes("Brass Knuckles")) {
-    relevantStatutes.push({ statuteNumber: "F.S. § 790.01", title: "Carrying concealed weapons" });
-  }
-
-  if (hasGlockSwitch) {
-    // Add the specific statute for machine guns if a switch is detected
-    relevantStatutes.unshift({ statuteNumber: "F.S. § 790.222", title: "Possession of machine guns" });
-  }
-  
-  // Step 3: Combine the AI identification with the determined statutes
-  const finalOutput: IdentifyWeaponOutput = {
-    ...identification,
-    relevantStatutes: relevantStatutes
-  };
-
-  return finalOutput;
-}
+);

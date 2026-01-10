@@ -5,14 +5,13 @@ import * as React from "react"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { Scenario } from "@/data/field-procedures/scenario-checklists"
-import { Check, Bot, Milestone, AlertTriangle, Repeat } from "lucide-react"
+import { Bot, AlertTriangle, Repeat } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 

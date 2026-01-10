@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, Calendar, BookOpen, CheckCircle, Clock } from 'lucide-react';
-import { dailyRollCallModules, DailyRollCallModule } from '@/data/daily-roll-call';
+import { dailyRollCallModules } from '@/data/daily-roll-call';
 
 export default function DailyBriefingPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -54,8 +54,6 @@ export default function DailyBriefingPage() {
       />
 
       
-/>
-
       {/* Search and Filter Controls */}
       <div className="bg-card rounded-lg p-6 space-y-4">
         <div className="flex flex-col sm:flex-row gap-4">

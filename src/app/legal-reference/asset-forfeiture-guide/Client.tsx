@@ -32,7 +32,7 @@ interface AssetForfeitureClientProps {
 
 const Section = memo(({ title, icon: Icon, children, value }: { 
   title: string; 
-  icon: any; 
+  icon: React.ElementType;
   children: React.ReactNode; 
   value: string 
 }) => (

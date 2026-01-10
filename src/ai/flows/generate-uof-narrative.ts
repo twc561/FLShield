@@ -23,11 +23,15 @@ const GenerateUofNarrativeOutputSchema = z.object({
 });
 export type GenerateUofNarrativeOutput = z.infer<typeof GenerateUofNarrativeOutputSchema>;
 
-export async function generateUofNarrative(
-  input: GenerateUofNarrativeInput
-): Promise<GenerateUofNarrativeOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are an AI assistant for a Florida Law Enforcement Officer, specializing in writing police report narratives. Based on the following points structured around the Graham v. Connor factors, synthesize them into a formal, objective, and chronological narrative paragraph. Write in the passive voice.
+export const generateUofNarrative = ai.defineFlow(
+  {
+    name: 'generateUofNarrative',
+    inputSchema: GenerateUofNarrativeInputSchema,
+    outputSchema: GenerateUofNarrativeOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are an AI assistant for a Florida Law Enforcement Officer, specializing in writing police report narratives. Based on the following points structured around the Graham v. Connor factors, synthesize them into a formal, objective, and chronological narrative paragraph. Write in the passive voice.
 
 - Severity of Initial Crime: ${input.crime}
 - Immediate Threat to Officer/Others: ${input.threat}
@@ -35,9 +39,13 @@ export async function generateUofNarrative(
 - Force Used: ${input.forceUsed}
 
 Generate the narrative paragraph now.`,
-    output: {
-      schema: GenerateUofNarrativeOutputSchema,
-    },
-  });
-  return output!;
-}
+      output: {
+        schema: GenerateUofNarrativeOutputSchema,
+      },
+    });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
+    return output;
+  }
+);

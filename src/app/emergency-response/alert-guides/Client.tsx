@@ -108,6 +108,7 @@ export const AlertGuidesClient = React.memo(function AlertGuidesClient({
   return (
     <Accordion type="single" collapsible className="w-full space-y-4" value={activeItem} onValueChange={handleAccordionChange}>
       {placeholders.map(placeholder => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const Icon = (LucideIcons as any)[placeholder.icon] || LucideIcons.HelpCircle;
         return (
           <AccordionItem value={placeholder.id} key={placeholder.id} className="border-b-0">

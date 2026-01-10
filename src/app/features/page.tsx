@@ -1,6 +1,6 @@
 
 import { PageHeader } from "@/components/PageHeader"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Scale, ListChecks, MessageSquare, Gavel, Fish, Biohazard, BrainCircuit, ShieldCheck, Languages, Truck, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"

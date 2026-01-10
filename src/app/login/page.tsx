@@ -17,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, User, AlertTriangle } from 'lucide-react'
+import { Loader2, AlertTriangle } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 const GoogleIcon = () => (
@@ -56,7 +56,7 @@ export default function LoginPage() {
         defaultValues: { email: "" },
     });
 
-    const handleAuthError = (error: any) => {
+    const handleAuthError = (error: unknown) => {
         let title = "Authentication Failed";
         let description = "An unknown error occurred. Please try again.";
 
@@ -97,15 +97,15 @@ export default function LoginPage() {
         const provider = new GoogleAuthProvider();
         try {
             const result = await signInWithPopup(auth!, provider);
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential?.accessToken;
             const user = result.user;
             console.log("Success! User:", user);
             router.push('/dashboard');
-        } catch (error: any) {
-            console.error("Google Auth Failed:", error);
-            console.error("Error Code:", error.code);
-            console.error("Error Message:", error.message);
+        } catch (error: unknown) {
+            if (error instanceof FirebaseError) {
+                console.error("Google Auth Failed:", error);
+                console.error("Error Code:", error.code);
+                console.error("Error Message:", error.message);
+            }
             handleAuthError(error);
         } finally {
             setIsLoading(null);

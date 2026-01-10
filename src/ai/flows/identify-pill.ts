@@ -49,15 +49,12 @@ const IdentifyPillOutputSchema = z.object({
 });
 export type IdentifyPillOutput = z.infer<typeof IdentifyPillOutputSchema>;
 
-export const identifyPill = ai.defineFlow(
-  {
-    name: 'identifyPill',
-    inputSchema: IdentifyPillInputSchema,
-    outputSchema: IdentifyPillOutputSchema,
-  },
-  async (input) => {
-    const { output } = await ai.generate({
-      prompt: `You are an expert forensic pharmacologist and narcotics identification specialist for Florida law enforcement. Your task is to analyze the provided image of a pill or substance and provide a comprehensive identification assessment.
+const identifyPillPrompt = ai.definePrompt(
+    {
+        name: 'identifyPillPrompt',
+        input: { schema: IdentifyPillInputSchema },
+        output: { schema: IdentifyPillOutputSchema },
+        prompt: `You are an expert forensic pharmacologist and narcotics identification specialist for Florida law enforcement. Your task is to analyze the provided image of a pill or substance and provide a comprehensive identification assessment.
 
 ANALYSIS REQUIREMENTS:
 1. Examine all visible physical characteristics (shape, color, size, markings, texture)
@@ -76,37 +73,22 @@ CRITICAL FOCUS AREAS:
 - Size, shape, color, and imprint analysis
 - Safety considerations for officer exposure
 
-ADDITIONAL CONTEXT: ${input.additionalContext || 'No additional context provided'}
+ADDITIONAL CONTEXT: {{additionalContext}}
 
-Provide a thorough, detailed analysis that prioritizes officer safety while delivering actionable intelligence for the investigation.`,
-      media: {
-        url: `data:image/jpeg;base64,${input.imageBase64}`,
-      },
-      output: {
-        schema: IdentifyPillOutputSchema,
-      },
-      config: {
-        maxOutputTokens: 12288, // Significantly increased token limit
-        temperature: 0.2, // Low temperature for consistent analysis
-        safetySettings: [
-          {
-            category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-            threshold: 'BLOCK_NONE',
-          },
-          {
-            category: 'HARM_CATEGORY_HARASSMENT',
-            threshold: 'BLOCK_NONE',
-          },
-          {
-            category: 'HARM_CATEGORY_HATE_SPEECH',
-            threshold: 'BLOCK_NONE',
-          },
-          {
-            category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-            threshold: 'BLOCK_NONE',
-          },
-        ],
-      },
+Provide a thorough, detailed analysis that prioritizes officer safety while delivering actionable intelligence for the investigation. Image: {{media url=imageBase64}}`,
+    }
+);
+
+export const identifyPill = ai.defineFlow(
+  {
+    name: 'identifyPill',
+    inputSchema: IdentifyPillInputSchema,
+    outputSchema: IdentifyPillOutputSchema,
+  },
+  async (input) => {
+    const { output } = await identifyPillPrompt({
+        ...input,
+        imageBase64: `data:image/jpeg;base64,${input.imageBase64}`,
     });
 
     if (!output || !output.identification) {

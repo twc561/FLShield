@@ -171,7 +171,7 @@ export function FwcClient({
                   </AccordionItem>
                 ))}
               </Accordion>
-              {filteredFishingData.length === 0 && <p className="text-center text-muted-foreground py-8">No finfish information found for "{searchTerm}".</p>}
+              {filteredFishingData.length === 0 && <p className="text-center text-muted-foreground py-8">No finfish information found for &quot;{searchTerm}&quot;.</p>}
               
               <h3 className="text-lg font-bold tracking-tight my-4 px-1">Invertebrates</h3>
               <Accordion type="single" collapsible className="w-full space-y-2">
@@ -197,7 +197,7 @@ export function FwcClient({
                   </AccordionItem>
                 ))}
               </Accordion>
-              {filteredInvertebrateData.length === 0 && <p className="text-center text-muted-foreground py-8">No invertebrate information found for "{searchTerm}".</p>}
+              {filteredInvertebrateData.length === 0 && <p className="text-center text-muted-foreground py-8">No invertebrate information found for &quot;{searchTerm}&quot;.</p>}
 
                <h3 className="text-lg font-bold tracking-tight my-4 px-1">Gear Regulations</h3>
                  <Accordion type="single" collapsible className="w-full space-y-2">
@@ -215,7 +215,7 @@ export function FwcClient({
                   </AccordionItem>
                 ))}
               </Accordion>
-              {filteredGearData.length === 0 && <p className="text-center text-muted-foreground py-8">No gear information found for "{searchTerm}".</p>}
+              {filteredGearData.length === 0 && <p className="text-center text-muted-foreground py-8">No gear information found for &quot;{searchTerm}&quot;.</p>}
             </div>
           </ScrollArea>
         </TabsContent>
@@ -249,7 +249,7 @@ export function FwcClient({
                   </AccordionItem>
                 ))}
               </Accordion>
-              {filteredHuntingData.length === 0 && <p className="text-center text-muted-foreground py-8">No hunting information found for "{searchTerm}".</p>}
+              {filteredHuntingData.length === 0 && <p className="text-center text-muted-foreground py-8">No hunting information found for &quot;{searchTerm}&quot;.</p>}
 
               <h3 className="text-lg font-bold tracking-tight my-4 px-1">Trapping Regulations</h3>
               <Accordion type="single" collapsible className="w-full space-y-2">
@@ -267,7 +267,7 @@ export function FwcClient({
                   </AccordionItem>
                 ))}
               </Accordion>
-              {filteredTrappingData.length === 0 && <p className="text-center text-muted-foreground py-8">No trapping information found for "{searchTerm}".</p>}
+              {filteredTrappingData.length === 0 && <p className="text-center text-muted-foreground py-8">No trapping information found for &quot;{searchTerm}&quot;.</p>}
               
               <h3 className="text-lg font-bold tracking-tight my-4 px-1">Firearms & Methods of Take</h3>
               <Accordion type="single" collapsible className="w-full space-y-2">
@@ -282,7 +282,7 @@ export function FwcClient({
                   </AccordionItem>
                 ))}
               </Accordion>
-              {filteredFirearmsData.length === 0 && <p className="text-center text-muted-foreground py-8">No firearms information found for "{searchTerm}".</p>}
+              {filteredFirearmsData.length === 0 && <p className="text-center text-muted-foreground py-8">No firearms information found for &quot;{searchTerm}&quot;.</p>}
             </div>
           </ScrollArea>
         </TabsContent>
@@ -321,7 +321,7 @@ export function FwcClient({
                         </AccordionItem>
                     ))}
                 </Accordion>
-               {filteredBoatingData.length === 0 && Object.keys(boatingEquipmentData).length > 0 && searchTerm && <p className="text-center text-muted-foreground py-8">No boating information found for "{searchTerm}".</p>}
+               {filteredBoatingData.length === 0 && Object.keys(boatingEquipmentData).length > 0 && searchTerm && <p className="text-center text-muted-foreground py-8">No boating information found for &quot;{searchTerm}&quot;.</p>}
              </div>
            </ScrollArea>
         </TabsContent>
@@ -345,7 +345,7 @@ export function FwcClient({
                     </CardContent>
                 </Card>
             ))}
-             {filteredSpeciesData.length === 0 && <p className="text-center text-muted-foreground py-8">No species information found for "{searchTerm}".</p>}
+             {filteredSpeciesData.length === 0 && <p className="text-center text-muted-foreground py-8">No species information found for &quot;{searchTerm}&quot;.</p>}
             </div>
           </ScrollArea>
         </TabsContent>
@@ -366,7 +366,7 @@ export function FwcClient({
                       </CardContent>
                   </Card>
               ))}
-               {filteredLicenseData.length === 0 && <p className="text-center text-muted-foreground py-8">No license information found for "{searchTerm}".</p>}
+               {filteredLicenseData.length === 0 && <p className="text-center text-muted-foreground py-8">No license information found for &quot;{searchTerm}&quot;.</p>}
               </div>
            </ScrollArea>
         </TabsContent>

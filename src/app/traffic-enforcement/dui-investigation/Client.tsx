@@ -2,7 +2,7 @@
 "use client"
 
 import * as React from "react"
-import { useState, memo } from "react"
+import { memo } from "react"
 import {
   Accordion,
   AccordionContent,
@@ -19,7 +19,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
 
-const FstSection = memo(({ guideData }: { guideData: LanguageGuide }) => (
+const FstSection = memo(function FstSection({ guideData }: { guideData: LanguageGuide }) {
+  return (
     <Accordion type="single" collapsible className="w-full space-y-4" defaultValue='item-0'>
         {guideData.fstAdminGuide.map((test, index) => (
              <AccordionItem value={`item-${index}`} key={test.TestName} className="border-b-0">
@@ -52,9 +53,11 @@ const FstSection = memo(({ guideData }: { guideData: LanguageGuide }) => (
              </AccordionItem>
         ))}
     </Accordion>
-));
+)});
+FstSection.displayName = 'FstSection';
 
-const LegalWarningsSection = memo(({ guideData }: { guideData: LanguageGuide }) => (
+const LegalWarningsSection = memo(function LegalWarningsSection({ guideData }: { guideData: LanguageGuide }) {
+  return (
     <div className="space-y-4">
         {guideData.impliedConsentScripts.map((warning, i) => (
              <Card key={i}>
@@ -74,12 +77,11 @@ const LegalWarningsSection = memo(({ guideData }: { guideData: LanguageGuide }) 
              </Card>
         ))}
     </div>
-));
+)});
+LegalWarningsSection.displayName = 'LegalWarningsSection';
 
 
 export const DuiInvestigationClient = memo(function DuiInvestigationClient({ data }: { data: DuiInvestigationGuide }) {
-    const [language, setLanguage] = useState<keyof DuiInvestigationGuide['pre_arrest_screening']['fstAdminGuide']>('english');
-
     return (
         <div className="space-y-6">
             <Accordion type="multiple" className="w-full space-y-4" defaultValue={['part1']}>
@@ -165,7 +167,7 @@ export const DuiInvestigationClient = memo(function DuiInvestigationClient({ dat
                         </AccordionTrigger>
                         <AccordionContent className="px-6 pb-6 pt-0">
                             <div className="border-t pt-4 space-y-6">
-                                <Tabs defaultValue="english" onValueChange={(value) => setLanguage(value as any)} className="w-full">
+                                <Tabs defaultValue="english" className="w-full">
                                     <TabsList className="grid w-full grid-cols-3">
                                         <TabsTrigger value="english">English</TabsTrigger>
                                         <TabsTrigger value="spanish">Español</TabsTrigger>
@@ -212,7 +214,7 @@ export const DuiInvestigationClient = memo(function DuiInvestigationClient({ dat
                                        <p>{data.arrest_and_testing.articulatingProbableCause.guide}</p>
                                     </CardContent>
                                 </Card>
-                                <Tabs defaultValue="english" onValueChange={(value) => setLanguage(value as any)} className="w-full">
+                                <Tabs defaultValue="english" className="w-full">
                                     <TabsList className="grid w-full grid-cols-3">
                                         <TabsTrigger value="english">English</TabsTrigger>
                                         <TabsTrigger value="spanish">Español</TabsTrigger>
@@ -264,7 +266,7 @@ export const DuiInvestigationClient = memo(function DuiInvestigationClient({ dat
                                         </Alert>
                                         <h4 className="font-semibold mb-2">Prosecutor-Preferred Phrases:</h4>
                                         <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
-                                            {data.case_building.reportNarrativeBuilder.prosecutorPhrases.map(phrase => <li key={phrase}>"{phrase}"</li>)}
+                                            {data.case_building.reportNarrativeBuilder.prosecutorPhrases.map(phrase => <li key={phrase}>&quot;{phrase}&quot;</li>)}
                                         </ul>
                                     </CardContent>
                                 </Card>

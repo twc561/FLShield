@@ -41,15 +41,15 @@ export default function SupportPage() {
                 </AccordionContent>
               </AccordionItem>
                <AccordionItem value="item-4">
-                <AccordionTrigger className="text-lg text-left">If you're not CJIS compliant, how do you handle security?</AccordionTrigger>
+                <AccordionTrigger className="text-lg text-left">If you&apos;re not CJIS compliant, how do you handle security?</AccordionTrigger>
                 <AccordionContent className="text-base text-muted-foreground">
-                  We understand that any platform used by law enforcement must be secure. We have engineered Shield FL with enterprise-grade security best practices from the ground up. Our platform is built on Google Cloud's secure infrastructure and includes mandatory Multi-Factor Authentication (MFA), end-to-end data encryption, and strict internal access controls. Our commitment is to provide a reliable and trustworthy platform for accessing public information.
+                  We understand that any platform used by law enforcement must be secure. We have engineered Shield FL with enterprise-grade security best practices from the ground up. Our platform is built on Google Cloud&apos;s secure infrastructure and includes mandatory Multi-Factor Authentication (MFA), end-to-end data encryption, and strict internal access controls. Our commitment is to provide a reliable and trustworthy platform for accessing public information.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-5">
-                <AccordionTrigger className="text-lg text-left">How can my agency's policies be added to the platform?</AccordionTrigger>
+                <AccordionTrigger className="text-lg text-left">How can my agency&apos;s policies be added to the platform?</AccordionTrigger>
                 <AccordionContent className="text-base text-muted-foreground">
-                  Since our platform works with publicly accessible documents, the process is simple. You can provide us with a copy of your policy manual in the same way you would for any public records request—typically via a direct link on your website or as an email attachment. Our team then ingests the document, indexes it, and integrates it into your agency's private version of the Shield FL search engine.
+                  Since our platform works with publicly accessible documents, the process is simple. You can provide us with a copy of your policy manual in the same way you would for any public records request—typically via a direct link on your website or as an email attachment. Our team then ingests the document, indexes it, and integrates it into your agency&apos;s private version of the Shield FL search engine.
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-6">

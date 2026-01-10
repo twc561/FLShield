@@ -32,6 +32,7 @@ export const HandcuffingClient = React.memo(function HandcuffingClient({ data }:
 
       <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="standing">
         {data.techniques.map((technique) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const Icon = (LucideIcons as any)[technique.icon] || LucideIcons.User;
           return (
             <AccordionItem value={technique.id} key={technique.id} className="border-b-0">

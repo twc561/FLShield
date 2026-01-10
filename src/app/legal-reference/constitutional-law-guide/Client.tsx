@@ -9,15 +9,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { ConstitutionalPlaceholder, ConstitutionalDetail } from "@/data/legal-reference/constitutional-law"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ShieldCheck, Loader2, Sparkles, Landmark } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { analyzeConstitution } from "@/ai/flows/analyze-constitution"
-import { Skeleton } from "@/components/ui/skeleton"
 
-const DetailView = React.memo(({ detail }: { detail: ConstitutionalDetail }) => (
+const DetailView = React.memo(function DetailView({ detail }: { detail: ConstitutionalDetail }) {
+  return (
   <div className="space-y-4">
     <h3 className="font-semibold text-lg">Plain Language Summary</h3>
     <p className="text-muted-foreground">{detail.plainLanguageSummary}</p>
@@ -51,7 +50,8 @@ const DetailView = React.memo(({ detail }: { detail: ConstitutionalDetail }) => 
       </AccordionItem>
     </Accordion>
   </div>
-));
+)});
+DetailView.displayName = 'DetailView';
 
 export const ConstitutionalLawClient = React.memo(function ConstitutionalLawClient({
   initialPlaceholders,
@@ -101,6 +101,7 @@ export const ConstitutionalLawClient = React.memo(function ConstitutionalLawClie
             <h2 className="text-lg font-bold tracking-tight my-4 px-1">{category}</h2>
             <Accordion type="single" collapsible className="w-full space-y-2" value={activeItem} onValueChange={handleAccordionChange}>
               {groupedPlaceholders[category].map(placeholder => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const Icon = (LucideIcons as any)[placeholder.icon] || Landmark;
                 return (
                     <AccordionItem value={placeholder.id} key={placeholder.id} className="border rounded-md bg-card">

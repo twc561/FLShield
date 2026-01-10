@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PageHeader } from '@/components/PageHeader';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { DailyRollCall } from '@/components/DailyRollCall';
 import { BriefingStats } from '@/components/BriefingStats';
@@ -44,6 +44,7 @@ const itemVariants = {
 };
 
 const ToolCard = ({ module }: { module: FeatureModule }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Icon = (LucideIcons as any)[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle;
   return (
     <div className="group relative">
@@ -161,7 +162,8 @@ export function DashboardClient({ featureGroups }: { featureGroups: FeatureGroup
     };
     setGreeting(getGreeting());
 
-    const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
+    if (auth) {
+        const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
       if (user) {
         if (user.displayName) {
           setUserName(user.displayName.split(' ')[0]);
@@ -179,6 +181,7 @@ export function DashboardClient({ featureGroups }: { featureGroups: FeatureGroup
     });
 
     return () => unsubscribe();
+    }
   }, []);
 
   return (
@@ -226,7 +229,7 @@ export function DashboardClient({ featureGroups }: { featureGroups: FeatureGroup
         <div className="space-y-6">
           {Array.isArray(featureGroups) &&
             featureGroups.map((group) => {
-              const GroupIcon = (LucideIcons as any)[group.icon] || LucideIcons.HelpCircle;
+              const GroupIcon = group.icon || LucideIcons.HelpCircle;
               return (
                 <Card key={group.category} className="bg-card/50">
                   <CardHeader>

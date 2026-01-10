@@ -25,35 +25,42 @@ const TextToSpeechOutputSchema = z.object({
 });
 export type TextToSpeechOutput = z.infer<typeof TextToSpeechOutputSchema>;
 
-export async function textToSpeech(input: TextToSpeechInput): Promise<TextToSpeechOutput> {
-  const { media } = await ai.generate({
-    model: googleAI.model('gemini-2.5-flash-preview-tts'),
-    config: {
-      responseModalities: ['AUDIO'],
-      speechConfig: {
-        voiceConfig: {
-          prebuiltVoiceConfig: { voiceName: input.voiceName || 'Algenib' },
+export const textToSpeech = ai.defineFlow(
+  {
+    name: 'textToSpeech',
+    inputSchema: TextToSpeechInputSchema,
+    outputSchema: TextToSpeechOutputSchema,
+  },
+  async (input) => {
+    const { media } = await ai.generate({
+      model: googleAI.model('gemini-2.5-flash-preview-tts'),
+      config: {
+        responseModalities: ['AUDIO'],
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: { voiceName: input.voiceName || 'Algenib' },
+          },
         },
       },
-    },
-    prompt: input.text,
-  });
+      prompt: input.text,
+    });
 
-  if (!media) {
-    throw new Error('No media was returned from the TTS model.');
+    if (!media) {
+      throw new Error('No media was returned from the TTS model.');
+    }
+
+    // The raw data from Gemini is PCM, so we need to encode it into a WAV container
+    const audioBuffer = Buffer.from(
+      media.url.substring(media.url.indexOf(',') + 1),
+      'base64'
+    );
+
+    const wavData = await toWav(audioBuffer);
+    return {
+      media: 'data:audio/wav;base64,' + wavData,
+    };
   }
-
-  // The raw data from Gemini is PCM, so we need to encode it into a WAV container
-  const audioBuffer = Buffer.from(
-    media.url.substring(media.url.indexOf(',') + 1),
-    'base64'
-  );
-
-  const wavData = await toWav(audioBuffer);
-  return {
-    media: 'data:audio/wav;base64,' + wavData,
-  };
-}
+);
 
 async function toWav(
   pcmData: Buffer,

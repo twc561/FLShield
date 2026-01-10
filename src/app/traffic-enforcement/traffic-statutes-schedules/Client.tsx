@@ -263,7 +263,7 @@ export const TrafficStatutesClient = React.memo(function TrafficStatutesClient({
           <Search className="mx-auto h-12 w-12 text-muted-foreground" />
           <h3 className="mt-4 text-lg font-medium">No Violations Found</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Your search for "{searchTerm}" did not match any local or AI-found traffic statutes.
+            Your search for &quot;{searchTerm}&quot; did not match any local or AI-found traffic statutes.
           </p>
         </div>
       )}

@@ -1,7 +1,6 @@
 import { PageHeader } from "@/components/PageHeader"
 import { flowcharts } from "@/data/flowcharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { GitFork } from "lucide-react"
 
 export default function FlowchartsPage() {
   const flowchart = flowcharts[0]

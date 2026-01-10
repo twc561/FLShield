@@ -43,14 +43,24 @@ const AnalyzeK9TopicOutputSchema = z.object({
 export type AnalyzeK9TopicOutput = z.infer<typeof AnalyzeK9TopicOutputSchema>;
 
 
-export async function analyzeK9Topic(input: AnalyzeK9TopicInput): Promise<AnalyzeK9TopicOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are a K-9 Operations & Legal Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific K-9 topic. For the given ID, retrieve the relevant procedures and case law, then parse this information into a practical format for an officer. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the following schema.
+export const analyzeK9Topic = ai.defineFlow(
+  {
+    name: 'analyzeK9Topic',
+    inputSchema: AnalyzeK9TopicInputSchema,
+    outputSchema: AnalyzeK9TopicOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are a K-9 Operations & Legal Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific K-9 topic. For the given ID, retrieve the relevant procedures and case law, then parse this information into a practical format for an officer. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the following schema.
 
 Topic ID: ${input.topicId}`,
-    output: {
-      schema: AnalyzeK9TopicOutputSchema,
-    },
-  });
-  return output;
-}
+      output: {
+        schema: AnalyzeK9TopicOutputSchema,
+      },
+    });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
+    return output;
+  }
+);

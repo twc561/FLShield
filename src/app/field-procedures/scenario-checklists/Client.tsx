@@ -18,11 +18,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsClient({
   initialScenarios,
-  groupedScenarios,
   categoryOrder,
 }: {
   initialScenarios: Scenario[]
-  groupedScenarios: Record<string, Scenario[]>
   categoryOrder: string[]
 }) {
   const [searchTerm, setSearchTerm] = React.useState("")
@@ -62,6 +60,7 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
               {filteredScenarios
                 .filter(s => s.category === category)
                 .map((scenario) => {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   const Icon = (LucideIcons as any)[scenario.icon] || LucideIcons.HelpCircle
                   return (
                     <AccordionItem value={scenario.id} key={scenario.id} className="border rounded-md mb-2 bg-card">
@@ -89,6 +88,7 @@ export const ScenarioChecklistsClient = React.memo(function ScenarioChecklistsCl
                               <TabsContent value="static" className="mt-4">
                                  <div className="space-y-4">
                                     {scenario.staticChecklist.map((section, index) => {
+                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                         const SectionIcon = (LucideIcons as any)[section.icon] || Check
                                         return (
                                             <Card key={index} className="bg-muted/50">

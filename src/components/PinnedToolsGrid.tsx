@@ -34,7 +34,7 @@ const PinnedToolCard = ({
   dragIndex: number
 }) => {
   const { isPro, mounted } = useSubscription()
-  const Icon = (LucideIcons as any)[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle
+  const Icon = (LucideIcons as { [key: string]: React.ElementType })[module.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle
 
   return (
     <div

@@ -99,8 +99,8 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
   // State for pre-loaded data
   const [searchTerm, setSearchTerm] = React.useState("");
   const [activeAccordionItem, setActiveAccordionItem] = React.useState<string | undefined>();
-  const [cachedDetails, setCachedDetails] = React.useState<Record<string, OrdinanceDetail>>(initialDetails);
-  const [loadingId, setLoadingId] = React.useState<string | null>(null);
+  const cachedDetails = React.useState<Record<string, OrdinanceDetail>>(initialDetails)[0];
+  const loadingId = React.useState<string | null>(null)[0];
 
   const lowercasedFilter = searchTerm.toLowerCase();
 
@@ -225,13 +225,13 @@ export const LocalOrdinancesClient = React.memo(function LocalOrdinancesClient({
           </div>
           <Accordion type="single" collapsible className="w-full space-y-2" value={activeAccordionItem} onValueChange={handleAccordionChange}>
             {filteredIndex.map(item => {
-                const Icon = (LucideIcons as any)[item.icon as keyof typeof LucideIcons] || Building;
+                const Icon = (LucideIcons as { [key: string]: React.ElementType })[item.icon as keyof typeof LucideIcons] || Building;
                 return (
                     <AccordionItem value={item.ordinanceNumber} key={item.ordinanceNumber} className="border rounded-md bg-card">
                         <AccordionTrigger className="p-4 hover:no-underline text-left">
                             <div className="flex items-center gap-4 flex-1">
                                 <div className="p-2 bg-primary/10 rounded-lg">
-                                    <Building className="w-6 h-6 text-primary" />
+                                    <Icon className="w-6 h-6 text-primary" />
                                 </div>
                                 <div className="flex-1 text-left">
                                     <p className="font-semibold text-base text-card-foreground">{item.ordinanceTitle}</p>

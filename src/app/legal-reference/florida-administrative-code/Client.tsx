@@ -11,12 +11,13 @@ import {
 } from "@/components/ui/accordion"
 import type { FacPlaceholder, FacDetail } from "@/data/legal-reference/florida-administrative-code"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { ShieldCheck, Loader2, Sparkles, Gavel, Building } from "lucide-react"
+import { ShieldCheck, Loader2, Sparkles, Building } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { analyzeFacRule } from "@/ai/flows/analyze-fac-rule"
 import { Badge } from "@/components/ui/badge"
 
-const DetailView = React.memo(({ detail }: { detail: FacDetail }) => (
+const DetailView = React.memo(function DetailView({ detail }: { detail: FacDetail }) {
+  return (
   <div className="space-y-4">
     <div className="flex justify-between items-center">
         <h3 className="font-semibold text-lg">Governing Agency</h3>
@@ -50,7 +51,8 @@ const DetailView = React.memo(({ detail }: { detail: FacDetail }) => (
       </AccordionItem>
     </Accordion>
   </div>
-));
+)});
+DetailView.displayName = 'DetailView';
 
 export const FloridaAdministrativeCodeClient = React.memo(function FloridaAdministrativeCodeClient({
   initialPlaceholders,
@@ -104,6 +106,7 @@ export const FloridaAdministrativeCodeClient = React.memo(function FloridaAdmini
             <h2 className="text-lg font-bold tracking-tight my-4 px-1">{category}</h2>
             <Accordion type="single" collapsible className="w-full space-y-2" value={activeItem} onValueChange={handleAccordionChange}>
               {groupedPlaceholders[category]?.map(placeholder => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const Icon = (LucideIcons as any)[placeholder.icon] || Building;
                 return (
                     <AccordionItem value={placeholder.id} key={placeholder.id} className="border rounded-md bg-card">

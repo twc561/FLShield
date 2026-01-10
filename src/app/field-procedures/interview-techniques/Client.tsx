@@ -15,6 +15,7 @@ export const InterviewTechniquesClient = React.memo(function InterviewTechniques
   return (
     <>
       {data.map((technique, index) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const Icon = (LucideIcons as any)[technique.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle;
         return (
           <Card 

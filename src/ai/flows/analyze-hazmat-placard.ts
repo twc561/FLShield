@@ -15,7 +15,7 @@ const AnalyzeHazmatPlacardInputSchema = z.object({
 });
 export type AnalyzeHazmatPlacardInput = z.infer<typeof AnalyzeHazmatPlacardInputSchema>;
 
-const AnalyzeHazmatPlacardOutputSchema = z.object({
+export const AnalyzeHazmatPlacardOutputSchema = z.object({
   unID: z.string().describe("The 4-digit ID requested."),
   materialName: z.string().describe("The proper shipping name of the material."),
   ergGuideNumber: z.string().describe("The corresponding guide number from the Emergency Response Guidebook (ERG)."),
@@ -47,9 +47,15 @@ const AnalyzeHazmatPlacardOutputSchema = z.object({
 export type AnalyzeHazmatPlacardOutput = z.infer<typeof AnalyzeHazmatPlacardOutputSchema>;
 
 
-export async function analyzeHazmatPlacard(input: AnalyzeHazmatPlacardInput): Promise<AnalyzeHazmatPlacardOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are a HAZMAT Response Analyst AI for first responders. Your task is to provide a detailed, structured analysis of a specific hazardous material based on its UN/NA ID from the latest Emergency Response Guidebook (ERG).
+export const analyzeHazmatPlacard = ai.defineFlow(
+  {
+    name: 'analyzeHazmatPlacard',
+    inputSchema: AnalyzeHazmatPlacardInputSchema,
+    outputSchema: AnalyzeHazmatPlacardOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are a HAZMAT Response Analyst AI for first responders. Your task is to provide a detailed, structured analysis of a specific hazardous material based on its UN/NA ID from the latest Emergency Response Guidebook (ERG).
 
 CRITICAL INSTRUCTIONS:
 1.  **Validate the ID:** You MUST validate that the provided UN/NA ID is a valid, existing 4-digit number found within the ERG.
@@ -57,9 +63,13 @@ CRITICAL INSTRUCTIONS:
 3.  **Strict JSON Output:** Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the required schema.
 
 UN/NA ID: ${input.unID}`,
-    output: {
-      schema: AnalyzeHazmatPlacardOutputSchema,
-    },
-  });
-  return output;
-}
+      output: {
+        schema: AnalyzeHazmatPlacardOutputSchema,
+      },
+    });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
+    return output;
+  }
+);

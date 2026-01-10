@@ -9,7 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { K9TopicPlaceholder } from "@/data/specialized-enforcement/k9-guide-index"
 import type { AnalyzeK9TopicOutput } from "@/ai/flows/analyze-k9-topic"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -18,7 +18,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { analyzeK9Topic } from "@/ai/flows/analyze-k9-topic"
 import { Button } from "@/components/ui/button"
 
-const DetailView = React.memo(({ detail }: { detail: AnalyzeK9TopicOutput }) => (
+const DetailView = React.memo(function DetailView({ detail }: { detail: AnalyzeK9TopicOutput }) {
+  return (
   <div className="space-y-6">
     <p className="text-muted-foreground">{detail.plainLanguageSummary}</p>
 
@@ -58,7 +59,8 @@ const DetailView = React.memo(({ detail }: { detail: AnalyzeK9TopicOutput }) => 
       </AlertDescription>
     </Alert>
   </div>
-));
+)});
+DetailView.displayName = 'DetailView';
 
 export const K9GuideClient = React.memo(function K9GuideClient({
   guideIndex,
@@ -96,6 +98,7 @@ export const K9GuideClient = React.memo(function K9GuideClient({
       </Button>
       <Accordion type="single" collapsible className="w-full space-y-2" value={activeItem} onValueChange={handleAccordionChange}>
         {topics.map(placeholder => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const Icon = (LucideIcons as any)[placeholder.icon] || LucideIcons.HelpCircle;
           return (
             <AccordionItem value={placeholder.id} key={placeholder.id} className="border rounded-md bg-card">

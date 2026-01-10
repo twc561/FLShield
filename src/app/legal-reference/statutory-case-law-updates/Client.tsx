@@ -16,7 +16,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { analyzeLegalUpdate } from "@/ai/flows/analyze-legal-update"
 import { Badge } from "@/components/ui/badge"
 
-const DetailView = React.memo(({ detail }: { detail: UpdateDetail }) => (
+const DetailView = React.memo(function DetailView({ detail }: { detail: UpdateDetail }) {
+  return (
   <div className="space-y-4">
     <div className="flex justify-between items-center">
         <h3 className="font-semibold text-lg">{detail.sourceInfo.sourceName}</h3>
@@ -39,11 +40,12 @@ const DetailView = React.memo(({ detail }: { detail: UpdateDetail }) => (
     <div>
         <h3 className="font-semibold text-lg mb-2">Key Quote or Statutory Text</h3>
         <blockquote className="border-l-2 pl-4 italic text-muted-foreground">
-            "{detail.keyQuoteOrText}"
+            &quot;{detail.keyQuoteOrText}&quot;
         </blockquote>
     </div>
   </div>
-));
+)});
+DetailView.displayName = 'DetailView';
 
 export const StatutoryCaseLawUpdatesClient = React.memo(function StatutoryCaseLawUpdatesClient({
   initialUpdates,
@@ -81,7 +83,7 @@ export const StatutoryCaseLawUpdatesClient = React.memo(function StatutoryCaseLa
     <ScrollArea className="flex-1 -mr-4 pr-4">
       <Accordion type="single" collapsible className="w-full space-y-2" value={activeItem} onValueChange={handleAccordionChange}>
         {sortedUpdates.map(update => {
-          const Icon = (LucideIcons as any)[update.icon] || LucideIcons.FileText;
+          const Icon = (LucideIcons as { [key: string]: React.ElementType })[update.icon] || LucideIcons.FileText;
           return (
             <AccordionItem value={update.updateID} key={update.updateID} className="border rounded-md bg-card">
               <AccordionTrigger className="p-4 hover:no-underline">

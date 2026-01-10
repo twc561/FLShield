@@ -411,7 +411,7 @@ ${shiftData.shiftSummary}
                       ...prev,
                       equipmentStatus: {
                         ...prev.equipmentStatus,
-                        vehicle: { ...prev.equipmentStatus.vehicle, fuelLevel: value as any }
+                        vehicle: { ...prev.equipmentStatus.vehicle, fuelLevel: value as ShiftReportData['equipmentStatus']['vehicle']['fuelLevel'] }
                       }
                     }))}>
                       <SelectTrigger>
@@ -436,7 +436,7 @@ ${shiftData.shiftSummary}
                   <Label>Radio</Label>
                   <Select value={shiftData.equipmentStatus.radio} onValueChange={(value) => setShiftData(prev => ({
                     ...prev,
-                    equipmentStatus: { ...prev.equipmentStatus, radio: value as any }
+                    equipmentStatus: { ...prev.equipmentStatus, radio: value as ShiftReportData['equipmentStatus']['radio'] }
                   }))}>
                     <SelectTrigger>
                       <SelectValue placeholder="Radio status" />
@@ -452,7 +452,7 @@ ${shiftData.shiftSummary}
                   <Label>Body Camera</Label>
                   <Select value={shiftData.equipmentStatus.bodyCamera} onValueChange={(value) => setShiftData(prev => ({
                     ...prev,
-                    equipmentStatus: { ...prev.equipmentStatus, bodyCamera: value as any }
+                    equipmentStatus: { ...prev.equipmentStatus, bodyCamera: value as ShiftReportData['equipmentStatus']['bodyCamera'] }
                   }))}>
                     <SelectTrigger>
                       <SelectValue placeholder="Body camera status" />
@@ -468,7 +468,7 @@ ${shiftData.shiftSummary}
                   <Label>Weapon</Label>
                   <Select value={shiftData.equipmentStatus.weapon} onValueChange={(value) => setShiftData(prev => ({
                     ...prev,
-                    equipmentStatus: { ...prev.equipmentStatus, weapon: value as any }
+                    equipmentStatus: { ...prev.equipmentStatus, weapon: value as ShiftReportData['equipmentStatus']['weapon'] }
                   }))}>
                     <SelectTrigger>
                       <SelectValue placeholder="Weapon status" />

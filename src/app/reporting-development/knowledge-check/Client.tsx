@@ -110,7 +110,7 @@ export function KnowledgeCheckClient({ questions }: { questions: DrillQuestion[]
       <Card>
         <CardHeader>
           <CardTitle>Quiz Complete!</CardTitle>
-          <CardDescription>You've completed this knowledge drill.</CardDescription>
+          <CardDescription>You&apos;ve completed this knowledge drill.</CardDescription>
         </CardHeader>
         <CardContent className="text-center">
           <p className="text-lg font-semibold">Your Score:</p>

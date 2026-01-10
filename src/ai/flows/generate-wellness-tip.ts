@@ -22,20 +22,28 @@ const GenerateWellnessTipOutputSchema = z.object({
 });
 export type GenerateWellnessTipOutput = z.infer<typeof GenerateWellnessTipOutputSchema>;
 
-export async function generateWellnessTip(
-  input: GenerateWellnessTipInput
-): Promise<GenerateWellnessTipOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are an expert on occupational health and wellness for law enforcement officers, with specific knowledge of the unique challenges faced by officers in Florida. These challenges include high heat and humidity, hurricane season preparedness and response, interactions with a large tourist population, and specific regional crime trends.
+export const generateWellnessTip = ai.defineFlow(
+  {
+    name: 'generateWellnessTip',
+    inputSchema: GenerateWellnessTipInputSchema,
+    outputSchema: GenerateWellnessTipOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are an expert on occupational health and wellness for law enforcement officers, with specific knowledge of the unique challenges faced by officers in Florida. These challenges include high heat and humidity, hurricane season preparedness and response, interactions with a large tourist population, and specific regional crime trends.
 
 Generate a single, actionable, and concise wellness tip for a Florida law enforcement officer.
 The tip should be practical and easy to implement during or after a shift.
 ${input.topic ? `The tip should be related to the topic of: ${input.topic}.` : 'The tip can be about any of the following topics: stress management, physical fitness, nutrition, sleep hygiene, mental resilience, or peer support.'}
 
 Return the tip and the general topic it falls under (e.g., Stress Management, Nutrition, Sleep).`,
-    output: {
-      schema: GenerateWellnessTipOutputSchema,
-    },
-  });
-  return output!;
-}
+      output: {
+        schema: GenerateWellnessTipOutputSchema,
+      },
+    });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
+    return output;
+  }
+);

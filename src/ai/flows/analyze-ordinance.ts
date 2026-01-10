@@ -32,15 +32,7 @@ export const analyzeOrdinance = ai.defineFlow(
   {
     name: 'analyzeOrdinance',
     inputSchema: AnalyzeOrdinanceInputSchema,
-    config: {
-      model: 'gemini-1.5-pro',
-      generationConfig: {
-        maxOutputTokens: 8192,
-        temperature: 0.3,
-        topP: 0.95,
-        topK: 40,
-      }
-    }
+    outputSchema: AnalyzeOrdinanceOutputSchema,
   },
   async (input) => {
   try {
@@ -48,7 +40,9 @@ export const analyzeOrdinance = ai.defineFlow(
       model: 'gemini-1.5-pro',
       config: {
         maxOutputTokens: 8192,
-        temperature: 0.1,
+        temperature: 0.3,
+        topP: 0.95,
+        topK: 40,
       },
       prompt: `You are an expert local government legal analyst AI specializing in Florida municipal and county codes. Your primary user is a law enforcement officer who needs to understand and enforce local laws. Your task is to find the single most relevant, chargeable ordinance based on a user's query and provide a detailed, structured analysis for that officer.
 
@@ -75,6 +69,9 @@ Remember: You must return valid JSON that matches the schema exactly. If you can
         schema: AnalyzeOrdinanceOutputSchema,
       },
     });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
     return output;
   } catch (error) {
     console.error('Error analyzing ordinance:', error);

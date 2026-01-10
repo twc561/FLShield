@@ -1,15 +1,14 @@
 
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Mic, MicOff, Loader2, Bot, AlertTriangle, User } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { motion } from "framer-motion";
+import { Mic, Loader2, Bot, AlertTriangle, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSpeechRecognition } from "@/hooks/use-speech-recognition";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { getConversationalResponse } from "@/ai/flows/conversational-partner-flow";
 import { textToSpeech } from "@/ai/flows/text-to-speech";
-import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 

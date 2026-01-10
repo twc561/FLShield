@@ -1,16 +1,14 @@
 
 'use client'
 
-import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { PageHeader } from '@/components/PageHeader';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, MessageSquare, ShieldAlert, Clock, Target, TrendingUp, Users, Brain, Zap, Award, CheckCircle2, Search } from 'lucide-react';
+import { ShieldAlert, Target, Brain, Search } from 'lucide-react';
 import { getScenarioLibrary, type ScenarioDefinition } from '@/ai/flows/roleplay-simulator';
 import { RolePlaySimulatorClient } from './ScenarioClient';
 

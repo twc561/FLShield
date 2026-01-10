@@ -2,10 +2,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { adminDb } from '@/lib/firebase-admin'
-import { headers } from 'next/headers'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2025-07-30.basil',
 })
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -16,16 +15,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
   }
   const body = await request.text()
-  const headersList = headers()
-  const sig = headersList.get('stripe-signature')
+  const sig = request.headers.get('stripe-signature')
 
   let event: Stripe.Event
 
   try {
     event = stripe.webhooks.constructEvent(body, sig!, endpointSecret)
-  } catch (err: any) {
-    console.error('Webhook signature verification failed:', err.message)
-    return NextResponse.json({ error: 'Webhook signature verification failed' }, { status: 400 })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error(`Webhook signature verification failed: ${message}`)
+    return NextResponse.json({ error: `Webhook Error: ${message}` }, { status: 400 })
   }
 
   try {
@@ -42,10 +41,11 @@ export async function POST(request: NextRequest) {
         break
 
       case 'invoice.payment_succeeded':
-        const invoice = event.data.object as Stripe.Invoice
-        if (invoice.subscription) {
-          const sub = await stripe.subscriptions.retrieve(invoice.subscription as string)
-          await handleSubscriptionUpdate(sub)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const invoice = event.data.object as any;
+        if (typeof invoice.subscription === 'string') {
+          const sub = await stripe.subscriptions.retrieve(invoice.subscription);
+          await handleSubscriptionUpdate(sub);
         }
         break
 
@@ -74,13 +74,15 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   
   if (!query.empty) {
     const userDoc = query.docs[0]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sub = subscription as any;
     await userDoc.ref.set({
       subscription: {
-        id: subscription.id,
+        id: sub.id,
         customerId: customerId,
-        status: subscription.status,
-        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-        priceId: subscription.items.data[0].price.id,
+        status: sub.status,
+        currentPeriodEnd: new Date(sub.current_period_end * 1000),
+        priceId: sub.items.data[0].price.id,
         plan: 'pro'
       },
       updatedAt: new Date()
@@ -98,13 +100,15 @@ async function handleSubscriptionCancellation(subscription: Stripe.Subscription)
   
   if (!query.empty) {
     const userDoc = query.docs[0]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sub = subscription as any;
     await userDoc.ref.set({
       subscription: {
-        id: subscription.id,
+        id: sub.id,
         customerId: customerId,
         status: 'canceled',
-        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-        priceId: subscription.items.data[0].price.id,
+        currentPeriodEnd: new Date(sub.current_period_end * 1000),
+        priceId: sub.items.data[0].price.id,
         plan: 'free'
       },
       updatedAt: new Date()

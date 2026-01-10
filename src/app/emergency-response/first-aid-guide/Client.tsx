@@ -9,10 +9,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
 import type { GenerateFirstAidProtocolOutput } from "@/ai/flows/generate-first-aid-protocol"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, Sparkles, ShieldCheck, Image as ImageIcon } from "lucide-react"
+import { Loader2, Sparkles, Image as ImageIcon } from "lucide-react"
 import { generateFirstAidProtocol } from "@/ai/flows/generate-first-aid-protocol"
 import { generateFirstAidProtocolImage } from "@/ai/flows/generate-first-aid-protocol-image"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -115,7 +115,7 @@ export const FirstAidClient = React.memo(function FirstAidClient() {
 
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
-      {protocols.map((protocol, index) => {
+      {protocols.map((protocol) => {
         return (
           <AccordionItem value={protocol.injuryType} key={protocol.injuryType} className="border-b-0">
             <Card>

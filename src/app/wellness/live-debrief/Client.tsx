@@ -3,9 +3,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
@@ -53,7 +50,6 @@ export function LiveDebriefClient() {
     const newMessages: Message[] = [...messages, userMessage, modelMessagePlaceholder];
     setMessages(newMessages);
 
-    const currentInput = userInput;
     setUserInput("");
     setIsLoading(true);
 
@@ -100,7 +96,7 @@ export function LiveDebriefClient() {
   return (
     <Card className="flex flex-col flex-1 h-full">
       <CardContent className="flex-1 p-0">
-        <ScrollArea className="h-[calc(100vh-27rem)]" ref={scrollAreaRef as any}>
+        <ScrollArea className="h-[calc(100vh-27rem)]" ref={scrollAreaRef as React.RefObject<HTMLDivElement>}>
             <div className="p-6 space-y-4">
                 {messages.length === 0 && (
                     <div className="text-center text-muted-foreground p-8">

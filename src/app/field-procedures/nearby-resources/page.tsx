@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { PageHeader } from '@/components/PageHeader';
 import { useGeolocation } from '@/hooks/use-geolocation';
-import { Loader2, Hospital, Building, Shield, Scale, HeartHandshake, CheckCircle } from 'lucide-react';
+import { Loader2, Hospital, Building, Shield, Scale, HeartHandshake } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { findNearbyResources, type Resource } from '@/ai/flows/find-nearby-resources';

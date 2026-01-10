@@ -9,7 +9,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2025-07-30.basil',
 })
 
 export async function POST(request: NextRequest) {
@@ -24,13 +24,15 @@ export async function POST(request: NextRequest) {
       const subscription = session.subscription as Stripe.Subscription
       
       // Store subscription data in Firebase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const sub = subscription as any;
       await adminDb.collection('users').doc(userId).set({
         subscription: {
-          id: subscription.id,
+          id: sub.id,
           customerId: session.customer,
-          status: subscription.status,
-          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-          priceId: subscription.items.data[0].price.id,
+          status: sub.status,
+          currentPeriodEnd: new Date(sub.current_period_end * 1000),
+          priceId: sub.items.data[0].price.id,
           plan: 'pro'
         },
         updatedAt: new Date()

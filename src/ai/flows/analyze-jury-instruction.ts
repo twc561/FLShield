@@ -36,15 +36,21 @@ const AnalyzeInstructionOutputSchema = z.object({
 export type AnalyzeInstructionOutput = z.infer<typeof AnalyzeInstructionOutputSchema>;
 
 
-export async function analyzeInstruction(input: AnalyzeInstructionInput): Promise<AnalyzeInstructionOutput> {
-  const instructionData = juryInstructionDetails[input.instructionId];
+export const analyzeInstruction = ai.defineFlow(
+  {
+    name: 'analyzeInstruction',
+    inputSchema: AnalyzeInstructionInputSchema,
+    outputSchema: AnalyzeInstructionOutputSchema,
+  },
+  async (input) => {
+    const instructionData = juryInstructionDetails[input.instructionId];
 
-  if (!instructionData) {
-    throw new Error(`Instruction with ID ${input.instructionId} not found.`);
-  }
+    if (!instructionData) {
+      throw new Error(`Instruction with ID ${input.instructionId} not found.`);
+    }
 
-  const { output } = await ai.generate({
-    prompt: `You are a Trial Procedure Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of the specific Florida Standard Jury Instruction provided below. Do NOT use any outside knowledge. Your entire analysis MUST be based *only* on the text provided.
+    const { output } = await ai.generate({
+      prompt: `You are a Trial Procedure Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of the specific Florida Standard Jury Instruction provided below. Do NOT use any outside knowledge. Your entire analysis MUST be based *only* on the text provided.
 
 Parse the provided text into a practical format for a patrol officer focused on case building. The most important part is the 'elementsToProve' section; for each legal element, you must derive a list of practical, actionable steps an officer should take to gather evidence for that specific element.
 
@@ -58,9 +64,13 @@ Related Statute: ${instructionData.relatedStatute}
 Full Text:
 ${instructionData.fullText}
 --- END OF JURY INSTRUCTION TO ANALYZE ---`,
-    output: {
-      schema: AnalyzeInstructionOutputSchema,
-    },
-  });
-  return output;
-}
+      output: {
+        schema: AnalyzeInstructionOutputSchema,
+      },
+    });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
+    return output;
+  }
+);

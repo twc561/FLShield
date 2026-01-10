@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { 
   FileCheck, 
-  ShieldAlert, 
   Camera, 
   Lock, 
   AlertTriangle,

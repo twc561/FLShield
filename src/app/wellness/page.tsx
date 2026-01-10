@@ -24,7 +24,7 @@ import { decompressionSessions } from "@/data/officer-wellness-rights/decompress
 import { wellnessResources } from "@/data/officer-wellness-rights/wellness-resources"
 import Link from "next/link"
 
-import { LifeBuoy, Zap, Shield, PiggyBank, Users, Loader2, MessageSquare, Headphones, Building, RefreshCw } from "lucide-react"
+import { LifeBuoy, Loader2, MessageSquare, Headphones, Building, RefreshCw } from "lucide-react"
 
 export default function OfficerWellnessPage() {
   const [dailyTip, setDailyTip] = useState<GenerateWellnessTipOutput | null>(null)

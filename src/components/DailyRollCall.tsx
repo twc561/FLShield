@@ -63,7 +63,7 @@ export function DailyRollCall({ className }: DailyRollCallProps) {
         <CardContent className="p-6">
           <div className="flex items-center justify-center space-x-2">
             <Clock className="h-5 w-5 animate-spin" />
-            <span>Loading today's briefing...</span>
+            <span>Loading today&apos;s briefing...</span>
           </div>
         </CardContent>
       </Card>

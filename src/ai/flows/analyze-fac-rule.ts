@@ -33,14 +33,24 @@ const AnalyzeFacRuleOutputSchema = z.object({
 export type AnalyzeFacRuleOutput = z.infer<typeof AnalyzeFacRuleOutputSchema>;
 
 
-export async function analyzeFacRule(input: AnalyzeFacRuleInput): Promise<AnalyzeFacRuleOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are a Regulatory Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific rule from the Florida Administrative Code. For the given ID, retrieve the full text and then parse it into a practical format for a patrol officer. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the following schema.
+export const analyzeFacRule = ai.defineFlow(
+  {
+    name: 'analyzeFacRule',
+    inputSchema: AnalyzeFacRuleInputSchema,
+    outputSchema: AnalyzeFacRuleOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are a Regulatory Analyst AI for Florida Law Enforcement. Your task is to provide a detailed, structured analysis of a specific rule from the Florida Administrative Code. For the given ID, retrieve the full text and then parse it into a practical format for a patrol officer. Return your analysis ONLY as a single, well-formed JSON object adhering strictly to the following schema.
 
 F.A.C. Rule ID: ${input.ruleId}`,
-    output: {
-      schema: AnalyzeFacRuleOutputSchema,
-    },
-  });
-  return output;
-}
+      output: {
+        schema: AnalyzeFacRuleOutputSchema,
+      },
+    });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
+    return output;
+  }
+);

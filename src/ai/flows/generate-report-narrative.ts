@@ -21,11 +21,15 @@ const GenerateReportNarrativeOutputSchema = z.object({
 });
 export type GenerateReportNarrativeOutput = z.infer<typeof GenerateReportNarrativeOutputSchema>;
 
-export async function generateReportNarrative(
-  input: GenerateReportNarrativeInput
-): Promise<GenerateReportNarrativeOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are an AI assistant for a Florida Law Enforcement Officer. Your task is to transform a set of informal, rough notes into a formal, structured, and professional incident report narrative suitable for an official police report. Write in the first person ("I"). Use clear, objective, and professional language. The narrative must be chronological and easy to follow.
+export const generateReportNarrative = ai.defineFlow(
+  {
+    name: 'generateReportNarrative',
+    inputSchema: GenerateReportNarrativeInputSchema,
+    outputSchema: GenerateReportNarrativeOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are an AI assistant for a Florida Law Enforcement Officer. Your task is to transform a set of informal, rough notes into a formal, structured, and professional incident report narrative suitable for an official police report. Write in the first person ("I"). Use clear, objective, and professional language. The narrative must be chronological and easy to follow.
 
 CRITICAL INSTRUCTIONS:
 - Do NOT invent facts or details not present in the notes.
@@ -41,9 +45,13 @@ ${input.notes}
 
 Generate the formal incident report narrative now.
 `,
-    output: {
-      schema: GenerateReportNarrativeOutputSchema,
-    },
-  });
-  return output!;
-}
+      output: {
+        schema: GenerateReportNarrativeOutputSchema,
+      },
+    });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
+    return output;
+  }
+);

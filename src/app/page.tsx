@@ -1,12 +1,11 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, User, Building } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { MarketingHeader } from '@/components/MarketingHeader'
 import { useToast } from '@/hooks/use-toast'
@@ -22,7 +21,6 @@ const PlayButton = () => (
 );
 
 export default function LandingPage() {
-  const router = useRouter()
   const { toast } = useToast()
 
   useEffect(() => {
@@ -58,7 +56,7 @@ export default function LandingPage() {
         <section className="text-center py-20 sm:py-24">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
-              The Digital FTO In Every Officer's Pocket
+              The Digital FTO In Every Officer&apos;s Pocket
             </h2>
             <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
               An AI-powered mobile application designed to enhance officer safety, improve in-field decision-making, and ensure procedural accuracy for Florida law enforcement.

@@ -3,14 +3,13 @@
 
 import * as React from "react"
 import Image from "next/image"
-import * as LucideIcons from "lucide-react"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { SubstancePlaceholder } from "@/data/specialized-enforcement/controlled-substances-index"
 import type { AnalyzeSubstanceOutput } from "@/ai/flows/analyze-substance"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -78,7 +77,8 @@ const SubstanceImageGenerator = ({ detail }: { detail: AnalyzeSubstanceOutput })
 };
 
 
-const DetailView = React.memo(({ detail }: { detail: AnalyzeSubstanceOutput }) => (
+const DetailView = React.memo(function DetailView({ detail }: { detail: AnalyzeSubstanceOutput }) {
+  return (
   <div className="space-y-6">
     <SubstanceImageGenerator detail={detail} />
 
@@ -173,7 +173,8 @@ const DetailView = React.memo(({ detail }: { detail: AnalyzeSubstanceOutput }) =
       <AlertDescription>{detail.officerSafetyNotes}</AlertDescription>
     </Alert>
   </div>
-));
+)});
+DetailView.displayName = 'DetailView';
 
 export const ControlledSubstancesClient = React.memo(function ControlledSubstancesClient({
   initialPlaceholders,

@@ -9,14 +9,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { RulePlaceholder, RuleDetail } from "@/data/legal-reference/rules-of-criminal-procedure"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ShieldCheck, Loader2, Sparkles, Gavel } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { analyzeCriminalProcedureRule } from "@/ai/flows/analyze-criminal-procedure-rule"
 
-const DetailView = React.memo(({ detail }: { detail: RuleDetail }) => (
+const DetailView = React.memo(function DetailView({ detail }: { detail: RuleDetail }) {
+  return (
   <div className="space-y-4">
     <h3 className="font-semibold text-lg">Plain Language Summary</h3>
     <p className="text-muted-foreground">{detail.plainLanguageSummary}</p>
@@ -46,7 +46,8 @@ const DetailView = React.memo(({ detail }: { detail: RuleDetail }) => (
       </AccordionItem>
     </Accordion>
   </div>
-));
+)});
+DetailView.displayName = 'DetailView';
 
 export const RulesOfCriminalProcedureClient = React.memo(function RulesOfCriminalProcedureClient({
   initialPlaceholders,
@@ -96,7 +97,7 @@ export const RulesOfCriminalProcedureClient = React.memo(function RulesOfCrimina
             <h2 className="text-lg font-bold tracking-tight my-4 px-1">{category}</h2>
             <Accordion type="single" collapsible className="w-full space-y-2" value={activeItem} onValueChange={handleAccordionChange}>
               {groupedPlaceholders[category]?.map(placeholder => {
-                const Icon = (LucideIcons as any)[placeholder.icon] || Gavel;
+                const Icon = (LucideIcons as { [key: string]: React.ElementType })[placeholder.icon] || Gavel;
                 return (
                     <AccordionItem value={placeholder.id} key={placeholder.id} className="border rounded-md bg-card">
                     <AccordionTrigger className="p-4 hover:no-underline">

@@ -2,35 +2,25 @@
 "use client"
 
 import * as React from "react"
-import * as LucideIcons from "lucide-react"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Loader2, Sparkles, Gavel, FileText, AlertTriangle, Search as SearchIcon } from "lucide-react"
+import { Loader2, Sparkles, Gavel, AlertTriangle, Search as SearchIcon } from "lucide-react"
 import type { AnalyzeInstructionOutput as InstructionDetail } from "@/ai/flows/analyze-jury-instruction"
 import { analyzeInstruction } from "@/ai/flows/analyze-jury-instruction"
 import { findJuryInstruction, FindJuryInstructionOutput } from "@/ai/flows/find-jury-instruction";
-import { JuryInstructionIndexItem } from "@/data/legal-reference/jury-instructions-index"
 
 import { Input } from "@/components/ui/input"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Button } from "@/components/ui/button"
 
-const InstructionDetailView = React.memo(({ detail }: { detail: InstructionDetail }) => {
+const InstructionDetailView = React.memo(function InstructionDetailView({ detail }: { detail: InstructionDetail }) {
     if (!detail.id) {
         return (
             <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>Instruction Not Found</AlertTitle>
                 <AlertDescription>
-                    The AI could not locate a specific jury instruction. This may be because it's a non-criminal statute or a complex crime without a standard instruction.
+                    The AI could not locate a specific jury instruction. This may be because it&apos;s a non-criminal statute or a complex crime without a standard instruction.
                 </AlertDescription>
             </Alert>
         )
@@ -47,7 +37,7 @@ const InstructionDetailView = React.memo(({ detail }: { detail: InstructionDetai
           <div className="space-y-4 mt-2">
               {detail.elementsToProve.elements.map((elem, i) => (
                   <div key={i} className="p-3 bg-background/50 rounded-md">
-                      <p className="font-semibold text-foreground/90">Element {i+1}: <span className="text-muted-foreground font-normal italic">"{elem.element}"</span></p>
+                      <p className="font-semibold text-foreground/90">Element {i+1}: <span className="text-muted-foreground font-normal italic">&quot;{elem.element}&quot;</span></p>
                       <p className="text-sm text-foreground/80 mt-2"><strong className="text-accent">Officer Actions:</strong> {elem.officerActions}</p>
                   </div>
               ))}
@@ -74,11 +64,7 @@ const InstructionDetailView = React.memo(({ detail }: { detail: InstructionDetai
 InstructionDetailView.displayName = 'InstructionDetailView';
 
 
-export const JuryInstructionsClient = React.memo(function JuryInstructionsClient({
-  initialInstructions,
-}: {
-  initialInstructions: JuryInstructionIndexItem[];
-}) {
+export const JuryInstructionsClient = React.memo(function JuryInstructionsClient() {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [activeItem, setActiveItem] = React.useState<string | undefined>();
   const [cachedDetails, setCachedDetails] = React.useState<Record<string, InstructionDetail>>({});
@@ -150,7 +136,7 @@ export const JuryInstructionsClient = React.memo(function JuryInstructionsClient
 
         {aiSearchResult && (
             <div>
-                <h2 className="text-lg font-bold tracking-tight my-4 px-1">AI Search Results for "{searchTerm}"</h2>
+                <h2 className="text-lg font-bold tracking-tight my-4 px-1">AI Search Results for &quot;{searchTerm}&quot;</h2>
                 {aiSearchResult.disambiguationOptions && aiSearchResult.disambiguationOptions.length > 0 && (
                      <Accordion type="single" collapsible className="w-full space-y-2" value={activeItem} onValueChange={handleAccordionChange}>
                         {aiSearchResult.disambiguationOptions.map(item => (

@@ -15,7 +15,7 @@ export default function FirstAidGuidePage() {
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Medical Disclaimer</AlertTitle>
         <AlertDescription>
-          This guide is for informational purposes only and is not a substitute for certified medical training or professional medical advice. Always follow your agency's policies and the direction of certified medical personnel.
+          This guide is for informational purposes only and is not a substitute for certified medical training or professional medical advice. Always follow your agency&apos;s policies and the direction of certified medical personnel.
         </AlertDescription>
       </Alert>
     </div>

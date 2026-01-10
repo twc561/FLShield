@@ -1,5 +1,5 @@
-import { gemini15Pro, gemini15Flash, googleAI } from '@genkit-ai/googleai';
-import { genkit, z } from 'genkit';
+import { gemini15Pro, googleAI } from '@genkit-ai/googleai';
+import { genkit } from 'genkit';
 
 const ai = genkit({
   plugins: [

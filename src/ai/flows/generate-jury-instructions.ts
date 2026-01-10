@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview A flow for generating case-specific draft jury instructions.
@@ -33,14 +32,7 @@ const GenerateJuryInstructionsOutputSchema = z.object({
 });
 export type GenerateJuryInstructionsOutput = z.infer<typeof GenerateJuryInstructionsOutputSchema>;
 
-// Define the generation flow
-export async function generateJuryInstructions(input: GenerateJuryInstructionsInput): Promise<GenerateJuryInstructionsOutput> {
-  const prompt = ai.definePrompt(
-    {
-      name: 'juryInstructionGenerator',
-      input: { schema: GenerateJuryInstructionsInputSchema },
-      output: { schema: GenerateJuryInstructionsOutputSchema },
-      prompt: `
+const promptTemplate = `
 1. ROLE AND GOAL
 You are an AI legal assistant with specialized training in drafting clear, accurate, and impartial jury instructions. Your primary goal is to generate a complete set of draft jury instructions based exclusively on the provided case information and established legal principles from the specified jurisdiction. Maintain a formal, neutral, and objective tone throughout.
 
@@ -55,27 +47,27 @@ Generate a full set of jury instructions for the case detailed below. The instru
  * Well-Structured: Organized logically with clear headings, subheadings, and numbered instructions.
 
 4. CORE CASE INFORMATION
- * Case Caption: {{{caseCaption}}}
- * Court: {{{court}}}
- * Case Type: {{{caseType}}}
- * Presiding Judge (if known): {{{presidingJudge}}}
- * Jurisdiction (State or Federal): {{{jurisdiction}}}
+ * Case Caption: ${'{{caseCaption}}'}
+ * Court: ${'{{court}}'}
+ * Case Type: ${'{{caseType}}'}
+ * Presiding Judge (if known): ${'{{presidingJudge}}'}
+ * Jurisdiction (State or Federal): ${'{{jurisdiction}}'}
 
 5. CHARGES / CLAIMS & DEFENSES
  * Prosecution/Plaintiff's Charges/Claims:
-   * {{{charges}}}
+   * ${'{{charges}}'}
  * Defendant's Pleas and Affirmative Defenses:
-   * {{{defenses}}}
+   * ${'{{defenses}}'}
 
 6. KEY LEGAL AND FACTUAL ISSUES
  * Stipulated (Agreed-Upon) Facts:
-   * {{{stipulatedFacts}}}
+   * ${'{{stipulatedFacts}}'}
  * Disputed Factual Issues for the Jury to Decide:
-   * {{{disputedIssues}}}
+   * ${'{{disputedIssues}}'}
  * Prosecution/Plaintiff's Theory of the Case (Brief Summary):
-   * {{{prosecutionTheory}}}
+   * ${'{{prosecutionTheory}}'}
  * Defendant's Theory of the Case (Brief Summary):
-   * {{{defendantTheory}}}
+   * ${'{{defendantTheory}}'}
 
 7. BASIS FOR INSTRUCTIONS & LEGAL SOURCES ([CRITICAL FOR ACCURACY])
  * Primary Source for Instructions: Generate all instructions based on the official Pattern Jury Instructions for the specified jurisdiction.
@@ -83,16 +75,16 @@ Generate a full set of jury instructions for the case detailed below. The instru
    * For Florida Civil Cases, use the Florida Standard Jury Instructions in Civil Cases.
    * For Federal Cases, specify the relevant Circuit's pattern instructions (e.g., Eleventh Circuit Pattern Jury Instructions).
  * Controlling Statutes: Cite and use the precise language from the following controlling statutes:
-   * {{{controllingStatutes}}}
+   * ${'{{controllingStatutes}}'}
  * Key Case Law (if applicable):
-   * {{{keyCaseLaw}}}
+   * ${'{{keyCaseLaw}}'}
 
 8. STRUCTURE & FORMATTING REQUIREMENTS
 Generate the instructions using the following structure. Each numbered item should be a separate instruction.
  * Part A: Preliminary & General Instructions
    * Introduction and Duties of the Jury
    * Presumption of Innocence
-   * Burden of Proof (Specify standard: {{{burdenOfProof}}})
+   * Burden of Proof (Specify standard: ${'{{burdenOfProof}}'})
    * Definitions of Direct and Circumstantial Evidence
    * Instructions on Assessing Witness Credibility
  * Part B: Substantive Law Instructions
@@ -110,17 +102,31 @@ Generate the instructions using the following structure. Each numbered item shou
  * DO NOT generate any instruction that is not based on the specified jurisdiction's pattern instructions or controlling law, per the Primary Mandate.
  * DO NOT use biased or argumentative language. The tone must remain strictly neutral and educational.
  * CITE YOUR SOURCES: For each substantive law instruction (Part B), add a footnote indicating the pattern instruction number or statute it is based on (e.g., Fla. Std. Jury Instr. (Crim.) 13.1).
-`,
-    },
-    async (input) => {
-      const { output } = await ai.generate({
-        prompt: input,
-        output: { schema: GenerateJuryInstructionsOutputSchema },
-      });
-      return output;
-    }
-  );
+`;
 
-  const result = await prompt(input);
-  return { juryInstructions: result.juryInstructions };
-}
+export const generateJuryInstructions = ai.defineFlow(
+  {
+    name: 'juryInstructionGenerator',
+    inputSchema: GenerateJuryInstructionsInputSchema,
+    outputSchema: GenerateJuryInstructionsOutputSchema,
+  },
+  async (input) => {
+    let prompt = promptTemplate;
+    for (const key in input) {
+        if (Object.prototype.hasOwnProperty.call(input, key)) {
+            const value = input[key as keyof typeof input];
+            prompt = prompt.replace(new RegExp(`\\$\\{'\\{\\{${key}\\}\\}'}`, 'g'), String(value || ''));
+        }
+    }
+
+    const { output } = await ai.generate({
+      prompt: prompt,
+      output: { schema: GenerateJuryInstructionsOutputSchema },
+    });
+
+    if (!output) {
+        throw new Error("AI failed to generate a response.");
+    }
+    return output;
+  }
+);

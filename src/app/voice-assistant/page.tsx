@@ -2,7 +2,7 @@
 import { PageHeader } from "@/components/PageHeader";
 import { VoiceAssistantClient } from "./Client";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Mic, ShieldAlert } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 
 export default function VoiceAssistantPage() {
   return (

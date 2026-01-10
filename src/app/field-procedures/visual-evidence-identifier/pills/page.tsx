@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef } from 'react';
@@ -7,48 +6,124 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, Sparkles, Camera, Pill as PillIcon, AlertTriangle, Info, ShieldAlert } from 'lucide-react';
-import { identifyPillFromImage, type IdentifyPillOutput } from '@/ai/flows/identify-pill';
+import { Loader2, Sparkles, Camera, Pill as PillIcon, AlertTriangle, Info, ShieldAlert, Microscope, Scale, BookUser } from 'lucide-react';
+import { identifyPill, type IdentifyPillOutput } from '@/ai/flows/identify-pill';
 import Image from 'next/image';
 
 function PillResult({ result }: { result: IdentifyPillOutput }) {
-  if (result.drugName === "Unknown") {
+  const { identification, disclaimer } = result;
+
+  if (identification.primaryIdentification.substanceName.startsWith("Unable to identify")) {
     return (
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Unable to Identify</AlertTitle>
         <AlertDescription>
-            {result.keyWarnings || "The AI could not confidently identify the substance from the provided image. This could be due to a poor quality image, a non-standard pill, or an illicit substance. Do not ingest."}
+          {identification.primaryIdentification.reasoning || "The AI could not confidently identify the substance from the provided image. This could be due to a poor quality image, a non-standard pill, or an illicit substance. Do not ingest."}
         </AlertDescription>
       </Alert>
     )
   }
+
+  const {
+    primaryIdentification,
+    alternativeIdentifications,
+    physicalCharacteristics,
+    legalClassification,
+    fieldSafetyNotes,
+    recommendedActions,
+    testingRecommendations,
+    warningFlags
+  } = identification;
 
   return (
     <Card className="animate-fade-in-up">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
             <PillIcon className="h-6 w-6 text-primary"/>
-            {result.drugName}
+            {primaryIdentification.substanceName}
         </CardTitle>
         <CardDescription>
-            Visual Description: {result.visualDescription}
+            Confidence: {primaryIdentification.confidence}
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
+        <div className="space-y-2">
+            <h3 className="font-semibold text-foreground/90">Reasoning</h3>
+            <p className="text-muted-foreground">{primaryIdentification.reasoning}</p>
+        </div>
+        {warningFlags.length > 0 && (
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Warning Flags</AlertTitle>
+            <AlertDescription>
+              <ul className="list-disc pl-5">
+                {warningFlags.map((flag, i) => <li key={i}>{flag}</li>)}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <h3 className="font-semibold text-foreground/90 mb-2">Physical Characteristics</h3>
+                <ul className="list-disc pl-5 text-muted-foreground space-y-1">
+                    <li><strong>Shape:</strong> {physicalCharacteristics.shape}</li>
+                    <li><strong>Color:</strong> {physicalCharacteristics.color}</li>
+                    <li><strong>Size:</strong> {physicalCharacteristics.size}</li>
+                    <li><strong>Markings:</strong> {physicalCharacteristics.markings}</li>
+                    <li><strong>Texture:</strong> {physicalCharacteristics.texture}</li>
+                </ul>
+            </div>
+            <div>
+                <h3 className="font-semibold text-foreground/90 mb-2 flex items-center gap-2"><Scale /> Legal Classification</h3>
+                <ul className="list-disc pl-5 text-muted-foreground space-y-1">
+                    <li><strong>Controlled:</strong> {legalClassification.controlledSubstance ? 'Yes' : 'No'}</li>
+                    {legalClassification.schedule && <li><strong>Schedule:</strong> {legalClassification.schedule}</li>}
+                    {legalClassification.flStatute && <li><strong>FL Statute:</strong> {legalClassification.flStatute}</li>}
+                </ul>
+            </div>
+        </div>
+
+        {alternativeIdentifications.length > 0 && (
+          <div>
+            <h3 className="font-semibold text-foreground/90 mb-2">Alternative Identifications</h3>
+            <div className="space-y-2">
+              {alternativeIdentifications.map((alt, i) => (
+                <div key={i} className="p-2 border rounded-md">
+                  <p className="font-semibold">{alt.substanceName} <span className="text-muted-foreground font-normal">(Confidence: {alt.confidence})</span></p>
+                  <p className="text-sm text-muted-foreground">{alt.reasoning}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div>
-            <h3 className="font-semibold text-foreground/90">Primary Use</h3>
-            <p className="text-muted-foreground">{result.primaryUse}</p>
+            <h3 className="font-semibold text-foreground/90 mb-2 flex items-center gap-2"><ShieldAlert /> Field Safety Notes</h3>
+            <ul className="list-disc pl-5 text-muted-foreground space-y-1">
+                {fieldSafetyNotes.map((note, i) => <li key={i}>{note}</li>)}
+            </ul>
         </div>
         <div>
-            <h3 className="font-semibold text-foreground/90">Key Warnings / Side Effects</h3>
-            <p className="text-muted-foreground">{result.keyWarnings}</p>
+            <h3 className="font-semibold text-foreground/90 mb-2 flex items-center gap-2"><Microscope /> Testing Recommendations</h3>
+            <ul className="list-disc pl-5 text-muted-foreground space-y-1">
+                {testingRecommendations.fieldTest && <li><strong>Field Test:</strong> {testingRecommendations.fieldTest}</li>}
+                <li><strong>Lab Analysis:</strong> {testingRecommendations.labAnalysis ? 'Recommended' : 'Not Recommended'}</li>
+                <li><strong>Preservation:</strong> {testingRecommendations.preservationInstructions}</li>
+            </ul>
         </div>
+        <div>
+            <h3 className="font-semibold text-foreground/90 mb-2 flex items-center gap-2"><BookUser /> Recommended Actions</h3>
+            <ul className="list-disc pl-5 text-muted-foreground space-y-1">
+                {recommendedActions.map((action, i) => <li key={i}>{action}</li>)}
+            </ul>
+        </div>
+
         <Alert>
             <Info className="h-4 w-4"/>
-            <AlertTitle>Source Information</AlertTitle>
+            <AlertTitle>Disclaimer</AlertTitle>
             <AlertDescription>
-                This information was summarized by AI from publicly available data from sources like Drugs.com, WebMD, and the NLM. Always confirm with official sources.
+                {disclaimer}
             </AlertDescription>
         </Alert>
       </CardContent>
@@ -109,8 +184,9 @@ export default function PillIdentifierPage() {
     reader.readAsDataURL(imageFile);
     reader.onloadend = async () => {
       const base64data = reader.result as string;
+      const base64Image = base64data.split(',')[1];
       try {
-        const response = await identifyPillFromImage({ imageDataUri: base64data });
+        const response = await identifyPill({ imageBase64: base64Image });
         setResult(response);
       } catch (err) {
         console.error('Pill Identification Error:', err);

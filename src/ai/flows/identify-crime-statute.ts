@@ -22,9 +22,15 @@ const IdentifyCrimeStatuteOutputSchema = z.object({
 });
 export type IdentifyCrimeStatuteOutput = z.infer<typeof IdentifyCrimeStatuteOutputSchema>;
 
-export async function identifyCrimeStatute(input: IdentifyCrimeStatuteInput): Promise<IdentifyCrimeStatuteOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are an AI paralegal for Florida law. Your task is to identify the single most probable Florida Statute number for the described crime.
+export const identifyCrimeStatute = ai.defineFlow(
+  {
+    name: 'identifyCrimeStatute',
+    inputSchema: IdentifyCrimeStatuteInputSchema,
+    outputSchema: IdentifyCrimeStatuteOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are an AI paralegal for Florida law. Your task is to identify the single most probable Florida Statute number for the described crime.
 
 Follow these steps:
 1.  **Analyze the user's crime description:** Break down the user's query into its core components (e.g., for "Man hit another man with a bat," the components are unwanted touching, use of a weapon, and causing injury).
@@ -33,9 +39,10 @@ Follow these steps:
 4.  **Provide Output:** Return the statute number, the common crime name, and a brief justification for your choice in the required JSON format.
 
 Crime Description: ${input.crimeDescription}`,
-    output: {
-      schema: IdentifyCrimeStatuteOutputSchema,
-    },
-  });
-  return output!;
-}
+      output: {
+        schema: IdentifyCrimeStatuteOutputSchema,
+      },
+    });
+    return output!;
+  }
+);

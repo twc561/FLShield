@@ -66,7 +66,7 @@ export default function AgencyIntelligencePage() {
                             The Public Records Intelligence Engine for Law Enforcement.
                         </h2>
                         <p className="mt-4 max-w-3xl mx-auto text-lg text-muted-foreground">
-                           Shield FL transforms your agency's public-facing policies and manuals into an interactive knowledge base. Our AI synthesizes this with Florida Statutes and case law to give your officers instant, defensible answers in the field.
+                           Shield FL transforms your agency&apos;s public-facing policies and manuals into an interactive knowledge base. Our AI synthesizes this with Florida Statutes and case law to give your officers instant, defensible answers in the field.
                         </p>
                         <div className="mt-8">
                             <Button asChild size="lg">
@@ -81,16 +81,16 @@ export default function AgencyIntelligencePage() {
                     <section className="max-w-4xl mx-auto text-center">
                         <h2 className="text-3xl font-bold tracking-tight">The Challenge: The Gap Between Policy and Practice</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                           Your Use of Force policy, your pursuit procedures, your response protocols—they are the backbone of professional law enforcement. But in a split-second, high-stress situation, how do you ensure your team's actions are not just lawful, but perfectly aligned with your agency's specific standards? This is the gap Shield FL was built to close.
+                           Your Use of Force policy, your pursuit procedures, your response protocols—they are the backbone of professional law enforcement. But in a split-second, high-stress situation, how do you ensure your team&apos;s actions are not just lawful, but perfectly aligned with your agency&apos;s specific standards? This is the gap Shield FL was built to close.
                         </p>
                     </section>
 
                     {/* The Solution Section */}
                     <section>
                         <div className="max-w-4xl mx-auto text-center">
-                            <h2 className="text-3xl font-bold tracking-tight">The Solution: Your Agency's Private Intelligence Engine</h2>
+                            <h2 className="text-3xl font-bold tracking-tight">The Solution: Your Agency&apos;s Private Intelligence Engine</h2>
                             <p className="mt-4 text-lg text-muted-foreground">
-                                Think of Shield FL as a secure, private AI research partner that has read, indexed, and understood your entire policy manual. It cross-references this with state law and relevant case law in seconds, providing officers with the 'why' behind their training, precisely when they need it most.
+                                Think of Shield FL as a secure, private AI research partner that has read, indexed, and understood your entire policy manual. It cross-references this with state law and relevant case law in seconds, providing officers with the &apos;why&apos; behind their training, precisely when they need it most.
                             </p>
                         </div>
 
@@ -104,18 +104,18 @@ export default function AgencyIntelligencePage() {
                                 />
                                 <HowItWorksStep 
                                     step={2} 
-                                    title="Building Your Agency's Knowledge Core" 
-                                    description="Our system doesn't just 'read' your policies; it ingests and understands them. We use a process called Retrieval-Augmented Generation (RAG) to convert your manuals into a sophisticated, private knowledge core. Every policy, procedure, and guideline is indexed for situational queries."
+                                    title="Building Your Agency&apos;s Knowledge Core"
+                                    description="Our system doesn&apos;t just &apos;read&apos; your policies; it ingests and understands them. We use a process called Retrieval-Augmented Generation (RAG) to convert your manuals into a sophisticated, private knowledge core. Every policy, procedure, and guideline is indexed for situational queries."
                                 />
                                 <HowItWorksStep 
                                     step={3} 
                                     title="Multi-Source Synthesis at Query Time" 
-                                    description="When an officer asks a question—'Can I use a PIT maneuver on this vehicle?'—the engine instantly searches multiple sources. It retrieves the most relevant information from 1) Your Department's Pursuit Policy, 2) Florida Statutes, and 3) Controlling case law like Scott v. Harris."
+                                    description="When an officer asks a question—&apos;Can I use a PIT maneuver on this vehicle?&apos;—the engine instantly searches multiple sources. It retrieves the most relevant information from 1) Your Department&apos;s Pursuit Policy, 2) Florida Statutes, and 3) Controlling case law like Scott v. Harris."
                                 />
                                 <HowItWorksStep 
                                     step={4} 
                                     title="The Prioritized, Comprehensive Answer" 
-                                    description="This is the critical step. The retrieved data is fed to our advanced AI with a unique instruction: deliver a single, comprehensive answer that prioritizes your agency's policy above all else. The result is a legally sound and department-compliant recommendation, delivered in seconds."
+                                    description="This is the critical step. The retrieved data is fed to our advanced AI with a unique instruction: deliver a single, comprehensive answer that prioritizes your agency&apos;s policy above all else. The result is a legally sound and department-compliant recommendation, delivered in seconds."
                                 />
                             </div>
                         </div>
@@ -145,7 +145,7 @@ export default function AgencyIntelligencePage() {
                             <BenefitCard 
                                 icon={FileText}
                                 title="Streamline Incident Reporting"
-                                description="Officers can use the AI's output, which cites specific policies and statutes, to help draft more accurate, detailed, and defensible incident reports."
+                                description="Officers can use the AI&apos;s output, which cites specific policies and statutes, to help draft more accurate, detailed, and defensible incident reports."
                             />
                              <BenefitCard 
                                 icon={DatabaseZap}
@@ -167,7 +167,7 @@ export default function AgencyIntelligencePage() {
                         </div>
                         <h2 className="text-3xl font-bold tracking-tight">Security & Trust: Our Foundational Commitment</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                           We understand the sensitive nature of law enforcement technology. Shield FL is built on Google's secure cloud infrastructure, leveraging best-in-class security protocols including end-to-end encryption and role-based access controls. Because we only handle public record information, we provide enterprise-grade security without the high cost and complexity of a CJIS-audited environment, making advanced AI accessible to more agencies.
+                           We understand the sensitive nature of law enforcement technology. Shield FL is built on Google&apos;s secure cloud infrastructure, leveraging best-in-class security protocols including end-to-end encryption and role-based access controls. Because we only handle public record information, we provide enterprise-grade security without the high cost and complexity of a CJIS-audited environment, making advanced AI accessible to more agencies.
                         </p>
                     </section>
                     
@@ -183,7 +183,7 @@ export default function AgencyIntelligencePage() {
                             </div>
                             <div className="text-center">
                                 <h3 className="font-bold text-lg">2. Public Document Link</h3>
-                                <p className="text-sm text-muted-foreground mt-1">You provide a public link to your agency's policy manuals. Our system securely ingests the data.</p>
+                                <p className="text-sm text-muted-foreground mt-1">You provide a public link to your agency&apos;s policy manuals. Our system securely ingests the data.</p>
                             </div>
                             <div className="text-center">
                                 <h3 className="font-bold text-lg">3. Go-Live & Training</h3>
@@ -198,7 +198,7 @@ export default function AgencyIntelligencePage() {
                             <CardHeader className="text-center p-6">
                                 <CardTitle className="text-2xl">Equip Your Officers with Confidence. Empower Your Agency with Shield FL.</CardTitle>
                                 <CardContent className="p-0 pt-4">
-                                    <p className="text-muted-foreground">Give your team the tool they need to make the right call, every time. Contact us today to schedule a personalized demo and learn how Shield FL can be tailored to your agency's specific needs.</p>
+                                    <p className="text-muted-foreground">Give your team the tool they need to make the right call, every time. Contact us today to schedule a personalized demo and learn how Shield FL can be tailored to your agency&apos;s specific needs.</p>
                                     <form onSubmit={handleSubmit} className="mt-6 space-y-4 text-left">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div className="space-y-1.5">

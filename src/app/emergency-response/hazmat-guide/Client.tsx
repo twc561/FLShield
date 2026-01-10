@@ -4,7 +4,6 @@
 import * as React from "react"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
-import * as LucideIcons from "lucide-react"
 import {
   Card,
   CardContent,
@@ -73,7 +72,8 @@ const PlacardImageGenerator = ({ detail }: { detail: AnalyzeHazmatPlacardOutput 
             </CardContent>
         </Card>
     );
-}
+};
+PlacardImageGenerator.displayName = 'PlacardImageGenerator';
 
 const DetailView = React.memo(({ detail }: { detail: AnalyzeHazmatPlacardOutput }) => {
     const Icon = classIcons[detail.placardInfo.className.charAt(6)] || ShieldAlert;
@@ -148,7 +148,8 @@ const DetailView = React.memo(({ detail }: { detail: AnalyzeHazmatPlacardOutput 
             </Card>
         </div>
     )
-})
+});
+DetailView.displayName = 'DetailView';
 
 export const HazmatClient = React.memo(function HazmatClient({
     hazmatClasses

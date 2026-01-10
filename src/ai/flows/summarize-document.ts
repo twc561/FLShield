@@ -8,8 +8,8 @@
  * - SummarizeDocumentOutput - The return type for the summarizeDocument function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'zod';
 
 const SummarizeDocumentInputSchema = z.object({
   documentText: z.string().describe('The text content of the document to summarize.'),
@@ -21,14 +21,24 @@ const SummarizeDocumentOutputSchema = z.object({
 });
 export type SummarizeDocumentOutput = z.infer<typeof SummarizeDocumentOutputSchema>;
 
-export async function summarizeDocument(input: SummarizeDocumentInput): Promise<SummarizeDocumentOutput> {
-  const { output } = await ai.generate({
-    prompt: `Summarize the following document, extracting the key information and insights:
+export const summarizeDocument = ai.defineFlow(
+  {
+    name: 'summarizeDocument',
+    inputSchema: SummarizeDocumentInputSchema,
+    outputSchema: SummarizeDocumentOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `Summarize the following document, extracting the key information and insights:
 
 ${input.documentText}`,
-    output: {
-      schema: SummarizeDocumentOutputSchema,
-    },
-  });
-  return output;
-}
+      output: {
+        schema: SummarizeDocumentOutputSchema,
+      },
+    });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
+    return output;
+  }
+);

@@ -27,21 +27,21 @@ export default function RequestDemoPage() {
                   <Clock className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Instant Answers</h3>
-                <p className="text-muted-foreground">No more radio calls asking "What's the statute for..." Get immediate, accurate responses in seconds.</p>
+                <p className="text-muted-foreground">No more radio calls asking &quot;What&apos;s the statute for...&quot; Get immediate, accurate responses in seconds.</p>
               </div>
               <div className="text-center">
                 <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <Shield className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Defensible Decisions</h3>
-                <p className="text-muted-foreground">Every response is backed by Florida Statutes, case law, and your agency's policies.</p>
+                <p className="text-muted-foreground">Every response is backed by Florida Statutes, case law, and your agency&apos;s policies.</p>
               </div>
               <div className="text-center">
                 <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <Users className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Agency-Specific</h3>
-                <p className="text-muted-foreground">Tailored to your department's policies, procedures, and local ordinances.</p>
+                <p className="text-muted-foreground">Tailored to your department&apos;s policies, procedures, and local ordinances.</p>
               </div>
             </div>
           </div>
@@ -52,14 +52,14 @@ export default function RequestDemoPage() {
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl">Ready to See Shield FL in Action?</CardTitle>
                 <CardDescription className="text-lg">
-                  We'll show you exactly how Shield FL integrates with your agency's operations and policies.
+                  We&apos;ll show you exactly how Shield FL integrates with your agency&apos;s operations and policies.
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center space-y-6">
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 text-left">
                     <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                    <span>Personalized demonstration using your agency's actual policies</span>
+                    <span>Personalized demonstration using your agency&apos;s actual policies</span>
                   </div>
                   <div className="flex items-center gap-3 text-left">
                     <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />

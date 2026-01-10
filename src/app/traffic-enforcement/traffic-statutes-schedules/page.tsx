@@ -3,7 +3,6 @@
 
 import { PageHeader } from "@/components/PageHeader"
 import { trafficViolationsIndex, trafficViolationsFullData } from "@/data/traffic-enforcement/traffic-violations"
-import { TrafficStatutesClient } from "./Client"
 import { Suspense } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
 import dynamic from 'next/dynamic';

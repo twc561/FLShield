@@ -11,7 +11,6 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -33,13 +32,11 @@ const Section = ({
   icon: Icon,
   children,
   value,
-  defaultOpen = false
 }: {
   title: string;
   icon: React.ElementType;
   children: React.ReactNode;
   value: string;
-  defaultOpen?: boolean;
 }) => (
   <AccordionItem value={value} className="border-b-0">
     <Card>

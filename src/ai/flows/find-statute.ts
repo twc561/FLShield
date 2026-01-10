@@ -50,11 +50,15 @@ const FindStatuteOutputSchema = z.object({
 });
 export type FindStatuteOutput = z.infer<typeof FindStatuteOutputSchema>;
 
-export async function findStatute(
-  input: FindStatuteInput
-): Promise<FindStatuteOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are an expert paralegal specializing in Florida law, with deep knowledge of the Florida Statutes. Your task is to find the single most relevant Florida Statute based on a user's query. The user is a law enforcement officer, so practical summaries and examples are crucial.
+export const findStatute = ai.defineFlow(
+  {
+    name: 'findStatute',
+    inputSchema: FindStatuteInputSchema,
+    outputSchema: FindStatuteOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are an expert paralegal specializing in Florida law, with deep knowledge of the Florida Statutes. Your task is to find the single most relevant Florida Statute based on a user's query. The user is a law enforcement officer, so practical summaries and examples are crucial.
 
 Your search should be broad and conceptual. Interpret the user's query loosely to find the most practically relevant statute, not just a literal keyword match. Handle variations in wording, such as plurals and synonyms. For example, a search for "debit card stolen and used" or "credit card fraud" should lead to the most appropriate statute regarding fraudulent use of financial instruments (likely in Chapter 817). A search for "knives" should find statutes about weapons, and "fight" should consider Assault, Battery, and Affray to return the most fitting statute.
 
@@ -68,18 +72,22 @@ CRITICAL RULE: Every key in the required JSON schema MUST be present in your res
 - The 'description' field MUST be a practical summary tailored for a law enforcement officer. It should explain what the statute means, what constitutes a violation, and key points for an officer to know. DO NOT provide a dry, official summary here.
 - If the statute defines a crime, you must populate the 'elementsOfTheCrime' field with a clear, concise list of the elements that must be proven.
 - If you cannot find a single, highly relevant statute, return "N/A" for all fields. Do not guess or invent statutes.`,
-    output: {
-      schema: FindStatuteOutputSchema,
-    },
-    config: {
-      model: 'gemini-1.5-pro',
-      generationConfig: {
-        maxOutputTokens: 8192,
-        temperature: 0.3,
-        topP: 0.95,
-        topK: 40,
+      output: {
+        schema: FindStatuteOutputSchema,
+      },
+      config: {
+        model: 'gemini-1.5-pro',
+        generationConfig: {
+          maxOutputTokens: 8192,
+          temperature: 0.3,
+          topP: 0.95,
+          topK: 40,
+        }
       }
+    });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
     }
-  });
-  return output!;
-}
+    return output;
+  }
+);

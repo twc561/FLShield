@@ -22,6 +22,7 @@ export default function FieldNotesPage() {
     }
   }, [])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSave = useCallback(
     debounce((newContent: string) => {
       localStorage.setItem("florida_shield_field_notes", newContent)

@@ -22,11 +22,15 @@ const SummarizeDebriefOutputSchema = z.object({
 });
 export type SummarizeDebriefOutput = z.infer<typeof SummarizeDebriefOutputSchema>;
 
-export async function summarizeDebrief(
-  input: SummarizeDebriefInput
-): Promise<SummarizeDebriefOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are a compassionate AI guide trained in Critical Incident Stress Management principles. Your role is to listen and reflect. Never give advice or say 'I understand.'
+export const summarizeDebrief = ai.defineFlow(
+  {
+    name: 'summarizeDebrief',
+    inputSchema: SummarizeDebriefInputSchema,
+    outputSchema: SummarizeDebriefOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are a compassionate AI guide trained in Critical Incident Stress Management principles. Your role is to listen and reflect. Never give advice or say 'I understand.'
   
   Based on the user's inputs, provide a brief, non-judgmental summary of what they expressed. Then, conclude with the following recommendation verbatim: "Thank you for sharing. Processing these events is a sign of strength. It is strongly recommended that you speak with a member of your agency's peer support team or a mental health professional. Your wellness is a priority."
 
@@ -36,9 +40,13 @@ export async function summarizeDebrief(
 
   Generate the summary and recommendation now.
   `,
-    output: {
-      schema: SummarizeDebriefOutputSchema,
-    },
-  });
-  return { summary: output!.summary };
-}
+      output: {
+        schema: SummarizeDebriefOutputSchema,
+      },
+    });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
+    return { summary: output.summary };
+  }
+);

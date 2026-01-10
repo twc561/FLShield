@@ -365,7 +365,7 @@ export const StatuteClient = memo(function StatuteClient({
                 <BookOpen className="mx-auto h-12 w-12 text-muted-foreground" />
                 <h3 className="mt-4 text-lg font-medium">No Statutes Found</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                Your search for "{searchTerm}" did not match any local or
+                Your search for &quot;{searchTerm}&quot; did not match any local or
                 AI-found statutes.
                 </p>
             </div>

@@ -70,7 +70,7 @@ export const RightsReferenceClient = React.memo(function RightsReferenceClient({
                         <h3 className="font-semibold mb-2">Key Case</h3>
                         <div className="p-3 bg-muted/50 rounded-md">
                             <p className="font-semibold">{item.keyCase.caseName} <span className="text-muted-foreground font-normal">({item.keyCase.citation})</span></p>
-                            <p className="text-sm text-muted-foreground mt-1 italic">"{item.keyCase.holding}"</p>
+                            <p className="text-sm text-muted-foreground mt-1 italic">&quot;{item.keyCase.holding}&quot;</p>
                         </div>
                     </div>
                 </div>

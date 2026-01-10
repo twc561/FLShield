@@ -23,7 +23,13 @@ const GenerateSubstanceImageOutputSchema = z.object({
 });
 export type GenerateSubstanceImageOutput = z.infer<typeof GenerateSubstanceImageOutputSchema>;
 
-export async function generateSubstanceImage(input: GenerateSubstanceImageInput): Promise<GenerateSubstanceImageOutput> {
+export const generateSubstanceImage = ai.defineFlow(
+  {
+    name: 'generateSubstanceImage',
+    inputSchema: GenerateSubstanceImageInputSchema,
+    outputSchema: GenerateSubstanceImageOutputSchema,
+  },
+  async (input) => {
     const promptText = `
         1. Visual Style:
          * Primary Style: Clinical, photorealistic, macro detail.
@@ -62,4 +68,5 @@ export async function generateSubstanceImage(input: GenerateSubstanceImageInput)
     }
 
     return { imageUrl: media.url };
-}
+  }
+);

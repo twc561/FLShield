@@ -15,7 +15,7 @@ export const PobrClient = React.memo(function PobrClient({ data }: { data: PobrR
   return (
     <Accordion type="single" collapsible className="w-full space-y-4" defaultValue={data[0].id}>
       {data.map((item, index) => {
-        const Icon = (LucideIcons as any)[item.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle
+        const Icon = (LucideIcons as { [key: string]: React.ElementType })[item.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle
         return (
           <AccordionItem value={item.id} key={item.id} className="border-b-0">
             <Card 

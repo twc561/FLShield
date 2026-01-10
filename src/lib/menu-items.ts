@@ -1,7 +1,7 @@
 
 
 import * as React from "react"
-import { AlertCircle, Biohazard, Bot, BrainCircuit, Camera, Car, ClipboardEdit, Dog, FileCheck, FileText, Fish, FlaskConical, Gavel, GraduationCap, Heart, HeartPulse, Home, Languages, ListChecks, Lock, MessageSquare, Mic, Newspaper, Scale, Search, ShieldAlert, ShieldCheck, ShieldQuestion, Siren, Stethoscope, Truck, Users, Wind, Footprints, CreditCard, Building, Download } from 'lucide-react'
+import { AlertCircle, Biohazard, Bot, BrainCircuit, Camera, Car, ClipboardEdit, Dog, FileCheck, FileText, Fish, FlaskConical, Gavel, GraduationCap, Heart, HeartPulse, Home, Languages, ListChecks, Lock, MessageSquare, Mic, Newspaper, Scale, Search, ShieldAlert, ShieldCheck, ShieldQuestion, Siren, Stethoscope, Truck, Users, Wind, CreditCard, Building, Download } from 'lucide-react'
 
 type SubMenuItem = {
   href: string

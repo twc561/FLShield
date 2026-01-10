@@ -3,7 +3,7 @@ import { MarketingHeader } from "@/components/MarketingHeader";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ShieldAlert, Database, Fingerprint, FileText, CheckCircle } from "lucide-react";
+import { ShieldAlert, Database, Fingerprint, CheckCircle } from "lucide-react";
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 
@@ -68,7 +68,7 @@ export default function CjisCompliancePage() {
                                      <ul className="list-disc pl-5 mt-2 space-y-1 text-muted-foreground">
                                         <li>Published Florida Statutes</li>
                                         <li>Publicly released court opinions (case law)</li>
-                                        <li>Your agency's policy manuals, which are subject to public records requests</li>
+                                        <li>Your agency&apos;s policy manuals, which are subject to public records requests</li>
                                     </ul>
                                     <p className="text-muted-foreground mt-2">Because we do not handle the protected data that CJIS governs, the CJIS Security Policy is not applicable to our service. This is a deliberate design choice that provides significant advantages: it allows us to offer a powerful, affordable, and rapidly deployable AI tool without the immense cost and complexity of a CJIS-audited system, while eliminating the risk of CJI data being mishandled.</p>
                                     <Button asChild variant="link" className="p-0 h-auto mt-2">

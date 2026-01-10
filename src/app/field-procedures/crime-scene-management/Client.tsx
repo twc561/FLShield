@@ -8,13 +8,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import type { ProcedureStep } from "@/data"
 
 export const CrimeSceneManagementClient = React.memo(function CrimeSceneManagementClient({ data }: { data: ProcedureStep[] }) {
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
       {data.map((step, index) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const Icon = (LucideIcons as any)[step.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle;
         return (
           <AccordionItem value={step.id} key={step.id} className="border-b-0">

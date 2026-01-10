@@ -11,7 +11,6 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -22,7 +21,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import type { MirandaWarningGuideData, LanguageContent } from "@/data/legal-reference/miranda-warning-guide";
-import { Gavel, AlertTriangle, Languages, CheckCircle, Mic, Milestone, Volume2, Loader2, PauseCircle } from "lucide-react";
+import { Gavel, AlertTriangle, Languages, CheckCircle, Mic, Milestone, Volume2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { textToSpeech } from "@/ai/flows/text-to-speech";
 
@@ -228,7 +227,7 @@ export function MirandaWarningClient({
         </CardHeader>
         <CardContent>
           <h4 className="font-semibold">{data.keyCase.caseName} <span className="text-muted-foreground font-normal">({data.keyCase.citation})</span></h4>
-          <p className="text-sm text-muted-foreground italic mt-1">"{data.keyCase.holding}"</p>
+          <p className="text-sm text-muted-foreground italic mt-1">&quot;{data.keyCase.holding}&quot;</p>
         </CardContent>
       </Card>
 

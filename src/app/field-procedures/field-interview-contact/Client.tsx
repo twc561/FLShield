@@ -24,6 +24,7 @@ export const FieldInterviewClient = React.memo(function FieldInterviewClient({ d
   return (
     <Accordion type="single" collapsible className="w-full space-y-4">
       {data.map((encounter, index) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const Icon = (LucideIcons as any)[encounter.icon as keyof typeof LucideIcons] || LucideIcons.HelpCircle;
         return (
           <AccordionItem value={encounter.id} key={encounter.id} className="border-b-0">

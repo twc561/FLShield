@@ -44,11 +44,15 @@ const fwcDataContext = JSON.stringify({
   licenseData
 });
 
-export async function queryFwcRegulations(
-  input: QueryFwcRegulationsInput
-): Promise<QueryFwcRegulationsOutput> {
-  const { output } = await ai.generate({
-    prompt: `You are an expert AI assistant on Florida Fish and Wildlife Conservation Commission (FWC) regulations. Your knowledge base is the provided JSON data. Answer the user's question concisely and directly based *only* on the provided data. If a rule is violated, state the rule and why it is a violation.
+export const queryFwcRegulations = ai.defineFlow(
+  {
+    name: 'queryFwcRegulations',
+    inputSchema: QueryFwcRegulationsInputSchema,
+    outputSchema: QueryFwcRegulationsOutputSchema,
+  },
+  async (input) => {
+    const { output } = await ai.generate({
+      prompt: `You are an expert AI assistant on Florida Fish and Wildlife Conservation Commission (FWC) regulations. Your knowledge base is the provided JSON data. Answer the user's question concisely and directly based *only* on the provided data. If a rule is violated, state the rule and why it is a violation.
 
 Knowledge Base:
 ${fwcDataContext}
@@ -57,9 +61,13 @@ User's Question:
 "${input.question}"
 
 Provide the direct answer now.`,
-    output: {
-      schema: QueryFwcRegulationsOutputSchema,
-    },
-  });
-  return output!;
-}
+      output: {
+        schema: QueryFwcRegulationsOutputSchema,
+      },
+    });
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
+    return output;
+  }
+);

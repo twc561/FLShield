@@ -61,18 +61,27 @@ Follow these rules with absolute precision:
 Your entire response must be a single, valid JSON object.`,
 });
 
-export async function findJuryInstruction(input: FindJuryInstructionInput): Promise<FindJuryInstructionOutput> {
-  // Format the entire database for the AI prompt
-  const fullDatabaseContext = instructionDatabase.map(r => r.text);
+export const findJuryInstruction = ai.defineFlow(
+  {
+    name: 'findJuryInstruction',
+    inputSchema: FindJuryInstructionInputSchema,
+    outputSchema: FindJuryInstructionOutputSchema,
+  },
+  async (input) => {
+    // Format the entire database for the AI prompt
+    const fullDatabaseContext = instructionDatabase.map(r => r.text);
 
-  const { output } = await findInstructionPrompt({
-      query: input.query,
-      instructionDatabase: fullDatabaseContext,
-  });
+    const { output } = await findInstructionPrompt({
+        query: input.query,
+        instructionDatabase: fullDatabaseContext,
+    });
 
-  if (!output || (!output.instructionID && (!output.disambiguationOptions || output.disambiguationOptions.length === 0))) {
-      throw new Error(`The AI analyst could not identify a relevant instruction for "${input.query}". Please try a more specific search term.`);
+    if (!output || (!output.instructionID && (!output.disambiguationOptions || output.disambiguationOptions.length === 0))) {
+        throw new Error(`The AI analyst could not identify a relevant instruction for "${input.query}". Please try a more specific search term.`);
+    }
+    if (!output) {
+      throw new Error("AI failed to generate a response.");
+    }
+    return output;
   }
-
-  return output;
-}
+);

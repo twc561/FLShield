@@ -17,7 +17,7 @@ export default function InstallPage() {
         <div className="animate-fade-in-up">
             <PageHeader
                 title="How to Install Shield FL"
-                description="Get a native app experience by adding Shield FL to your device's home screen."
+                description="Get a native app experience by adding Shield FL to your device&apos;s home screen."
             />
             <div className="grid md:grid-cols-3 gap-6">
                 <Card>
@@ -33,8 +33,8 @@ export default function InstallPage() {
                             <InstructionStep step={2}>
                                 Tap the <strong>Share</strong> button (the icon with a square and an arrow pointing up <Share className="inline-block h-4 w-4 align-middle" />).
                             </InstructionStep>
-                            <InstructionStep step={3}>Scroll down in the share menu and tap <strong>'Add to Home Screen'</strong>.</InstructionStep>
-                            <InstructionStep step={4}>Confirm the name and tap <strong>'Add'</strong> in the top-right corner.</InstructionStep>
+                            <InstructionStep step={3}>Scroll down in the share menu and tap <strong>&apos;Add to Home Screen&apos;</strong>.</InstructionStep>
+                            <InstructionStep step={4}>Confirm the name and tap <strong>&apos;Add&apos;</strong> in the top-right corner.</InstructionStep>
                         </ol>
                     </CardContent>
                 </Card>
@@ -52,7 +52,7 @@ export default function InstallPage() {
                             <InstructionStep step={2}>
                                 Tap the <strong>Menu</strong> button (the three vertical dots <MoreVertical className="inline-block h-4 w-4 align-middle" /> in the top corner).
                             </InstructionStep>
-                            <InstructionStep step={3}>Tap <strong>'Install app'</strong> or <strong>'Add to Home screen'</strong> from the menu.</InstructionStep>
+                            <InstructionStep step={3}>Tap <strong>&apos;Install app&apos;</strong> or <strong>&apos;Add to Home screen&apos;</strong> from the menu.</InstructionStep>
                             <InstructionStep step={4}>Follow the on-screen prompts to confirm the installation.</InstructionStep>
                         </ol>
                     </CardContent>
@@ -71,8 +71,8 @@ export default function InstallPage() {
                             <InstructionStep step={2}>
                                 In the address bar at the top, look for the <strong>Install icon</strong> (it looks like a small screen with a down arrow <AppWindow className="inline-block h-4 w-4 align-middle" />).
                             </InstructionStep>
-                            <InstructionStep step={3}>Click the icon and then click the <strong>'Install'</strong> button.</InstructionStep>
-                            <InstructionStep step={4}>The app will now be available in your computer's applications folder.</InstructionStep>
+                            <InstructionStep step={3}>Click the icon and then click the <strong>&apos;Install&apos;</strong> button.</InstructionStep>
+                            <InstructionStep step={4}>The app will now be available in your computer&apos;s applications folder.</InstructionStep>
                         </ol>
                     </CardContent>
                 </Card>

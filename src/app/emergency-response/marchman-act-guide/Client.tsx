@@ -11,12 +11,10 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import type { MarchmanActGuide } from "@/data/emergency-response/marchman-act-guide"
-import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
   Table,
@@ -34,13 +32,11 @@ const Section = ({
   icon: Icon,
   children,
   value,
-  defaultOpen = false
 }: {
   title: string;
   icon: React.ElementType;
   children: React.ReactNode;
   value: string;
-  defaultOpen?: boolean;
 }) => (
   <AccordionItem value={value} className="border-b-0">
     <Card>

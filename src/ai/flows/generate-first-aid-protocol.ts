@@ -24,5 +24,8 @@ export async function generateFirstAidProtocol(): Promise<GenerateFirstAidProtoc
       schema: GenerateFirstAidProtocolOutputSchema,
     },
   });
+  if (!output) {
+    throw new Error("AI failed to generate a response.");
+  }
   return output;
 }
