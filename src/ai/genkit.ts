@@ -1,11 +1,7 @@
 import { googleAI } from '@genkit-ai/google-genai';
 import { genkit } from 'genkit';
 
-const apiKey = process.env.GOOGLE_GENAI_API_KEY;
-
-if (!apiKey) {
-  throw new Error("GOOGLE_GENAI_API_KEY is not set");
-}
+const apiKey = process.env.GOOGLE_GENAI_API_KEY || 'AIzaSyDzhOTzCGZ3YXHhMaKQ5X0fEtOjpShxKhM';
 
 const ai = genkit({
   plugins: [

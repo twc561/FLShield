@@ -4,7 +4,7 @@ config();
 
 // Ensure the API key is set for development if not present in env
 if (!process.env.GOOGLE_GENAI_API_KEY) {
-  console.warn("GOOGLE_GENAI_API_KEY is not set in your environment. Please add it to your .env file.");
+  process.env.GOOGLE_GENAI_API_KEY = 'AIzaSyDzhOTzCGZ3YXHhMaKQ5X0fEtOjpShxKhM';
 }
 
 import '@/ai/flows/summarize-document.ts';
