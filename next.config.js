@@ -9,6 +9,9 @@ const nextConfig = {
   },
   output: 'standalone',
   experimental: {
+    allowedDevOrigins: [
+        '*.cloudworkstations.dev',
+    ],
     optimizePackageImports: ['lucide-react'],
     serverActions: {
       allowedOrigins: [
@@ -46,15 +49,6 @@ const nextConfig = {
     ],
   },
   webpack: (config, { isServer }) => {
-    config.watchOptions = {
-      ignored: [
-        '**/.git/**',
-        '**/.next/**',
-        '**/node_modules/**',
-        '**/.genkit/**',
-      ],
-    };
-    
     // These modules are server-side only and should not be included in the client-side bundle.
     if (!isServer) {
         config.externals.push('@opentelemetry/winston-transport');
