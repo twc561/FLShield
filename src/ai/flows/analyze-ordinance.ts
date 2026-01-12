@@ -33,7 +33,7 @@ export const analyzeOrdinance = ai.defineFlow(
     name: 'analyzeOrdinance',
     inputSchema: AnalyzeOrdinanceInputSchema,
     config: {
-      model: 'gemini-1.5-pro',
+      model: 'gemini-3.0-pro',
       generationConfig: {
         maxOutputTokens: 8192,
         temperature: 0.3,
@@ -45,7 +45,7 @@ export const analyzeOrdinance = ai.defineFlow(
   async (input) => {
   try {
     const { output } = await ai.generate({
-      model: 'gemini-1.5-pro',
+      model: 'gemini-3.0-pro',
       config: {
         maxOutputTokens: 8192,
         temperature: 0.1,

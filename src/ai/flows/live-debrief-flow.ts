@@ -39,7 +39,7 @@ Generate a brief, supportive, and conversational response.
 
   try {
     const { stream } = await ai.generateStream({
-      model: 'gemini-1.5-pro',
+      model: 'gemini-3.0-pro',
       prompt: prompt,
       history: input.conversationHistory.slice(0, -1), // Pass history excluding the latest prompt
       config: {

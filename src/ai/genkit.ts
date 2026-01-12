@@ -1,4 +1,4 @@
-import { gemini15Pro, googleAI } from '@genkit-ai/googleai';
+import { googleAI } from '@genkit-ai/googleai';
 import { genkit, z } from 'genkit';
 
 const plugins = [];
@@ -10,9 +10,13 @@ if (process.env.GOOGLE_GENAI_API_KEY) {
   console.warn("GOOGLE_GENAI_API_KEY is not set. AI features will not function correctly.");
 }
 
+// Gemini 3.0 models are not yet exported as constants in the library version we are using.
+// Using string references instead.
+const gemini30Pro = 'gemini-3.0-pro';
+
 const ai = genkit({
   plugins,
-  model: gemini15Pro,
+  model: gemini30Pro,
 });
 
 export { ai };
@@ -20,12 +24,12 @@ export { ai };
 // Export enhanced model configurations with maximum token limits
 export const enhancedAI = genkit({
   plugins,
-  model: gemini15Pro,
+  model: gemini30Pro,
 });
 
 // High-capacity configuration for complex scenarios
 export const highCapacityConfig = {
-  model: gemini15Pro,
+  model: gemini30Pro,
   config: {
     maxOutputTokens: 8192,
     temperature: 0.7,
